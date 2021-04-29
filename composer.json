@@ -1,0 +1,27 @@
+{
+    "name": "xguard/laravel-kanban",
+    "description": "A kanban for Laravel applications",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Siamak Samie",
+            "email": "siamak.samie@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Xguard\\LaravelKanban\\": "src/"
+        }
+    },
+
+    "extra": {
+        "laravel": {
+            "providers": [
+              "LaravelKanbanServiceProvider"
+            ]
+        }
+    }
+
+}
