@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Phone Schedule App Data
 
-export function getPhoneLineData(id) {
+export function getkanbanData(id) {
     return axios.get('get-phone-line-data/' + id);
 }
 
@@ -12,18 +12,18 @@ export function getDashboardData() {
 
 // Phone Line
 
-export function getPhoneLines() {
+export function getBoards() {
     return axios.get('get-phone-lines');
 }
 
-export function createPhoneLine(phoneLineData) {
-    return axios.post('create-phone-line', phoneLineData).catch((error) => {
+export function createBoard(kanbanData) {
+    return axios.post('create-board', kanbanData).catch((error) => {
         console.warn(error);
     });
 }
 
-export function deletePhoneLine(phoneLineId) {
-    return axios.post('delete-phone-line/' + phoneLineId);
+export function deleteBoard(phoneLineId) {
+    return axios.post('delete-board/' + phoneLineId);
 }
 
 export function getTags() {

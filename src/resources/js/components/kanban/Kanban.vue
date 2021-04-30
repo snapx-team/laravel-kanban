@@ -246,7 +246,7 @@
             getKanban(kanbanID) {
                 this.eventHub.$emit("set-loading-state", true);
 
-                this.asyncGetPhoneLineData(kanbanID).then((data) => {
+                this.asyncGetkanbanData(kanbanID).then((data) => {
                     this.kanban = data.data;
                     this.eventHub.$emit("set-loading-state", false);
 

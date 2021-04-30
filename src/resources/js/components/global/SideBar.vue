@@ -49,7 +49,7 @@
 
 </template>
 <script>
-    import {getPhoneLines} from "../../api";
+    import {getBoards} from "../../api";
 
     export default {
         inject: ["eventHub"],
@@ -60,19 +60,19 @@
                 loadingPhoneLine: false
             };
         }, mounted() {
-            this.getPhoneLines();
+            this.getBoards();
         },
 
         created() {
             this.eventHub.$on("update-side-bar", () => {
-                this.getPhoneLines();
+                this.getBoards();
             });
         },
 
         methods: {
-            getPhoneLines() {
+            getBoards() {
                 this.loadingPhoneLine = true;
-                getPhoneLines().then((data) => {
+                getBoards().then((data) => {
                     this.phoneLines = data.data;
                     this.loadingPhoneLine = false;
                 }).catch(res => {console.log(res)});

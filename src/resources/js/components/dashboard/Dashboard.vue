@@ -59,11 +59,11 @@
             this.eventHub.$on("save-employee", (employeeData) => {
                 this.saveEmployee(employeeData);
             });
-            this.eventHub.$on("save-phone-line", (phoneLineData) => {
-                this.savePhoneLine(phoneLineData);
+            this.eventHub.$on("save-board", (kanbanData) => {
+                this.savePhoneLine(kanbanData);
             });
-            this.eventHub.$on("delete-phone-line", (phoneLineId) => {
-                this.deletePhoneLine(phoneLineId);
+            this.eventHub.$on("delete-board", (phoneLineId) => {
+                this.deleteBoard(phoneLineId);
             });
             this.eventHub.$on("delete-employee", (employeeId) => {
                 this.deleteEmployee(employeeId);
@@ -72,8 +72,8 @@
 
         beforeDestroy(){
             this.eventHub.$off('save-employee');
-            this.eventHub.$off('save-phone-line');
-            this.eventHub.$off('delete-phone-line');
+            this.eventHub.$off('save-board');
+            this.eventHub.$off('delete-board');
             this.eventHub.$off('delete-employee');
         },
 
@@ -89,12 +89,12 @@
                 });
             },
 
-            savePhoneLine(phoneLineData) {
+            savePhoneLine(kanbanData) {
                 this.loadingPhoneLine = true
-                const clonePhoneLineData = {...phoneLineData};
-                this.asyncCreatePhoneLine(clonePhoneLineData).then(res => {
+                const clonekanbanData = {...kanbanData};
+                this.asynccreateBoard(clonekanbanData).then(res => {
                     this.eventHub.$emit("update-side-bar");
-                    this.asyncGetPhoneLines().then((data) => {
+                    this.asyncgetBoards().then((data) => {
                         this.dashboardData.phoneLines = data.data;
                         this.loadingPhoneLine = false;
                     }).catch(res => {console.log(res)});
@@ -102,11 +102,11 @@
                 });
             },
 
-            deletePhoneLine(phoneLineId) {
+            deleteBoard(phoneLineId) {
                 this.loadingPhoneLine = true
-                this.asyncDeletePhoneLine(phoneLineId).then(res => {
+                this.asyncdeleteBoard(phoneLineId).then(res => {
                     this.eventHub.$emit("update-side-bar");
-                    this.asyncGetPhoneLines().then((data) => {
+                    this.asyncgetBoards().then((data) => {
                         this.dashboardData.phoneLines = data.data;
                         this.loadingPhoneLine = false;
                     }).catch(res => {console.log(res)});

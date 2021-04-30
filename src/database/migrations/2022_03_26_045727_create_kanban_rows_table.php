@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateLogs extends Migration
+class CreateKanbanRowsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,12 @@ class CreateLogs extends Migration
      */
     public function up()
     {
-        Schema::create('kanban_logs', function (Blueprint $table) {
+        Schema::create('kanban_rows', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('user_id')->nullable();
-            $table->unsignedInteger('log_type');
-            $table->longText('description')->nullable();
+            $table->unsignedBigInteger('board_id');
+            $table->string('name');
             $table->timestamps();
+            $table->foreign('board_id')->references('id')->on('kanban_boards')->onDelete('cascade');
         });
     }
 
@@ -29,6 +29,6 @@ class CreateLogs extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('kanban_logs');
+        Schema::dropIfExists('kanban_rows');
     }
 }

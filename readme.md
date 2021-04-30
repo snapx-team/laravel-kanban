@@ -67,6 +67,11 @@ php artisan vendor:publish --provider="Xguard\LaravelKanabn\LaravelKanabnService
 php artisan migrate --path=package/laravel-kanban/src/database/migrations
 ```
 
+**7:** To run seeder for testing
+```bash
+php artisan db:seed --class="Xguard\LaravelKanban\database\seeds\EmployeeSeeder"
+```
+
 <br>
 
 ## License

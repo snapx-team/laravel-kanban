@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePhoneLinesTable extends Migration
+class CreateKanbanLogs extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,11 @@ class CreatePhoneLinesTable extends Migration
      */
     public function up()
     {
-        Schema::create('kanban_phone_lines', function (Blueprint $table) {
+        Schema::create('kanban_logs', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('phone')->unique();
-            $table->string('tag');
-            $table->boolean('is_active')->default(true);
+            $table->unsignedInteger('user_id')->nullable();
+            $table->unsignedInteger('log_type');
+            $table->longText('description')->nullable();
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ class CreatePhoneLinesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('kanban_phone_lines');
+        Schema::dropIfExists('kanban_logs');
     }
 }

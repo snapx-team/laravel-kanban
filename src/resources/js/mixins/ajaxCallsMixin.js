@@ -10,7 +10,7 @@ export const ajaxCalls = {
 
         // Phone Schedule App Data
 
-        asyncGetPhoneLineData(id) {
+        asyncGetkanbanData(id) {
             return axios.get('get-phone-line-data/' + id);
         },
 
@@ -18,26 +18,22 @@ export const ajaxCalls = {
             return axios.get('get-dashboard-data');
         },
 
-        // Phone Lines
+        // Board
 
-        asyncGetPhoneLines() {
+        asyncgetBoards() {
             return axios.get('get-phone-lines');
         },
 
-        asyncCreatePhoneLine(phoneLineData) {
-            return axios.post('create-phone-line', phoneLineData).catch((error) => {
+        asynccreateBoard(kanbanData) {
+            return axios.post('create-board', kanbanData).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
 
-        asyncDeletePhoneLine(phoneLineId) {
-            return axios.post('delete-phone-line/' + phoneLineId).catch((error) => {
+        asyncdeleteBoard(phoneLineId) {
+            return axios.post('delete-board/' + phoneLineId).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
-        },
-
-        asyncGetTags() {
-            return axios.get('get-tags');
         },
 
         // Columns

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMembersTable extends Migration
+class CreateKanbanMembersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -16,10 +16,10 @@ class CreateMembersTable extends Migration
         Schema::create('kanban_members', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('employee_id');
-            $table->unsignedBigInteger('phone_line_id');
+            $table->unsignedBigInteger('board_id');
             $table->timestamps();
             $table->foreign('employee_id')->references('id')->on('kanban_employees')->onDelete('cascade');
-            $table->foreign('phone_line_id')->references('id')->on('kanban_phone_lines')->onDelete('cascade');
+            $table->foreign('board_id')->references('id')->on('kanban_boards')->onDelete('cascade');
         });
     }
 

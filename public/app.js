@@ -6613,11 +6613,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     this.eventHub.$on("save-employee", function (employeeData) {
       _this.saveEmployee(employeeData);
     });
-    this.eventHub.$on("save-phone-line", function (phoneLineData) {
-      _this.savePhoneLine(phoneLineData);
+    this.eventHub.$on("save-board", function (kanbanData) {
+      _this.savePhoneLine(kanbanData);
     });
-    this.eventHub.$on("delete-phone-line", function (phoneLineId) {
-      _this.deletePhoneLine(phoneLineId);
+    this.eventHub.$on("delete-board", function (phoneLineId) {
+      _this.deleteBoard(phoneLineId);
     });
     this.eventHub.$on("delete-employee", function (employeeId) {
       _this.deleteEmployee(employeeId);
@@ -6625,8 +6625,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   beforeDestroy: function beforeDestroy() {
     this.eventHub.$off('save-employee');
-    this.eventHub.$off('save-phone-line');
-    this.eventHub.$off('delete-phone-line');
+    this.eventHub.$off('save-board');
+    this.eventHub.$off('delete-board');
     this.eventHub.$off('delete-employee');
   },
   methods: {
@@ -6646,17 +6646,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         });
       });
     },
-    savePhoneLine: function savePhoneLine(phoneLineData) {
+    savePhoneLine: function savePhoneLine(kanbanData) {
       var _this3 = this;
 
       this.loadingPhoneLine = true;
 
-      var clonePhoneLineData = _objectSpread({}, phoneLineData);
+      var clonekanbanData = _objectSpread({}, kanbanData);
 
-      this.asyncCreatePhoneLine(clonePhoneLineData).then(function (res) {
+      this.asynccreateBoard(clonekanbanData).then(function (res) {
         _this3.eventHub.$emit("update-side-bar");
 
-        _this3.asyncGetPhoneLines().then(function (data) {
+        _this3.asyncgetBoards().then(function (data) {
           _this3.dashboardData.phoneLines = data.data;
           _this3.loadingPhoneLine = false;
         })["catch"](function (res) {
@@ -6664,14 +6664,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         });
       });
     },
-    deletePhoneLine: function deletePhoneLine(phoneLineId) {
+    deleteBoard: function deleteBoard(phoneLineId) {
       var _this4 = this;
 
       this.loadingPhoneLine = true;
-      this.asyncDeletePhoneLine(phoneLineId).then(function (res) {
+      this.asyncdeleteBoard(phoneLineId).then(function (res) {
         _this4.eventHub.$emit("update-side-bar");
 
-        _this4.asyncGetPhoneLines().then(function (data) {
+        _this4.asyncgetBoards().then(function (data) {
           _this4.dashboardData.phoneLines = data.data;
           _this4.loadingPhoneLine = false;
         })["catch"](function (res) {
@@ -6778,8 +6778,8 @@ __webpack_require__.r(__webpack_exports__);
     createEmployee: function createEmployee() {
       this.eventHub.$emit("create-employee");
     },
-    createPhoneLine: function createPhoneLine() {
-      this.eventHub.$emit("create-phone-line");
+    createBoard: function createBoard() {
+      this.eventHub.$emit("create-board");
     }
   }
 });
@@ -7130,63 +7130,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -7198,32 +7141,21 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   data: function data() {
     return {
       isEdit: false,
-      phoneLineData: {
+      kanbanData: {
         id: null,
-        name: null,
-        phone: null,
-        tag: null,
-        is_active: true
+        name: null
       },
-      modalOpen: false,
-      tags: ['test', 'test2']
+      modalOpen: false
     };
   },
   created: function created() {
     var _this = this;
 
-    this.eventHub.$on("create-phone-line", function (phoneLine) {
+    this.eventHub.$on("create-board", function (phoneLine) {
       if (phoneLine !== undefined) {
-        _this.phoneLineData = _objectSpread({}, phoneLine);
+        _this.kanbanData = _objectSpread({}, phoneLine);
         _this.isEdit = true;
       } else {
-        _this.phoneLineData = {
-          id: null,
-          name: null,
-          phone: null,
-          tag: null,
-          is_active: true
-        };
         _this.isEdit = false;
       }
 
@@ -7231,32 +7163,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     });
   },
   beforeDestroy: function beforeDestroy() {
-    this.eventHub.$off('create-phone-line');
-  },
-  mounted: function mounted() {
-    this.getTags();
+    this.eventHub.$off('create-board');
   },
   methods: {
     savePhoneLine: function savePhoneLine(event) {
       event.target.disabled = true;
-      this.eventHub.$emit("save-phone-line", this.phoneLineData);
+      this.eventHub.$emit("save-board", this.kanbanData);
       this.modalOpen = false;
-      this.getTags();
     },
-    deletePhoneLine: function deletePhoneLine(event) {
+    deleteBoard: function deleteBoard(event) {
       event.target.disabled = true;
-      this.eventHub.$emit("delete-phone-line", this.phoneLineData.id);
+      this.eventHub.$emit("delete-board", this.kanbanData.id);
       this.modalOpen = false;
-      this.getTags();
-    },
-    getTags: function getTags() {
-      var _this2 = this;
-
-      this.asyncGetTags().then(function (data) {
-        _this2.tags = data.data;
-      })["catch"](function (res) {
-        console.log(res);
-      });
     }
   }
 });
@@ -7450,16 +7368,6 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _global_Avatar_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../global/Avatar.vue */ "./src/resources/js/components/global/Avatar.vue");
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -7517,17 +7425,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       "default": null
     }
   },
-  computed: {
-    phoneLinesGroup: function phoneLinesGroup() {
-      return this.phoneLines.reduce(function (res, curr) {
-        if (res[curr.tag]) res[curr.tag].push(curr);else Object.assign(res, _defineProperty({}, curr.tag, [curr]));
-        return res;
-      }, {});
-    }
-  },
   methods: {
     editPhoneLine: function editPhoneLine(phoneLine) {
-      this.eventHub.$emit("create-phone-line", phoneLine);
+      this.eventHub.$emit("create-board", phoneLine);
     }
   }
 });
@@ -7717,22 +7617,22 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   mounted: function mounted() {
-    this.getPhoneLines();
+    this.getBoards();
   },
   created: function created() {
     var _this = this;
 
     this.eventHub.$on("update-side-bar", function () {
-      _this.getPhoneLines();
+      _this.getBoards();
     });
   },
   methods: {
-    getPhoneLines: function getPhoneLines() {
+    getBoards: function getBoards() {
       var _this2 = this;
 
       this.loadingPhoneLine = true;
 
-      Object(_api__WEBPACK_IMPORTED_MODULE_0__["getPhoneLines"])().then(function (data) {
+      Object(_api__WEBPACK_IMPORTED_MODULE_0__["getBoards"])().then(function (data) {
         _this2.phoneLines = data.data;
         _this2.loadingPhoneLine = false;
       })["catch"](function (res) {
@@ -8080,7 +7980,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var _this8 = this;
 
       this.eventHub.$emit("set-loading-state", true);
-      this.asyncGetPhoneLineData(kanbanID).then(function (data) {
+      this.asyncGetkanbanData(kanbanID).then(function (data) {
         _this8.kanban = data.data;
 
         _this8.eventHub.$emit("set-loading-state", false);
@@ -8919,25 +8819,6 @@ exports = module.exports = __webpack_require__(/*! ../../../../../../node_module
 
 // module
 exports.push([module.i, "\n.toggle__dot[data-v-48631027] {\n    top: -0.1rem;\n\n    transition: all 0.1s ease-in-out;\n}\ninput:checked ~ .toggle__dot[data-v-48631027] {\n    transform: translateX(100%);\n    background-color: #059669;\n}\n", ""]);
-
-// exports
-
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=style&index=0&id=4be54ff3&scoped=true&lang=css&":
-/*!***************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=style&index=0&id=4be54ff3&scoped=true&lang=css& ***!
-  \***************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../../../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
-// imports
-
-
-// module
-exports.push([module.i, "\n.toggle__dot[data-v-4be54ff3] {\n    top: -0.1rem;\n\n    transition: all 0.1s ease-in-out;\n}\ninput:checked ~ .toggle__dot[data-v-4be54ff3] {\n    transform: translateX(100%);\n    background-color: #059669;\n}\n", ""]);
 
 // exports
 
@@ -13327,36 +13208,6 @@ if(false) {}
 
 /***/ }),
 
-/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=style&index=0&id=4be54ff3&scoped=true&lang=css&":
-/*!*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=style&index=0&id=4be54ff3&scoped=true&lang=css& ***!
-  \*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-var content = __webpack_require__(/*! !../../../../../../node_modules/css-loader??ref--6-1!../../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../../node_modules/postcss-loader/src??ref--6-2!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddOrEditPhoneLineModal.vue?vue&type=style&index=0&id=4be54ff3&scoped=true&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=style&index=0&id=4be54ff3&scoped=true&lang=css&");
-
-if(typeof content === 'string') content = [[module.i, content, '']];
-
-var transform;
-var insertInto;
-
-
-
-var options = {"hmr":true}
-
-options.transform = transform
-options.insertInto = undefined;
-
-var update = __webpack_require__(/*! ../../../../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
-
-if(content.locals) module.exports = content.locals;
-
-if(false) {}
-
-/***/ }),
-
 /***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/global/Avatar.vue?vue&type=style&index=0&id=bb806982&scoped=true&lang=css&":
 /*!***************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/global/Avatar.vue?vue&type=style&index=0&id=bb806982&scoped=true&lang=css& ***!
@@ -14897,7 +14748,7 @@ var render = function() {
               "cursor-pointer bg-blue-100 hover:bg-blue-200 transition duration-300 ease-in-out border-b-4 border-blue-500 rounded-lg shadow-xl p-5",
             on: {
               click: function($event) {
-                return _vm.createPhoneLine()
+                return _vm.createBoard()
               }
             }
           },
@@ -14907,16 +14758,14 @@ var render = function() {
               _vm._v(" "),
               _c("div", { staticClass: "flex-1 text-right md:text-center" }, [
                 _c("h5", { staticClass: "font-bold uppercase text-gray-800" }, [
-                  _vm._v(
-                    "\n                            Add Phone Line Schedule "
-                  )
+                  _vm._v("\n                            Add A Board ")
                 ]),
                 _vm._v(" "),
                 _c("h3", { staticClass: "text-sm text-gray-600" }, [
                   _vm._v(
                     "\n                            " +
                       _vm._s(_vm.phoneLinesLength) +
-                      " phone lines total "
+                      " boards total "
                   )
                 ])
               ])
@@ -15681,10 +15530,10 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=template&id=4be54ff3&scoped=true&":
-/*!************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=template&id=4be54ff3&scoped=true& ***!
-  \************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=template&id=4be54ff3&":
+/*!************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=template&id=4be54ff3& ***!
+  \************************************************************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -15774,7 +15623,7 @@ var render = function() {
                                   _c(
                                     "h1",
                                     { staticClass: "text-2xl text-white pb-2" },
-                                    [_vm._v("Edit Phone Line")]
+                                    [_vm._v("Edit Kanban Board")]
                                   ),
                                   _vm._v(" "),
                                   _c(
@@ -15785,7 +15634,7 @@ var render = function() {
                                     },
                                     [
                                       _vm._v(
-                                        "\n                                Editing existing phone line "
+                                        "\n                                Editing an existing kanban board "
                                       )
                                     ]
                                   )
@@ -15794,7 +15643,7 @@ var render = function() {
                                   _c(
                                     "h1",
                                     { staticClass: "text-2xl text-white pb-2" },
-                                    [_vm._v("Create Phone Line")]
+                                    [_vm._v("Create Board")]
                                   ),
                                   _vm._v(" "),
                                   _c(
@@ -15805,7 +15654,7 @@ var render = function() {
                                     },
                                     [
                                       _vm._v(
-                                        "\n                                Creating a new phone line "
+                                        "\n                                Creating a new kanban board "
                                       )
                                     ]
                                   )
@@ -15862,8 +15711,8 @@ var render = function() {
                                   {
                                     name: "model",
                                     rawName: "v-model",
-                                    value: _vm.phoneLineData.name,
-                                    expression: "phoneLineData.name"
+                                    value: _vm.kanbanData.name,
+                                    expression: "kanbanData.name"
                                   }
                                 ],
                                 staticClass:
@@ -15872,288 +15721,20 @@ var render = function() {
                                   placeholder: "John Doe",
                                   type: "text"
                                 },
-                                domProps: { value: _vm.phoneLineData.name },
+                                domProps: { value: _vm.kanbanData.name },
                                 on: {
                                   input: function($event) {
                                     if ($event.target.composing) {
                                       return
                                     }
                                     _vm.$set(
-                                      _vm.phoneLineData,
+                                      _vm.kanbanData,
                                       "name",
                                       $event.target.value
                                     )
                                   }
                                 }
                               })
-                            ]),
-                            _vm._v(" "),
-                            _c("label", { staticClass: "flex-1 space-y-2" }, [
-                              _c(
-                                "span",
-                                {
-                                  staticClass:
-                                    "block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"
-                                },
-                                [_vm._v("Phone ")]
-                              ),
-                              _vm._v(" "),
-                              _c("input", {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.phoneLineData.phone,
-                                    expression: "phoneLineData.phone"
-                                  }
-                                ],
-                                staticClass:
-                                  "px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4",
-                                attrs: {
-                                  placeholder: "+15145550000",
-                                  type: "Number"
-                                },
-                                domProps: { value: _vm.phoneLineData.phone },
-                                on: {
-                                  input: function($event) {
-                                    if ($event.target.composing) {
-                                      return
-                                    }
-                                    _vm.$set(
-                                      _vm.phoneLineData,
-                                      "phone",
-                                      $event.target.value
-                                    )
-                                  }
-                                }
-                              })
-                            ])
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "flex space-x-3" }, [
-                            _c(
-                              "div",
-                              { staticClass: "flex-1" },
-                              [
-                                _c(
-                                  "span",
-                                  {
-                                    staticClass:
-                                      "block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"
-                                  },
-                                  [_vm._v("Tag")]
-                                ),
-                                _vm._v(" "),
-                                _c("vSelect", {
-                                  staticClass: "text-gray-700",
-                                  staticStyle: { "margin-top": "7px" },
-                                  attrs: {
-                                    options: this.tags,
-                                    taggable: "",
-                                    label: "name",
-                                    placeholder: "Choose or create a tag"
-                                  },
-                                  scopedSlots: _vm._u(
-                                    [
-                                      {
-                                        key: "option",
-                                        fn: function(option) {
-                                          return [
-                                            _c("p", { staticClass: "inline" }, [
-                                              _vm._v(_vm._s(option.name))
-                                            ])
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        key: "no-options",
-                                        fn: function(ref) {
-                                          var search = ref.search
-                                          var searching = ref.searching
-                                          var loading = ref.loading
-                                          return [
-                                            _vm._v(
-                                              "\n                                    No tags Created\n                                "
-                                            )
-                                          ]
-                                        }
-                                      }
-                                    ],
-                                    null,
-                                    false,
-                                    452437754
-                                  ),
-                                  model: {
-                                    value: _vm.phoneLineData.tag,
-                                    callback: function($$v) {
-                                      _vm.$set(_vm.phoneLineData, "tag", $$v)
-                                    },
-                                    expression: "phoneLineData.tag"
-                                  }
-                                })
-                              ],
-                              1
-                            ),
-                            _vm._v(" "),
-                            _c("div", { staticClass: "flex-1" }, [
-                              _c(
-                                "div",
-                                {
-                                  staticClass:
-                                    "block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"
-                                },
-                                [
-                                  _vm._v(
-                                    "\n                                Status\n                            "
-                                  )
-                                ]
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "div",
-                                {
-                                  staticClass:
-                                    "flex border border-gray-400 p-2 mt-2"
-                                },
-                                [
-                                  _c(
-                                    "label",
-                                    {
-                                      staticClass:
-                                        "flex items-start cursor-pointer",
-                                      attrs: { for: "is-active" }
-                                    },
-                                    [
-                                      _c(
-                                        "div",
-                                        { staticClass: "relative mt-1" },
-                                        [
-                                          _c("input", {
-                                            directives: [
-                                              {
-                                                name: "model",
-                                                rawName: "v-model",
-                                                value:
-                                                  _vm.phoneLineData.is_active,
-                                                expression:
-                                                  "phoneLineData.is_active"
-                                              }
-                                            ],
-                                            staticClass: "hidden",
-                                            attrs: {
-                                              id: "is-active",
-                                              type: "checkbox"
-                                            },
-                                            domProps: {
-                                              checked: Array.isArray(
-                                                _vm.phoneLineData.is_active
-                                              )
-                                                ? _vm._i(
-                                                    _vm.phoneLineData.is_active,
-                                                    null
-                                                  ) > -1
-                                                : _vm.phoneLineData.is_active
-                                            },
-                                            on: {
-                                              change: function($event) {
-                                                var $$a =
-                                                    _vm.phoneLineData.is_active,
-                                                  $$el = $event.target,
-                                                  $$c = $$el.checked
-                                                    ? true
-                                                    : false
-                                                if (Array.isArray($$a)) {
-                                                  var $$v = null,
-                                                    $$i = _vm._i($$a, $$v)
-                                                  if ($$el.checked) {
-                                                    $$i < 0 &&
-                                                      _vm.$set(
-                                                        _vm.phoneLineData,
-                                                        "is_active",
-                                                        $$a.concat([$$v])
-                                                      )
-                                                  } else {
-                                                    $$i > -1 &&
-                                                      _vm.$set(
-                                                        _vm.phoneLineData,
-                                                        "is_active",
-                                                        $$a
-                                                          .slice(0, $$i)
-                                                          .concat(
-                                                            $$a.slice($$i + 1)
-                                                          )
-                                                      )
-                                                  }
-                                                } else {
-                                                  _vm.$set(
-                                                    _vm.phoneLineData,
-                                                    "is_active",
-                                                    $$c
-                                                  )
-                                                }
-                                              }
-                                            }
-                                          }),
-                                          _vm._v(" "),
-                                          _c("div", {
-                                            staticClass:
-                                              "toggle__dot absolute w-5 h-5 bg-red-600 rounded-full shadow inset-y-0 left-0"
-                                          }),
-                                          _vm._v(" "),
-                                          _c("div", {
-                                            staticClass:
-                                              "toggle__line w-10 h-4 bg-gray-400 rounded-full shadow-inner"
-                                          })
-                                        ]
-                                      ),
-                                      _vm._v(" "),
-                                      _vm.phoneLineData.is_active
-                                        ? _c(
-                                            "div",
-                                            {
-                                              staticClass:
-                                                "ml-3 text-gray-700 font-medium"
-                                            },
-                                            [
-                                              _c("p", [_vm._v("Active")]),
-                                              _vm._v(" "),
-                                              _c(
-                                                "small",
-                                                {
-                                                  staticClass: "text-green-700"
-                                                },
-                                                [
-                                                  _vm._v(
-                                                    "Phone Line Is Working"
-                                                  )
-                                                ]
-                                              )
-                                            ]
-                                          )
-                                        : _c(
-                                            "div",
-                                            {
-                                              staticClass:
-                                                "ml-3 text-gray-700 font-medium"
-                                            },
-                                            [
-                                              _c("p", [_vm._v("Inactive")]),
-                                              _vm._v(" "),
-                                              _c(
-                                                "small",
-                                                { staticClass: "text-red-700" },
-                                                [
-                                                  _vm._v(
-                                                    "Phone Line is Disabled"
-                                                  )
-                                                ]
-                                              )
-                                            ]
-                                          )
-                                    ]
-                                  )
-                                ]
-                              )
                             ])
                           ]),
                           _vm._v(" "),
@@ -16197,8 +15778,8 @@ var render = function() {
                                 },
                                 [
                                   _vm.isEdit
-                                    ? _c("span", [_vm._v("Edit Phone Line")])
-                                    : _c("span", [_vm._v("Create Phone Line")])
+                                    ? _c("span", [_vm._v("Edit Kanban Board")])
+                                    : _c("span", [_vm._v("Create Board")])
                                 ]
                               )
                             ]
@@ -16212,14 +15793,14 @@ var render = function() {
                                     "mt-4  text-sm text-red-600 hover:text-red-800 transition duration-300 ease-in-out focus:outline-none",
                                   on: {
                                     click: function($event) {
-                                      return _vm.deletePhoneLine($event)
+                                      return _vm.deleteBoard($event)
                                     }
                                   }
                                 },
                                 [
                                   _c("i", { staticClass: "fas fa-trash mr-2" }),
                                   _vm._v(
-                                    "\n                        Delete Phone Line\n                    "
+                                    "\n                        Delete Kanaban Board\n                    "
                                   )
                                 ]
                               )
@@ -16738,154 +16319,119 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "phoneLines" }, [
     _c("h2", { staticClass: "text-2xl font-semibold py-5" }, [
-      _vm._v("Phone Lines")
+      _vm._v("Kanban Boards")
     ]),
     _vm._v(" "),
-    _c(
-      "div",
-      { staticClass: "bg-gray-100 py-3" },
-      [
-        _vm._l(_vm.phoneLinesGroup, function(
-          phoneLineGroup,
-          phoneLinesGroupIndex
-        ) {
-          return [
-            _c("div", { key: phoneLinesGroupIndex }, [
-              _c(
-                "p",
-                {
-                  staticClass:
-                    "pl-5 pt-4 font-semibold  text-gray-500 leading-5"
-                },
-                [_vm._v(_vm._s(phoneLinesGroupIndex))]
-              ),
-              _vm._v(" "),
+    _c("div", { staticClass: "bg-gray-100 py-3" }, [
+      _c(
+        "div",
+        { staticClass: "p-2 flex flex-wrap" },
+        [
+          _vm._l(_vm.phoneLines, function(phoneLine, phoneLineIndex) {
+            return [
               _c(
                 "div",
-                { staticClass: "p-2 flex flex-wrap" },
+                {
+                  key: phoneLineIndex,
+                  staticClass: "flex-auto rounded shadow-lg m-2 bg-white"
+                },
                 [
-                  _vm._l(phoneLineGroup, function(phoneLine, phoneLineIndex) {
-                    return [
+                  _c("div", { staticClass: "flex p-4" }, [
+                    _c("div", { staticClass: "pr-1 flex-1" }, [
                       _c(
-                        "div",
+                        "h5",
                         {
-                          key: phoneLineIndex,
-                          staticClass: "flex-auto rounded shadow-lg m-2",
-                          class: phoneLine.is_active
-                            ? "bg-white"
-                            : "bg-red-50 border-2 border-red-300"
+                          staticClass:
+                            "font-semibold text-md uppercase text-gray-800"
                         },
                         [
-                          _c("div", { staticClass: "flex p-4" }, [
-                            _c("div", { staticClass: "pr-1 flex-1" }, [
-                              _c(
-                                "h5",
-                                {
-                                  staticClass:
-                                    "font-semibold text-md uppercase text-gray-800"
-                                },
-                                [
-                                  _vm._v(
-                                    _vm._s(phoneLine.name) +
-                                      "\n                                        "
-                                  ),
-                                  _c(
-                                    "a",
-                                    {
-                                      staticClass:
-                                        "cursor-pointer px-2 text-gray-400 hover:text-gray-600 transition duration-300 ease-in-out focus:outline-none",
-                                      on: {
-                                        click: function($event) {
-                                          return _vm.editPhoneLine(phoneLine)
-                                        }
-                                      }
-                                    },
-                                    [_c("i", { staticClass: "fas fa-edit" })]
-                                  )
-                                ]
-                              ),
-                              _vm._v(" "),
+                          _vm._v(
+                            _vm._s(phoneLine.name) +
+                              "\n                                "
+                          ),
+                          _c(
+                            "a",
+                            {
+                              staticClass:
+                                "cursor-pointer px-2 text-gray-400 hover:text-gray-600 transition duration-300 ease-in-out focus:outline-none",
+                              on: {
+                                click: function($event) {
+                                  return _vm.editPhoneLine(phoneLine)
+                                }
+                              }
+                            },
+                            [_c("i", { staticClass: "fas fa-edit" })]
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "span",
+                        { staticClass: "text-gray-500 font-bold text-sm" },
+                        [_vm._v(_vm._s(phoneLine.phone))]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "p",
+                        {
+                          staticClass: "text-sm text-gray-500 mt-4 font-medium"
+                        },
+                        [
+                          _c("span", { staticClass: "mr-2 text-green-700" }, [
+                            _c("i", { staticClass: "fas fa-user" }),
+                            _vm._v(
+                              "\n                                    " +
+                                _vm._s(phoneLine.members.length) +
+                                "\n                                "
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "router-link",
+                            {
+                              attrs: {
+                                to: {
+                                  path: "/kanban/phoneline",
+                                  query: { id: phoneLine.id }
+                                }
+                              }
+                            },
+                            [
                               _c(
                                 "span",
                                 {
-                                  staticClass: "text-gray-500 font-bold text-sm"
-                                },
-                                [_vm._v(_vm._s(phoneLine.phone))]
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "p",
-                                {
                                   staticClass:
-                                    "text-sm text-gray-500 mt-4 font-medium"
+                                    "whitespace-no-wrap underline text-blue-600 hover:text-blue-800"
                                 },
-                                [
-                                  _c(
-                                    "span",
-                                    { staticClass: "mr-2 text-green-700" },
-                                    [
-                                      _c("i", { staticClass: "fas fa-user" }),
-                                      _vm._v(
-                                        "\n                                    " +
-                                          _vm._s(phoneLine.members.length) +
-                                          "\n                                "
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "router-link",
-                                    {
-                                      attrs: {
-                                        to: {
-                                          path: "/kanban/phoneline",
-                                          query: { id: phoneLine.id }
-                                        }
-                                      }
-                                    },
-                                    [
-                                      _c(
-                                        "span",
-                                        {
-                                          staticClass:
-                                            "whitespace-no-wrap underline text-blue-600 hover:text-blue-800"
-                                        },
-                                        [_vm._v("Navigate to phone line")]
-                                      )
-                                    ]
-                                  )
-                                ],
-                                1
+                                [_vm._v("Navigate to board")]
                               )
-                            ]),
-                            _vm._v(" "),
-                            _c(
-                              "div",
-                              {
-                                staticClass: "relative w-auto pl-4 flex-initial"
-                              },
-                              [
-                                _c("avatar", {
-                                  staticClass: "mr-3",
-                                  attrs: { name: phoneLine.name, size: 12 }
-                                })
-                              ],
-                              1
-                            )
-                          ])
-                        ]
+                            ]
+                          )
+                        ],
+                        1
                       )
-                    ]
-                  })
-                ],
-                2
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "relative w-auto pl-4 flex-initial" },
+                      [
+                        _c("avatar", {
+                          staticClass: "mr-3",
+                          attrs: { name: phoneLine.name, size: 12 }
+                        })
+                      ],
+                      1
+                    )
+                  ])
+                ]
               )
-            ])
-          ]
-        })
-      ],
-      2
-    )
+            ]
+          })
+        ],
+        2
+      )
+    ])
   ])
 }
 var staticRenderFns = []
@@ -39595,16 +39141,16 @@ __webpack_require__.r(__webpack_exports__);
 /*!*********************************!*\
   !*** ./src/resources/js/api.js ***!
   \*********************************/
-/*! exports provided: getPhoneLineData, getDashboardData, getPhoneLines, createPhoneLine, deletePhoneLine, getTags, createColumns, createEmployeeCards, getEmployeeCardsByColumn, deleteEmployeeCard, updateEmployeeCardIndexes, updateEmployeeCardColumnId, getEmployees, createEmployee, deleteEmployee, getMembers, addMembers, deleteMember */
+/*! exports provided: getkanbanData, getDashboardData, getBoards, createBoard, deleteBoard, getTags, createColumns, createEmployeeCards, getEmployeeCardsByColumn, deleteEmployeeCard, updateEmployeeCardIndexes, updateEmployeeCardColumnId, getEmployees, createEmployee, deleteEmployee, getMembers, addMembers, deleteMember */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPhoneLineData", function() { return getPhoneLineData; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getkanbanData", function() { return getkanbanData; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDashboardData", function() { return getDashboardData; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPhoneLines", function() { return getPhoneLines; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createPhoneLine", function() { return createPhoneLine; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deletePhoneLine", function() { return deletePhoneLine; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getBoards", function() { return getBoards; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createBoard", function() { return createBoard; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deleteBoard", function() { return deleteBoard; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTags", function() { return getTags; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createColumns", function() { return createColumns; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createEmployeeCards", function() { return createEmployeeCards; });
@@ -39622,23 +39168,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
  // Phone Schedule App Data
 
-function getPhoneLineData(id) {
+function getkanbanData(id) {
   return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('get-phone-line-data/' + id);
 }
 function getDashboardData() {
   return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('get-dashboard-data');
 } // Phone Line
 
-function getPhoneLines() {
+function getBoards() {
   return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('get-phone-lines');
 }
-function createPhoneLine(phoneLineData) {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('create-phone-line', phoneLineData)["catch"](function (error) {
+function createBoard(kanbanData) {
+  return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('create-board', kanbanData)["catch"](function (error) {
     console.warn(error);
   });
 }
-function deletePhoneLine(phoneLineId) {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('delete-phone-line/' + phoneLineId);
+function deleteBoard(phoneLineId) {
+  return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('delete-board/' + phoneLineId);
 }
 function getTags() {
   return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('get-tags');
@@ -39962,11 +39508,9 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _AddOrEditPhoneLineModal_vue_vue_type_template_id_4be54ff3_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AddOrEditPhoneLineModal.vue?vue&type=template&id=4be54ff3&scoped=true& */ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=template&id=4be54ff3&scoped=true&");
+/* harmony import */ var _AddOrEditPhoneLineModal_vue_vue_type_template_id_4be54ff3___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AddOrEditPhoneLineModal.vue?vue&type=template&id=4be54ff3& */ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=template&id=4be54ff3&");
 /* harmony import */ var _AddOrEditPhoneLineModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AddOrEditPhoneLineModal.vue?vue&type=script&lang=js& */ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _AddOrEditPhoneLineModal_vue_vue_type_style_index_0_id_4be54ff3_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./AddOrEditPhoneLineModal.vue?vue&type=style&index=0&id=4be54ff3&scoped=true&lang=css& */ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=style&index=0&id=4be54ff3&scoped=true&lang=css&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -39974,13 +39518,13 @@ __webpack_require__.r(__webpack_exports__);
 
 /* normalize component */
 
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
   _AddOrEditPhoneLineModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _AddOrEditPhoneLineModal_vue_vue_type_template_id_4be54ff3_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _AddOrEditPhoneLineModal_vue_vue_type_template_id_4be54ff3_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _AddOrEditPhoneLineModal_vue_vue_type_template_id_4be54ff3___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _AddOrEditPhoneLineModal_vue_vue_type_template_id_4be54ff3___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
-  "4be54ff3",
+  null,
   null
   
 )
@@ -40006,35 +39550,19 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=style&index=0&id=4be54ff3&scoped=true&lang=css&":
-/*!********************************************************************************************************************************************************!*\
-  !*** ./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=style&index=0&id=4be54ff3&scoped=true&lang=css& ***!
-  \********************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditPhoneLineModal_vue_vue_type_style_index_0_id_4be54ff3_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/style-loader!../../../../../../node_modules/css-loader??ref--6-1!../../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../../node_modules/postcss-loader/src??ref--6-2!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddOrEditPhoneLineModal.vue?vue&type=style&index=0&id=4be54ff3&scoped=true&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=style&index=0&id=4be54ff3&scoped=true&lang=css&");
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditPhoneLineModal_vue_vue_type_style_index_0_id_4be54ff3_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditPhoneLineModal_vue_vue_type_style_index_0_id_4be54ff3_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditPhoneLineModal_vue_vue_type_style_index_0_id_4be54ff3_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditPhoneLineModal_vue_vue_type_style_index_0_id_4be54ff3_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-
-
-/***/ }),
-
-/***/ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=template&id=4be54ff3&scoped=true&":
-/*!******************************************************************************************************************************************!*\
-  !*** ./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=template&id=4be54ff3&scoped=true& ***!
-  \******************************************************************************************************************************************/
+/***/ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=template&id=4be54ff3&":
+/*!******************************************************************************************************************************!*\
+  !*** ./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=template&id=4be54ff3& ***!
+  \******************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditPhoneLineModal_vue_vue_type_template_id_4be54ff3_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddOrEditPhoneLineModal.vue?vue&type=template&id=4be54ff3&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=template&id=4be54ff3&scoped=true&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditPhoneLineModal_vue_vue_type_template_id_4be54ff3_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditPhoneLineModal_vue_vue_type_template_id_4be54ff3___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddOrEditPhoneLineModal.vue?vue&type=template&id=4be54ff3& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=template&id=4be54ff3&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditPhoneLineModal_vue_vue_type_template_id_4be54ff3___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditPhoneLineModal_vue_vue_type_template_id_4be54ff3_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditPhoneLineModal_vue_vue_type_template_id_4be54ff3___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
@@ -40892,32 +40420,29 @@ var ajaxCalls = {
   },
   methods: {
     // Phone Schedule App Data
-    asyncGetPhoneLineData: function asyncGetPhoneLineData(id) {
+    asyncGetkanbanData: function asyncGetkanbanData(id) {
       return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('get-phone-line-data/' + id);
     },
     asyncGetDashboardData: function asyncGetDashboardData() {
       return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('get-dashboard-data');
     },
-    // Phone Lines
-    asyncGetPhoneLines: function asyncGetPhoneLines() {
+    // Board
+    asyncgetBoards: function asyncgetBoards() {
       return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('get-phone-lines');
     },
-    asyncCreatePhoneLine: function asyncCreatePhoneLine(phoneLineData) {
+    asynccreateBoard: function asynccreateBoard(kanbanData) {
       var _this = this;
 
-      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('create-phone-line', phoneLineData)["catch"](function (error) {
+      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('create-board', kanbanData)["catch"](function (error) {
         _this.triggerErrorToast(error.response.data.message);
       });
     },
-    asyncDeletePhoneLine: function asyncDeletePhoneLine(phoneLineId) {
+    asyncdeleteBoard: function asyncdeleteBoard(phoneLineId) {
       var _this2 = this;
 
-      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('delete-phone-line/' + phoneLineId)["catch"](function (error) {
+      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('delete-board/' + phoneLineId)["catch"](function (error) {
         _this2.triggerErrorToast(error.response.data.message);
       });
-    },
-    asyncGetTags: function asyncGetTags() {
-      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('get-tags');
     },
     // Columns
     asyncCreateColumns: function asyncCreateColumns(columnData) {

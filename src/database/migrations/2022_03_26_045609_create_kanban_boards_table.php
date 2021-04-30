@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRowsTable extends Migration
+class CreateKanbanBoardsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,10 @@ class CreateRowsTable extends Migration
      */
     public function up()
     {
-        Schema::create('kanban_rows', function (Blueprint $table) {
+        Schema::create('kanban_boards', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('phone_line_id');
-            $table->string('name');
+            $table->string('name')->unique();
             $table->timestamps();
-            $table->foreign('phone_line_id')->references('id')->on('kanban_phone_lines')->onDelete('cascade');
         });
     }
 
@@ -29,6 +27,6 @@ class CreateRowsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('kanban_rows');
+        Schema::dropIfExists('kanban_boards');
     }
 }

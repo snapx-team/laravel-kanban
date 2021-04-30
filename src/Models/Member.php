@@ -19,7 +19,7 @@ class Member extends Model
 
     public function phoneLine(): BelongsTo
     {
-        return $this->belongsTo(PhoneLine::class);
+        return $this->belongsTo(Board::class);
     }
 
     public function employeeCards(): HasMany

@@ -3,7 +3,7 @@
 namespace Xguard\LaravelKanban\database\seeds;
 
 use Illuminate\Database\Seeder;
-use Xguard\PhoneScheduler\Models\Employee;
+use Xguard\LaravelKanban\Models\Employee;
 
 class EmployeeSeeder extends Seeder
 {

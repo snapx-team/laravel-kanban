@@ -5,7 +5,7 @@ namespace Xguard\LaravelKanban\Http\Controllers;
 use App\Http\Controllers\Controller;
 use DateTime;
 use Xguard\LaravelKanban\Models\Employee;
-use Xguard\LaravelKanban\Models\PhoneLine;
+use Xguard\LaravelKanban\Models\Board;
 
 class LaravelKanbanController extends Controller
 {
@@ -15,16 +15,16 @@ class LaravelKanbanController extends Controller
         return view('Xguard\LaravelKanban::index');
     }
 
-    public function getPhoneLineData($id)
+    public function getkanbanData($id)
     {
-        $phoneLine = PhoneLine::with('members.employee', 'rows.columns.employeeCards.employee')->find($id);
+        $phoneLine = Board::with('members.employee', 'rows.columns.employeeCards.employee')->find($id);
         return $phoneLine;
     }
 
     public function getDashboardData()
     {
         $employees = Employee::orderBy('name')->get();
-        $phoneLine = PhoneLine::orderBy('name')->with('members')->get();
+        $phoneLine = Board::orderBy('name')->with('members')->get();
         return [
             'employees' => $employees,
             'phoneLines' => $phoneLine
@@ -33,11 +33,11 @@ class LaravelKanbanController extends Controller
 
     public function getFormattedData($id)
     {
-        $phoneLineData = PhoneLine::with('members.employee', 'rows.columns.employeeCards.employee')->find($id);
+        $kanbanData = Board::with('members.employee', 'rows.columns.employeeCards.employee')->find($id);
 
         $rows = [];
 
-        foreach ($phoneLineData['rows'] as $row) {
+        foreach ($kanbanData['rows'] as $row) {
             $columns = [];
             foreach ($row['columns'] as $column) {
                 $employeeCards = [];
@@ -61,14 +61,14 @@ class LaravelKanbanController extends Controller
     public function getAvailableAgent($id, $level)
     {
         $level--; // we start at index 0
-        $phoneLineData = PhoneLine::with('members.employee', 'rows.columns.employeeCards.employee')->find($id);
+        $kanbanData = Board::with('members.employee', 'rows.columns.employeeCards.employee')->find($id);
 
         date_default_timezone_set('America/Montreal');
 
         $dayOfWeek = date("l");
         $currentTime = date('h:i a');
 
-        foreach ($phoneLineData['rows'] as $row) {
+        foreach ($kanbanData['rows'] as $row) {
 
             if ($row['name'] === $dayOfWeek) {
 

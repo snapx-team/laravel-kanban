@@ -266,8 +266,8 @@ __webpack_require__.r(__webpack_exports__);
     this.eventHub.$on("save-employee", function (employeeData) {
       _this.saveEmployee(employeeData);
     });
-    this.eventHub.$on("save-phone-line", function (phoneLineData) {
-      _this.savePhoneLine(phoneLineData);
+    this.eventHub.$on("save-board", function (kanbanData) {
+      _this.savePhoneLine(kanbanData);
     });
   },
   methods: {
@@ -474,8 +474,8 @@ __webpack_require__.r(__webpack_exports__);
     createEmployee: function createEmployee() {
       this.eventHub.$emit("create-employee");
     },
-    createPhoneLine: function createPhoneLine() {
-      this.eventHub.$emit("create-phone-line");
+    createBoard: function createBoard() {
+      this.eventHub.$emit("create-board");
     }
   }
 });
@@ -8438,7 +8438,7 @@ var render = function() {
               "cursor-pointer bg-blue-100 hover:bg-blue-200 transition duration-300 ease-in-out border-b-4 border-blue-500 rounded-lg shadow-xl p-5",
             on: {
               click: function($event) {
-                return _vm.createPhoneLine()
+                return _vm.createBoard()
               }
             }
           },
@@ -8449,7 +8449,7 @@ var render = function() {
               _c("div", { staticClass: "flex-1 text-right md:text-center" }, [
                 _c("h5", { staticClass: "font-bold uppercase text-gray-800" }, [
                   _vm._v(
-                    "\n              Add Phone Line Schedule\n            "
+                    "\n              Add A Board\n            "
                   )
                 ]),
                 _vm._v(" "),
@@ -8457,7 +8457,7 @@ var render = function() {
                   _vm._v(
                     "\n              " +
                       _vm._s(_vm.phoneLinesLength) +
-                      " phone lines total\n            "
+                      " boards total\n            "
                   )
                 ])
               ])
@@ -9686,7 +9686,7 @@ var render = function() {
                                   staticClass:
                                     "whitespace-no-wrap underline text-blue-600 hover:text-blue-800"
                                 },
-                                [_vm._v("Navigate to phone line")]
+                                [_vm._v("Navigate to board")]
                               )
                             ]
                           )

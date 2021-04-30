@@ -5,9 +5,9 @@ namespace Xguard\LaravelKanban\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class PhoneLine extends Model
+class Board extends Model
 {
-    protected $table = 'kanban_phone_lines';
+    protected $table = 'kanban_boards';
 
     protected $guarded = [];
 

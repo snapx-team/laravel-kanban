@@ -14,14 +14,14 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             Route::get('/phoneline', 'LaravelKanbanController@getIndex');
 
             // Phone Schedule App Data
-            Route::get('/get-phone-line-data/{id}', 'LaravelKanbanController@getPhoneLineData');
+            Route::get('/get-phone-line-data/{id}', 'LaravelKanbanController@getkanbanData');
             Route::get('/get-dashboard-data', 'LaravelKanbanController@getDashboardData');
 
-            // Phone Lines
-            Route::post('/create-phone-line', 'PhoneLineController@createPhoneLine');
-            Route::post('/delete-phone-line/{id}', 'PhoneLineController@deletePhoneLine');
-            Route::get('/get-phone-lines', 'PhoneLineController@getPhoneLines');
-            Route::get('/get-tags', 'PhoneLineController@getTags');
+            // Board
+            Route::post('/create-board', 'BoardsController@createBoard');
+            Route::post('/delete-board/{id}', 'BoardsController@deleteBoard');
+            Route::get('/get-phone-lines', 'BoardsController@getBoards');
+            Route::get('/get-tags', 'BoardsController@getTags');
 
             // Columns
             Route::post('/create-columns', 'ColumnController@createOrUpdateColumns');
@@ -50,7 +50,7 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
 
 // API
 
-Route::group(['namespace' => 'Xguard\PhoneScheduler\Http\Controllers',], function () {
+Route::group(['namespace' => 'Xguard\LaravelKanban\Http\Controllers',], function () {
     Route::group(['prefix' => 'phone-scheduler',], function () {
 
         Route::get('/api/formatted-phone-line-data/{id}', 'LaravelKanbanController@getFormattedData');

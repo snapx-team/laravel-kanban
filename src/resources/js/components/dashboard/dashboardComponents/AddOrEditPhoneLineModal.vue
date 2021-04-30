@@ -24,14 +24,14 @@
                     <div class="flex justify-between p-5 bg-indigo-800 border-b">
                         <div class="space-y-1">
                             <div v-if="isEdit">
-                                <h1 class="text-2xl text-white pb-2">Edit Phone Line</h1>
+                                <h1 class="text-2xl text-white pb-2">Edit Kanban Board</h1>
                                 <p class="text-sm font-medium leading-5 text-gray-500">
-                                    Editing existing phone line </p>
+                                    Editing an existing kanban board </p>
                             </div>
                             <div v-else>
-                                <h1 class="text-2xl text-white pb-2">Create Phone Line</h1>
+                                <h1 class="text-2xl text-white pb-2">Create Board</h1>
                                 <p class="text-sm font-medium leading-5 text-gray-500">
-                                    Creating a new phone line </p>
+                                    Creating a new kanban board </p>
                             </div>
                         </div>
                         <div>
@@ -51,65 +51,8 @@
                                 <input class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
                                        placeholder="John Doe"
                                        type="text"
-                                       v-model="phoneLineData.name"/>
+                                       v-model="kanbanData.name"/>
                             </label>
-
-                            <label class="flex-1 space-y-2">
-                                <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Phone </span>
-                                <input class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
-                                       placeholder="+15145550000"
-                                       type="Number"
-                                       v-model="phoneLineData.phone"/>
-                            </label>
-
-                        </div>
-
-                        <div class="flex space-x-3">
-
-                            <div class="flex-1">
-                                <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Tag</span>
-                                <vSelect :options="this.tags"
-                                         taggable
-                                         class="text-gray-700"
-                                         label="name"
-                                         placeholder="Choose or create a tag"
-                                         style="margin-top: 7px"
-                                         v-model="phoneLineData.tag">
-                                    <template slot="option" slot-scope="option">
-                                        <p class="inline">{{ option.name }}</p>
-                                    </template>
-                                    <template #no-options="{ search, searching, loading }">
-                                        No tags Created
-                                    </template>
-                                </vSelect>
-                            </div>
-
-                            <div class="flex-1">
-                                <div class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">
-                                    Status
-                                </div>
-
-                                <div class="flex border border-gray-400 p-2 mt-2">
-                                    <label class="flex items-start cursor-pointer" for="is-active">
-                                        <div class="relative mt-1">
-                                            <input class="hidden"
-                                                   id="is-active"
-                                                   type="checkbox"
-                                                   v-model="phoneLineData.is_active"/>
-                                            <div class="toggle__dot absolute w-5 h-5 bg-red-600 rounded-full shadow inset-y-0 left-0"></div>
-                                            <div class="toggle__line w-10 h-4 bg-gray-400 rounded-full shadow-inner"></div>
-                                        </div>
-                                        <div class="ml-3 text-gray-700 font-medium" v-if="phoneLineData.is_active">
-                                            <p>Active</p>
-                                            <small class="text-green-700">Phone Line Is Working</small>
-                                        </div>
-                                        <div class="ml-3 text-gray-700 font-medium" v-else>
-                                            <p>Inactive</p>
-                                            <small class="text-red-700">Phone Line is Disabled</small>
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
 
                         </div>
 
@@ -123,17 +66,17 @@
                                     class="px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
                                     type="button">
 
-                                <span v-if="isEdit">Edit Phone Line</span>
-                                <span v-else>Create Phone Line</span>
+                                <span v-if="isEdit">Edit Kanban Board</span>
+                                <span v-else>Create Board</span>
                             </button>
 
                         </div>
 
-                        <button @click="deletePhoneLine($event)"
+                        <button @click="deleteBoard($event)"
                                 class="mt-4  text-sm text-red-600 hover:text-red-800 transition duration-300 ease-in-out focus:outline-none"
                                 v-if="isEdit">
                             <i class="fas fa-trash mr-2"></i>
-                            Delete Phone Line
+                            Delete Kanaban Board
                         </button>
                     </form>
                 </div>
@@ -159,32 +102,21 @@
             return {
                 isEdit: false,
 
-                phoneLineData: {
+                kanbanData: {
                     id: null,
                     name: null,
-                    phone: null,
-                    tag: null,
-                    is_active: true,
                 },
                 modalOpen: false,
-                tags: ['test', 'test2'],
             };
         },
 
         created() {
-            this.eventHub.$on("create-phone-line", (phoneLine) => {
+            this.eventHub.$on("create-board", (phoneLine) => {
                 if (phoneLine !== undefined) {
-                    this.phoneLineData = {...phoneLine};
+                    this.kanbanData = {...phoneLine};
                     this.isEdit = true;
                 }
                 else {
-                    this.phoneLineData = {
-                        id: null,
-                        name: null,
-                        phone: null,
-                        tag: null,
-                        is_active: true,
-                    };
                     this.isEdit = false;
                 }
                 this.modalOpen = true;
@@ -192,46 +124,22 @@
         },
 
         beforeDestroy(){
-            this.eventHub.$off('create-phone-line');
-        },
-
-        mounted() {
-            this.getTags();
+            this.eventHub.$off('create-board');
         },
 
         methods: {
             savePhoneLine(event) {
                 event.target.disabled = true;
-                this.eventHub.$emit("save-phone-line", this.phoneLineData);
+                this.eventHub.$emit("save-board", this.kanbanData);
                 this.modalOpen = false;
-                this.getTags();
             },
 
-            deletePhoneLine(event) {
+            deleteBoard(event) {
                 event.target.disabled = true;
-                this.eventHub.$emit("delete-phone-line", this.phoneLineData.id);
+                this.eventHub.$emit("delete-board", this.kanbanData.id);
                 this.modalOpen = false;
-                this.getTags();
             },
 
-            getTags() {
-                this.asyncGetTags().then((data) => {
-                    this.tags = data.data;
-                }).catch(res => {console.log(res)});
-            }
         },
     };
 </script>
-
-<style scoped>
-    .toggle__dot {
-        top: -0.1rem;
-
-        transition: all 0.1s ease-in-out;
-    }
-
-    input:checked ~ .toggle__dot {
-        transform: translateX(100%);
-        background-color: #059669;
-    }
-</style>

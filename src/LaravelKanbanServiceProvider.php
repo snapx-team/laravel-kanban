@@ -29,7 +29,10 @@ class LaravelKanbanServiceProvider extends ServiceProvider
         app('router')->aliasMiddleware('laravel_kanban_role_check', CheckHasAccess::class);
         $this->loadMigrationsFrom(__DIR__ . '/Http/Middleware');
         $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/database/seeds');
+
         $this->commands([CreateAdmin::class]);
+
 
         include __DIR__ . '/routes/web.php';
 

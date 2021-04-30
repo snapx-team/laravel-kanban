@@ -4,7 +4,7 @@
 
         <div class="flex flex-wrap bg-gray-100">
             <div class="w-full lg:w-1/2 p-6">
-                <div @click="createPhoneLine()"
+                <div @click="createBoard()"
                      class="cursor-pointer bg-blue-100 hover:bg-blue-200 transition duration-300 ease-in-out border-b-4 border-blue-500 rounded-lg shadow-xl p-5">
                     <div class="flex flex-row items-center">
                         <div class="flex-shrink pr-4">
@@ -14,9 +14,9 @@
                         </div>
                         <div class="flex-1 text-right md:text-center">
                             <h5 class="font-bold uppercase text-gray-800">
-                                Add Phone Line Schedule </h5>
+                                Add A Board </h5>
                             <h3 class="text-sm text-gray-600">
-                                {{ phoneLinesLength }} phone lines total </h3>
+                                {{ phoneLinesLength }} boards total </h3>
                         </div>
                     </div>
                 </div>
@@ -60,8 +60,8 @@
             createEmployee() {
                 this.eventHub.$emit("create-employee");
             },
-            createPhoneLine() {
-                this.eventHub.$emit("create-phone-line");
+            createBoard() {
+                this.eventHub.$emit("create-board");
             },
         },
     };

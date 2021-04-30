@@ -15,7 +15,7 @@ class MemberController extends Controller
             foreach ($members as $employee) {
                 Member::firstOrCreate([
                     'employee_id' => $employee['id'],
-                    'phone_line_id' => $phoneLineId,
+                    'board_id' => $phoneLineId,
                 ]);
             }
         } catch (\Exception $e) {
@@ -43,6 +43,6 @@ class MemberController extends Controller
 
     public function getMembers($id)
     {
-        return Member::where('phone_line_id', $id)->with('employee')->get();
+        return Member::where('board_id', $id)->with('employee')->get();
     }
 }
