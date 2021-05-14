@@ -63,7 +63,7 @@ npm install
 npm run dev
 ```
 
-**6:** Return to the  and publish the package with the following command:
+**6:** Return to the root folder in the command line and publish the package with the following command:
 ```bash
 php artisan vendor:publish --provider="Xguard\LaravelKanban\LaravelKanbanServiceProvider" --force
 ```
@@ -73,7 +73,7 @@ php artisan vendor:publish --provider="Xguard\LaravelKanban\LaravelKanbanService
 php artisan migrate --path=package/laravel-kanban/src/database/migrations
 ```
 
-**7:** To run seeder for testing
+**8:** To run seeder for testing
 ```bash
 php artisan db:seed --class="Xguard\LaravelKanban\database\seeds\EmployeeSeeder"
 ```
