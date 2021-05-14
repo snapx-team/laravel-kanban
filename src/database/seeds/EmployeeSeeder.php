@@ -15,18 +15,16 @@ class EmployeeSeeder extends Seeder
     public function run()
     {
         Employee::create([
-            'name' => 'admin',
-            'email' => 'system-admin@test.com',
-            'phone' => '15556667777',
+            'user_id' => 1,
             'role' => 'admin',
-            'is_active' => true,
         ]);
         Employee::create([
-            'name' => 'employee',
-            'email' => 'siamak@snapx.com',
-            'phone' => '15145590578',
-            'role' => 'employee',
-            'is_active' => true,
+            'user_id' => 2,
+            'role' => 'admin',
+        ]);
+        Employee::create([
+            'user_id' => 3,
+            'role' => 'admin',
         ]);
     }
 }

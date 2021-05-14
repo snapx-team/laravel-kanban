@@ -58,7 +58,7 @@
         },
         methods: {
             createEmployee() {
-                this.eventHub.$emit("create-kanban-employee");
+                this.eventHub.$emit("create-kanban-employees");
             },
             createBoard() {
                 this.eventHub.$emit("create-board");

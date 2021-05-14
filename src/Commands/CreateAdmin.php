@@ -2,6 +2,7 @@
 
 namespace Xguard\LaravelKanban\Commands;
 
+use App\Models\User;
 use Illuminate\Console\Command;
 use Xguard\LaravelKanban\Models\Employee;
 
@@ -38,17 +39,12 @@ class CreateAdmin extends Command
      */
     public function handle()
     {
-        $name = $this->ask('First and last name:');
         $email = $this->ask('ERP email:');
-        $phone = $this->ask('Phone number (with country code:)');
-        $isActive = $this->confirm('Is this employee available to receive calls?');
+        $user = User::where('email',$email) -> first();
 
         Employee::create([
-            'name' => $name,
-            'phone' => $phone,
-            'email' => $email,
+            'user_id' => $user->id,
             'role' => 'admin',
-            'is_active' => $isActive,
         ]);
     }
 }

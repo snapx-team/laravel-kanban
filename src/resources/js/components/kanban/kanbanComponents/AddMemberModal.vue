@@ -46,14 +46,14 @@
                                 </span>
                                 <vSelect :options="allUsers"
                                          class="text-gray-400"
-                                         label="name"
+                                         label="user.full_name"
                                          multiple
                                          placeholder="Select Members"
                                          style="margin-top: 7px"
                                          v-model="selectedMembers">
                                     <template slot="option" slot-scope="option">
-                                        <avatar :name="option.name" :size="4" class="mr-3 m-1 float-left"></avatar>
-                                        <p class="inline">{{ option.name }}</p>
+                                        <avatar :name="option.user.full_name" :size="4" class="mr-3 m-1 float-left"></avatar>
+                                        <p class="inline">{{ option.user.full_name }}</p>
                                     </template>
                                     <template #no-options="{ search, searching, loading }">
                                         No result .

@@ -10,49 +10,18 @@ use Xguard\LaravelKanban\Models\Employee;
 
 class EmployeeController extends Controller
 {
-    public function createEmployee(Request $request)
+    public function createEmployees(Request $request)
     {
-        $rules = [
-            'employeeId' => 'required|unique:kanban_employees,name,' . $request->input('id') . ',id',
-            'role' => 'required',
-            'is_active' => 'required',
-        ];
-
-        $customMessages = [
-            'name.required' => 'Employee name is required.',
-            'name.unique' => 'Employee name must be unique.',
-            'phone.unique' => 'Phone number already exists.',
-            'phone.required' => 'Phone number is required.',
-            'phone.digits_between' => 'Phone number must be between 9-11 digits.',
-            'is_active.required' => 'Employee status must be set'
-        ];
-
-        $validator = Validator::make($request->all(), $rules, $customMessages);
-
-        if ($validator->fails()) {
-            return response([
-                'success' => 'false',
-                'message' => implode(' ', $validator->messages()->all()),
-            ], 400);
-        }
 
         try {
             if ($request->filled('id')) {
 
                 $employee = Employee::where('id', $request->input('id'))
-                    ->update(['name' => $request->input('name'),
-                        'phone' => $request->input('phone'),
-                        'email' => $request->input('email'),
-                        'role' => $request->input('role'),
-                        'is_active' => $request->input('is_active'),
-                    ]);
+                    ->update(['role' => $request->input('role')]);
             } else {
                 $employee = Employee::create([
-                    'name' => $request->input('name'),
-                    'phone' => $request->input('phone'),
-                    'email' => $request->input('email'),
+                    'user_id' => $request->input('name'),
                     'role' => $request->input('role'),
-                    'is_active' => $request->input('is_active'),
                 ]);
             }
 
@@ -81,11 +50,11 @@ class EmployeeController extends Controller
 
     public function getEmployees()
     {
-        return Employee::orderBy('name')->get();
+        return Employee::with('user')->get();
     }
 
     public function getAllUsers()
     {
-        return User::orderBy('name')->get();
+        return User::orderBy('first_name')->get();
     }
 }

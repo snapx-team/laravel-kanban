@@ -18,7 +18,7 @@ class CheckHasAccess
     public function handle($request, Closure $next)
     {
         if (Auth::check()) {
-            $employee = Employee::where('email', '=', Auth::user()->email)->first();
+            $employee = Employee::where('user_id', '=', Auth::user()->id)->first();
             if ($employee === null || $employee->role !== "admin") {
                 abort(403, "You need to be an admin to view this page");
             }

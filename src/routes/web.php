@@ -35,7 +35,7 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
 
             // Employees
             Route::get('/get-all-users', 'EmployeeController@getAllUsers');
-            Route::post('/create-kanban-employee', 'EmployeeController@createEmployee');
+            Route::post('/create-kanban-employees', 'EmployeeController@createEmployees');
             Route::post('/delete-kanban-employee/{id}', 'EmployeeController@deleteEmployee');
             Route::get('/get-kanban-employees', 'EmployeeController@getEmployees');
 
