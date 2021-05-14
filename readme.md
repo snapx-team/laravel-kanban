@@ -44,7 +44,7 @@ return [
     //...
     "providers" => [
         //...
-        Xguard\LaravelKanabn\LaravelKanbanServiceProvider::class,
+        Xguard\LaravelKanban\LaravelKanbanServiceProvider::class,
     ]
 ];
 
