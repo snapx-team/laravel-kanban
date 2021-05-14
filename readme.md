@@ -51,7 +51,7 @@ return [
 ```
 
 
-**4:** Navigate to the laravel-kanban package folder in your command line and perform the following commands:
+**4:** run this command
 ```bash
 composer dump-autoload
 ```
