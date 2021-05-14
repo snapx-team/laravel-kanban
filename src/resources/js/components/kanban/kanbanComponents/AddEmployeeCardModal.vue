@@ -148,13 +148,13 @@
         },
 
         created() {
-            this.eventHub.$on("create-employee-cards", (cardData) => {
+            this.eventHub.$on("create-kanban-employee-cards", (cardData) => {
                 this.openModal(cardData);
             });
         },
 
         beforeDestroy(){
-            this.eventHub.$off('create-employee-cards');
+            this.eventHub.$off('create-kanban-employee-cards');
         },
         computed: {
             filtered() {
@@ -180,7 +180,7 @@
             },
 
             deleteCard(selectedCardData) {
-                this.eventHub.$emit("delete-employee-cards", {
+                this.eventHub.$emit("delete-kanban-employee-cards", {
                     selectedCardData,
                     selectedRowIndex: this.cardData.selectedRowIndex,
                     selectedColumnIndex: this.cardData.selectedColumnIndex

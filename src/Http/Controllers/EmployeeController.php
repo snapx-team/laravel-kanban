@@ -3,6 +3,7 @@
 namespace Xguard\LaravelKanban\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Xguard\LaravelKanban\Models\Employee;
@@ -12,9 +13,7 @@ class EmployeeController extends Controller
     public function createEmployee(Request $request)
     {
         $rules = [
-            'name' => 'required|unique:kanban_employees,name,' . $request->input('id') . ',id',
-            'phone' => 'required|unique:kanban_employees,phone,' . $request->input('id') . ',id|digits_between:9,11',
-            'email' => 'required|unique:kanban_employees,email,' . $request->input('id') . ',id',
+            'employeeId' => 'required|unique:kanban_employees,name,' . $request->input('id') . ',id',
             'role' => 'required',
             'is_active' => 'required',
         ];
@@ -83,5 +82,10 @@ class EmployeeController extends Controller
     public function getEmployees()
     {
         return Employee::orderBy('name')->get();
+    }
+
+    public function getAllUsers()
+    {
+        return User::orderBy('name')->get();
     }
 }

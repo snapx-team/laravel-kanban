@@ -8,7 +8,7 @@ export const ajaxCalls = {
     },
     methods: {
 
-        // Phone Schedule App Data
+        // Kanban App Data
 
         asyncGetkanbanData(id) {
             return axios.get('get-phone-line-data/' + id);
@@ -20,18 +20,18 @@ export const ajaxCalls = {
 
         // Board
 
-        asyncgetBoards() {
+        asyncGetBoards() {
             return axios.get('get-phone-lines');
         },
 
-        asynccreateBoard(kanbanData) {
+        asyncCreateBoard(kanbanData) {
             return axios.post('create-board', kanbanData).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
 
-        asyncdeleteBoard(phoneLineId) {
-            return axios.post('delete-board/' + phoneLineId).catch((error) => {
+        asyncDeleteBoard(boardId) {
+            return axios.post('delete-board/' + boardId).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
@@ -46,8 +46,8 @@ export const ajaxCalls = {
 
         // Employee Cards
 
-        asyncCreateEmployeeCards(employeeCardData) {
-            return axios.post('create-employee-cards', employeeCardData).catch((error) => {
+        asyncCreateKanbanEmployeeCards(employeeCardData) {
+            return axios.post('create-kanban-employee-cards', employeeCardData).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
@@ -56,8 +56,8 @@ export const ajaxCalls = {
             return axios.post('get-employee-cards-by-column/' + columnId);
         },
 
-        asyncDeleteEmployeeCard(employeeCardId) {
-            return axios.post('delete-employee-card/' + employeeCardId).catch((error) => {
+        asyncDeleteKanbanEmployeeCard(employeeCardId) {
+            return axios.post('delete-kanban-employee-card/' + employeeCardId).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
@@ -76,31 +76,35 @@ export const ajaxCalls = {
 
         // Employees
 
-        asyncGetEmployees() {
-            return axios.get('get-employees');
+        asyncGetAllUsers() {
+            return axios.get('get-all-users');
         },
 
-        asyncCreateEmployee(employeeData) {
-            return axios.post('create-employee', employeeData).catch((error) => {
+        asyncGetKanbanEmployees() {
+            return axios.get('get-kanban-employees');
+        },
+
+        asyncCreateKanbanEmployee(employeeData) {
+            return axios.post('create-kanban-employee', employeeData).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
 
-        asyncDeleteEmployee(employeeId) {
-            return axios.post('delete-employee/' + employeeId).catch((error) => {
+        asyncDeleteKanbanEmployee(employeeId) {
+            return axios.post('delete-kanban-employee/' + employeeId).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
 
         // Members
 
-        asyncGetMembers(phoneLineId) {
-            return axios.get('get-members/' + phoneLineId);
+        asyncGetMembers(boardId) {
+            return axios.get('get-members/' + boardId);
         },
 
-        asyncAddMembers(memberData, phoneLineId) {
+        asyncAddMembers(memberData, boardId) {
 
-            return axios.post('create-members/' + phoneLineId, memberData).catch((error) => {
+            return axios.post('create-members/' + boardId, memberData).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
 
@@ -162,6 +166,5 @@ export const ajaxCalls = {
                 rtl: false
             });
         }
-
     }
 };

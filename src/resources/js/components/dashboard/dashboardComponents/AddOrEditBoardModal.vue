@@ -62,7 +62,7 @@
                                     type="button">
                                 Cancel
                             </button>
-                            <button @click="savePhoneLine($event)"
+                            <button @click="saveBoard($event)"
                                     class="px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
                                     type="button">
 
@@ -111,9 +111,9 @@
         },
 
         created() {
-            this.eventHub.$on("create-board", (phoneLine) => {
-                if (phoneLine !== undefined) {
-                    this.kanbanData = {...phoneLine};
+            this.eventHub.$on("create-board", (board) => {
+                if (board !== undefined) {
+                    this.kanbanData = {...board};
                     this.isEdit = true;
                 }
                 else {
@@ -128,7 +128,7 @@
         },
 
         methods: {
-            savePhoneLine(event) {
+            saveBoard(event) {
                 event.target.disabled = true;
                 this.eventHub.$emit("save-board", this.kanbanData);
                 this.modalOpen = false;

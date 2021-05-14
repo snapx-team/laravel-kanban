@@ -17,17 +17,17 @@ class LaravelKanbanController extends Controller
 
     public function getkanbanData($id)
     {
-        $phoneLine = Board::with('members.employee', 'rows.columns.employeeCards.employee')->find($id);
-        return $phoneLine;
+        $board = Board::with('members.employee', 'rows.columns.employeeCards.employee')->find($id);
+        return $board;
     }
 
     public function getDashboardData()
     {
         $employees = Employee::orderBy('name')->get();
-        $phoneLine = Board::orderBy('name')->with('members')->get();
+        $board = Board::orderBy('name')->with('members')->get();
         return [
             'employees' => $employees,
-            'phoneLines' => $phoneLine
+            'boards' => $board
         ];
     }
 

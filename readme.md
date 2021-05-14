@@ -59,7 +59,7 @@ npm run dev
 
 **5:** Return to the  and publish the package with the following command:
 ```bash
-php artisan vendor:publish --provider="Xguard\LaravelKanabn\LaravelKanabnServiceProvider" --force
+php artisan vendor:publish --provider="Xguard\LaravelKanban\LaravelKanbanServiceProvider" --force
 ```
 
 **6:** To run package migrations

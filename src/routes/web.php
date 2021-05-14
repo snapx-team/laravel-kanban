@@ -27,17 +27,17 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             Route::post('/create-columns', 'ColumnController@createOrUpdateColumns');
 
             // Employee Cards
-            Route::post('/create-employee-cards', 'EmployeeCardController@createEmployeeCards');
+            Route::post('/create-kanban-employee-cards', 'EmployeeCardController@createEmployeeCards');
             Route::post('/get-employee-cards-by-column/{id}', 'EmployeeCardController@getEmployeeCardsByColumn');
             Route::post('/update-employee-card-indexes', 'EmployeeCardController@updateEmployeeCardIndexes');
             Route::post('/update-employee-card-column/{columnId}/{employeeCardId}', 'EmployeeCardController@updateEmployeeCardColumnId');
-
-            Route::post('/delete-employee-card/{id}', 'EmployeeCardController@deleteEmployeeCard');
+            Route::post('/delete-kanban-employee-card/{id}', 'EmployeeCardController@deleteEmployeeCard');
 
             // Employees
-            Route::post('/create-employee', 'EmployeeController@createEmployee');
-            Route::post('/delete-employee/{id}', 'EmployeeController@deleteEmployee');
-            Route::get('/get-employees', 'EmployeeController@getEmployees');
+            Route::get('/get-all-users', 'EmployeeController@getAllUsers');
+            Route::post('/create-kanban-employee', 'EmployeeController@createEmployee');
+            Route::post('/delete-kanban-employee/{id}', 'EmployeeController@deleteEmployee');
+            Route::get('/get-kanban-employees', 'EmployeeController@getEmployees');
 
             // Phone Line Members
             Route::post('/create-members/{id}', 'MemberController@createMembers');
@@ -51,7 +51,7 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
 // API
 
 Route::group(['namespace' => 'Xguard\LaravelKanban\Http\Controllers',], function () {
-    Route::group(['prefix' => 'phone-scheduler',], function () {
+    Route::group(['prefix' => 'kanban',], function () {
 
         Route::get('/api/formatted-phone-line-data/{id}', 'LaravelKanbanController@getFormattedData');
         Route::get('/api/get-available-agent/{id}/{level}', 'LaravelKanbanController@getAvailableAgent');

@@ -23,16 +23,16 @@
             <h3 class="mt-8 text-sm font-semibold text-gray-600 uppercase tracking-wide text-left">
                 Kanbans </h3>
 
-            <div class="my-2 -mx-3 animate-pulse" v-if="loadingPhoneLine">
+            <div class="my-2 -mx-3 animate-pulse" v-if="loadingBoard">
                 <span class="text-sm font-medium text-gray-700  px-3  py-2 ">Loading ...</span>
             </div>
 
             <div class="my-2 -mx-3 pb-2 ">
-                <template v-for="(phoneLine, phoneLineIndex) in phoneLines">
-                    <router-link :key="phoneLineIndex"
-                                 :to="{ path: '/kanban/phoneline', query: { id: phoneLine.id } }"
+                <template v-for="(board, boardIndex) in boards">
+                    <router-link :key="boardIndex"
+                                 :to="{ path: '/kanban/phoneline', query: { id: board.id } }"
                                  class="flex justify-between items-center px-3 py-2 hover:bg-gray-200 rounded-lg">
-                        <span class="text-sm font-medium text-gray-700">{{ phoneLine.name }}</span>
+                        <span class="text-sm font-medium text-gray-700">{{ board.name }}</span>
                     </router-link>
                 </template>
             </div>
@@ -56,8 +56,8 @@
 
         data() {
             return {
-                phoneLines: {},
-                loadingPhoneLine: false
+                boards: {},
+                loadingBoard: false
             };
         }, mounted() {
             this.getBoards();
@@ -71,10 +71,10 @@
 
         methods: {
             getBoards() {
-                this.loadingPhoneLine = true;
+                this.loadingBoard = true;
                 getBoards().then((data) => {
-                    this.phoneLines = data.data;
-                    this.loadingPhoneLine = false;
+                    this.boards = data.data;
+                    this.loadingBoard = false;
                 }).catch(res => {console.log(res)});
             },
         },

@@ -210,7 +210,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _dashboardComponents_EmployeeList_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./dashboardComponents/EmployeeList.vue */ "./src/resources/js/components/dashboard/dashboardComponents/EmployeeList.vue");
-/* harmony import */ var _dashboardComponents_PhoneLineList_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./dashboardComponents/PhoneLineList.vue */ "./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue");
+/* harmony import */ var _dashboardComponents_BoardList_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./dashboardComponents/BoardList.vue */ "./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue");
 /* harmony import */ var _dashboardComponents_Actions_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./dashboardComponents/Actions.vue */ "./src/resources/js/components/dashboard/dashboardComponents/Actions.vue");
 /* harmony import */ var _dashboardComponents_AddOrEditEmployeeModal_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./dashboardComponents/AddOrEditEmployeeModal.vue */ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue");
 //
@@ -245,7 +245,7 @@ __webpack_require__.r(__webpack_exports__);
   inject: ["eventHub"],
   components: {
     EmployeeList: _dashboardComponents_EmployeeList_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
-    PhoneLineList: _dashboardComponents_PhoneLineList_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
+    BoardList: _dashboardComponents_BoardList_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
     Actions: _dashboardComponents_Actions_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
     AddOrEditEmployeeModal: _dashboardComponents_AddOrEditEmployeeModal_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
   },
@@ -267,7 +267,7 @@ __webpack_require__.r(__webpack_exports__);
       _this.saveEmployee(employeeData);
     });
     this.eventHub.$on("save-board", function (kanbanData) {
-      _this.savePhoneLine(kanbanData);
+      _this.saveBoard(kanbanData);
     });
   },
   methods: {
@@ -359,7 +359,7 @@ __webpack_require__.r(__webpack_exports__);
           role: "employee",
           isActive: false
         }],
-        phoneLines: [{
+        boards: [{
           id: 1,
           name: "Ontario Dispatcher",
           phone: "555-555-5555",
@@ -461,7 +461,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   inject: ["eventHub"],
   props: {
-    phoneLinesLength: {
+    boardsLength: {
       type: Number,
       "default": 0
     },
@@ -472,7 +472,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     createEmployee: function createEmployee() {
-      this.eventHub.$emit("create-employee");
+      this.eventHub.$emit("create-kanban-employee");
     },
     createBoard: function createBoard() {
       this.eventHub.$emit("create-board");
@@ -714,7 +714,7 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     var _this = this;
 
-    this.eventHub.$on("create-employee", function (employee) {
+    this.eventHub.$on("create-kanban-employee", function (employee) {
       if (employee !== undefined) {
         _this.employeeData = employee;
         _this.isEdit = true;
@@ -964,7 +964,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     createEmployee: function createEmployee(index) {
-      this.eventHub.$emit("create-employee", this.filtered[index]);
+      this.eventHub.$emit("create-kanban-employee", this.filtered[index]);
     },
     updatePaginationIndex: function updatePaginationIndex(newIndex) {
       if (newIndex < 0) newIndex = 0;else if (newIndex < this.filtered.length) this.paginationIndex = newIndex;
@@ -974,9 +974,9 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue?vue&type=script&lang=js&":
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue?vue&type=script&lang=js&":
 /*!**********************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue?vue&type=script&lang=js& ***!
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue?vue&type=script&lang=js& ***!
   \**********************************************************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -1041,7 +1041,7 @@ __webpack_require__.r(__webpack_exports__);
     Avatar: _global_Avatar_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
   props: {
-    phoneLines: {
+    boards: {
       type: Array,
       "default": null
     }
@@ -1367,7 +1367,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     createEmployeeCard: function createEmployeeCard(rowIndex, columnIndex) {
       var rowName = this.kanban.rows[rowIndex].title;
       var columnName = this.kanban.rows[rowIndex].columns[columnIndex].title;
-      this.eventHub.$emit("create-employee-cards", {
+      this.eventHub.$emit("create-kanban-employee-cards", {
         rowIndex: rowIndex,
         rowName: rowName,
         columnIndex: columnIndex,
@@ -2094,7 +2094,7 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     var _this = this;
 
-    this.eventHub.$on("create-employee-cards", function (cardData) {
+    this.eventHub.$on("create-kanban-employee-cards", function (cardData) {
       _this.openModal(cardData);
     });
   },
@@ -8372,12 +8372,12 @@ var render = function() {
             _c("actions", {
               attrs: {
                 employeesLength: _vm.dashboardData.employees.length,
-                phoneLinesLength: _vm.dashboardData.phoneLines.length
+                boardsLength: _vm.dashboardData.boards.length
               }
             }),
             _vm._v(" "),
             _c("phone-line-list", {
-              attrs: { phoneLines: _vm.dashboardData.phoneLines }
+              attrs: { boards: _vm.dashboardData.boards }
             }),
             _vm._v(" "),
             _c("employee-list", {
@@ -8456,7 +8456,7 @@ var render = function() {
                 _c("h3", { staticClass: "text-sm text-gray-600" }, [
                   _vm._v(
                     "\n              " +
-                      _vm._s(_vm.phoneLinesLength) +
+                      _vm._s(_vm.boardsLength) +
                       " boards total\n            "
                   )
                 ])
@@ -9591,9 +9591,9 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue?vue&type=template&id=e5e34c8c&":
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue?vue&type=template&id=e5e34c8c&":
 /*!**************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue?vue&type=template&id=e5e34c8c& ***!
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue?vue&type=template&id=e5e34c8c& ***!
   \**************************************************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -9606,7 +9606,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "phoneLines" }, [
+  return _c("div", { staticClass: "boards" }, [
     _c("h2", { staticClass: "text-2xl font-semibold py-5" }, [
       _vm._v("Phone Lines")
     ]),
@@ -9616,12 +9616,12 @@ var render = function() {
         "div",
         { staticClass: "pt-5 p-3 flex flex-wrap" },
         [
-          _vm._l(_vm.phoneLines, function(phoneLine, phoneLineIndex) {
+          _vm._l(_vm.boards, function(board, boardIndex) {
             return [
               _c(
                 "div",
                 {
-                  key: phoneLineIndex,
+                  key: boardIndex,
                   staticClass: "flex-auto bg-white rounded shadow-lg m-2"
                 },
                 [
@@ -9636,7 +9636,7 @@ var render = function() {
                         [
                           _vm._v(
                             "\n                " +
-                              _vm._s(phoneLine.name) +
+                              _vm._s(board.name) +
                               "\n              "
                           )
                         ]
@@ -9648,7 +9648,7 @@ var render = function() {
                         [
                           _vm._v(
                             "\n                " +
-                              _vm._s(phoneLine.phone) +
+                              _vm._s(board.phone) +
                               "\n              "
                           )
                         ]
@@ -9664,7 +9664,7 @@ var render = function() {
                             _c("i", { staticClass: "fas fa-user" }),
                             _vm._v(
                               "\n                  " +
-                                _vm._s(phoneLine.numberOfEmployees) +
+                                _vm._s(board.numberOfEmployees) +
                                 "\n                "
                             )
                           ]),
@@ -9675,7 +9675,7 @@ var render = function() {
                               attrs: {
                                 to: {
                                   path: "/phoneline",
-                                  query: { name: phoneLine.name }
+                                  query: { name: board.name }
                                 }
                               }
                             },
@@ -9701,7 +9701,7 @@ var render = function() {
                       [
                         _c("avatar", {
                           staticClass: "mr-3",
-                          attrs: { name: phoneLine.name, size: 12 }
+                          attrs: { name: board.name, size: 12 }
                         })
                       ],
                       1
@@ -30902,17 +30902,17 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue":
+/***/ "./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue":
 /*!*************************************************************************************!*\
-  !*** ./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue ***!
+  !*** ./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue ***!
   \*************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _PhoneLineList_vue_vue_type_template_id_e5e34c8c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PhoneLineList.vue?vue&type=template&id=e5e34c8c& */ "./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue?vue&type=template&id=e5e34c8c&");
-/* harmony import */ var _PhoneLineList_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./PhoneLineList.vue?vue&type=script&lang=js& */ "./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue?vue&type=script&lang=js&");
+/* harmony import */ var _BoardList_vue_vue_type_template_id_e5e34c8c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./BoardList.vue?vue&type=template&id=e5e34c8c& */ "./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue?vue&type=template&id=e5e34c8c&");
+/* harmony import */ var _BoardList_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./BoardList.vue?vue&type=script&lang=js& */ "./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -30922,9 +30922,9 @@ __webpack_require__.r(__webpack_exports__);
 /* normalize component */
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _PhoneLineList_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _PhoneLineList_vue_vue_type_template_id_e5e34c8c___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _PhoneLineList_vue_vue_type_template_id_e5e34c8c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _BoardList_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _BoardList_vue_vue_type_template_id_e5e34c8c___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _BoardList_vue_vue_type_template_id_e5e34c8c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
   null,
@@ -30934,38 +30934,38 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue"
+component.options.__file = "src/resources/js/components/dashboard/dashboardComponents/BoardList.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 
-/***/ "./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue?vue&type=script&lang=js&":
+/***/ "./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue?vue&type=script&lang=js&":
 /*!**************************************************************************************************************!*\
-  !*** ./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue?vue&type=script&lang=js& ***!
+  !*** ./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue?vue&type=script&lang=js& ***!
   \**************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PhoneLineList_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./PhoneLineList.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PhoneLineList_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_BoardList_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./BoardList.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_BoardList_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /***/ }),
 
-/***/ "./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue?vue&type=template&id=e5e34c8c&":
+/***/ "./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue?vue&type=template&id=e5e34c8c&":
 /*!********************************************************************************************************************!*\
-  !*** ./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue?vue&type=template&id=e5e34c8c& ***!
+  !*** ./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue?vue&type=template&id=e5e34c8c& ***!
   \********************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PhoneLineList_vue_vue_type_template_id_e5e34c8c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./PhoneLineList.vue?vue&type=template&id=e5e34c8c& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue?vue&type=template&id=e5e34c8c&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PhoneLineList_vue_vue_type_template_id_e5e34c8c___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BoardList_vue_vue_type_template_id_e5e34c8c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./BoardList.vue?vue&type=template&id=e5e34c8c& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue?vue&type=template&id=e5e34c8c&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BoardList_vue_vue_type_template_id_e5e34c8c___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PhoneLineList_vue_vue_type_template_id_e5e34c8c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BoardList_vue_vue_type_template_id_e5e34c8c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

@@ -12,7 +12,7 @@ class Row extends Model
 
     protected $guarded = [];
 
-    public function phoneLine(): BelongsTo
+    public function board(): BelongsTo
     {
         return $this->belongsTo(Board::class);
     }

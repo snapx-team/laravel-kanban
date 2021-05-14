@@ -158,7 +158,7 @@
         },
         methods: {
             editEmployee(index) {
-                this.eventHub.$emit("create-employee", this.filtered[index]);
+                this.eventHub.$emit("create-kanban-employee", this.filtered[index]);
             },
             updatePaginationIndex(newIndex) {
                 if (newIndex < 0) newIndex = 0;

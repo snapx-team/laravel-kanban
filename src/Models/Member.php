@@ -17,7 +17,7 @@ class Member extends Model
         return $this->belongsTo(Employee::class);
     }
 
-    public function phoneLine(): BelongsTo
+    public function board(): BelongsTo
     {
         return $this->belongsTo(Board::class);
     }

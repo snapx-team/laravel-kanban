@@ -22,8 +22,8 @@ export function createBoard(kanbanData) {
     });
 }
 
-export function deleteBoard(phoneLineId) {
-    return axios.post('delete-board/' + phoneLineId);
+export function deleteBoard(boardId) {
+    return axios.post('delete-board/' + boardId);
 }
 
 export function getTags() {
@@ -40,7 +40,7 @@ export function createColumns(columnData) {
 // Employee Cards
 
 export function createEmployeeCards(employeeCardData) {
-    return axios.post('create-employee-cards', employeeCardData);
+    return axios.post('create-kanban-employee-cards', employeeCardData);
 }
 
 export function getEmployeeCardsByColumn(columnId) {
@@ -48,7 +48,7 @@ export function getEmployeeCardsByColumn(columnId) {
 }
 
 export function deleteEmployeeCard(employeeCardId) {
-    return axios.post('delete-employee-card/' + employeeCardId);
+    return axios.post('delete-kanban-employee-card/' + employeeCardId);
 }
 
 export function updateEmployeeCardIndexes(employeeCards) {
@@ -62,25 +62,25 @@ export function updateEmployeeCardColumnId(columnId, employeeCardId) {
 // Employees
 
 export function getEmployees() {
-    return axios.get('get-employees');
+    return axios.get('get-kanban-employees');
 }
 
 export function createEmployee(employeeData) {
-    return axios.post('create-employee', employeeData);
+    return axios.post('create-kanban-employee', employeeData);
 }
 
 export function deleteEmployee(employeeId) {
-    return axios.post('delete-employee/' + employeeId);
+    return axios.post('delete-kanban-employee/' + employeeId);
 }
 
 // Members
 
-export function getMembers(phoneLineId) {
-    return axios.get('get-members/' + phoneLineId);
+export function getMembers(boardId) {
+    return axios.get('get-members/' + boardId);
 }
 
-export function addMembers(memberData, phoneLineId) {
-    return axios.post('create-members/' + phoneLineId, memberData);
+export function addMembers(memberData, boardId) {
+    return axios.post('create-members/' + boardId, memberData);
 }
 
 export function deleteMember(memberId) {

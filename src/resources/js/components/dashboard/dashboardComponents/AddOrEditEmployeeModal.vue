@@ -24,14 +24,14 @@
                     <div class="flex justify-between p-5 bg-indigo-800 border-b">
                         <div class="space-y-1">
                             <div v-if="isEdit">
-                                <h1 class="text-2xl text-white pb-2">Edit Employee</h1>
+                                <h1 class="text-2xl text-white pb-2">Edit Xkanban Employee</h1>
                                 <p class="text-sm font-medium leading-5 text-gray-500">
-                                    Editing existing employee </p>
+                                    Editing existing Xkanban employee </p>
                             </div>
                             <div v-else>
-                                <h1 class="text-2xl text-white pb-2">Create Employee</h1>
+                                <h1 class="text-2xl text-white pb-2">Create Xkanban Employee</h1>
                                 <p class="text-sm font-medium leading-5 text-gray-500">
-                                    Creating a new employee </p>
+                                    Creating a new employee for Xkanban</p>
                             </div>
                         </div>
                         <div>
@@ -48,27 +48,27 @@
                     <!-- Task container -->
                     <form class="space-y-6 overflow-auto px-8 py-6">
                         <div class="flex space-x-3">
-                            <label class="flex-1 space-y-2">
-                                <div class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">
-                                    Name
-                                </div>
-                                <input class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
-                                       placeholder="John Doe"
-                                       type="text"
-                                       v-model="employeeData.name"/>
-                            </label>
-
-                            <label class="flex-1 space-y-2">
-                                <div class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">
-                                    Phone
-                                </div>
-                                <input class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
-                                       placeholder="+15145550000"
-                                       type="Number"
-                                       v-model="employeeData.phone"/>
-                            </label>
+                            <div class="space-y-2 flex-1">
+                                <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">
+                                    Employees
+                                </span>
+                                <vSelect :options="allUsers"
+                                         class="text-gray-400"
+                                         label="name"
+                                         multiple
+                                         placeholder="Select Members"
+                                         style="margin-top: 7px"
+                                         v-model="selectedMembers">
+                                    <template slot="option" slot-scope="option">
+                                        <avatar :name="option.name" :size="4" class="mr-3 m-1 float-left"></avatar>
+                                        <p class="inline">{{ option.name }}</p>
+                                    </template>
+                                    <template #no-options="{ search, searching, loading }">
+                                        No result .
+                                    </template>
+                                </vSelect>
+                            </div>
                         </div>
-                        <!-- Flow options -->
                         <div class="flex space-x-3">
                             <div class="space-y-2 flex-1">
                                 <div class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">
@@ -84,7 +84,7 @@
                                                value="employee"/>
                                         <div class="ml-3 text-gray-700 font-medium">
                                             <p>Employee</p>
-                                            <small class="text-indigo-700">Can be added to phonelines</small>
+                                            <small class="text-indigo-700">Can create and interact with tasks.</small>
                                         </div>
                                     </label>
 
@@ -97,45 +97,9 @@
                                                value="admin"/>
                                         <div class="ml-3 text-gray-700 font-medium">
                                             <p>Admin</p>
-                                            <small class="text-indigo-700">Create/Edit/Delete Access</small>
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="space-y-2 flex-1">
-
-                                <label class="flex-1 space-y-2">
-                                    <div class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">
-                                        ERP Email
-                                    </div>
-                                    <input class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
-                                           placeholder="example@snapx.com"
-                                           type="email"
-                                           v-model="employeeData.email"/>
-                                </label>
-
-                                <div class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">
-                                    Status
-                                </div>
-
-                                <div class="flex border border-gray-400 p-2">
-                                    <label class="flex items-start cursor-pointer" for="is-active">
-                                        <div class="relative mt-1">
-                                            <input class="hidden"
-                                                   id="is-active"
-                                                   type="checkbox"
-                                                   v-model="employeeData.is_active"/>
-                                            <div class="toggle__dot absolute w-5 h-5 bg-red-600 rounded-full shadow inset-y-0 left-0"></div>
-                                            <div class="toggle__line w-10 h-4 bg-gray-400 rounded-full shadow-inner"></div>
-                                        </div>
-                                        <div class="ml-3 text-gray-700 font-medium" v-if="employeeData.is_active">
-                                            <p>Active</p>
-                                            <small class="text-green-700">User can be called</small>
-                                        </div>
-                                        <div class="ml-3 text-gray-700 font-medium" v-else>
-                                            <p>Inactive</p>
-                                            <small class="text-red-700">User won't be called</small>
+                                            <small class="text-indigo-700">Create/Edit/Delete access for employees and
+                                                                           kanban boards.
+                                            </small>
                                         </div>
                                     </label>
                                 </div>
@@ -167,8 +131,17 @@
     </div>
 </template>
 <script>
+    import vSelect from "vue-select";
+    import Avatar from "../../global/Avatar";
+    import {ajaxCalls} from "../../../mixins/ajaxCallsMixin";
+
     export default {
         inject: ["eventHub"],
+        components: {
+            vSelect,
+            Avatar,
+        },
+        mixins: [ajaxCalls],
 
         data() {
             return {
@@ -176,18 +149,15 @@
 
                 employeeData: {
                     id: null,
-                    name: null,
-                    phone: null,
-                    email: null,
-                    is_active: true,
                     role: "employee",
                 },
                 modalOpen: false,
+                allUsers: [],
             };
         },
 
         created() {
-            this.eventHub.$on("create-employee", (employee) => {
+            this.eventHub.$on("create-kanban-employee", (employee) => {
                 if (employee !== undefined) {
                     this.employeeData = {...employee}
                     this.isEdit = true;
@@ -195,10 +165,6 @@
                 else {
                     this.employeeData = {
                         id: null,
-                        name: null,
-                        phone: null,
-                        email: null,
-                        is_active: true,
                         role: "employee",
                     };
                     this.isEdit = false;
@@ -207,8 +173,15 @@
             });
         },
 
-        beforeDestroy(){
-            this.eventHub.$off('create-employee');
+        beforeDestroy() {
+            this.eventHub.$off('create-kanban-employee');
+        },
+
+        mounted(){
+            this.asyncGetAllUsers().then((data) => {
+                this.allUsers = data.data;
+                console.log(this.allUsers );
+            }).catch(res => {console.log(res)});
         },
 
         methods: {
@@ -219,22 +192,9 @@
             },
             deleteEmployee(event) {
                 event.target.disabled = true;
-                this.eventHub.$emit("delete-employee", this.employeeData.id);
+                this.eventHub.$emit("delete-kanban-employee", this.employeeData.id);
                 this.modalOpen = false;
             },
         },
     };
 </script>
-
-<style scoped>
-    .toggle__dot {
-        top: -0.1rem;
-
-        transition: all 0.1s ease-in-out;
-    }
-
-    input:checked ~ .toggle__dot {
-        transform: translateX(100%);
-        background-color: #059669;
-    }
-</style>

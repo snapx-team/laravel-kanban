@@ -6545,10 +6545,10 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _dashboardComponents_EmployeeList_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./dashboardComponents/EmployeeList.vue */ "./src/resources/js/components/dashboard/dashboardComponents/EmployeeList.vue");
-/* harmony import */ var _dashboardComponents_PhoneLineList_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./dashboardComponents/PhoneLineList.vue */ "./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue");
+/* harmony import */ var _dashboardComponents_BoardList_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./dashboardComponents/BoardList.vue */ "./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue");
 /* harmony import */ var _dashboardComponents_Actions_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./dashboardComponents/Actions.vue */ "./src/resources/js/components/dashboard/dashboardComponents/Actions.vue");
 /* harmony import */ var _dashboardComponents_AddOrEditEmployeeModal_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./dashboardComponents/AddOrEditEmployeeModal.vue */ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue");
-/* harmony import */ var _dashboardComponents_AddOrEditPhoneLineModal_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./dashboardComponents/AddOrEditPhoneLineModal.vue */ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue");
+/* harmony import */ var _dashboardComponents_AddOrEditBoardModal_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./dashboardComponents/AddOrEditBoardModal.vue */ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditBoardModal.vue");
 /* harmony import */ var _mixins_ajaxCallsMixin__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../mixins/ajaxCallsMixin */ "./src/resources/js/mixins/ajaxCallsMixin.js");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
@@ -6588,10 +6588,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   inject: ["eventHub"],
   components: {
     EmployeeList: _dashboardComponents_EmployeeList_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
-    PhoneLineList: _dashboardComponents_PhoneLineList_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
+    BoardList: _dashboardComponents_BoardList_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
     Actions: _dashboardComponents_Actions_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
     AddOrEditEmployeeModal: _dashboardComponents_AddOrEditEmployeeModal_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
-    AddOrEditPhoneLineModal: _dashboardComponents_AddOrEditPhoneLineModal_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
+    AddOrEditBoardModal: _dashboardComponents_AddOrEditBoardModal_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
   },
   mixins: [_mixins_ajaxCallsMixin__WEBPACK_IMPORTED_MODULE_5__["ajaxCalls"]],
   mounted: function mounted() {
@@ -6603,7 +6603,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       paginationIndex: 0,
       paginationStep: 5,
       dashboardData: null,
-      loadingPhoneLine: false,
+      loadingBoard: false,
       loadingEmployee: false
     };
   },
@@ -6614,12 +6614,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       _this.saveEmployee(employeeData);
     });
     this.eventHub.$on("save-board", function (kanbanData) {
-      _this.savePhoneLine(kanbanData);
+      _this.saveBoard(kanbanData);
     });
-    this.eventHub.$on("delete-board", function (phoneLineId) {
-      _this.deleteBoard(phoneLineId);
+    this.eventHub.$on("delete-board", function (boardId) {
+      _this.deleteBoard(boardId);
     });
-    this.eventHub.$on("delete-employee", function (employeeId) {
+    this.eventHub.$on("delete-kanban-employee", function (employeeId) {
       _this.deleteEmployee(employeeId);
     });
   },
@@ -6627,7 +6627,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     this.eventHub.$off('save-employee');
     this.eventHub.$off('save-board');
     this.eventHub.$off('delete-board');
-    this.eventHub.$off('delete-employee');
+    this.eventHub.$off('delete-kanban-employee');
   },
   methods: {
     saveEmployee: function saveEmployee(employeeData) {
@@ -6637,8 +6637,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       var cloneEmployeeData = _objectSpread({}, employeeData);
 
-      this.asyncCreateEmployee(cloneEmployeeData).then(function (res) {
-        _this2.asyncGetEmployees().then(function (data) {
+      this.asyncCreateKanbanEmployee(cloneEmployeeData).then(function (res) {
+        _this2.asyncGetKanbanEmployees().then(function (data) {
           _this2.dashboardData.employees = data.data;
           _this2.loadingEmployee = false;
         })["catch"](function (res) {
@@ -6646,34 +6646,34 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         });
       });
     },
-    savePhoneLine: function savePhoneLine(kanbanData) {
+    saveBoard: function saveBoard(kanbanData) {
       var _this3 = this;
 
-      this.loadingPhoneLine = true;
+      this.loadingBoard = true;
 
       var clonekanbanData = _objectSpread({}, kanbanData);
 
-      this.asynccreateBoard(clonekanbanData).then(function (res) {
+      this.asyncCreateBoard(clonekanbanData).then(function (res) {
         _this3.eventHub.$emit("update-side-bar");
 
-        _this3.asyncgetBoards().then(function (data) {
-          _this3.dashboardData.phoneLines = data.data;
-          _this3.loadingPhoneLine = false;
+        _this3.asyncGetBoards().then(function (data) {
+          _this3.dashboardData.boards = data.data;
+          _this3.loadingBoard = false;
         })["catch"](function (res) {
           console.log(res);
         });
       });
     },
-    deleteBoard: function deleteBoard(phoneLineId) {
+    deleteBoard: function deleteBoard(boardId) {
       var _this4 = this;
 
-      this.loadingPhoneLine = true;
-      this.asyncdeleteBoard(phoneLineId).then(function (res) {
+      this.loadingBoard = true;
+      this.asyncDeleteBoard(boardId).then(function (res) {
         _this4.eventHub.$emit("update-side-bar");
 
-        _this4.asyncgetBoards().then(function (data) {
-          _this4.dashboardData.phoneLines = data.data;
-          _this4.loadingPhoneLine = false;
+        _this4.asyncGetBoards().then(function (data) {
+          _this4.dashboardData.boards = data.data;
+          _this4.loadingBoard = false;
         })["catch"](function (res) {
           console.log(res);
         });
@@ -6683,8 +6683,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var _this5 = this;
 
       this.loadingEmployee = true;
-      this.asyncDeleteEmployee(employeeId).then(function (res) {
-        _this5.asyncGetEmployees().then(function (data) {
+      this.asyncDeleteKanbanEmployee(employeeId).then(function (res) {
+        _this5.asyncGetKanbanEmployees().then(function (data) {
           _this5.dashboardData.employees = data.data;
           _this5.loadingEmployee = false;
         })["catch"](function (res) {
@@ -6765,7 +6765,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   inject: ["eventHub"],
   props: {
-    phoneLinesLength: {
+    boardsLength: {
       type: Number,
       "default": 0
     },
@@ -6776,7 +6776,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     createEmployee: function createEmployee() {
-      this.eventHub.$emit("create-employee");
+      this.eventHub.$emit("create-kanban-employee");
     },
     createBoard: function createBoard() {
       this.eventHub.$emit("create-board");
@@ -6786,250 +6786,10 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue?vue&type=script&lang=js&":
-/*!*******************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue?vue&type=script&lang=js& ***!
-  \*******************************************************************************************************************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ __webpack_exports__["default"] = ({
-  inject: ["eventHub"],
-  data: function data() {
-    return {
-      isEdit: false,
-      employeeData: {
-        id: null,
-        name: null,
-        phone: null,
-        email: null,
-        is_active: true,
-        role: "employee"
-      },
-      modalOpen: false
-    };
-  },
-  created: function created() {
-    var _this = this;
-
-    this.eventHub.$on("create-employee", function (employee) {
-      if (employee !== undefined) {
-        _this.employeeData = _objectSpread({}, employee);
-        _this.isEdit = true;
-      } else {
-        _this.employeeData = {
-          id: null,
-          name: null,
-          phone: null,
-          email: null,
-          is_active: true,
-          role: "employee"
-        };
-        _this.isEdit = false;
-      }
-
-      _this.modalOpen = true;
-    });
-  },
-  beforeDestroy: function beforeDestroy() {
-    this.eventHub.$off('create-employee');
-  },
-  methods: {
-    saveEmployee: function saveEmployee(event) {
-      event.target.disabled = true;
-      this.eventHub.$emit("save-employee", this.employeeData);
-      this.modalOpen = false;
-    },
-    deleteEmployee: function deleteEmployee(event) {
-      event.target.disabled = true;
-      this.eventHub.$emit("delete-employee", this.employeeData.id);
-      this.modalOpen = false;
-    }
-  }
-});
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=script&lang=js&":
-/*!********************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=script&lang=js& ***!
-  \********************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditBoardModal.vue?vue&type=script&lang=js&":
+/*!****************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditBoardModal.vue?vue&type=script&lang=js& ***!
+  \****************************************************************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -7151,9 +6911,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   created: function created() {
     var _this = this;
 
-    this.eventHub.$on("create-board", function (phoneLine) {
-      if (phoneLine !== undefined) {
-        _this.kanbanData = _objectSpread({}, phoneLine);
+    this.eventHub.$on("create-board", function (board) {
+      if (board !== undefined) {
+        _this.kanbanData = _objectSpread({}, board);
         _this.isEdit = true;
       } else {
         _this.isEdit = false;
@@ -7166,7 +6926,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     this.eventHub.$off('create-board');
   },
   methods: {
-    savePhoneLine: function savePhoneLine(event) {
+    saveBoard: function saveBoard(event) {
       event.target.disabled = true;
       this.eventHub.$emit("save-board", this.kanbanData);
       this.modalOpen = false;
@@ -7175,6 +6935,301 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       event.target.disabled = true;
       this.eventHub.$emit("delete-board", this.kanbanData.id);
       this.modalOpen = false;
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vue_select__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-select */ "./node_modules/vue-select/dist/vue-select.js");
+/* harmony import */ var vue_select__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_select__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _global_Avatar__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../global/Avatar */ "./src/resources/js/components/global/Avatar.vue");
+/* harmony import */ var _mixins_ajaxCallsMixin__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../mixins/ajaxCallsMixin */ "./src/resources/js/mixins/ajaxCallsMixin.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  inject: ["eventHub"],
+  components: {
+    vSelect: vue_select__WEBPACK_IMPORTED_MODULE_0___default.a,
+    Avatar: _global_Avatar__WEBPACK_IMPORTED_MODULE_1__["default"]
+  },
+  mixins: [_mixins_ajaxCallsMixin__WEBPACK_IMPORTED_MODULE_2__["ajaxCalls"]],
+  data: function data() {
+    return {
+      isEdit: false,
+      employeeData: {
+        id: null,
+        role: "employee"
+      },
+      modalOpen: false,
+      allUsers: []
+    };
+  },
+  created: function created() {
+    var _this = this;
+
+    this.eventHub.$on("create-kanban-employee", function (employee) {
+      if (employee !== undefined) {
+        _this.employeeData = _objectSpread({}, employee);
+        _this.isEdit = true;
+      } else {
+        _this.employeeData = {
+          id: null,
+          role: "employee"
+        };
+        _this.isEdit = false;
+      }
+
+      _this.modalOpen = true;
+    });
+  },
+  beforeDestroy: function beforeDestroy() {
+    this.eventHub.$off('create-kanban-employee');
+  },
+  mounted: function mounted() {
+    var _this2 = this;
+
+    this.asyncGetAllUsers().then(function (data) {
+      _this2.allUsers = data.data;
+      console.log(_this2.allUsers);
+    })["catch"](function (res) {
+      console.log(res);
+    });
+  },
+  methods: {
+    saveEmployee: function saveEmployee(event) {
+      event.target.disabled = true;
+      this.eventHub.$emit("save-employee", this.employeeData);
+      this.modalOpen = false;
+    },
+    deleteEmployee: function deleteEmployee(event) {
+      event.target.disabled = true;
+      this.eventHub.$emit("delete-kanban-employee", this.employeeData.id);
+      this.modalOpen = false;
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue?vue&type=script&lang=js&":
+/*!******************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue?vue&type=script&lang=js& ***!
+  \******************************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _global_Avatar_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../global/Avatar.vue */ "./src/resources/js/components/global/Avatar.vue");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  inject: ["eventHub"],
+  components: {
+    Avatar: _global_Avatar_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
+  props: {
+    boards: {
+      type: Array,
+      "default": null
+    }
+  },
+  methods: {
+    editBoard: function editBoard(board) {
+      this.eventHub.$emit("create-board", board);
     }
   }
 });
@@ -7348,86 +7403,10 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     editEmployee: function editEmployee(index) {
-      this.eventHub.$emit("create-employee", this.filtered[index]);
+      this.eventHub.$emit("create-kanban-employee", this.filtered[index]);
     },
     updatePaginationIndex: function updatePaginationIndex(newIndex) {
       if (newIndex < 0) newIndex = 0;else if (newIndex < this.filtered.length) this.paginationIndex = newIndex;
-    }
-  }
-});
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue?vue&type=script&lang=js&":
-/*!**********************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue?vue&type=script&lang=js& ***!
-  \**********************************************************************************************************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _global_Avatar_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../global/Avatar.vue */ "./src/resources/js/components/global/Avatar.vue");
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  inject: ["eventHub"],
-  components: {
-    Avatar: _global_Avatar_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
-  },
-  props: {
-    phoneLines: {
-      type: Array,
-      "default": null
-    }
-  },
-  methods: {
-    editPhoneLine: function editPhoneLine(phoneLine) {
-      this.eventHub.$emit("create-board", phoneLine);
     }
   }
 });
@@ -7612,8 +7591,8 @@ __webpack_require__.r(__webpack_exports__);
   inject: ["eventHub"],
   data: function data() {
     return {
-      phoneLines: {},
-      loadingPhoneLine: false
+      boards: {},
+      loadingBoard: false
     };
   },
   mounted: function mounted() {
@@ -7630,11 +7609,11 @@ __webpack_require__.r(__webpack_exports__);
     getBoards: function getBoards() {
       var _this2 = this;
 
-      this.loadingPhoneLine = true;
+      this.loadingBoard = true;
 
       Object(_api__WEBPACK_IMPORTED_MODULE_0__["getBoards"])().then(function (data) {
-        _this2.phoneLines = data.data;
-        _this2.loadingPhoneLine = false;
+        _this2.boards = data.data;
+        _this2.loadingBoard = false;
       })["catch"](function (res) {
         console.log(res);
       });
@@ -7789,7 +7768,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     this.eventHub.$on("save-employee-cards", function (cardData) {
       _this.saveEmployeeCards(cardData);
     });
-    this.eventHub.$on("delete-employee-cards", function (cardData) {
+    this.eventHub.$on("delete-kanban-employee-cards", function (cardData) {
       _this.deleteEmployeeCard(cardData);
     });
     this.eventHub.$on("save-members", function (selectedMembers) {
@@ -7804,7 +7783,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   beforeDestroy: function beforeDestroy() {
     this.eventHub.$off('save-employee-cards');
-    this.eventHub.$off('delete-employee-cards');
+    this.eventHub.$off('delete-kanban-employee-cards');
     this.eventHub.$off('save-members');
     this.eventHub.$off('remove-member');
     this.eventHub.$off('save-columns');
@@ -7814,7 +7793,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var rowName = this.kanban.rows[rowIndex].name;
       var columnName = this.kanban.rows[rowIndex].columns[columnIndex].name;
       var columnId = this.kanban.rows[rowIndex].columns[columnIndex].id;
-      this.eventHub.$emit("create-employee-cards", {
+      this.eventHub.$emit("create-kanban-employee-cards", {
         rowIndex: rowIndex,
         rowName: rowName,
         columnIndex: columnIndex,
@@ -7919,7 +7898,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         columnId: cloneCardData.columnId,
         isLoading: true
       };
-      this.asyncCreateEmployeeCards(cloneCardData).then(function () {
+      this.asyncCreateKanbanEmployeeCards(cloneCardData).then(function () {
         _this5.asyncGetEmployeeCardsByColumn(cloneCardData.columnId).then(function (data) {
           _this5.kanban.rows[cloneCardData.selectedRowIndex].columns[cloneCardData.selectedColumnIndex].employee_cards = data.data;
           _this5.loadingCards = {
@@ -7942,7 +7921,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         columnId: cloneCardData.selectedCardData.column_id,
         isLoading: true
       };
-      this.asyncDeleteEmployeeCard(cloneCardData.selectedCardData.id).then(function () {
+      this.asyncDeleteKanbanEmployeeCard(cloneCardData.selectedCardData.id).then(function () {
         _this6.asyncGetEmployeeCardsByColumn(cloneCardData.selectedCardData.column_id).then(function (data) {
           _this6.kanban.rows[cloneCardData.selectedRowIndex].columns[cloneCardData.selectedColumnIndex].employee_cards = data.data;
           _this6.loadingCards = {
@@ -8411,12 +8390,12 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     var _this = this;
 
-    this.eventHub.$on("create-employee-cards", function (cardData) {
+    this.eventHub.$on("create-kanban-employee-cards", function (cardData) {
       _this.openModal(cardData);
     });
   },
   beforeDestroy: function beforeDestroy() {
-    this.eventHub.$off('create-employee-cards');
+    this.eventHub.$off('create-kanban-employee-cards');
   },
   computed: {
     filtered: function filtered() {
@@ -8439,7 +8418,7 @@ __webpack_require__.r(__webpack_exports__);
       this.cardData.employeesSelected = null;
     },
     deleteCard: function deleteCard(selectedCardData) {
-      this.eventHub.$emit("delete-employee-cards", {
+      this.eventHub.$emit("delete-kanban-employee-cards", {
         selectedCardData: selectedCardData,
         selectedRowIndex: this.cardData.selectedRowIndex,
         selectedColumnIndex: this.cardData.selectedColumnIndex
@@ -8618,7 +8597,7 @@ __webpack_require__.r(__webpack_exports__);
   mounted: function mounted() {
     var _this2 = this;
 
-    this.asyncGetEmployees().then(function (data) {
+    this.asyncGetKanbanEmployees().then(function (data) {
       _this2.allUsers = data.data;
     })["catch"](function (res) {
       console.log(res);
@@ -8800,25 +8779,6 @@ exports = module.exports = __webpack_require__(/*! ../../css-loader/lib/css-base
 
 // module
 exports.push([module.i, ".Vue-Toastification__container {\n  z-index: 9999;\n  position: fixed;\n  padding: 4px;\n  width: 600px;\n  box-sizing: border-box;\n  display: flex;\n  min-height: 100%;\n  color: #fff;\n  flex-direction: column;\n  pointer-events: none;\n}\n@media only screen and (min-width : 600px) {\n  .Vue-Toastification__container.top-left, .Vue-Toastification__container.top-right, .Vue-Toastification__container.top-center {\n    top: 1em;\n  }\n  .Vue-Toastification__container.bottom-left, .Vue-Toastification__container.bottom-right, .Vue-Toastification__container.bottom-center {\n    bottom: 1em;\n    flex-direction: column-reverse;\n  }\n  .Vue-Toastification__container.top-left, .Vue-Toastification__container.bottom-left {\n    left: 1em;\n  }\n  .Vue-Toastification__container.top-left .Vue-Toastification__toast, .Vue-Toastification__container.bottom-left .Vue-Toastification__toast {\n    margin-right: auto;\n  }\n  .Vue-Toastification__container.top-left .Vue-Toastification__toast--rtl, .Vue-Toastification__container.bottom-left .Vue-Toastification__toast--rtl {\n    margin-right: unset;\n    margin-left: auto;\n  }\n  .Vue-Toastification__container.top-right, .Vue-Toastification__container.bottom-right {\n    right: 1em;\n  }\n  .Vue-Toastification__container.top-right .Vue-Toastification__toast, .Vue-Toastification__container.bottom-right .Vue-Toastification__toast {\n    margin-left: auto;\n  }\n  .Vue-Toastification__container.top-right .Vue-Toastification__toast--rtl, .Vue-Toastification__container.bottom-right .Vue-Toastification__toast--rtl {\n    margin-left: unset;\n    margin-right: auto;\n  }\n  .Vue-Toastification__container.top-center, .Vue-Toastification__container.bottom-center {\n    left: 50%;\n    margin-left: -300px;\n  }\n  .Vue-Toastification__container.top-center .Vue-Toastification__toast, .Vue-Toastification__container.bottom-center .Vue-Toastification__toast {\n    margin-left: auto;\n    margin-right: auto;\n  }\n}\n@media only screen and (max-width : 600px) {\n  .Vue-Toastification__container {\n    width: 100vw;\n    padding: 0;\n    left: 0;\n    margin: 0;\n  }\n  .Vue-Toastification__container .Vue-Toastification__toast {\n    width: 100%;\n  }\n  .Vue-Toastification__container.top-left, .Vue-Toastification__container.top-right, .Vue-Toastification__container.top-center {\n    top: 0;\n  }\n  .Vue-Toastification__container.bottom-left, .Vue-Toastification__container.bottom-right, .Vue-Toastification__container.bottom-center {\n    bottom: 0;\n    flex-direction: column-reverse;\n  }\n}\n\n.Vue-Toastification__toast {\n  display: inline-flex;\n  position: relative;\n  max-height: 800px;\n  min-height: 64px;\n  box-sizing: border-box;\n  margin-bottom: 1rem;\n  padding: 22px 24px;\n  border-radius: 8px;\n  box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.1), 0 2px 15px 0 rgba(0, 0, 0, 0.05);\n  justify-content: space-between;\n  font-family: \"Lato\", Helvetica, \"Roboto\", Arial, sans-serif;\n  max-width: 600px;\n  min-width: 326px;\n  pointer-events: auto;\n  overflow: hidden;\n  transform: translateZ(0);\n  direction: ltr;\n}\n.Vue-Toastification__toast--rtl {\n  direction: rtl;\n}\n.Vue-Toastification__toast--default {\n  background-color: #1976d2;\n  color: #fff;\n}\n.Vue-Toastification__toast--info {\n  background-color: #2196f3;\n  color: #fff;\n}\n.Vue-Toastification__toast--success {\n  background-color: #4caf50;\n  color: #fff;\n}\n.Vue-Toastification__toast--error {\n  background-color: #ff5252;\n  color: #fff;\n}\n.Vue-Toastification__toast--warning {\n  background-color: #ffc107;\n  color: #fff;\n}\n@media only screen and (max-width : 600px) {\n  .Vue-Toastification__toast {\n    border-radius: 0px;\n    margin-bottom: 0.5rem;\n  }\n}\n.Vue-Toastification__toast-body {\n  flex: 1;\n  line-height: 24px;\n  font-size: 16px;\n  word-break: break-word;\n  white-space: pre-wrap;\n}\n.Vue-Toastification__toast-component-body {\n  flex: 1;\n}\n.Vue-Toastification__toast.disable-transition {\n  transition: none !important;\n  -webkit-animation: none !important;\n          animation: none !important;\n}\n\n.Vue-Toastification__close-button {\n  font-weight: bold;\n  font-size: 24px;\n  line-height: 24px;\n  background: transparent;\n  outline: none;\n  border: none;\n  padding: 0;\n  padding-left: 10px;\n  cursor: pointer;\n  transition: 0.3s ease;\n  align-items: center;\n  color: #fff;\n  opacity: 0.3;\n  transition: visibility 0s, opacity 0.2s linear;\n}\n.Vue-Toastification__close-button:hover, .Vue-Toastification__close-button:focus {\n  opacity: 1;\n}\n.Vue-Toastification__toast:not(:hover) .Vue-Toastification__close-button.show-on-hover {\n  opacity: 0;\n}\n.Vue-Toastification__toast--rtl .Vue-Toastification__close-button {\n  padding-left: unset;\n  padding-right: 10px;\n}\n\n@-webkit-keyframes scale-x-frames {\n  0% {\n    transform: scaleX(1);\n  }\n  100% {\n    transform: scaleX(0);\n  }\n}\n\n@keyframes scale-x-frames {\n  0% {\n    transform: scaleX(1);\n  }\n  100% {\n    transform: scaleX(0);\n  }\n}\n.Vue-Toastification__progress-bar {\n  position: absolute;\n  bottom: 0;\n  left: 0;\n  width: 100%;\n  height: 5px;\n  z-index: 10000;\n  background-color: rgba(255, 255, 255, 0.7);\n  transform-origin: left;\n  -webkit-animation: scale-x-frames linear 1 forwards;\n          animation: scale-x-frames linear 1 forwards;\n}\n.Vue-Toastification__toast--rtl .Vue-Toastification__progress-bar {\n  right: 0;\n  left: unset;\n  transform-origin: right;\n}\n\n.Vue-Toastification__icon {\n  margin: auto 18px auto 0px;\n  background: transparent;\n  outline: none;\n  border: none;\n  padding: 0;\n  transition: 0.3s ease;\n  align-items: center;\n  width: 20px;\n  height: 100%;\n}\n.Vue-Toastification__toast--rtl .Vue-Toastification__icon {\n  margin: auto 0px auto 18px;\n}\n\n@-webkit-keyframes bounceInRight {\n  from, 60%, 75%, 90%, to {\n    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n            animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n  }\n  from {\n    opacity: 0;\n    transform: translate3d(3000px, 0, 0);\n  }\n  60% {\n    opacity: 1;\n    transform: translate3d(-25px, 0, 0);\n  }\n  75% {\n    transform: translate3d(10px, 0, 0);\n  }\n  90% {\n    transform: translate3d(-5px, 0, 0);\n  }\n  to {\n    transform: none;\n  }\n}\n\n@keyframes bounceInRight {\n  from, 60%, 75%, 90%, to {\n    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n            animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n  }\n  from {\n    opacity: 0;\n    transform: translate3d(3000px, 0, 0);\n  }\n  60% {\n    opacity: 1;\n    transform: translate3d(-25px, 0, 0);\n  }\n  75% {\n    transform: translate3d(10px, 0, 0);\n  }\n  90% {\n    transform: translate3d(-5px, 0, 0);\n  }\n  to {\n    transform: none;\n  }\n}\n@-webkit-keyframes bounceOutRight {\n  40% {\n    opacity: 1;\n    transform: translate3d(-20px, 0, 0);\n  }\n  to {\n    opacity: 0;\n    transform: translate3d(1000px, 0, 0);\n  }\n}\n@keyframes bounceOutRight {\n  40% {\n    opacity: 1;\n    transform: translate3d(-20px, 0, 0);\n  }\n  to {\n    opacity: 0;\n    transform: translate3d(1000px, 0, 0);\n  }\n}\n@-webkit-keyframes bounceInLeft {\n  from, 60%, 75%, 90%, to {\n    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n            animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n  }\n  0% {\n    opacity: 0;\n    transform: translate3d(-3000px, 0, 0);\n  }\n  60% {\n    opacity: 1;\n    transform: translate3d(25px, 0, 0);\n  }\n  75% {\n    transform: translate3d(-10px, 0, 0);\n  }\n  90% {\n    transform: translate3d(5px, 0, 0);\n  }\n  to {\n    transform: none;\n  }\n}\n@keyframes bounceInLeft {\n  from, 60%, 75%, 90%, to {\n    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n            animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n  }\n  0% {\n    opacity: 0;\n    transform: translate3d(-3000px, 0, 0);\n  }\n  60% {\n    opacity: 1;\n    transform: translate3d(25px, 0, 0);\n  }\n  75% {\n    transform: translate3d(-10px, 0, 0);\n  }\n  90% {\n    transform: translate3d(5px, 0, 0);\n  }\n  to {\n    transform: none;\n  }\n}\n@-webkit-keyframes bounceOutLeft {\n  20% {\n    opacity: 1;\n    transform: translate3d(20px, 0, 0);\n  }\n  to {\n    opacity: 0;\n    transform: translate3d(-2000px, 0, 0);\n  }\n}\n@keyframes bounceOutLeft {\n  20% {\n    opacity: 1;\n    transform: translate3d(20px, 0, 0);\n  }\n  to {\n    opacity: 0;\n    transform: translate3d(-2000px, 0, 0);\n  }\n}\n@-webkit-keyframes bounceInUp {\n  from, 60%, 75%, 90%, to {\n    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n            animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n  }\n  from {\n    opacity: 0;\n    transform: translate3d(0, 3000px, 0);\n  }\n  60% {\n    opacity: 1;\n    transform: translate3d(0, -20px, 0);\n  }\n  75% {\n    transform: translate3d(0, 10px, 0);\n  }\n  90% {\n    transform: translate3d(0, -5px, 0);\n  }\n  to {\n    transform: translate3d(0, 0, 0);\n  }\n}\n@keyframes bounceInUp {\n  from, 60%, 75%, 90%, to {\n    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n            animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n  }\n  from {\n    opacity: 0;\n    transform: translate3d(0, 3000px, 0);\n  }\n  60% {\n    opacity: 1;\n    transform: translate3d(0, -20px, 0);\n  }\n  75% {\n    transform: translate3d(0, 10px, 0);\n  }\n  90% {\n    transform: translate3d(0, -5px, 0);\n  }\n  to {\n    transform: translate3d(0, 0, 0);\n  }\n}\n@-webkit-keyframes bounceOutUp {\n  20% {\n    transform: translate3d(0, -10px, 0);\n  }\n  40%, 45% {\n    opacity: 1;\n    transform: translate3d(0, 20px, 0);\n  }\n  to {\n    opacity: 0;\n    transform: translate3d(0, -2000px, 0);\n  }\n}\n@keyframes bounceOutUp {\n  20% {\n    transform: translate3d(0, -10px, 0);\n  }\n  40%, 45% {\n    opacity: 1;\n    transform: translate3d(0, 20px, 0);\n  }\n  to {\n    opacity: 0;\n    transform: translate3d(0, -2000px, 0);\n  }\n}\n@-webkit-keyframes bounceInDown {\n  from, 60%, 75%, 90%, to {\n    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n            animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n  }\n  0% {\n    opacity: 0;\n    transform: translate3d(0, -3000px, 0);\n  }\n  60% {\n    opacity: 1;\n    transform: translate3d(0, 25px, 0);\n  }\n  75% {\n    transform: translate3d(0, -10px, 0);\n  }\n  90% {\n    transform: translate3d(0, 5px, 0);\n  }\n  to {\n    transform: none;\n  }\n}\n@keyframes bounceInDown {\n  from, 60%, 75%, 90%, to {\n    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n            animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n  }\n  0% {\n    opacity: 0;\n    transform: translate3d(0, -3000px, 0);\n  }\n  60% {\n    opacity: 1;\n    transform: translate3d(0, 25px, 0);\n  }\n  75% {\n    transform: translate3d(0, -10px, 0);\n  }\n  90% {\n    transform: translate3d(0, 5px, 0);\n  }\n  to {\n    transform: none;\n  }\n}\n@-webkit-keyframes bounceOutDown {\n  20% {\n    transform: translate3d(0, 10px, 0);\n  }\n  40%, 45% {\n    opacity: 1;\n    transform: translate3d(0, -20px, 0);\n  }\n  to {\n    opacity: 0;\n    transform: translate3d(0, 2000px, 0);\n  }\n}\n@keyframes bounceOutDown {\n  20% {\n    transform: translate3d(0, 10px, 0);\n  }\n  40%, 45% {\n    opacity: 1;\n    transform: translate3d(0, -20px, 0);\n  }\n  to {\n    opacity: 0;\n    transform: translate3d(0, 2000px, 0);\n  }\n}\n@keyframes bounceOutDown {\n  20% {\n    transform: translate3d(0, 10px, 0);\n  }\n  40%, 45% {\n    opacity: 1;\n    transform: translate3d(0, -20px, 0);\n  }\n  to {\n    opacity: 0;\n    transform: translate3d(0, 2000px, 0);\n  }\n}\n.Vue-Toastification__bounce-enter-active.top-left, .Vue-Toastification__bounce-enter-active.bottom-left {\n  -webkit-animation-name: bounceInLeft;\n          animation-name: bounceInLeft;\n}\n.Vue-Toastification__bounce-enter-active.top-right, .Vue-Toastification__bounce-enter-active.bottom-right {\n  -webkit-animation-name: bounceInRight;\n          animation-name: bounceInRight;\n}\n.Vue-Toastification__bounce-enter-active.top-center {\n  -webkit-animation-name: bounceInDown;\n          animation-name: bounceInDown;\n}\n.Vue-Toastification__bounce-enter-active.bottom-center {\n  -webkit-animation-name: bounceInUp;\n          animation-name: bounceInUp;\n}\n\n.Vue-Toastification__bounce-leave-active.top-left, .Vue-Toastification__bounce-leave-active.bottom-left {\n  -webkit-animation-name: bounceOutLeft;\n          animation-name: bounceOutLeft;\n}\n.Vue-Toastification__bounce-leave-active.top-right, .Vue-Toastification__bounce-leave-active.bottom-right {\n  -webkit-animation-name: bounceOutRight;\n          animation-name: bounceOutRight;\n}\n.Vue-Toastification__bounce-leave-active.top-center {\n  -webkit-animation-name: bounceOutUp;\n          animation-name: bounceOutUp;\n}\n.Vue-Toastification__bounce-leave-active.bottom-center {\n  -webkit-animation-name: bounceOutDown;\n          animation-name: bounceOutDown;\n}\n\n.Vue-Toastification__bounce-move {\n  transition-timing-function: ease-in-out;\n  transition-property: all;\n  transition-duration: 400ms;\n}\n\n/* ----------------------------------------------\n * Modified version from Animista\n * Animista is Licensed under FreeBSD License.\n * See http://animista.net/license for more info. \n * w: http://animista.net, t: @cssanimista\n * ---------------------------------------------- */\n@-webkit-keyframes fadeOutTop {\n  0% {\n    transform: translateY(0);\n    opacity: 1;\n  }\n  100% {\n    transform: translateY(-50px);\n    opacity: 0;\n  }\n}\n@keyframes fadeOutTop {\n  0% {\n    transform: translateY(0);\n    opacity: 1;\n  }\n  100% {\n    transform: translateY(-50px);\n    opacity: 0;\n  }\n}\n@-webkit-keyframes fadeOutLeft {\n  0% {\n    transform: translateX(0);\n    opacity: 1;\n  }\n  100% {\n    transform: translateX(-50px);\n    opacity: 0;\n  }\n}\n@keyframes fadeOutLeft {\n  0% {\n    transform: translateX(0);\n    opacity: 1;\n  }\n  100% {\n    transform: translateX(-50px);\n    opacity: 0;\n  }\n}\n@-webkit-keyframes fadeOutBottom {\n  0% {\n    transform: translateY(0);\n    opacity: 1;\n  }\n  100% {\n    transform: translateY(50px);\n    opacity: 0;\n  }\n}\n@keyframes fadeOutBottom {\n  0% {\n    transform: translateY(0);\n    opacity: 1;\n  }\n  100% {\n    transform: translateY(50px);\n    opacity: 0;\n  }\n}\n@-webkit-keyframes fadeOutRight {\n  0% {\n    transform: translateX(0);\n    opacity: 1;\n  }\n  100% {\n    transform: translateX(50px);\n    opacity: 0;\n  }\n}\n@keyframes fadeOutRight {\n  0% {\n    transform: translateX(0);\n    opacity: 1;\n  }\n  100% {\n    transform: translateX(50px);\n    opacity: 0;\n  }\n}\n@-webkit-keyframes fadeInLeft {\n  0% {\n    transform: translateX(-50px);\n    opacity: 0;\n  }\n  100% {\n    transform: translateX(0);\n    opacity: 1;\n  }\n}\n@keyframes fadeInLeft {\n  0% {\n    transform: translateX(-50px);\n    opacity: 0;\n  }\n  100% {\n    transform: translateX(0);\n    opacity: 1;\n  }\n}\n@-webkit-keyframes fadeInRight {\n  0% {\n    transform: translateX(50px);\n    opacity: 0;\n  }\n  100% {\n    transform: translateX(0);\n    opacity: 1;\n  }\n}\n@keyframes fadeInRight {\n  0% {\n    transform: translateX(50px);\n    opacity: 0;\n  }\n  100% {\n    transform: translateX(0);\n    opacity: 1;\n  }\n}\n@-webkit-keyframes fadeInTop {\n  0% {\n    transform: translateY(-50px);\n    opacity: 0;\n  }\n  100% {\n    transform: translateY(0);\n    opacity: 1;\n  }\n}\n@keyframes fadeInTop {\n  0% {\n    transform: translateY(-50px);\n    opacity: 0;\n  }\n  100% {\n    transform: translateY(0);\n    opacity: 1;\n  }\n}\n@-webkit-keyframes fadeInBottom {\n  0% {\n    transform: translateY(50px);\n    opacity: 0;\n  }\n  100% {\n    transform: translateY(0);\n    opacity: 1;\n  }\n}\n@keyframes fadeInBottom {\n  0% {\n    transform: translateY(50px);\n    opacity: 0;\n  }\n  100% {\n    transform: translateY(0);\n    opacity: 1;\n  }\n}\n.Vue-Toastification__fade-enter-active.top-left, .Vue-Toastification__fade-enter-active.bottom-left {\n  -webkit-animation-name: fadeInLeft;\n          animation-name: fadeInLeft;\n}\n.Vue-Toastification__fade-enter-active.top-right, .Vue-Toastification__fade-enter-active.bottom-right {\n  -webkit-animation-name: fadeInRight;\n          animation-name: fadeInRight;\n}\n.Vue-Toastification__fade-enter-active.top-center {\n  -webkit-animation-name: fadeInTop;\n          animation-name: fadeInTop;\n}\n.Vue-Toastification__fade-enter-active.bottom-center {\n  -webkit-animation-name: fadeInBottom;\n          animation-name: fadeInBottom;\n}\n\n.Vue-Toastification__fade-leave-active.top-left, .Vue-Toastification__fade-leave-active.bottom-left {\n  -webkit-animation-name: fadeOutLeft;\n          animation-name: fadeOutLeft;\n}\n.Vue-Toastification__fade-leave-active.top-right, .Vue-Toastification__fade-leave-active.bottom-right {\n  -webkit-animation-name: fadeOutRight;\n          animation-name: fadeOutRight;\n}\n.Vue-Toastification__fade-leave-active.top-center {\n  -webkit-animation-name: fadeOutTop;\n          animation-name: fadeOutTop;\n}\n.Vue-Toastification__fade-leave-active.bottom-center {\n  -webkit-animation-name: fadeOutBottom;\n          animation-name: fadeOutBottom;\n}\n\n.Vue-Toastification__fade-move {\n  transition-timing-function: ease-in-out;\n  transition-property: all;\n  transition-duration: 400ms;\n}\n\n/* ----------------------------------------------\n * Modified version from Animista\n * Animista is Licensed under FreeBSD License.\n * See http://animista.net/license for more info. \n * w: http://animista.net, t: @cssanimista\n * ---------------------------------------------- */\n@-webkit-keyframes slideInBlurredLeft {\n  0% {\n    transform: translateX(-1000px) scaleX(2.5) scaleY(0.2);\n    transform-origin: 100% 50%;\n    filter: blur(40px);\n    opacity: 0;\n  }\n  100% {\n    transform: translateX(0) scaleY(1) scaleX(1);\n    transform-origin: 50% 50%;\n    filter: blur(0);\n    opacity: 1;\n  }\n}\n@keyframes slideInBlurredLeft {\n  0% {\n    transform: translateX(-1000px) scaleX(2.5) scaleY(0.2);\n    transform-origin: 100% 50%;\n    filter: blur(40px);\n    opacity: 0;\n  }\n  100% {\n    transform: translateX(0) scaleY(1) scaleX(1);\n    transform-origin: 50% 50%;\n    filter: blur(0);\n    opacity: 1;\n  }\n}\n@-webkit-keyframes slideInBlurredTop {\n  0% {\n    transform: translateY(-1000px) scaleY(2.5) scaleX(0.2);\n    transform-origin: 50% 0%;\n    filter: blur(240px);\n    opacity: 0;\n  }\n  100% {\n    transform: translateY(0) scaleY(1) scaleX(1);\n    transform-origin: 50% 50%;\n    filter: blur(0);\n    opacity: 1;\n  }\n}\n@keyframes slideInBlurredTop {\n  0% {\n    transform: translateY(-1000px) scaleY(2.5) scaleX(0.2);\n    transform-origin: 50% 0%;\n    filter: blur(240px);\n    opacity: 0;\n  }\n  100% {\n    transform: translateY(0) scaleY(1) scaleX(1);\n    transform-origin: 50% 50%;\n    filter: blur(0);\n    opacity: 1;\n  }\n}\n@-webkit-keyframes slideInBlurredRight {\n  0% {\n    transform: translateX(1000px) scaleX(2.5) scaleY(0.2);\n    transform-origin: 0% 50%;\n    filter: blur(40px);\n    opacity: 0;\n  }\n  100% {\n    transform: translateX(0) scaleY(1) scaleX(1);\n    transform-origin: 50% 50%;\n    filter: blur(0);\n    opacity: 1;\n  }\n}\n@keyframes slideInBlurredRight {\n  0% {\n    transform: translateX(1000px) scaleX(2.5) scaleY(0.2);\n    transform-origin: 0% 50%;\n    filter: blur(40px);\n    opacity: 0;\n  }\n  100% {\n    transform: translateX(0) scaleY(1) scaleX(1);\n    transform-origin: 50% 50%;\n    filter: blur(0);\n    opacity: 1;\n  }\n}\n@-webkit-keyframes slideInBlurredBottom {\n  0% {\n    transform: translateY(1000px) scaleY(2.5) scaleX(0.2);\n    transform-origin: 50% 100%;\n    filter: blur(240px);\n    opacity: 0;\n  }\n  100% {\n    transform: translateY(0) scaleY(1) scaleX(1);\n    transform-origin: 50% 50%;\n    filter: blur(0);\n    opacity: 1;\n  }\n}\n@keyframes slideInBlurredBottom {\n  0% {\n    transform: translateY(1000px) scaleY(2.5) scaleX(0.2);\n    transform-origin: 50% 100%;\n    filter: blur(240px);\n    opacity: 0;\n  }\n  100% {\n    transform: translateY(0) scaleY(1) scaleX(1);\n    transform-origin: 50% 50%;\n    filter: blur(0);\n    opacity: 1;\n  }\n}\n@-webkit-keyframes slideOutBlurredTop {\n  0% {\n    transform: translateY(0) scaleY(1) scaleX(1);\n    transform-origin: 50% 0%;\n    filter: blur(0);\n    opacity: 1;\n  }\n  100% {\n    transform: translateY(-1000px) scaleY(2) scaleX(0.2);\n    transform-origin: 50% 0%;\n    filter: blur(240px);\n    opacity: 0;\n  }\n}\n@keyframes slideOutBlurredTop {\n  0% {\n    transform: translateY(0) scaleY(1) scaleX(1);\n    transform-origin: 50% 0%;\n    filter: blur(0);\n    opacity: 1;\n  }\n  100% {\n    transform: translateY(-1000px) scaleY(2) scaleX(0.2);\n    transform-origin: 50% 0%;\n    filter: blur(240px);\n    opacity: 0;\n  }\n}\n@-webkit-keyframes slideOutBlurredBottom {\n  0% {\n    transform: translateY(0) scaleY(1) scaleX(1);\n    transform-origin: 50% 50%;\n    filter: blur(0);\n    opacity: 1;\n  }\n  100% {\n    transform: translateY(1000px) scaleY(2) scaleX(0.2);\n    transform-origin: 50% 100%;\n    filter: blur(240px);\n    opacity: 0;\n  }\n}\n@keyframes slideOutBlurredBottom {\n  0% {\n    transform: translateY(0) scaleY(1) scaleX(1);\n    transform-origin: 50% 50%;\n    filter: blur(0);\n    opacity: 1;\n  }\n  100% {\n    transform: translateY(1000px) scaleY(2) scaleX(0.2);\n    transform-origin: 50% 100%;\n    filter: blur(240px);\n    opacity: 0;\n  }\n}\n@-webkit-keyframes slideOutBlurredLeft {\n  0% {\n    transform: translateX(0) scaleY(1) scaleX(1);\n    transform-origin: 50% 50%;\n    filter: blur(0);\n    opacity: 1;\n  }\n  100% {\n    transform: translateX(-1000px) scaleX(2) scaleY(0.2);\n    transform-origin: 100% 50%;\n    filter: blur(40px);\n    opacity: 0;\n  }\n}\n@keyframes slideOutBlurredLeft {\n  0% {\n    transform: translateX(0) scaleY(1) scaleX(1);\n    transform-origin: 50% 50%;\n    filter: blur(0);\n    opacity: 1;\n  }\n  100% {\n    transform: translateX(-1000px) scaleX(2) scaleY(0.2);\n    transform-origin: 100% 50%;\n    filter: blur(40px);\n    opacity: 0;\n  }\n}\n@-webkit-keyframes slideOutBlurredRight {\n  0% {\n    transform: translateX(0) scaleY(1) scaleX(1);\n    transform-origin: 50% 50%;\n    filter: blur(0);\n    opacity: 1;\n  }\n  100% {\n    transform: translateX(1000px) scaleX(2) scaleY(0.2);\n    transform-origin: 0% 50%;\n    filter: blur(40px);\n    opacity: 0;\n  }\n}\n@keyframes slideOutBlurredRight {\n  0% {\n    transform: translateX(0) scaleY(1) scaleX(1);\n    transform-origin: 50% 50%;\n    filter: blur(0);\n    opacity: 1;\n  }\n  100% {\n    transform: translateX(1000px) scaleX(2) scaleY(0.2);\n    transform-origin: 0% 50%;\n    filter: blur(40px);\n    opacity: 0;\n  }\n}\n.Vue-Toastification__slideBlurred-enter-active.top-left, .Vue-Toastification__slideBlurred-enter-active.bottom-left {\n  -webkit-animation-name: slideInBlurredLeft;\n          animation-name: slideInBlurredLeft;\n}\n.Vue-Toastification__slideBlurred-enter-active.top-right, .Vue-Toastification__slideBlurred-enter-active.bottom-right {\n  -webkit-animation-name: slideInBlurredRight;\n          animation-name: slideInBlurredRight;\n}\n.Vue-Toastification__slideBlurred-enter-active.top-center {\n  -webkit-animation-name: slideInBlurredTop;\n          animation-name: slideInBlurredTop;\n}\n.Vue-Toastification__slideBlurred-enter-active.bottom-center {\n  -webkit-animation-name: slideInBlurredBottom;\n          animation-name: slideInBlurredBottom;\n}\n\n.Vue-Toastification__slideBlurred-leave-active.top-left, .Vue-Toastification__slideBlurred-leave-active.bottom-left {\n  -webkit-animation-name: slideOutBlurredLeft;\n          animation-name: slideOutBlurredLeft;\n}\n.Vue-Toastification__slideBlurred-leave-active.top-right, .Vue-Toastification__slideBlurred-leave-active.bottom-right {\n  -webkit-animation-name: slideOutBlurredRight;\n          animation-name: slideOutBlurredRight;\n}\n.Vue-Toastification__slideBlurred-leave-active.top-center {\n  -webkit-animation-name: slideOutBlurredTop;\n          animation-name: slideOutBlurredTop;\n}\n.Vue-Toastification__slideBlurred-leave-active.bottom-center {\n  -webkit-animation-name: slideOutBlurredBottom;\n          animation-name: slideOutBlurredBottom;\n}\n\n.Vue-Toastification__slideBlurred-move {\n  transition-timing-function: ease-in-out;\n  transition-property: all;\n  transition-duration: 400ms;\n}", ""]);
-
-// exports
-
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue?vue&type=style&index=0&id=48631027&scoped=true&lang=css&":
-/*!**************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue?vue&type=style&index=0&id=48631027&scoped=true&lang=css& ***!
-  \**************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../../../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
-// imports
-
-
-// module
-exports.push([module.i, "\n.toggle__dot[data-v-48631027] {\n    top: -0.1rem;\n\n    transition: all 0.1s ease-in-out;\n}\ninput:checked ~ .toggle__dot[data-v-48631027] {\n    transform: translateX(100%);\n    background-color: #059669;\n}\n", ""]);
 
 // exports
 
@@ -13178,36 +13138,6 @@ Sortable.mount(Remove, Revert);
 
 /***/ }),
 
-/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue?vue&type=style&index=0&id=48631027&scoped=true&lang=css&":
-/*!******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue?vue&type=style&index=0&id=48631027&scoped=true&lang=css& ***!
-  \******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-var content = __webpack_require__(/*! !../../../../../../node_modules/css-loader??ref--6-1!../../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../../node_modules/postcss-loader/src??ref--6-2!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddOrEditEmployeeModal.vue?vue&type=style&index=0&id=48631027&scoped=true&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue?vue&type=style&index=0&id=48631027&scoped=true&lang=css&");
-
-if(typeof content === 'string') content = [[module.i, content, '']];
-
-var transform;
-var insertInto;
-
-
-
-var options = {"hmr":true}
-
-options.transform = transform
-options.insertInto = undefined;
-
-var update = __webpack_require__(/*! ../../../../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
-
-if(content.locals) module.exports = content.locals;
-
-if(false) {}
-
-/***/ }),
-
 /***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/global/Avatar.vue?vue&type=style&index=0&id=bb806982&scoped=true&lang=css&":
 /*!***************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/global/Avatar.vue?vue&type=style&index=0&id=bb806982&scoped=true&lang=css& ***!
@@ -14678,13 +14608,13 @@ var render = function() {
             _c("actions", {
               attrs: {
                 employeesLength: _vm.dashboardData.employees.length,
-                phoneLinesLength: _vm.dashboardData.phoneLines.length
+                boardsLength: _vm.dashboardData.boards.length
               }
             }),
             _vm._v(" "),
-            _c("phone-line-list", {
-              class: { "animate-pulse": _vm.loadingPhoneLine },
-              attrs: { phoneLines: _vm.dashboardData.phoneLines }
+            _c("board-list", {
+              class: { "animate-pulse": _vm.loadingBoard },
+              attrs: { boards: _vm.dashboardData.boards }
             }),
             _vm._v(" "),
             _c("employee-list", {
@@ -14694,7 +14624,7 @@ var render = function() {
             _vm._v(" "),
             _c("add-or-edit-employee-modal"),
             _vm._v(" "),
-            _c("add-or-edit-phone-line-modal")
+            _c("add-or-edit-board-modal")
           ],
           1
         )
@@ -14764,7 +14694,7 @@ var render = function() {
                 _c("h3", { staticClass: "text-sm text-gray-600" }, [
                   _vm._v(
                     "\n                            " +
-                      _vm._s(_vm.phoneLinesLength) +
+                      _vm._s(_vm.boardsLength) +
                       " boards total "
                   )
                 ])
@@ -14792,7 +14722,7 @@ var render = function() {
               _vm._v(" "),
               _c("div", { staticClass: "flex-1 text-right md:text-center" }, [
                 _c("h5", { staticClass: "font-bold uppercase text-gray-800" }, [
-                  _vm._v("Add Employee")
+                  _vm._v("Add Xkanban Employee")
                 ]),
                 _vm._v(" "),
                 _c("h3", { staticClass: "text-sm text-gray-600" }, [
@@ -14838,702 +14768,10 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue?vue&type=template&id=48631027&scoped=true&":
-/*!***********************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue?vue&type=template&id=48631027&scoped=true& ***!
-  \***********************************************************************************************************************************************************************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    [
-      _c(
-        "transition",
-        {
-          attrs: {
-            "enter-active-class": "transition duration-500 ease-out transform",
-            "enter-class": " opacity-0 bg-blue-200",
-            "leave-active-class": "transition duration-300 ease-in transform",
-            "leave-to-class": "opacity-0 bg-blue-200"
-          }
-        },
-        [
-          _vm.modalOpen
-            ? _c("div", {
-                staticClass:
-                  "overflow-auto fixed inset-0 bg-gray-700 bg-opacity-50 z-30"
-              })
-            : _vm._e()
-        ]
-      ),
-      _vm._v(" "),
-      _c(
-        "transition",
-        {
-          attrs: {
-            "enter-active-class": "transition duration-300 ease-out transform ",
-            "enter-class": "scale-95 opacity-0 -translate-y-10",
-            "enter-to-class": "scale-100 opacity-100",
-            "leave-active-class": "transition duration-150 ease-in transform",
-            "leave-class": "scale-100 opacity-100",
-            "leave-to-class": "scale-95 opacity-0"
-          }
-        },
-        [
-          _vm.modalOpen
-            ? _c(
-                "div",
-                {
-                  staticClass:
-                    "fixed inset-0 z-40 flex items-start justify-center"
-                },
-                [
-                  _c("div", {
-                    staticClass: "overflow-auto fixed h-full w-full",
-                    on: {
-                      click: function($event) {
-                        _vm.modalOpen = false
-                      }
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c(
-                    "div",
-                    {
-                      staticClass:
-                        "flex flex-col overflow-auto z-50 w-100 bg-white rounded-md shadow-2xl m-10",
-                      staticStyle: {
-                        width: "700px",
-                        "min-height": "300px",
-                        "max-height": "80%"
-                      }
-                    },
-                    [
-                      _c(
-                        "div",
-                        {
-                          staticClass:
-                            "flex justify-between p-5 bg-indigo-800 border-b"
-                        },
-                        [
-                          _c("div", { staticClass: "space-y-1" }, [
-                            _vm.isEdit
-                              ? _c("div", [
-                                  _c(
-                                    "h1",
-                                    { staticClass: "text-2xl text-white pb-2" },
-                                    [_vm._v("Edit Employee")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "p",
-                                    {
-                                      staticClass:
-                                        "text-sm font-medium leading-5 text-gray-500"
-                                    },
-                                    [
-                                      _vm._v(
-                                        "\n                                Editing existing employee "
-                                      )
-                                    ]
-                                  )
-                                ])
-                              : _c("div", [
-                                  _c(
-                                    "h1",
-                                    { staticClass: "text-2xl text-white pb-2" },
-                                    [_vm._v("Create Employee")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "p",
-                                    {
-                                      staticClass:
-                                        "text-sm font-medium leading-5 text-gray-500"
-                                    },
-                                    [
-                                      _vm._v(
-                                        "\n                                Creating a new employee "
-                                      )
-                                    ]
-                                  )
-                                ])
-                          ]),
-                          _vm._v(" "),
-                          _c("div", [
-                            _c(
-                              "button",
-                              {
-                                staticClass:
-                                  "focus:outline-none flex flex-col items-center text-gray-400 hover:text-gray-500 transition duration-150 ease-in-out pl-8",
-                                attrs: { type: "button" },
-                                on: {
-                                  click: function($event) {
-                                    _vm.modalOpen = false
-                                  }
-                                }
-                              },
-                              [
-                                _c("i", { staticClass: "fas fa-times" }),
-                                _vm._v(" "),
-                                _c(
-                                  "div",
-                                  {
-                                    staticClass:
-                                      "text-xs font-semibold text-center leading-3 uppercase"
-                                  },
-                                  [
-                                    _vm._v(
-                                      "\n                                Esc\n                            "
-                                    )
-                                  ]
-                                )
-                              ]
-                            )
-                          ])
-                        ]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "form",
-                        { staticClass: "space-y-6 overflow-auto px-8 py-6" },
-                        [
-                          _c("div", { staticClass: "flex space-x-3" }, [
-                            _c("label", { staticClass: "flex-1 space-y-2" }, [
-                              _c(
-                                "div",
-                                {
-                                  staticClass:
-                                    "block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"
-                                },
-                                [
-                                  _vm._v(
-                                    "\n                                Name\n                            "
-                                  )
-                                ]
-                              ),
-                              _vm._v(" "),
-                              _c("input", {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.employeeData.name,
-                                    expression: "employeeData.name"
-                                  }
-                                ],
-                                staticClass:
-                                  "px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4",
-                                attrs: {
-                                  placeholder: "John Doe",
-                                  type: "text"
-                                },
-                                domProps: { value: _vm.employeeData.name },
-                                on: {
-                                  input: function($event) {
-                                    if ($event.target.composing) {
-                                      return
-                                    }
-                                    _vm.$set(
-                                      _vm.employeeData,
-                                      "name",
-                                      $event.target.value
-                                    )
-                                  }
-                                }
-                              })
-                            ]),
-                            _vm._v(" "),
-                            _c("label", { staticClass: "flex-1 space-y-2" }, [
-                              _c(
-                                "div",
-                                {
-                                  staticClass:
-                                    "block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"
-                                },
-                                [
-                                  _vm._v(
-                                    "\n                                Phone\n                            "
-                                  )
-                                ]
-                              ),
-                              _vm._v(" "),
-                              _c("input", {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.employeeData.phone,
-                                    expression: "employeeData.phone"
-                                  }
-                                ],
-                                staticClass:
-                                  "px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4",
-                                attrs: {
-                                  placeholder: "+15145550000",
-                                  type: "Number"
-                                },
-                                domProps: { value: _vm.employeeData.phone },
-                                on: {
-                                  input: function($event) {
-                                    if ($event.target.composing) {
-                                      return
-                                    }
-                                    _vm.$set(
-                                      _vm.employeeData,
-                                      "phone",
-                                      $event.target.value
-                                    )
-                                  }
-                                }
-                              })
-                            ])
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "flex space-x-3" }, [
-                            _c("div", { staticClass: "space-y-2 flex-1" }, [
-                              _c(
-                                "div",
-                                {
-                                  staticClass:
-                                    "block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"
-                                },
-                                [
-                                  _vm._v(
-                                    "\n                                Role\n                            "
-                                  )
-                                ]
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "div",
-                                {
-                                  staticClass:
-                                    "border border-gray-400 p-2 rounded grid divide-y divide-gray-400"
-                                },
-                                [
-                                  _c(
-                                    "label",
-                                    { staticClass: "flex items-start p-2" },
-                                    [
-                                      _c("input", {
-                                        directives: [
-                                          {
-                                            name: "model",
-                                            rawName: "v-model",
-                                            value: _vm.employeeData.role,
-                                            expression: "employeeData.role"
-                                          }
-                                        ],
-                                        staticClass:
-                                          "mt-1 form-radio text-indigo-600",
-                                        attrs: {
-                                          name: "role",
-                                          type: "radio",
-                                          value: "employee"
-                                        },
-                                        domProps: {
-                                          checked: _vm._q(
-                                            _vm.employeeData.role,
-                                            "employee"
-                                          )
-                                        },
-                                        on: {
-                                          change: function($event) {
-                                            return _vm.$set(
-                                              _vm.employeeData,
-                                              "role",
-                                              "employee"
-                                            )
-                                          }
-                                        }
-                                      }),
-                                      _vm._v(" "),
-                                      _c(
-                                        "div",
-                                        {
-                                          staticClass:
-                                            "ml-3 text-gray-700 font-medium"
-                                        },
-                                        [
-                                          _c("p", [_vm._v("Employee")]),
-                                          _vm._v(" "),
-                                          _c(
-                                            "small",
-                                            { staticClass: "text-indigo-700" },
-                                            [
-                                              _vm._v(
-                                                "Can be added to phonelines"
-                                              )
-                                            ]
-                                          )
-                                        ]
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "label",
-                                    { staticClass: "flex items-start p-2" },
-                                    [
-                                      _c("input", {
-                                        directives: [
-                                          {
-                                            name: "model",
-                                            rawName: "v-model",
-                                            value: _vm.employeeData.role,
-                                            expression: "employeeData.role"
-                                          }
-                                        ],
-                                        staticClass:
-                                          "mt-1 form-radio text-indigo-600",
-                                        attrs: {
-                                          checked: "",
-                                          name: "role",
-                                          type: "radio",
-                                          value: "admin"
-                                        },
-                                        domProps: {
-                                          checked: _vm._q(
-                                            _vm.employeeData.role,
-                                            "admin"
-                                          )
-                                        },
-                                        on: {
-                                          change: function($event) {
-                                            return _vm.$set(
-                                              _vm.employeeData,
-                                              "role",
-                                              "admin"
-                                            )
-                                          }
-                                        }
-                                      }),
-                                      _vm._v(" "),
-                                      _c(
-                                        "div",
-                                        {
-                                          staticClass:
-                                            "ml-3 text-gray-700 font-medium"
-                                        },
-                                        [
-                                          _c("p", [_vm._v("Admin")]),
-                                          _vm._v(" "),
-                                          _c(
-                                            "small",
-                                            { staticClass: "text-indigo-700" },
-                                            [
-                                              _vm._v(
-                                                "Create/Edit/Delete Access"
-                                              )
-                                            ]
-                                          )
-                                        ]
-                                      )
-                                    ]
-                                  )
-                                ]
-                              )
-                            ]),
-                            _vm._v(" "),
-                            _c("div", { staticClass: "space-y-2 flex-1" }, [
-                              _c("label", { staticClass: "flex-1 space-y-2" }, [
-                                _c(
-                                  "div",
-                                  {
-                                    staticClass:
-                                      "block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"
-                                  },
-                                  [
-                                    _vm._v(
-                                      "\n                                    ERP Email\n                                "
-                                    )
-                                  ]
-                                ),
-                                _vm._v(" "),
-                                _c("input", {
-                                  directives: [
-                                    {
-                                      name: "model",
-                                      rawName: "v-model",
-                                      value: _vm.employeeData.email,
-                                      expression: "employeeData.email"
-                                    }
-                                  ],
-                                  staticClass:
-                                    "px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4",
-                                  attrs: {
-                                    placeholder: "example@snapx.com",
-                                    type: "email"
-                                  },
-                                  domProps: { value: _vm.employeeData.email },
-                                  on: {
-                                    input: function($event) {
-                                      if ($event.target.composing) {
-                                        return
-                                      }
-                                      _vm.$set(
-                                        _vm.employeeData,
-                                        "email",
-                                        $event.target.value
-                                      )
-                                    }
-                                  }
-                                })
-                              ]),
-                              _vm._v(" "),
-                              _c(
-                                "div",
-                                {
-                                  staticClass:
-                                    "block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"
-                                },
-                                [
-                                  _vm._v(
-                                    "\n                                Status\n                            "
-                                  )
-                                ]
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "div",
-                                {
-                                  staticClass: "flex border border-gray-400 p-2"
-                                },
-                                [
-                                  _c(
-                                    "label",
-                                    {
-                                      staticClass:
-                                        "flex items-start cursor-pointer",
-                                      attrs: { for: "is-active" }
-                                    },
-                                    [
-                                      _c(
-                                        "div",
-                                        { staticClass: "relative mt-1" },
-                                        [
-                                          _c("input", {
-                                            directives: [
-                                              {
-                                                name: "model",
-                                                rawName: "v-model",
-                                                value:
-                                                  _vm.employeeData.is_active,
-                                                expression:
-                                                  "employeeData.is_active"
-                                              }
-                                            ],
-                                            staticClass: "hidden",
-                                            attrs: {
-                                              id: "is-active",
-                                              type: "checkbox"
-                                            },
-                                            domProps: {
-                                              checked: Array.isArray(
-                                                _vm.employeeData.is_active
-                                              )
-                                                ? _vm._i(
-                                                    _vm.employeeData.is_active,
-                                                    null
-                                                  ) > -1
-                                                : _vm.employeeData.is_active
-                                            },
-                                            on: {
-                                              change: function($event) {
-                                                var $$a =
-                                                    _vm.employeeData.is_active,
-                                                  $$el = $event.target,
-                                                  $$c = $$el.checked
-                                                    ? true
-                                                    : false
-                                                if (Array.isArray($$a)) {
-                                                  var $$v = null,
-                                                    $$i = _vm._i($$a, $$v)
-                                                  if ($$el.checked) {
-                                                    $$i < 0 &&
-                                                      _vm.$set(
-                                                        _vm.employeeData,
-                                                        "is_active",
-                                                        $$a.concat([$$v])
-                                                      )
-                                                  } else {
-                                                    $$i > -1 &&
-                                                      _vm.$set(
-                                                        _vm.employeeData,
-                                                        "is_active",
-                                                        $$a
-                                                          .slice(0, $$i)
-                                                          .concat(
-                                                            $$a.slice($$i + 1)
-                                                          )
-                                                      )
-                                                  }
-                                                } else {
-                                                  _vm.$set(
-                                                    _vm.employeeData,
-                                                    "is_active",
-                                                    $$c
-                                                  )
-                                                }
-                                              }
-                                            }
-                                          }),
-                                          _vm._v(" "),
-                                          _c("div", {
-                                            staticClass:
-                                              "toggle__dot absolute w-5 h-5 bg-red-600 rounded-full shadow inset-y-0 left-0"
-                                          }),
-                                          _vm._v(" "),
-                                          _c("div", {
-                                            staticClass:
-                                              "toggle__line w-10 h-4 bg-gray-400 rounded-full shadow-inner"
-                                          })
-                                        ]
-                                      ),
-                                      _vm._v(" "),
-                                      _vm.employeeData.is_active
-                                        ? _c(
-                                            "div",
-                                            {
-                                              staticClass:
-                                                "ml-3 text-gray-700 font-medium"
-                                            },
-                                            [
-                                              _c("p", [_vm._v("Active")]),
-                                              _vm._v(" "),
-                                              _c(
-                                                "small",
-                                                {
-                                                  staticClass: "text-green-700"
-                                                },
-                                                [_vm._v("User can be called")]
-                                              )
-                                            ]
-                                          )
-                                        : _c(
-                                            "div",
-                                            {
-                                              staticClass:
-                                                "ml-3 text-gray-700 font-medium"
-                                            },
-                                            [
-                                              _c("p", [_vm._v("Inactive")]),
-                                              _vm._v(" "),
-                                              _c(
-                                                "small",
-                                                { staticClass: "text-red-700" },
-                                                [_vm._v("User won't be called")]
-                                              )
-                                            ]
-                                          )
-                                    ]
-                                  )
-                                ]
-                              )
-                            ])
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            {
-                              staticClass:
-                                "w-full grid sm:grid-cols-2 gap-3 sm:gap-3"
-                            },
-                            [
-                              _c(
-                                "button",
-                                {
-                                  staticClass:
-                                    "px-4 py-3 border border-gray-200 rounded text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-600 transition duration-300 ease-in-out",
-                                  attrs: { type: "button" },
-                                  on: {
-                                    click: function($event) {
-                                      _vm.modalOpen = false
-                                    }
-                                  }
-                                },
-                                [
-                                  _vm._v(
-                                    "\n                            Cancel\n                        "
-                                  )
-                                ]
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "button",
-                                {
-                                  staticClass:
-                                    "px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out",
-                                  attrs: { type: "button" },
-                                  on: {
-                                    click: function($event) {
-                                      return _vm.saveEmployee($event)
-                                    }
-                                  }
-                                },
-                                [
-                                  _vm.isEdit
-                                    ? _c("span", [_vm._v("Edit Employee")])
-                                    : _c("span", [_vm._v("Create Employee")])
-                                ]
-                              )
-                            ]
-                          ),
-                          _vm._v(" "),
-                          _vm.isEdit
-                            ? _c(
-                                "button",
-                                {
-                                  staticClass:
-                                    "mt-4  text-sm text-red-600 hover:text-red-800 transition duration-300 ease-in-out focus:outline-none",
-                                  on: {
-                                    click: function($event) {
-                                      return _vm.deleteEmployee($event)
-                                    }
-                                  }
-                                },
-                                [
-                                  _c("i", { staticClass: "fas fa-trash mr-2" }),
-                                  _vm._v(
-                                    "\n                        Delete Employee\n                    "
-                                  )
-                                ]
-                              )
-                            : _vm._e()
-                        ]
-                      )
-                    ]
-                  )
-                ]
-              )
-            : _vm._e()
-        ]
-      )
-    ],
-    1
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=template&id=4be54ff3&":
-/*!************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=template&id=4be54ff3& ***!
-  \************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditBoardModal.vue?vue&type=template&id=96ad57e2&":
+/*!********************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditBoardModal.vue?vue&type=template&id=96ad57e2& ***!
+  \********************************************************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -15772,7 +15010,7 @@ var render = function() {
                                   attrs: { type: "button" },
                                   on: {
                                     click: function($event) {
-                                      return _vm.savePhoneLine($event)
+                                      return _vm.saveBoard($event)
                                     }
                                   }
                                 },
@@ -15817,6 +15055,627 @@ var render = function() {
     ],
     1
   )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue?vue&type=template&id=48631027&":
+/*!***********************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue?vue&type=template&id=48631027& ***!
+  \***********************************************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    [
+      _c(
+        "transition",
+        {
+          attrs: {
+            "enter-active-class": "transition duration-500 ease-out transform",
+            "enter-class": " opacity-0 bg-blue-200",
+            "leave-active-class": "transition duration-300 ease-in transform",
+            "leave-to-class": "opacity-0 bg-blue-200"
+          }
+        },
+        [
+          _vm.modalOpen
+            ? _c("div", {
+                staticClass:
+                  "overflow-auto fixed inset-0 bg-gray-700 bg-opacity-50 z-30"
+              })
+            : _vm._e()
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "transition",
+        {
+          attrs: {
+            "enter-active-class": "transition duration-300 ease-out transform ",
+            "enter-class": "scale-95 opacity-0 -translate-y-10",
+            "enter-to-class": "scale-100 opacity-100",
+            "leave-active-class": "transition duration-150 ease-in transform",
+            "leave-class": "scale-100 opacity-100",
+            "leave-to-class": "scale-95 opacity-0"
+          }
+        },
+        [
+          _vm.modalOpen
+            ? _c(
+                "div",
+                {
+                  staticClass:
+                    "fixed inset-0 z-40 flex items-start justify-center"
+                },
+                [
+                  _c("div", {
+                    staticClass: "overflow-auto fixed h-full w-full",
+                    on: {
+                      click: function($event) {
+                        _vm.modalOpen = false
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "flex flex-col overflow-auto z-50 w-100 bg-white rounded-md shadow-2xl m-10",
+                      staticStyle: {
+                        width: "700px",
+                        "min-height": "300px",
+                        "max-height": "80%"
+                      }
+                    },
+                    [
+                      _c(
+                        "div",
+                        {
+                          staticClass:
+                            "flex justify-between p-5 bg-indigo-800 border-b"
+                        },
+                        [
+                          _c("div", { staticClass: "space-y-1" }, [
+                            _vm.isEdit
+                              ? _c("div", [
+                                  _c(
+                                    "h1",
+                                    { staticClass: "text-2xl text-white pb-2" },
+                                    [_vm._v("Edit Xkanban Employee")]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "p",
+                                    {
+                                      staticClass:
+                                        "text-sm font-medium leading-5 text-gray-500"
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                                Editing existing Xkanban employee "
+                                      )
+                                    ]
+                                  )
+                                ])
+                              : _c("div", [
+                                  _c(
+                                    "h1",
+                                    { staticClass: "text-2xl text-white pb-2" },
+                                    [_vm._v("Create Xkanban Employee")]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "p",
+                                    {
+                                      staticClass:
+                                        "text-sm font-medium leading-5 text-gray-500"
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                                Creating a new employee for Xkanban"
+                                      )
+                                    ]
+                                  )
+                                ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", [
+                            _c(
+                              "button",
+                              {
+                                staticClass:
+                                  "focus:outline-none flex flex-col items-center text-gray-400 hover:text-gray-500 transition duration-150 ease-in-out pl-8",
+                                attrs: { type: "button" },
+                                on: {
+                                  click: function($event) {
+                                    _vm.modalOpen = false
+                                  }
+                                }
+                              },
+                              [
+                                _c("i", { staticClass: "fas fa-times" }),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  {
+                                    staticClass:
+                                      "text-xs font-semibold text-center leading-3 uppercase"
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                                Esc\n                            "
+                                    )
+                                  ]
+                                )
+                              ]
+                            )
+                          ])
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "form",
+                        { staticClass: "space-y-6 overflow-auto px-8 py-6" },
+                        [
+                          _c("div", { staticClass: "flex space-x-3" }, [
+                            _c(
+                              "div",
+                              { staticClass: "space-y-2 flex-1" },
+                              [
+                                _c(
+                                  "span",
+                                  {
+                                    staticClass:
+                                      "block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                                Employees\n                            "
+                                    )
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c("vSelect", {
+                                  staticClass: "text-gray-400",
+                                  staticStyle: { "margin-top": "7px" },
+                                  attrs: {
+                                    options: _vm.allUsers,
+                                    label: "name",
+                                    multiple: "",
+                                    placeholder: "Select Members"
+                                  },
+                                  scopedSlots: _vm._u(
+                                    [
+                                      {
+                                        key: "option",
+                                        fn: function(option) {
+                                          return [
+                                            _c("avatar", {
+                                              staticClass:
+                                                "mr-3 m-1 float-left",
+                                              attrs: {
+                                                name: option.name,
+                                                size: 4
+                                              }
+                                            }),
+                                            _vm._v(" "),
+                                            _c("p", { staticClass: "inline" }, [
+                                              _vm._v(_vm._s(option.name))
+                                            ])
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        key: "no-options",
+                                        fn: function(ref) {
+                                          var search = ref.search
+                                          var searching = ref.searching
+                                          var loading = ref.loading
+                                          return [
+                                            _vm._v(
+                                              "\n                                    No result .\n                                "
+                                            )
+                                          ]
+                                        }
+                                      }
+                                    ],
+                                    null,
+                                    false,
+                                    3290051624
+                                  ),
+                                  model: {
+                                    value: _vm.selectedMembers,
+                                    callback: function($$v) {
+                                      _vm.selectedMembers = $$v
+                                    },
+                                    expression: "selectedMembers"
+                                  }
+                                })
+                              ],
+                              1
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "flex space-x-3" }, [
+                            _c("div", { staticClass: "space-y-2 flex-1" }, [
+                              _c(
+                                "div",
+                                {
+                                  staticClass:
+                                    "block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                                Role\n                            "
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                {
+                                  staticClass:
+                                    "border border-gray-400 p-2 rounded grid divide-y divide-gray-400"
+                                },
+                                [
+                                  _c(
+                                    "label",
+                                    { staticClass: "flex items-start p-2" },
+                                    [
+                                      _c("input", {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value: _vm.employeeData.role,
+                                            expression: "employeeData.role"
+                                          }
+                                        ],
+                                        staticClass:
+                                          "mt-1 form-radio text-indigo-600",
+                                        attrs: {
+                                          name: "role",
+                                          type: "radio",
+                                          value: "employee"
+                                        },
+                                        domProps: {
+                                          checked: _vm._q(
+                                            _vm.employeeData.role,
+                                            "employee"
+                                          )
+                                        },
+                                        on: {
+                                          change: function($event) {
+                                            return _vm.$set(
+                                              _vm.employeeData,
+                                              "role",
+                                              "employee"
+                                            )
+                                          }
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c(
+                                        "div",
+                                        {
+                                          staticClass:
+                                            "ml-3 text-gray-700 font-medium"
+                                        },
+                                        [
+                                          _c("p", [_vm._v("Employee")]),
+                                          _vm._v(" "),
+                                          _c(
+                                            "small",
+                                            { staticClass: "text-indigo-700" },
+                                            [
+                                              _vm._v(
+                                                "Can create and interact with tasks."
+                                              )
+                                            ]
+                                          )
+                                        ]
+                                      )
+                                    ]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "label",
+                                    { staticClass: "flex items-start p-2" },
+                                    [
+                                      _c("input", {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value: _vm.employeeData.role,
+                                            expression: "employeeData.role"
+                                          }
+                                        ],
+                                        staticClass:
+                                          "mt-1 form-radio text-indigo-600",
+                                        attrs: {
+                                          checked: "",
+                                          name: "role",
+                                          type: "radio",
+                                          value: "admin"
+                                        },
+                                        domProps: {
+                                          checked: _vm._q(
+                                            _vm.employeeData.role,
+                                            "admin"
+                                          )
+                                        },
+                                        on: {
+                                          change: function($event) {
+                                            return _vm.$set(
+                                              _vm.employeeData,
+                                              "role",
+                                              "admin"
+                                            )
+                                          }
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c(
+                                        "div",
+                                        {
+                                          staticClass:
+                                            "ml-3 text-gray-700 font-medium"
+                                        },
+                                        [
+                                          _c("p", [_vm._v("Admin")]),
+                                          _vm._v(" "),
+                                          _c(
+                                            "small",
+                                            { staticClass: "text-indigo-700" },
+                                            [
+                                              _vm._v(
+                                                "Create/Edit/Delete access for employees and\n                                                                       kanban boards.\n                                        "
+                                              )
+                                            ]
+                                          )
+                                        ]
+                                      )
+                                    ]
+                                  )
+                                ]
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            {
+                              staticClass:
+                                "w-full grid sm:grid-cols-2 gap-3 sm:gap-3"
+                            },
+                            [
+                              _c(
+                                "button",
+                                {
+                                  staticClass:
+                                    "px-4 py-3 border border-gray-200 rounded text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-600 transition duration-300 ease-in-out",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      _vm.modalOpen = false
+                                    }
+                                  }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                            Cancel\n                        "
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "button",
+                                {
+                                  staticClass:
+                                    "px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.saveEmployee($event)
+                                    }
+                                  }
+                                },
+                                [
+                                  _vm.isEdit
+                                    ? _c("span", [_vm._v("Edit Employee")])
+                                    : _c("span", [_vm._v("Create Employee")])
+                                ]
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _vm.isEdit
+                            ? _c(
+                                "button",
+                                {
+                                  staticClass:
+                                    "mt-4  text-sm text-red-600 hover:text-red-800 transition duration-300 ease-in-out focus:outline-none",
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.deleteEmployee($event)
+                                    }
+                                  }
+                                },
+                                [
+                                  _c("i", { staticClass: "fas fa-trash mr-2" }),
+                                  _vm._v(
+                                    "\n                        Delete Employee\n                    "
+                                  )
+                                ]
+                              )
+                            : _vm._e()
+                        ]
+                      )
+                    ]
+                  )
+                ]
+              )
+            : _vm._e()
+        ]
+      )
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue?vue&type=template&id=08fb6b1e&":
+/*!**********************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue?vue&type=template&id=08fb6b1e& ***!
+  \**********************************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "boards" }, [
+    _c("h2", { staticClass: "text-2xl font-semibold py-5" }, [
+      _vm._v("Kanban Boards")
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "bg-gray-100 py-3" }, [
+      _c(
+        "div",
+        { staticClass: "p-2 flex flex-wrap" },
+        [
+          _vm._l(_vm.boards, function(board, boardIndex) {
+            return [
+              _c(
+                "div",
+                {
+                  key: boardIndex,
+                  staticClass: "flex-auto rounded shadow-lg m-2 bg-white"
+                },
+                [
+                  _c("div", { staticClass: "flex p-4" }, [
+                    _c("div", { staticClass: "pr-1 flex-1" }, [
+                      _c(
+                        "h5",
+                        {
+                          staticClass:
+                            "font-semibold text-md uppercase text-gray-800"
+                        },
+                        [
+                          _vm._v(
+                            _vm._s(board.name) +
+                              "\n                                "
+                          ),
+                          _c(
+                            "a",
+                            {
+                              staticClass:
+                                "cursor-pointer px-2 text-gray-400 hover:text-gray-600 transition duration-300 ease-in-out focus:outline-none",
+                              on: {
+                                click: function($event) {
+                                  return _vm.editBoard(board)
+                                }
+                              }
+                            },
+                            [_c("i", { staticClass: "fas fa-edit" })]
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "span",
+                        { staticClass: "text-gray-500 font-bold text-sm" },
+                        [_vm._v(_vm._s(board.phone))]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "p",
+                        {
+                          staticClass: "text-sm text-gray-500 mt-4 font-medium"
+                        },
+                        [
+                          _c("span", { staticClass: "mr-2 text-green-700" }, [
+                            _c("i", { staticClass: "fas fa-user" }),
+                            _vm._v(
+                              "\n                                    " +
+                                _vm._s(board.members.length) +
+                                "\n                                "
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "router-link",
+                            {
+                              attrs: {
+                                to: {
+                                  path: "/kanban/phoneline",
+                                  query: { id: board.id }
+                                }
+                              }
+                            },
+                            [
+                              _c(
+                                "span",
+                                {
+                                  staticClass:
+                                    "whitespace-no-wrap underline text-blue-600 hover:text-blue-800"
+                                },
+                                [_vm._v("Navigate to board")]
+                              )
+                            ]
+                          )
+                        ],
+                        1
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "relative w-auto pl-4 flex-initial" },
+                      [
+                        _c("avatar", {
+                          staticClass: "mr-3",
+                          attrs: { name: board.name, size: 12 }
+                        })
+                      ],
+                      1
+                    )
+                  ])
+                ]
+              )
+            ]
+          })
+        ],
+        2
+      )
+    ])
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -16302,145 +16161,6 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue?vue&type=template&id=e5e34c8c&":
-/*!**************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue?vue&type=template&id=e5e34c8c& ***!
-  \**************************************************************************************************************************************************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "phoneLines" }, [
-    _c("h2", { staticClass: "text-2xl font-semibold py-5" }, [
-      _vm._v("Kanban Boards")
-    ]),
-    _vm._v(" "),
-    _c("div", { staticClass: "bg-gray-100 py-3" }, [
-      _c(
-        "div",
-        { staticClass: "p-2 flex flex-wrap" },
-        [
-          _vm._l(_vm.phoneLines, function(phoneLine, phoneLineIndex) {
-            return [
-              _c(
-                "div",
-                {
-                  key: phoneLineIndex,
-                  staticClass: "flex-auto rounded shadow-lg m-2 bg-white"
-                },
-                [
-                  _c("div", { staticClass: "flex p-4" }, [
-                    _c("div", { staticClass: "pr-1 flex-1" }, [
-                      _c(
-                        "h5",
-                        {
-                          staticClass:
-                            "font-semibold text-md uppercase text-gray-800"
-                        },
-                        [
-                          _vm._v(
-                            _vm._s(phoneLine.name) +
-                              "\n                                "
-                          ),
-                          _c(
-                            "a",
-                            {
-                              staticClass:
-                                "cursor-pointer px-2 text-gray-400 hover:text-gray-600 transition duration-300 ease-in-out focus:outline-none",
-                              on: {
-                                click: function($event) {
-                                  return _vm.editPhoneLine(phoneLine)
-                                }
-                              }
-                            },
-                            [_c("i", { staticClass: "fas fa-edit" })]
-                          )
-                        ]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "span",
-                        { staticClass: "text-gray-500 font-bold text-sm" },
-                        [_vm._v(_vm._s(phoneLine.phone))]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "p",
-                        {
-                          staticClass: "text-sm text-gray-500 mt-4 font-medium"
-                        },
-                        [
-                          _c("span", { staticClass: "mr-2 text-green-700" }, [
-                            _c("i", { staticClass: "fas fa-user" }),
-                            _vm._v(
-                              "\n                                    " +
-                                _vm._s(phoneLine.members.length) +
-                                "\n                                "
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "router-link",
-                            {
-                              attrs: {
-                                to: {
-                                  path: "/kanban/phoneline",
-                                  query: { id: phoneLine.id }
-                                }
-                              }
-                            },
-                            [
-                              _c(
-                                "span",
-                                {
-                                  staticClass:
-                                    "whitespace-no-wrap underline text-blue-600 hover:text-blue-800"
-                                },
-                                [_vm._v("Navigate to board")]
-                              )
-                            ]
-                          )
-                        ],
-                        1
-                      )
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "div",
-                      { staticClass: "relative w-auto pl-4 flex-initial" },
-                      [
-                        _c("avatar", {
-                          staticClass: "mr-3",
-                          attrs: { name: phoneLine.name, size: 12 }
-                        })
-                      ],
-                      1
-                    )
-                  ])
-                ]
-              )
-            ]
-          })
-        ],
-        2
-      )
-    ])
-  ])
-}
-var staticRenderFns = []
-render._withStripped = true
-
-
-
-/***/ }),
-
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/global/Avatar.vue?vue&type=template&id=bb806982&scoped=true&":
 /*!********************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/global/Avatar.vue?vue&type=template&id=bb806982&scoped=true& ***!
@@ -16736,7 +16456,7 @@ var render = function() {
           [_vm._v("\n            Kanbans ")]
         ),
         _vm._v(" "),
-        _vm.loadingPhoneLine
+        _vm.loadingBoard
           ? _c("div", { staticClass: "my-2 -mx-3 animate-pulse" }, [
               _c(
                 "span",
@@ -16752,26 +16472,23 @@ var render = function() {
           "div",
           { staticClass: "my-2 -mx-3 pb-2 " },
           [
-            _vm._l(_vm.phoneLines, function(phoneLine, phoneLineIndex) {
+            _vm._l(_vm.boards, function(board, boardIndex) {
               return [
                 _c(
                   "router-link",
                   {
-                    key: phoneLineIndex,
+                    key: boardIndex,
                     staticClass:
                       "flex justify-between items-center px-3 py-2 hover:bg-gray-200 rounded-lg",
                     attrs: {
-                      to: {
-                        path: "/kanban/phoneline",
-                        query: { id: phoneLine.id }
-                      }
+                      to: { path: "/kanban/phoneline", query: { id: board.id } }
                     }
                   },
                   [
                     _c(
                       "span",
                       { staticClass: "text-sm font-medium text-gray-700" },
-                      [_vm._v(_vm._s(phoneLine.name))]
+                      [_vm._v(_vm._s(board.name))]
                     )
                   ]
                 )
@@ -39183,8 +38900,8 @@ function createBoard(kanbanData) {
     console.warn(error);
   });
 }
-function deleteBoard(phoneLineId) {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('delete-board/' + phoneLineId);
+function deleteBoard(boardId) {
+  return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('delete-board/' + boardId);
 }
 function getTags() {
   return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('get-tags');
@@ -39195,13 +38912,13 @@ function createColumns(columnData) {
 } // Employee Cards
 
 function createEmployeeCards(employeeCardData) {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('create-employee-cards', employeeCardData);
+  return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('create-kanban-employee-cards', employeeCardData);
 }
 function getEmployeeCardsByColumn(columnId) {
   return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('get-employee-cards-by-column/' + columnId);
 }
 function deleteEmployeeCard(employeeCardId) {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('delete-employee-card/' + employeeCardId);
+  return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('delete-kanban-employee-card/' + employeeCardId);
 }
 function updateEmployeeCardIndexes(employeeCards) {
   return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('update-employee-card-indexes', employeeCards);
@@ -39211,20 +38928,20 @@ function updateEmployeeCardColumnId(columnId, employeeCardId) {
 } // Employees
 
 function getEmployees() {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('get-employees');
+  return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('get-kanban-employees');
 }
 function createEmployee(employeeData) {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('create-employee', employeeData);
+  return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('create-kanban-employee', employeeData);
 }
 function deleteEmployee(employeeId) {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('delete-employee/' + employeeId);
+  return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('delete-kanban-employee/' + employeeId);
 } // Members
 
-function getMembers(phoneLineId) {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('get-members/' + phoneLineId);
+function getMembers(boardId) {
+  return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('get-members/' + boardId);
 }
-function addMembers(memberData, phoneLineId) {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('create-members/' + phoneLineId, memberData);
+function addMembers(memberData, boardId) {
+  return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('create-members/' + boardId, memberData);
 }
 function deleteMember(memberId) {
   return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('delete-member/' + memberId);
@@ -39412,6 +39129,75 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditBoardModal.vue":
+/*!*******************************************************************************************!*\
+  !*** ./src/resources/js/components/dashboard/dashboardComponents/AddOrEditBoardModal.vue ***!
+  \*******************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _AddOrEditBoardModal_vue_vue_type_template_id_96ad57e2___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AddOrEditBoardModal.vue?vue&type=template&id=96ad57e2& */ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditBoardModal.vue?vue&type=template&id=96ad57e2&");
+/* harmony import */ var _AddOrEditBoardModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AddOrEditBoardModal.vue?vue&type=script&lang=js& */ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditBoardModal.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _AddOrEditBoardModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _AddOrEditBoardModal_vue_vue_type_template_id_96ad57e2___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _AddOrEditBoardModal_vue_vue_type_template_id_96ad57e2___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "src/resources/js/components/dashboard/dashboardComponents/AddOrEditBoardModal.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditBoardModal.vue?vue&type=script&lang=js&":
+/*!********************************************************************************************************************!*\
+  !*** ./src/resources/js/components/dashboard/dashboardComponents/AddOrEditBoardModal.vue?vue&type=script&lang=js& ***!
+  \********************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditBoardModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddOrEditBoardModal.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditBoardModal.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditBoardModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditBoardModal.vue?vue&type=template&id=96ad57e2&":
+/*!**************************************************************************************************************************!*\
+  !*** ./src/resources/js/components/dashboard/dashboardComponents/AddOrEditBoardModal.vue?vue&type=template&id=96ad57e2& ***!
+  \**************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditBoardModal_vue_vue_type_template_id_96ad57e2___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddOrEditBoardModal.vue?vue&type=template&id=96ad57e2& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditBoardModal.vue?vue&type=template&id=96ad57e2&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditBoardModal_vue_vue_type_template_id_96ad57e2___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditBoardModal_vue_vue_type_template_id_96ad57e2___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue":
 /*!**********************************************************************************************!*\
   !*** ./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue ***!
@@ -39421,11 +39207,9 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _AddOrEditEmployeeModal_vue_vue_type_template_id_48631027_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AddOrEditEmployeeModal.vue?vue&type=template&id=48631027&scoped=true& */ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue?vue&type=template&id=48631027&scoped=true&");
+/* harmony import */ var _AddOrEditEmployeeModal_vue_vue_type_template_id_48631027___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AddOrEditEmployeeModal.vue?vue&type=template&id=48631027& */ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue?vue&type=template&id=48631027&");
 /* harmony import */ var _AddOrEditEmployeeModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AddOrEditEmployeeModal.vue?vue&type=script&lang=js& */ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _AddOrEditEmployeeModal_vue_vue_type_style_index_0_id_48631027_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./AddOrEditEmployeeModal.vue?vue&type=style&index=0&id=48631027&scoped=true&lang=css& */ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue?vue&type=style&index=0&id=48631027&scoped=true&lang=css&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -39433,13 +39217,13 @@ __webpack_require__.r(__webpack_exports__);
 
 /* normalize component */
 
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
   _AddOrEditEmployeeModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _AddOrEditEmployeeModal_vue_vue_type_template_id_48631027_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _AddOrEditEmployeeModal_vue_vue_type_template_id_48631027_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _AddOrEditEmployeeModal_vue_vue_type_template_id_48631027___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _AddOrEditEmployeeModal_vue_vue_type_template_id_48631027___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
-  "48631027",
+  null,
   null
   
 )
@@ -39465,51 +39249,35 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue?vue&type=style&index=0&id=48631027&scoped=true&lang=css&":
-/*!*******************************************************************************************************************************************************!*\
-  !*** ./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue?vue&type=style&index=0&id=48631027&scoped=true&lang=css& ***!
-  \*******************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditEmployeeModal_vue_vue_type_style_index_0_id_48631027_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/style-loader!../../../../../../node_modules/css-loader??ref--6-1!../../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../../node_modules/postcss-loader/src??ref--6-2!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddOrEditEmployeeModal.vue?vue&type=style&index=0&id=48631027&scoped=true&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue?vue&type=style&index=0&id=48631027&scoped=true&lang=css&");
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditEmployeeModal_vue_vue_type_style_index_0_id_48631027_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditEmployeeModal_vue_vue_type_style_index_0_id_48631027_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditEmployeeModal_vue_vue_type_style_index_0_id_48631027_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditEmployeeModal_vue_vue_type_style_index_0_id_48631027_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-
-
-/***/ }),
-
-/***/ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue?vue&type=template&id=48631027&scoped=true&":
-/*!*****************************************************************************************************************************************!*\
-  !*** ./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue?vue&type=template&id=48631027&scoped=true& ***!
-  \*****************************************************************************************************************************************/
+/***/ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue?vue&type=template&id=48631027&":
+/*!*****************************************************************************************************************************!*\
+  !*** ./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue?vue&type=template&id=48631027& ***!
+  \*****************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditEmployeeModal_vue_vue_type_template_id_48631027_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddOrEditEmployeeModal.vue?vue&type=template&id=48631027&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue?vue&type=template&id=48631027&scoped=true&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditEmployeeModal_vue_vue_type_template_id_48631027_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditEmployeeModal_vue_vue_type_template_id_48631027___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddOrEditEmployeeModal.vue?vue&type=template&id=48631027& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue?vue&type=template&id=48631027&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditEmployeeModal_vue_vue_type_template_id_48631027___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditEmployeeModal_vue_vue_type_template_id_48631027_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditEmployeeModal_vue_vue_type_template_id_48631027___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
 /***/ }),
 
-/***/ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue":
-/*!***********************************************************************************************!*\
-  !*** ./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue ***!
-  \***********************************************************************************************/
+/***/ "./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue":
+/*!*********************************************************************************!*\
+  !*** ./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue ***!
+  \*********************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _AddOrEditPhoneLineModal_vue_vue_type_template_id_4be54ff3___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AddOrEditPhoneLineModal.vue?vue&type=template&id=4be54ff3& */ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=template&id=4be54ff3&");
-/* harmony import */ var _AddOrEditPhoneLineModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AddOrEditPhoneLineModal.vue?vue&type=script&lang=js& */ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=script&lang=js&");
+/* harmony import */ var _BoardList_vue_vue_type_template_id_08fb6b1e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./BoardList.vue?vue&type=template&id=08fb6b1e& */ "./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue?vue&type=template&id=08fb6b1e&");
+/* harmony import */ var _BoardList_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./BoardList.vue?vue&type=script&lang=js& */ "./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -39519,9 +39287,9 @@ __webpack_require__.r(__webpack_exports__);
 /* normalize component */
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _AddOrEditPhoneLineModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _AddOrEditPhoneLineModal_vue_vue_type_template_id_4be54ff3___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _AddOrEditPhoneLineModal_vue_vue_type_template_id_4be54ff3___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _BoardList_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _BoardList_vue_vue_type_template_id_08fb6b1e___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _BoardList_vue_vue_type_template_id_08fb6b1e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
   null,
@@ -39531,38 +39299,38 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue"
+component.options.__file = "src/resources/js/components/dashboard/dashboardComponents/BoardList.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 
-/***/ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=script&lang=js&":
-/*!************************************************************************************************************************!*\
-  !*** ./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=script&lang=js& ***!
-  \************************************************************************************************************************/
+/***/ "./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************************************!*\
+  !*** ./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditPhoneLineModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddOrEditPhoneLineModal.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditPhoneLineModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_BoardList_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./BoardList.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_BoardList_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
-/***/ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=template&id=4be54ff3&":
-/*!******************************************************************************************************************************!*\
-  !*** ./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=template&id=4be54ff3& ***!
-  \******************************************************************************************************************************/
+/***/ "./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue?vue&type=template&id=08fb6b1e&":
+/*!****************************************************************************************************************!*\
+  !*** ./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue?vue&type=template&id=08fb6b1e& ***!
+  \****************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditPhoneLineModal_vue_vue_type_template_id_4be54ff3___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddOrEditPhoneLineModal.vue?vue&type=template&id=4be54ff3& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditPhoneLineModal.vue?vue&type=template&id=4be54ff3&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditPhoneLineModal_vue_vue_type_template_id_4be54ff3___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BoardList_vue_vue_type_template_id_08fb6b1e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./BoardList.vue?vue&type=template&id=08fb6b1e& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/BoardList.vue?vue&type=template&id=08fb6b1e&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BoardList_vue_vue_type_template_id_08fb6b1e___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditPhoneLineModal_vue_vue_type_template_id_4be54ff3___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BoardList_vue_vue_type_template_id_08fb6b1e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
@@ -39632,75 +39400,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_EmployeeList_vue_vue_type_template_id_5c5043e2___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_EmployeeList_vue_vue_type_template_id_5c5043e2___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
-
-
-
-/***/ }),
-
-/***/ "./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue":
-/*!*************************************************************************************!*\
-  !*** ./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue ***!
-  \*************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _PhoneLineList_vue_vue_type_template_id_e5e34c8c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PhoneLineList.vue?vue&type=template&id=e5e34c8c& */ "./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue?vue&type=template&id=e5e34c8c&");
-/* harmony import */ var _PhoneLineList_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./PhoneLineList.vue?vue&type=script&lang=js& */ "./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _PhoneLineList_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _PhoneLineList_vue_vue_type_template_id_e5e34c8c___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _PhoneLineList_vue_vue_type_template_id_e5e34c8c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue"
-/* harmony default export */ __webpack_exports__["default"] = (component.exports);
-
-/***/ }),
-
-/***/ "./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue?vue&type=script&lang=js&":
-/*!**************************************************************************************************************!*\
-  !*** ./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue?vue&type=script&lang=js& ***!
-  \**************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PhoneLineList_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./PhoneLineList.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PhoneLineList_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue?vue&type=template&id=e5e34c8c&":
-/*!********************************************************************************************************************!*\
-  !*** ./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue?vue&type=template&id=e5e34c8c& ***!
-  \********************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PhoneLineList_vue_vue_type_template_id_e5e34c8c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./PhoneLineList.vue?vue&type=template&id=e5e34c8c& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/PhoneLineList.vue?vue&type=template&id=e5e34c8c&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PhoneLineList_vue_vue_type_template_id_e5e34c8c___WEBPACK_IMPORTED_MODULE_0__["render"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PhoneLineList_vue_vue_type_template_id_e5e34c8c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
@@ -40419,7 +40118,7 @@ var ajaxCalls = {
     };
   },
   methods: {
-    // Phone Schedule App Data
+    // Kanban App Data
     asyncGetkanbanData: function asyncGetkanbanData(id) {
       return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('get-phone-line-data/' + id);
     },
@@ -40427,20 +40126,20 @@ var ajaxCalls = {
       return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('get-dashboard-data');
     },
     // Board
-    asyncgetBoards: function asyncgetBoards() {
+    asyncGetBoards: function asyncGetBoards() {
       return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('get-phone-lines');
     },
-    asynccreateBoard: function asynccreateBoard(kanbanData) {
+    asyncCreateBoard: function asyncCreateBoard(kanbanData) {
       var _this = this;
 
       return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('create-board', kanbanData)["catch"](function (error) {
         _this.triggerErrorToast(error.response.data.message);
       });
     },
-    asyncdeleteBoard: function asyncdeleteBoard(phoneLineId) {
+    asyncDeleteBoard: function asyncDeleteBoard(boardId) {
       var _this2 = this;
 
-      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('delete-board/' + phoneLineId)["catch"](function (error) {
+      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('delete-board/' + boardId)["catch"](function (error) {
         _this2.triggerErrorToast(error.response.data.message);
       });
     },
@@ -40453,20 +40152,20 @@ var ajaxCalls = {
       });
     },
     // Employee Cards
-    asyncCreateEmployeeCards: function asyncCreateEmployeeCards(employeeCardData) {
+    asyncCreateKanbanEmployeeCards: function asyncCreateKanbanEmployeeCards(employeeCardData) {
       var _this4 = this;
 
-      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('create-employee-cards', employeeCardData)["catch"](function (error) {
+      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('create-kanban-employee-cards', employeeCardData)["catch"](function (error) {
         _this4.triggerErrorToast(error.response.data.message);
       });
     },
     asyncGetEmployeeCardsByColumn: function asyncGetEmployeeCardsByColumn(columnId) {
       return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('get-employee-cards-by-column/' + columnId);
     },
-    asyncDeleteEmployeeCard: function asyncDeleteEmployeeCard(employeeCardId) {
+    asyncDeleteKanbanEmployeeCard: function asyncDeleteKanbanEmployeeCard(employeeCardId) {
       var _this5 = this;
 
-      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('delete-employee-card/' + employeeCardId)["catch"](function (error) {
+      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('delete-kanban-employee-card/' + employeeCardId)["catch"](function (error) {
         _this5.triggerErrorToast(error.response.data.message);
       });
     },
@@ -40485,31 +40184,34 @@ var ajaxCalls = {
       });
     },
     // Employees
-    asyncGetEmployees: function asyncGetEmployees() {
-      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('get-employees');
+    asyncGetAllUsers: function asyncGetAllUsers() {
+      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('get-all-users');
     },
-    asyncCreateEmployee: function asyncCreateEmployee(employeeData) {
+    asyncGetKanbanEmployees: function asyncGetKanbanEmployees() {
+      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('get-kanban-employees');
+    },
+    asyncCreateKanbanEmployee: function asyncCreateKanbanEmployee(employeeData) {
       var _this8 = this;
 
-      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('create-employee', employeeData)["catch"](function (error) {
+      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('create-kanban-employee', employeeData)["catch"](function (error) {
         _this8.triggerErrorToast(error.response.data.message);
       });
     },
-    asyncDeleteEmployee: function asyncDeleteEmployee(employeeId) {
+    asyncDeleteKanbanEmployee: function asyncDeleteKanbanEmployee(employeeId) {
       var _this9 = this;
 
-      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('delete-employee/' + employeeId)["catch"](function (error) {
+      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('delete-kanban-employee/' + employeeId)["catch"](function (error) {
         _this9.triggerErrorToast(error.response.data.message);
       });
     },
     // Members
-    asyncGetMembers: function asyncGetMembers(phoneLineId) {
-      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('get-members/' + phoneLineId);
+    asyncGetMembers: function asyncGetMembers(boardId) {
+      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('get-members/' + boardId);
     },
-    asyncAddMembers: function asyncAddMembers(memberData, phoneLineId) {
+    asyncAddMembers: function asyncAddMembers(memberData, boardId) {
       var _this10 = this;
 
-      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('create-members/' + phoneLineId, memberData)["catch"](function (error) {
+      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('create-members/' + boardId, memberData)["catch"](function (error) {
         _this10.triggerErrorToast(error.response.data.message);
       });
     },

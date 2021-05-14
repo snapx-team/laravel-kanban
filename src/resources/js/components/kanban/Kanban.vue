@@ -115,7 +115,7 @@
             this.eventHub.$on("save-employee-cards", (cardData) => {
                 this.saveEmployeeCards(cardData);
             });
-            this.eventHub.$on("delete-employee-cards", (cardData) => {
+            this.eventHub.$on("delete-kanban-employee-cards", (cardData) => {
                 this.deleteEmployeeCard(cardData);
             });
             this.eventHub.$on("save-members", (selectedMembers) => {
@@ -131,7 +131,7 @@
 
         beforeDestroy(){
             this.eventHub.$off('save-employee-cards');
-            this.eventHub.$off('delete-employee-cards');
+            this.eventHub.$off('delete-kanban-employee-cards');
             this.eventHub.$off('save-members');
             this.eventHub.$off('remove-member');
             this.eventHub.$off('save-columns');
@@ -143,7 +143,7 @@
                 var columnName = this.kanban.rows[rowIndex].columns[columnIndex].name;
                 var columnId = this.kanban.rows[rowIndex].columns[columnIndex].id;
 
-                this.eventHub.$emit("create-employee-cards", {
+                this.eventHub.$emit("create-kanban-employee-cards", {
                     rowIndex,
                     rowName,
                     columnIndex,
@@ -212,7 +212,7 @@
             saveEmployeeCards(cardData) {
                 const cloneCardData = {...cardData};
                 this.loadingCards = {columnId: cloneCardData.columnId, isLoading: true}
-                this.asyncCreateEmployeeCards(cloneCardData).then(() => {
+                this.asyncCreateKanbanEmployeeCards(cloneCardData).then(() => {
                     this.asyncGetEmployeeCardsByColumn(cloneCardData.columnId).then((data) => {
                         this.kanban.rows[cloneCardData.selectedRowIndex].columns[cloneCardData.selectedColumnIndex].employee_cards = data.data;
                         this.loadingCards = {columnId: null, isLoading: false}
@@ -223,7 +223,7 @@
             deleteEmployeeCard(cardData) {
                 const cloneCardData = {...cardData};
                 this.loadingCards = {columnId: cloneCardData.selectedCardData.column_id, isLoading: true}
-                this.asyncDeleteEmployeeCard(cloneCardData.selectedCardData.id).then(() => {
+                this.asyncDeleteKanbanEmployeeCard(cloneCardData.selectedCardData.id).then(() => {
                     this.asyncGetEmployeeCardsByColumn(cloneCardData.selectedCardData.column_id).then((data) => {
                         this.kanban.rows[cloneCardData.selectedRowIndex].columns[cloneCardData.selectedColumnIndex].employee_cards = data.data;
                         this.loadingCards = {columnId: null, isLoading: false}

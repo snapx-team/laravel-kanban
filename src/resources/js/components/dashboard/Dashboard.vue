@@ -8,34 +8,34 @@
 
         <div class="mx-10 my-3 space-y-5 shadow-xl p-5 bg-white">
             <actions :employeesLength="dashboardData.employees.length"
-                     :phoneLinesLength="dashboardData.phoneLines.length"></actions>
-            <phone-line-list :class="{ 'animate-pulse': loadingPhoneLine }"
-                             :phoneLines="dashboardData.phoneLines"></phone-line-list>
+                     :boardsLength="dashboardData.boards.length"></actions>
+            <board-list :class="{ 'animate-pulse': loadingBoard }"
+                             :boards="dashboardData.boards"></board-list>
 
             <employee-list :class="{ 'animate-pulse': loadingEmployee }"
                            :employees="dashboardData.employees"></employee-list>
             <add-or-edit-employee-modal></add-or-edit-employee-modal>
-            <add-or-edit-phone-line-modal></add-or-edit-phone-line-modal>
+            <add-or-edit-board-modal></add-or-edit-board-modal>
         </div>
     </div>
 </template>
 
 <script>
     import EmployeeList from "./dashboardComponents/EmployeeList.vue";
-    import PhoneLineList from "./dashboardComponents/PhoneLineList.vue";
+    import BoardList from "./dashboardComponents/BoardList.vue";
     import Actions from "./dashboardComponents/Actions.vue";
     import AddOrEditEmployeeModal from "./dashboardComponents/AddOrEditEmployeeModal.vue";
-    import AddOrEditPhoneLineModal from "./dashboardComponents/AddOrEditPhoneLineModal.vue";
+    import AddOrEditBoardModal from "./dashboardComponents/AddOrEditBoardModal.vue";
     import {ajaxCalls} from "../../mixins/ajaxCallsMixin";
 
     export default {
         inject: ["eventHub"],
         components: {
             EmployeeList,
-            PhoneLineList,
+            BoardList,
             Actions,
             AddOrEditEmployeeModal,
-            AddOrEditPhoneLineModal,
+            AddOrEditBoardModal,
         },
 
         mixins: [ajaxCalls],
@@ -50,7 +50,7 @@
                 paginationIndex: 0,
                 paginationStep: 5,
                 dashboardData: null,
-                loadingPhoneLine: false,
+                loadingBoard: false,
                 loadingEmployee: false
             };
         },
@@ -60,12 +60,12 @@
                 this.saveEmployee(employeeData);
             });
             this.eventHub.$on("save-board", (kanbanData) => {
-                this.savePhoneLine(kanbanData);
+                this.saveBoard(kanbanData);
             });
-            this.eventHub.$on("delete-board", (phoneLineId) => {
-                this.deleteBoard(phoneLineId);
+            this.eventHub.$on("delete-board", (boardId) => {
+                this.deleteBoard(boardId);
             });
-            this.eventHub.$on("delete-employee", (employeeId) => {
+            this.eventHub.$on("delete-kanban-employee", (employeeId) => {
                 this.deleteEmployee(employeeId);
             });
         },
@@ -74,41 +74,41 @@
             this.eventHub.$off('save-employee');
             this.eventHub.$off('save-board');
             this.eventHub.$off('delete-board');
-            this.eventHub.$off('delete-employee');
+            this.eventHub.$off('delete-kanban-employee');
         },
 
         methods: {
             saveEmployee(employeeData) {
                 this.loadingEmployee = true;
                 const cloneEmployeeData = {...employeeData};
-                this.asyncCreateEmployee(cloneEmployeeData).then(res => {
-                    this.asyncGetEmployees().then((data) => {
+                this.asyncCreateKanbanEmployee(cloneEmployeeData).then(res => {
+                    this.asyncGetKanbanEmployees().then((data) => {
                         this.dashboardData.employees = data.data;
                         this.loadingEmployee = false;
                     }).catch(res => {console.log(res)});
                 });
             },
 
-            savePhoneLine(kanbanData) {
-                this.loadingPhoneLine = true
+            saveBoard(kanbanData) {
+                this.loadingBoard = true
                 const clonekanbanData = {...kanbanData};
-                this.asynccreateBoard(clonekanbanData).then(res => {
+                this.asyncCreateBoard(clonekanbanData).then(res => {
                     this.eventHub.$emit("update-side-bar");
-                    this.asyncgetBoards().then((data) => {
-                        this.dashboardData.phoneLines = data.data;
-                        this.loadingPhoneLine = false;
+                    this.asyncGetBoards().then((data) => {
+                        this.dashboardData.boards = data.data;
+                        this.loadingBoard = false;
                     }).catch(res => {console.log(res)});
 
                 });
             },
 
-            deleteBoard(phoneLineId) {
-                this.loadingPhoneLine = true
-                this.asyncdeleteBoard(phoneLineId).then(res => {
+            deleteBoard(boardId) {
+                this.loadingBoard = true
+                this.asyncDeleteBoard(boardId).then(res => {
                     this.eventHub.$emit("update-side-bar");
-                    this.asyncgetBoards().then((data) => {
-                        this.dashboardData.phoneLines = data.data;
-                        this.loadingPhoneLine = false;
+                    this.asyncGetBoards().then((data) => {
+                        this.dashboardData.boards = data.data;
+                        this.loadingBoard = false;
                     }).catch(res => {console.log(res)});
 
                 });
@@ -116,8 +116,8 @@
 
             deleteEmployee(employeeId) {
                 this.loadingEmployee = true;
-                this.asyncDeleteEmployee(employeeId).then(res => {
-                    this.asyncGetEmployees().then((data) => {
+                this.asyncDeleteKanbanEmployee(employeeId).then(res => {
+                    this.asyncGetKanbanEmployees().then((data) => {
                         this.dashboardData.employees = data.data;
                         this.loadingEmployee = false;
                     }).catch(res => {console.log(res)});

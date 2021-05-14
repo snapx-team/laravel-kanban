@@ -145,7 +145,7 @@
         },
 
         mounted(){
-            this.asyncGetEmployees().then((data) => {
+            this.asyncGetKanbanEmployees().then((data) => {
                 this.allUsers = data.data;
             }).catch(res => {console.log(res)});
         },

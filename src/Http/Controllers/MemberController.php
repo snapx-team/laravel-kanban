@@ -8,14 +8,14 @@ use Xguard\LaravelKanban\Models\Member;
 
 class MemberController extends Controller
 {
-    public function createMembers(Request $request, $phoneLineId)
+    public function createMembers(Request $request, $boardId)
     {
         $members = $request->all();
         try {
             foreach ($members as $employee) {
                 Member::firstOrCreate([
                     'employee_id' => $employee['id'],
-                    'board_id' => $phoneLineId,
+                    'board_id' => $boardId,
                 ]);
             }
         } catch (\Exception $e) {

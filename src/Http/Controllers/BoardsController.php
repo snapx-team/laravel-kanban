@@ -36,13 +36,13 @@ class BoardsController extends Controller
                     'name' => $request->input('name'),
                 ]);
             } else {
-                $phoneLine = Board::create([
+                $board = Board::create([
                     'name' => $request->input('name'),
                 ]);
                 $daysOfWeek = array("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday");
 
                 foreach ($daysOfWeek as $day) {
-                    Row::create(['name' => $day, 'board_id' => $phoneLine->id]);
+                    Row::create(['name' => $day, 'board_id' => $board->id]);
                 }
             }
 
@@ -64,8 +64,8 @@ class BoardsController extends Controller
     public function deleteBoard($id)
     {
         try {
-            $phoneLine = Board::find($id);
-            $phoneLine->delete();
+            $board = Board::find($id);
+            $board->delete();
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',

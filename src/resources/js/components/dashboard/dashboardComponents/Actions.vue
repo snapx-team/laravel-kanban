@@ -16,7 +16,7 @@
                             <h5 class="font-bold uppercase text-gray-800">
                                 Add A Board </h5>
                             <h3 class="text-sm text-gray-600">
-                                {{ phoneLinesLength }} boards total </h3>
+                                {{ boardsLength }} boards total </h3>
                         </div>
                     </div>
                 </div>
@@ -31,7 +31,7 @@
                             </div>
                         </div>
                         <div class="flex-1 text-right md:text-center">
-                            <h5 class="font-bold uppercase text-gray-800">Add Employee</h5>
+                            <h5 class="font-bold uppercase text-gray-800">Add Xkanban Employee</h5>
                             <h3 class="text-sm text-gray-600">
                                 {{ employeesLength }} employees total </h3>
                         </div>
@@ -47,7 +47,7 @@
         inject: ["eventHub"],
 
         props: {
-            phoneLinesLength: {
+            boardsLength: {
                 type: Number,
                 default: 0,
             },
@@ -58,7 +58,7 @@
         },
         methods: {
             createEmployee() {
-                this.eventHub.$emit("create-employee");
+                this.eventHub.$emit("create-kanban-employee");
             },
             createBoard() {
                 this.eventHub.$emit("create-board");
