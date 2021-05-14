@@ -37,12 +37,8 @@
                                     Role
                                 </th>
                                 <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                    Phone Number
+                                    Email
                                 </th>
-                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                    Status
-                                </th>
-
                                 <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                     Edit
                                 </th>
@@ -57,10 +53,10 @@
                                     <tr :key="employeeIndex">
                                         <td class="px-5 py-5 bg-white text-sm">
                                             <div class="flex items-center">
-                                                <avatar :name="employee.name" :size="6" class="mr-3"></avatar>
+                                                <avatar :name="employee.user.full_name" :size="6" class="mr-3"></avatar>
                                                 <div class="ml-3">
                                                     <p class="text-gray-900 whitespace-no-wrap">
-                                                        {{ employee.name }} </p>
+                                                        {{ employee.user.full_name }} </p>
                                                 </div>
                                             </div>
                                         </td>
@@ -70,24 +66,14 @@
                                         </td>
                                         <td class="px-5 py-5 bg-white text-sm">
                                             <p class="text-gray-900 whitespace-no-wrap">
-                                                {{ employee.phone }} </p>
-                                        </td>
-                                        <td class="px-5 py-5 bg-white text-sm">
-                                            <span :class="employee.is_active? 'text-green-900': 'text-red-900 '"
-                                                  class="relative inline-block px-3 py-1 font-semibold leading-tight">
-                                                <span :class="employee.is_active ? 'bg-green-200' : 'bg-red-200'"
-                                                      aria-hidden=""
-                                                      class="absolute inset-0 opacity-50 rounded-full">
-                                                </span>
-                                                <span class="relative" v-if="employee.is_active">Active</span>
-                                                <span class="relative" v-if="!employee.is_active">Inactive</span>
-                                            </span>
+                                                {{ employee.user.email }} </p>
                                         </td>
 
                                         <td class="px-5 py-5 bg-white text-sm">
                                             <a @click="editEmployee(employeeIndex)"
                                                class="cursor-pointer px-2 text-gray-400 hover:text-gray-600 transition duration-300 ease-in-out focus:outline-none">
-                                                <i class="fas fa-edit"></i> </a>
+                                                <i class="fas fa-edit"></i>
+                                            </a>
                                         </td>
                                     </tr>
                                 </template>
@@ -158,7 +144,9 @@
         },
         methods: {
             editEmployee(index) {
-                this.eventHub.$emit("create-kanban-employee", this.filtered[index]);
+                console.log(this.employees);
+
+                this.eventHub.$emit("create-kanban-employees", this.filtered[index]);
             },
             updatePaginationIndex(newIndex) {
                 if (newIndex < 0) newIndex = 0;

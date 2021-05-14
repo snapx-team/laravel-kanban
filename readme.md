@@ -50,19 +50,25 @@ return [
 
 ```
 
+
 **4:** Navigate to the laravel-kanban package folder in your command line and perform the following commands:
+```bash
+composer dump-autoload
+```
+
+**5:** Navigate to the laravel-kanban package folder in your command line and perform the following commands:
 ```bash
 composer install
 npm install
 npm run dev
 ```
 
-**5:** Return to the  and publish the package with the following command:
+**6:** Return to the  and publish the package with the following command:
 ```bash
 php artisan vendor:publish --provider="Xguard\LaravelKanban\LaravelKanbanServiceProvider" --force
 ```
 
-**6:** To run package migrations
+**7:** To run package migrations
 ```bash
 php artisan migrate --path=package/laravel-kanban/src/database/migrations
 ```

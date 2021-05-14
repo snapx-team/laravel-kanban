@@ -6776,7 +6776,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     createEmployee: function createEmployee() {
-      this.eventHub.$emit("create-kanban-employee");
+      this.eventHub.$emit("create-kanban-employees");
     },
     createBoard: function createBoard() {
       this.eventHub.$emit("create-board");
@@ -7110,13 +7110,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         role: "employee"
       },
       modalOpen: false,
-      allUsers: []
+      allUsers: [],
+      selectedUsers: []
     };
   },
   created: function created() {
     var _this = this;
 
-    this.eventHub.$on("create-kanban-employee", function (employee) {
+    this.eventHub.$on("create-kanban-employees", function (employee) {
       if (employee !== undefined) {
         _this.employeeData = _objectSpread({}, employee);
         _this.isEdit = true;
@@ -7357,20 +7358,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   inject: ["eventHub"],
@@ -7403,7 +7390,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     editEmployee: function editEmployee(index) {
-      this.eventHub.$emit("create-kanban-employee", this.filtered[index]);
+      console.log(this.employees);
+      this.eventHub.$emit("create-kanban-employees", this.filtered[index]);
     },
     updatePaginationIndex: function updatePaginationIndex(newIndex) {
       if (newIndex < 0) newIndex = 0;else if (newIndex < this.filtered.length) this.paginationIndex = newIndex;
@@ -15255,7 +15243,7 @@ var render = function() {
                                   staticStyle: { "margin-top": "7px" },
                                   attrs: {
                                     options: _vm.allUsers,
-                                    label: "name",
+                                    label: "full_name",
                                     multiple: "",
                                     placeholder: "Select Members"
                                   },
@@ -15269,13 +15257,13 @@ var render = function() {
                                               staticClass:
                                                 "mr-3 m-1 float-left",
                                               attrs: {
-                                                name: option.name,
+                                                name: option.full_name,
                                                 size: 4
                                               }
                                             }),
                                             _vm._v(" "),
                                             _c("p", { staticClass: "inline" }, [
-                                              _vm._v(_vm._s(option.name))
+                                              _vm._v(_vm._s(option.full_name))
                                             ])
                                           ]
                                         }
@@ -15296,14 +15284,14 @@ var render = function() {
                                     ],
                                     null,
                                     false,
-                                    3290051624
+                                    709904776
                                   ),
                                   model: {
-                                    value: _vm.selectedMembers,
+                                    value: _vm.selectedUsers,
                                     callback: function($$v) {
-                                      _vm.selectedMembers = $$v
+                                      _vm.selectedUsers = $$v
                                     },
-                                    expression: "selectedMembers"
+                                    expression: "selectedUsers"
                                   }
                                 })
                               ],
@@ -15819,7 +15807,7 @@ var render = function() {
                                           _c("avatar", {
                                             staticClass: "mr-3",
                                             attrs: {
-                                              name: employee.name,
+                                              name: employee.user.full_name,
                                               size: 6
                                             }
                                           }),
@@ -15834,7 +15822,9 @@ var render = function() {
                                               [
                                                 _vm._v(
                                                   "\n                                                    " +
-                                                    _vm._s(employee.name) +
+                                                    _vm._s(
+                                                      employee.user.full_name
+                                                    ) +
                                                     " "
                                                 )
                                               ]
@@ -15884,54 +15874,9 @@ var render = function() {
                                         [
                                           _vm._v(
                                             "\n                                            " +
-                                              _vm._s(employee.phone) +
+                                              _vm._s(employee.user.email) +
                                               " "
                                           )
-                                        ]
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "td",
-                                    {
-                                      staticClass: "px-5 py-5 bg-white text-sm"
-                                    },
-                                    [
-                                      _c(
-                                        "span",
-                                        {
-                                          staticClass:
-                                            "relative inline-block px-3 py-1 font-semibold leading-tight",
-                                          class: employee.is_active
-                                            ? "text-green-900"
-                                            : "text-red-900 "
-                                        },
-                                        [
-                                          _c("span", {
-                                            staticClass:
-                                              "absolute inset-0 opacity-50 rounded-full",
-                                            class: employee.is_active
-                                              ? "bg-green-200"
-                                              : "bg-red-200",
-                                            attrs: { "aria-hidden": "" }
-                                          }),
-                                          _vm._v(" "),
-                                          employee.is_active
-                                            ? _c(
-                                                "span",
-                                                { staticClass: "relative" },
-                                                [_vm._v("Active")]
-                                              )
-                                            : _vm._e(),
-                                          _vm._v(" "),
-                                          !employee.is_active
-                                            ? _c(
-                                                "span",
-                                                { staticClass: "relative" },
-                                                [_vm._v("Inactive")]
-                                              )
-                                            : _vm._e()
                                         ]
                                       )
                                     ]
@@ -16121,20 +16066,7 @@ var staticRenderFns = [
           },
           [
             _vm._v(
-              "\n                                Phone Number\n                            "
-            )
-          ]
-        ),
-        _vm._v(" "),
-        _c(
-          "th",
-          {
-            staticClass:
-              "px-5 py-3 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
-          },
-          [
-            _vm._v(
-              "\n                                Status\n                            "
+              "\n                                Email\n                            "
             )
           ]
         ),
@@ -17704,7 +17636,7 @@ var render = function() {
                                   staticStyle: { "margin-top": "7px" },
                                   attrs: {
                                     options: _vm.allUsers,
-                                    label: "name",
+                                    label: "user.full_name",
                                     multiple: "",
                                     placeholder: "Select Members"
                                   },
@@ -17718,13 +17650,15 @@ var render = function() {
                                               staticClass:
                                                 "mr-3 m-1 float-left",
                                               attrs: {
-                                                name: option.name,
+                                                name: option.user.full_name,
                                                 size: 4
                                               }
                                             }),
                                             _vm._v(" "),
                                             _c("p", { staticClass: "inline" }, [
-                                              _vm._v(_vm._s(option.name))
+                                              _vm._v(
+                                                _vm._s(option.user.full_name)
+                                              )
                                             ])
                                           ]
                                         }
@@ -17745,7 +17679,7 @@ var render = function() {
                                     ],
                                     null,
                                     false,
-                                    3290051624
+                                    1507952648
                                   ),
                                   model: {
                                     value: _vm.selectedMembers,
@@ -40336,8 +40270,8 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_router__WEBPACK_IMPORTED_MODU
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\laragon\www\breeze\package\laravel-kanban\src\resources\js\app.js */"./src/resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\laragon\www\breeze\package\laravel-kanban\src\resources\sass\app.scss */"./src/resources/sass/app.scss");
+__webpack_require__(/*! C:\laragon\www\xguard-schedule\package\laravel-kanban\src\resources\js\app.js */"./src/resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\laragon\www\xguard-schedule\package\laravel-kanban\src\resources\sass\app.scss */"./src/resources/sass/app.scss");
 
 
 /***/ })

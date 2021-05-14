@@ -54,14 +54,14 @@
                                 </span>
                                 <vSelect :options="allUsers"
                                          class="text-gray-400"
-                                         label="name"
+                                         label="full_name"
                                          multiple
                                          placeholder="Select Members"
                                          style="margin-top: 7px"
-                                         v-model="selectedMembers">
+                                         v-model="selectedUsers">
                                     <template slot="option" slot-scope="option">
-                                        <avatar :name="option.name" :size="4" class="mr-3 m-1 float-left"></avatar>
-                                        <p class="inline">{{ option.name }}</p>
+                                        <avatar :name="option.full_name" :size="4" class="mr-3 m-1 float-left"></avatar>
+                                        <p class="inline">{{ option.full_name }}</p>
                                     </template>
                                     <template #no-options="{ search, searching, loading }">
                                         No result .
@@ -153,11 +153,12 @@
                 },
                 modalOpen: false,
                 allUsers: [],
+                selectedUsers: [],
             };
         },
 
         created() {
-            this.eventHub.$on("create-kanban-employee", (employee) => {
+            this.eventHub.$on("create-kanban-employees", (employee) => {
                 if (employee !== undefined) {
                     this.employeeData = {...employee}
                     this.isEdit = true;

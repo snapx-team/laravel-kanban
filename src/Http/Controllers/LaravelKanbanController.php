@@ -23,7 +23,8 @@ class LaravelKanbanController extends Controller
 
     public function getDashboardData()
     {
-        $employees = Employee::orderBy('name')->get();
+        $employees = Employee::with('user')->get();
+
         $board = Board::orderBy('name')->with('members')->get();
         return [
             'employees' => $employees,
