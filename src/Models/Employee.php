@@ -13,9 +13,9 @@ class Employee extends Model
 
     protected $guarded = [];
 
-    public function employeeCards(): HasMany
+    public function taskCards(): HasMany
     {
-        return $this->hasMany(EmployeeCard::class);
+        return $this->hasMany(TaskCard::class);
     }
 
     public function members(): HasMany

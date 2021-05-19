@@ -39,24 +39,24 @@ export function createColumns(columnData) {
 
 // Employee Cards
 
-export function createEmployeeCards(employeeCardData) {
-    return axios.post('create-kanban-employee-cards', employeeCardData);
+export function createTaskCards(taskCardData) {
+    return axios.post('create-kanban-task-cards', taskCardData);
 }
 
-export function getEmployeeCardsByColumn(columnId) {
-    return axios.post('get-employee-cards-by-column/' + columnId);
+export function getTaskCardsByColumn(columnId) {
+    return axios.post('get-task-cards-by-column/' + columnId);
 }
 
-export function deleteEmployeeCard(employeeCardId) {
-    return axios.post('delete-kanban-employee-card/' + employeeCardId);
+export function deleteTaskCard(taskCardId) {
+    return axios.post('delete-kanban-task-card/' + taskCardId);
 }
 
-export function updateEmployeeCardIndexes(employeeCards) {
-    return axios.post('update-employee-card-indexes', employeeCards);
+export function updateTaskCardIndexes(taskCards) {
+    return axios.post('update-task-card-indexes', taskCards);
 }
 
-export function updateEmployeeCardColumnId(columnId, employeeCardId) {
-    return axios.post('update-employee-card-column/' + columnId + '/' + employeeCardId);
+export function updateTaskCardColumnId(columnId, taskCardId) {
+    return axios.post('update-task-card-column/' + columnId + '/' + taskCardId);
 }
 
 // Employees

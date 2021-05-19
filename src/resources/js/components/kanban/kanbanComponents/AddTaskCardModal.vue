@@ -94,16 +94,16 @@
                                     <p class="text-gray-900" v-if="filtered.length === 0">
                                         No matching results </p>
 
-                                    <template v-for="(employeeCard, employeeIndex) in filtered">
+                                    <template v-for="(taskCard, employeeIndex) in filtered">
                                         <div :key="employeeIndex"
                                              class="flex justify-between items-center border-b p-1">
                                             <div class="flex items-center">
-                                                <avatar :name="employeeCard.employee.name"
+                                                <avatar :name="taskCard.employee.name"
                                                         :size="6"
                                                         class="mr-3"></avatar>
-                                                <span class="py-2 mr-3 text-gray-600">{{employeeCard.employee.name}}</span>
+                                                <span class="py-2 mr-3 text-gray-600">{{taskCard.employee.name}}</span>
                                             </div>
-                                            <a @click="deleteCard(employeeCard)"
+                                            <a @click="deleteCard(taskCard)"
                                                class="cursor-pointer text-gray-400 text-sm hover:text-gray-600 transition duration-300 ease-in-out">
                                                 remove from shift
                                             </a>
@@ -135,7 +135,7 @@
             return {
                 filter: "",
                 modalOpen: false,
-                isSavingEmployeeCard: false,
+                isSavingTaskCard: false,
                 cardData: {
                     employeesSelected: null,
                     selectedRowIndex: null,
@@ -148,39 +148,39 @@
         },
 
         created() {
-            this.eventHub.$on("create-kanban-employee-cards", (cardData) => {
+            this.eventHub.$on("create-kanban-task-cards", (cardData) => {
                 this.openModal(cardData);
             });
         },
 
         beforeDestroy(){
-            this.eventHub.$off('create-kanban-employee-cards');
+            this.eventHub.$off('create-kanban-task-cards');
         },
         computed: {
             filtered() {
                 const regex = new RegExp(this.filter, "i");
                 return this.kanbanData.rows[this.cardData.selectedRowIndex].columns[
                     this.cardData.selectedColumnIndex
-                    ].employee_cards.filter((e) => {
+                    ].task_cards.filter((e) => {
                     return !this.filter || e.employee.name.match(regex);
                 });
             },
             getNumberOfEmployeesInShift() {
                 return this.kanbanData.rows[this.cardData.selectedRowIndex].columns[
                     this.cardData.selectedColumnIndex
-                    ].employee_cards.length;
+                    ].task_cards.length;
             },
         },
         methods: {
             saveCards(event) {
                 event.target.disabled = true;
-                this.eventHub.$emit("save-employee-cards", this.cardData);
+                this.eventHub.$emit("save-task-cards", this.cardData);
                 this.modalOpen = false;
                 this.cardData.employeesSelected = null;
             },
 
             deleteCard(selectedCardData) {
-                this.eventHub.$emit("delete-kanban-employee-cards", {
+                this.eventHub.$emit("delete-kanban-task-cards", {
                     selectedCardData,
                     selectedRowIndex: this.cardData.selectedRowIndex,
                     selectedColumnIndex: this.cardData.selectedColumnIndex

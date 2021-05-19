@@ -46,30 +46,30 @@ export const ajaxCalls = {
 
         // Employee Cards
 
-        asyncCreateKanbanEmployeeCards(employeeCardData) {
-            return axios.post('create-kanban-employee-cards', employeeCardData).catch((error) => {
+        asyncCreateKanbanTaskCards(taskCardData) {
+            return axios.post('create-kanban-task-cards', taskCardData).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
 
-        asyncGetEmployeeCardsByColumn(columnId) {
-            return axios.post('get-employee-cards-by-column/' + columnId);
+        asyncGetTaskCardsByColumn(columnId) {
+            return axios.post('get-task-cards-by-column/' + columnId);
         },
 
-        asyncDeleteKanbanEmployeeCard(employeeCardId) {
-            return axios.post('delete-kanban-employee-card/' + employeeCardId).catch((error) => {
+        asyncDeleteKanbanTaskCard(taskCardId) {
+            return axios.post('delete-kanban-task-card/' + taskCardId).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
 
-        asyncUpdateEmployeeCardIndexes(employeeCards) {
-            return axios.post('update-employee-card-indexes', employeeCards).catch((error) => {
+        asyncUpdateTaskCardIndexes(taskCards) {
+            return axios.post('update-task-card-indexes', taskCards).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
 
-        asyncUpdateEmployeeCardColumnId(columnId, employeeCardId) {
-            return axios.post('update-employee-card-column/' + columnId + '/' + employeeCardId).catch((error) => {
+        asyncUpdateTaskCardColumnId(columnId, taskCardId) {
+            return axios.post('update-task-card-column/' + columnId + '/' + taskCardId).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },

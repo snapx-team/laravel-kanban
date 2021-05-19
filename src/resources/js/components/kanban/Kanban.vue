@@ -36,24 +36,24 @@
                             <p class="flex-auto text-gray-700 font-semibold font-sans tracking-wide pt-1">
                                 {{ column.name }} </p>
 
-                            <button @click="createEmployeeCard(rowIndex, columnIndex)"
+                            <button @click="createTaskCard(rowIndex, columnIndex)"
                                     class="w-6 h-6 bg-blue-200 rounded-full hover:bg-blue-300 mouse transition ease-in duration-200 focus:outline-none">
                                 <i class="fas fa-plus text-white"></i>
                             </button>
                         </div>
                         <draggable :animation="200"
-                                   :list="column.employee_cards"
+                                   :list="column.task_cards"
                                    :disabled="isDraggableDisabled"
                                    @change="getChangeData($event, columnIndex, rowIndex)"
                                    class="h-full list-group"
                                    ghost-class="ghost-card"
                                    group="employees">
-                            <employee-card :employee_card="employee_card"
-                                           :key="employee_card.id"
+                            <task-card :task_card="task_card"
+                                           :key="task_card.id"
                                            class="mt-3 cursor-move"
                                            :class="{'opacity-60':isDraggableDisabled}"
-                                           v-for="employee_card in column.employee_cards"
-                                           v-on:click.native="updateTask(employee_card.id)"></employee-card>
+                                           v-for="task_card in column.task_cards"
+                                           v-on:click.native="updateTask(task_card.id)"></task-card>
                         </draggable>
                     </div>
                 </div>
@@ -61,7 +61,7 @@
         </div>
         <hr class="mt-5"/>
 
-        <add-employee-card-modal :kanbanData="kanban"></add-employee-card-modal>
+        <add-task-card-modal :kanbanData="kanban"></add-task-card-modal>
         <add-member-modal :kanbanData="kanban"></add-member-modal>
         <add-column-modal :kanbanData="kanban"></add-column-modal>
     </div>
@@ -69,8 +69,8 @@
 
 <script>
     import draggable from "vuedraggable";
-    import EmployeeCard from "./kanbanComponents/EmployeeCard.vue";
-    import AddEmployeeCardModal from "./kanbanComponents/AddEmployeeCardModal.vue";
+    import TaskCard from "./kanbanComponents/TaskCard.vue";
+    import AddTaskCardModal from "./kanbanComponents/AddTaskCardModal.vue";
     import AddMemberModal from "./kanbanComponents/AddMemberModal.vue";
     import AddColumnModal from "./kanbanComponents/AddColumnModal.vue";
     import KanbanBar from "./kanbanComponents/KanbanBar.vue";
@@ -79,9 +79,9 @@
     export default {
         inject: ["eventHub"],
         components: {
-            EmployeeCard,
+            TaskCard,
             draggable,
-            AddEmployeeCardModal,
+            AddTaskCardModal,
             AddMemberModal,
             AddColumnModal,
             KanbanBar,
@@ -112,11 +112,11 @@
         },
 
         created() {
-            this.eventHub.$on("save-employee-cards", (cardData) => {
-                this.saveEmployeeCards(cardData);
+            this.eventHub.$on("save-task-cards", (cardData) => {
+                this.saveTaskCards(cardData);
             });
-            this.eventHub.$on("delete-kanban-employee-cards", (cardData) => {
-                this.deleteEmployeeCard(cardData);
+            this.eventHub.$on("delete-kanban-task-cards", (cardData) => {
+                this.deleteTaskCard(cardData);
             });
             this.eventHub.$on("save-members", (selectedMembers) => {
                 this.saveMember(selectedMembers);
@@ -130,20 +130,20 @@
         },
 
         beforeDestroy(){
-            this.eventHub.$off('save-employee-cards');
-            this.eventHub.$off('delete-kanban-employee-cards');
+            this.eventHub.$off('save-task-cards');
+            this.eventHub.$off('delete-kanban-task-cards');
             this.eventHub.$off('save-members');
             this.eventHub.$off('remove-member');
             this.eventHub.$off('save-columns');
         },
 
         methods: {
-            createEmployeeCard(rowIndex, columnIndex) {
+            createTaskCard(rowIndex, columnIndex) {
                 var rowName = this.kanban.rows[rowIndex].name;
                 var columnName = this.kanban.rows[rowIndex].columns[columnIndex].name;
                 var columnId = this.kanban.rows[rowIndex].columns[columnIndex].id;
 
-                this.eventHub.$emit("create-kanban-employee-cards", {
+                this.eventHub.$emit("create-kanban-task-cards", {
                     rowIndex,
                     rowName,
                     columnIndex,
@@ -162,22 +162,22 @@
             // Whenever a user drags a card
             getChangeData(event, columnIndex, rowIndex) {
                 var eventName = Object.keys(event)[0];
-                let employeeCardData = this.kanban.rows[rowIndex].columns[columnIndex].employee_cards
+                let taskCardData = this.kanban.rows[rowIndex].columns[columnIndex].task_cards
                 let columnId = this.kanban.rows[rowIndex].columns[columnIndex].id
                 this.isDraggableDisabled = true
 
                 switch (eventName) {
                     case "moved":
-                        this.asyncUpdateEmployeeCardIndexes(employeeCardData).then(() => {this.isDraggableDisabled = false});
+                        this.asyncUpdateTaskCardIndexes(taskCardData).then(() => {this.isDraggableDisabled = false});
                         break;
                     case "added":
-                        this.asyncUpdateEmployeeCardColumnId(columnId, event.added.element.id).then(() => {
-                                this.asyncUpdateEmployeeCardIndexes(employeeCardData).then(() => {this.isDraggableDisabled = false});
+                        this.asyncUpdateTaskCardColumnId(columnId, event.added.element.id).then(() => {
+                                this.asyncUpdateTaskCardIndexes(taskCardData).then(() => {this.isDraggableDisabled = false});
                             }
                         );
                         break;
                     case "removed":
-                        this.asyncUpdateEmployeeCardIndexes(employeeCardData).then(() => {this.isDraggableDisabled = false});
+                        this.asyncUpdateTaskCardIndexes(taskCardData).then(() => {this.isDraggableDisabled = false});
                         break;
                     default:
                         alert('event "' + eventName + '" not handled: ');
@@ -209,23 +209,23 @@
                 this.getKanban(this.kanban.id);
             },
 
-            saveEmployeeCards(cardData) {
+            saveTaskCards(cardData) {
                 const cloneCardData = {...cardData};
                 this.loadingCards = {columnId: cloneCardData.columnId, isLoading: true}
-                this.asyncCreateKanbanEmployeeCards(cloneCardData).then(() => {
-                    this.asyncGetEmployeeCardsByColumn(cloneCardData.columnId).then((data) => {
-                        this.kanban.rows[cloneCardData.selectedRowIndex].columns[cloneCardData.selectedColumnIndex].employee_cards = data.data;
+                this.asyncCreateKanbanTaskCards(cloneCardData).then(() => {
+                    this.asyncGetTaskCardsByColumn(cloneCardData.columnId).then((data) => {
+                        this.kanban.rows[cloneCardData.selectedRowIndex].columns[cloneCardData.selectedColumnIndex].task_cards = data.data;
                         this.loadingCards = {columnId: null, isLoading: false}
                     }).catch(res => {console.log(res)});
                 }).catch(res => {console.log(res)});
             },
 
-            deleteEmployeeCard(cardData) {
+            deleteTaskCard(cardData) {
                 const cloneCardData = {...cardData};
                 this.loadingCards = {columnId: cloneCardData.selectedCardData.column_id, isLoading: true}
-                this.asyncDeleteKanbanEmployeeCard(cloneCardData.selectedCardData.id).then(() => {
-                    this.asyncGetEmployeeCardsByColumn(cloneCardData.selectedCardData.column_id).then((data) => {
-                        this.kanban.rows[cloneCardData.selectedRowIndex].columns[cloneCardData.selectedColumnIndex].employee_cards = data.data;
+                this.asyncDeleteKanbanTaskCard(cloneCardData.selectedCardData.id).then(() => {
+                    this.asyncGetTaskCardsByColumn(cloneCardData.selectedCardData.column_id).then((data) => {
+                        this.kanban.rows[cloneCardData.selectedRowIndex].columns[cloneCardData.selectedColumnIndex].task_cards = data.data;
                         this.loadingCards = {columnId: null, isLoading: false}
                     }).catch(res => {console.log(res)});
                 }).catch(res => {console.log(res)});

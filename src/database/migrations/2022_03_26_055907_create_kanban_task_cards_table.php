@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateKanbanEmployeeCardsTable extends Migration
+class CreateKanbanTaskCardsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateKanbanEmployeeCardsTable extends Migration
      */
     public function up()
     {
-        Schema::create('kanban_employee_cards', function (Blueprint $table) {
+        Schema::create('kanban_task_cards', function (Blueprint $table) {
             $table->id();
             $table->integer('index');
             $table->unsignedBigInteger('employee_id');
@@ -34,6 +34,6 @@ class CreateKanbanEmployeeCardsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('kanban_employee_cards');
+        Schema::dropIfExists('kanban_task_cards');
     }
 }

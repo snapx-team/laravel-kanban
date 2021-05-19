@@ -27,11 +27,11 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             Route::post('/create-columns', 'ColumnController@createOrUpdateColumns');
 
             // Employee Cards
-            Route::post('/create-kanban-employee-cards', 'EmployeeCardController@createEmployeeCards');
-            Route::post('/get-employee-cards-by-column/{id}', 'EmployeeCardController@getEmployeeCardsByColumn');
-            Route::post('/update-employee-card-indexes', 'EmployeeCardController@updateEmployeeCardIndexes');
-            Route::post('/update-employee-card-column/{columnId}/{employeeCardId}', 'EmployeeCardController@updateEmployeeCardColumnId');
-            Route::post('/delete-kanban-employee-card/{id}', 'EmployeeCardController@deleteEmployeeCard');
+            Route::post('/create-kanban-task-cards', 'TaskCardController@createTaskCards');
+            Route::post('/get-task-cards-by-column/{id}', 'TaskCardController@getTaskCardsByColumn');
+            Route::post('/update-task-card-indexes', 'TaskCardController@updateTaskCardIndexes');
+            Route::post('/update-task-card-column/{columnId}/{taskCardId}', 'TaskCardController@updateTaskCardColumnId');
+            Route::post('/delete-kanban-task-card/{id}', 'TaskCardController@deleteTaskCard');
 
             // Employees
             Route::get('/get-all-users', 'EmployeeController@getAllUsers');

@@ -22,7 +22,7 @@ class ColumnController extends Controller
                     'shift_end' => $range['endTime'],
                 ]);
             }
-            return Column::where('row_id', $columns['rowId'])->with('employeeCards')->get();
+            return Column::where('row_id', $columns['rowId'])->with('taskCards')->get();
 
         } catch (\Exception $e) {
             return response([

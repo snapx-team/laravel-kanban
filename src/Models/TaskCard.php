@@ -5,9 +5,9 @@ namespace Xguard\LaravelKanban\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class EmployeeCard extends Model
+class TaskCard extends Model
 {
-    protected $table = 'kanban_employee_cards';
+    protected $table = 'kanban_task_cards';
 
     protected $guarded = [];
 

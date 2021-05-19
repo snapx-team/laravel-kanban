@@ -17,8 +17,8 @@ class Column extends Model
         return $this->belongsTo(Row::class);
     }
 
-    public function employeeCards(): HasMany
+    public function taskCards(): HasMany
     {
-        return $this->hasMany(EmployeeCard::class)->orderBy('index', 'asc');
+        return $this->hasMany(TaskCard::class)->orderBy('index', 'asc');
     }
 }

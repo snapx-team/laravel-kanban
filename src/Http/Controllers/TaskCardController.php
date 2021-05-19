@@ -4,23 +4,23 @@ namespace Xguard\LaravelKanban\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Xguard\LaravelKanban\Models\EmployeeCard;
+use Xguard\LaravelKanban\Models\TaskCard;
 
-class EmployeeCardController extends Controller
+class TaskCardController extends Controller
 {
-    public function createEmployeeCards(Request $request)
+    public function createTaskCards(Request $request)
     {
-        $employeeCards = $request->all();
-        $maxIndex = EmployeeCard::where('column_id', $employeeCards['columnId'])->max('index');
+        $taskCards = $request->all();
+        $maxIndex = TaskCard::where('column_id', $taskCards['columnId'])->max('index');
 
         try {
-            foreach ($employeeCards['employeesSelected'] as $employeeCard) {
+            foreach ($taskCards['employeesSelected'] as $taskCard) {
                 $maxIndex++;
-                EmployeeCard::create([
+                TaskCard::create([
                     'index' => $maxIndex,
-                    'employee_id' => $employeeCard['employee']['id'],
-                    'column_id' => $employeeCards['columnId'],
-                    'member_id' => $employeeCard['id'],
+                    'employee_id' => $taskCard['employee']['id'],
+                    'column_id' => $taskCards['columnId'],
+                    'member_id' => $taskCard['id'],
                 ]);
             }
         } catch (\Exception $e) {
@@ -32,19 +32,19 @@ class EmployeeCardController extends Controller
         return response(['success' => 'true'], 200);
     }
 
-    public function getEmployeeCardsByColumn($id)
+    public function getTaskCardsByColumn($id)
     {
-        return EmployeeCard::where('column_id', $id)->with('employee')->get();
+        return TaskCard::where('column_id', $id)->with('employee')->get();
     }
 
-    public function updateEmployeeCardIndexes(Request $request)
+    public function updateTaskCardIndexes(Request $request)
     {
-        $employeeCards = $request->all();
+        $taskCards = $request->all();
         $newIndex = 0;
         try {
-            foreach ($employeeCards as $employeeCard) {
+            foreach ($taskCards as $taskCard) {
                 $newIndex++;
-                EmployeeCard::find($employeeCard['id'])->update(['index' => $newIndex]);
+                TaskCard::find($taskCard['id'])->update(['index' => $newIndex]);
             }
         } catch (\Exception $e) {
             return response([
@@ -55,10 +55,10 @@ class EmployeeCardController extends Controller
         return response(['success' => 'true'], 200);
     }
 
-    public function updateEmployeeCardColumnId($columnId, $employeeCardId)
+    public function updateTaskCardColumnId($columnId, $taskCardId)
     {
         try {
-            EmployeeCard::find($employeeCardId)->update(['column_id' => $columnId]);
+            TaskCard::find($taskCardId)->update(['column_id' => $columnId]);
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
@@ -68,11 +68,11 @@ class EmployeeCardController extends Controller
         return response(['success' => 'true'], 200);
     }
 
-    public function deleteEmployeeCard($id)
+    public function deleteTaskCard($id)
     {
         try {
-            $employeeCard = EmployeeCard::find($id);
-            $employeeCard->delete();
+            $taskCard = TaskCard::find($id);
+            $taskCard->delete();
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
