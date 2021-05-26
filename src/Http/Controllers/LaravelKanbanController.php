@@ -17,7 +17,7 @@ class LaravelKanbanController extends Controller
 
     public function getkanbanData($id)
     {
-        $board = Board::with('members.employee', 'rows.columns.taskCards.employee')->find($id);
+        $board = Board::with('members.employee.user', 'rows.columns.taskCards.employee.user')->find($id);
         return $board;
     }
 
@@ -34,7 +34,7 @@ class LaravelKanbanController extends Controller
 
     public function getFormattedData($id)
     {
-        $kanbanData = Board::with('members.employee', 'rows.columns.taskCards.employee')->find($id);
+        $kanbanData = Board::with('members.employee.user', 'rows.columns.taskCards.employee.user')->find($id);
 
         $rows = [];
 

@@ -46,17 +46,17 @@
                         <div class="space-y-6">
                             <div class="flex-1">
                                 <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Employees</span>
-                                <vSelect :getOptionLabel="option => option.employee.name"
+                                <vSelect :getOptionLabel="option => option.employee.user.full_name"
                                          :options="this.kanbanData.members"
                                          class="text-gray-700"
                                          multiple
                                          style="margin-top: 7px"
                                          v-model="cardData.employeesSelected">
                                     <template slot="option" slot-scope="option">
-                                        <avatar :name="option.employee.name"
+                                        <avatar :name="option.employee.user.full_name"
                                                 :size="4"
                                                 class="mr-3 m-1 float-left"></avatar>
-                                        <p class="inline">{{ option.employee.name }}</p>
+                                        <p class="inline">{{ option.employee.user.full_name }}</p>
                                     </template>
                                     <template #no-options="{ search, searching, loading }">
                                         No result .
@@ -98,10 +98,10 @@
                                         <div :key="employeeIndex"
                                              class="flex justify-between items-center border-b p-1">
                                             <div class="flex items-center">
-                                                <avatar :name="taskCard.employee.name"
+                                                <avatar :name="taskCard.employee.user.full_name"
                                                         :size="6"
                                                         class="mr-3"></avatar>
-                                                <span class="py-2 mr-3 text-gray-600">{{taskCard.employee.name}}</span>
+                                                <span class="py-2 mr-3 text-gray-600">{{taskCard.employee.user.full_name}}</span>
                                             </div>
                                             <a @click="deleteCard(taskCard)"
                                                class="cursor-pointer text-gray-400 text-sm hover:text-gray-600 transition duration-300 ease-in-out">
@@ -200,3 +200,4 @@
         },
     };
 </script>
+

@@ -5,61 +5,82 @@
                     :kanbanName="kanban.name"
                     :loadingMembers="loadingMembers"></kanban-bar>
 
-        <div :key="row.id" class="mx-10 my-3" v-for="(row, rowIndex) in kanban.rows">
+        <draggable :animation="200" group="rows" class="h-full list-group" ghost-class="ghost-card">
 
-            <div class="border bg-gray-700 pl-3 pr-3 rounded py-2 flex justify-between"
-                 v-if="loadingColumn.rowId === row.id && loadingColumn.isLoading ">
-                <h2 class="text-gray-100 font-medium tracking-wide animate-pulse">
-                    Loading... </h2>
-            </div>
-            <div class="border bg-gray-700 pl-3 pr-3 rounded py-2 flex justify-between" v-else>
-                <h2 class="text-gray-100 font-medium tracking-wide">
-                    {{ row.name }} </h2>
+            <div :key="row.id" class="mx-10 my-3" v-for="(row, rowIndex) in kanban.rows">
 
-                <a @click="createColumns(rowIndex, row.columns, row.id)"
-                   class="px-2 text-gray-500 hover:text-gray-400 transition duration-300 ease-in-out focus:outline-none"
-                   href="#">
-                    <i class="fas fa-business-time"></i>
-                </a>
-            </div>
-            <div class="flex flex-wrap">
-                <div class="space-x-2  flex flex-1 pt-3 pb-2 overflow-x-auto overflow-y-hidden">
-                    <div :key="column.id"
-                         class="flex-1 bg-gray-200 px-3 py-3 column-width rounded"
-                         v-for="(column, columnIndex) in row.columns">
-                        <div class="flex" v-if="loadingCards.columnId === column.id && loadingCards.isLoading ">
-                            <p class="flex-auto text-gray-700 font-semibold font-sans tracking-wide pt-1 animate-pulse">
-                                Loading... </p>
-                        </div>
-                        <div class="flex" v-else>
+                <div class="border bg-gray-700 pl-3 pr-3 rounded py-2 flex justify-between"
+                     v-if="loadingColumn.rowId === row.id && loadingColumn.isLoading ">
+                    <h2 class="text-gray-100 font-medium tracking-wide animate-pulse">
+                        Loading... </h2>
+                </div>
+                <div class="border bg-gray-700 pl-3 pr-3 rounded py-2 flex justify-between" v-else>
+                    <h2 class="text-gray-100 font-medium tracking-wide">
+                        {{ row.name }} </h2>
 
-                            <p class="flex-auto text-gray-700 font-semibold font-sans tracking-wide pt-1">
-                                {{ column.name }} </p>
+                    <a @click="createColumns(rowIndex, row.columns, row.id)"
+                       class="px-2 text-gray-500 hover:text-gray-400 transition duration-300 ease-in-out focus:outline-none"
+                       href="#">
+                        <i class="fas fa-business-time"></i>
+                    </a>
+                </div>
+                <div class="flex flex-wrap">
+                    <div class="space-x-2  flex flex-1 pt-3 pb-2 overflow-x-auto overflow-y-hidden">
 
-                            <button @click="createTaskCard(rowIndex, columnIndex)"
-                                    class="w-6 h-6 bg-blue-200 rounded-full hover:bg-blue-300 mouse transition ease-in duration-200 focus:outline-none">
-                                <i class="fas fa-plus text-white"></i>
-                            </button>
-                        </div>
                         <draggable :animation="200"
-                                   :list="column.task_cards"
-                                   :disabled="isDraggableDisabled"
-                                   @change="getChangeData($event, columnIndex, rowIndex)"
-                                   class="h-full list-group"
-                                   ghost-class="ghost-card"
-                                   group="employees">
-                            <task-card :task_card="task_card"
-                                           :key="task_card.id"
-                                           class="mt-3 cursor-move"
-                                           :class="{'opacity-60':isDraggableDisabled}"
-                                           v-for="task_card in column.task_cards"
-                                           v-on:click.native="updateTask(task_card.id)"></task-card>
+                                   group="columns"
+                                   class="h-full list-group flex"
+                                   ghost-class="ghost-card">
+                            <div :key="column.id"
+                                 class="flex-1 bg-gray-200 px-3 py-3 column-width rounded mr-4"
+                                 v-for="(column, columnIndex) in row.columns">
+                                <div class="flex" v-if="loadingCards.columnId === column.id && loadingCards.isLoading ">
+                                    <p class="flex-auto text-gray-700 font-semibold font-sans tracking-wide pt-1 animate-pulse">
+                                        Loading... </p>
+                                </div>
+                                <div class="flex" v-else>
+
+                                    <p class="flex-auto text-gray-700 font-semibold font-sans tracking-wide pt-1">
+                                        {{ column.name }} </p>
+
+                                    <button @click="createTaskCard(rowIndex, columnIndex)"
+                                            class="w-6 h-6 bg-blue-200 rounded-full hover:bg-blue-300 mouse transition ease-in duration-200 focus:outline-none">
+                                        <i class="fas fa-plus text-white"></i>
+                                    </button>
+                                </div>
+                                <draggable :animation="200"
+                                           :disabled="isDraggableDisabled"
+                                           :list="column.task_cards"
+                                           @change="getChangeData($event, columnIndex, rowIndex)"
+                                           class="h-full list-group"
+                                           ghost-class="ghost-card"
+                                           group="employees">
+                                    <task-card :class="{'opacity-60':isDraggableDisabled}"
+                                               :key="task_card.id"
+                                               :task_card="task_card"
+                                               class="mt-3 cursor-move"
+                                               v-for="task_card in column.task_cards"
+                                               v-on:click.native="updateTask(task_card.id)"></task-card>
+                                </draggable>
+                            </div>
                         </draggable>
+                        <button @click="createColumn(rowIndex)"
+                                class="bg-gray-200 rounded-lg rounded p-4 h-full hover:bg-blue-200 mouse transition ease-in duration-200 focus:outline-none">
+                            <i class="fas fa-plus text-white"></i>
+                        </button>
                     </div>
                 </div>
             </div>
-        </div>
+
+        </draggable>
+
         <hr class="mt-5"/>
+
+        <button @click="createRow()"
+                class="text-gray-500 hover:text-gray-600 font-semibold font-sans tracking-wide bg-gray-200 rounded-lg rounded p-4 m-10 hover:bg-blue-200 mouse transition ease-in duration-200 focus:outline-none">
+            <p class="font-bold inline">Create new row</p>
+            <i class="pl-2 fas fa-plus"></i>
+        </button>
 
         <add-task-card-modal :kanbanData="kanban"></add-task-card-modal>
         <add-member-modal :kanbanData="kanban"></add-member-modal>
@@ -129,7 +150,7 @@
             });
         },
 
-        beforeDestroy(){
+        beforeDestroy() {
             this.eventHub.$off('save-task-cards');
             this.eventHub.$off('delete-kanban-task-cards');
             this.eventHub.$off('save-members');

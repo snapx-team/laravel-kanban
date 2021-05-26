@@ -34,7 +34,7 @@ class TaskCardController extends Controller
 
     public function getTaskCardsByColumn($id)
     {
-        return TaskCard::where('column_id', $id)->with('employee')->get();
+        return TaskCard::where('column_id', $id)->with('employee.user')->get();
     }
 
     public function updateTaskCardIndexes(Request $request)

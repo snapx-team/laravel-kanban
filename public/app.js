@@ -7703,6 +7703,27 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -8615,6 +8636,34 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/Badge.vue?vue&type=script&lang=js&":
+/*!********************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/kanban/kanbanComponents/Badge.vue?vue&type=script&lang=js& ***!
+  \********************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: {
+    color: {
+      type: String,
+      "default": "teal"
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/KanbanBar.vue?vue&type=script&lang=js&":
 /*!************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/kanban/kanbanComponents/KanbanBar.vue?vue&type=script&lang=js& ***!
@@ -8625,10 +8674,6 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _global_Avatar_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../global/Avatar.vue */ "./src/resources/js/components/global/Avatar.vue");
-//
-//
-//
-//
 //
 //
 //
@@ -8710,6 +8755,41 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _global_Avatar_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../global/Avatar.vue */ "./src/resources/js/components/global/Avatar.vue");
+/* harmony import */ var _Badge_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Badge.vue */ "./src/resources/js/components/kanban/kanbanComponents/Badge.vue");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -8724,8 +8804,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
+    Badge: _Badge_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
     Avatar: _global_Avatar_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
   props: {
@@ -16515,179 +16597,247 @@ var render = function() {
             }
           }),
           _vm._v(" "),
-          _vm._l(_vm.kanban.rows, function(row, rowIndex) {
-            return _c("div", { key: row.id, staticClass: "mx-10 my-3" }, [
-              _vm.loadingColumn.rowId === row.id && _vm.loadingColumn.isLoading
-                ? _c(
-                    "div",
-                    {
-                      staticClass:
-                        "border bg-gray-700 pl-3 pr-3 rounded py-2 flex justify-between"
-                    },
-                    [
-                      _c(
-                        "h2",
-                        {
-                          staticClass:
-                            "text-gray-100 font-medium tracking-wide animate-pulse"
-                        },
-                        [_vm._v("\n                Loading... ")]
-                      )
-                    ]
-                  )
-                : _c(
-                    "div",
-                    {
-                      staticClass:
-                        "border bg-gray-700 pl-3 pr-3 rounded py-2 flex justify-between"
-                    },
-                    [
-                      _c(
-                        "h2",
-                        {
-                          staticClass: "text-gray-100 font-medium tracking-wide"
-                        },
-                        [_vm._v("\n                " + _vm._s(row.name) + " ")]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "a",
-                        {
-                          staticClass:
-                            "px-2 text-gray-500 hover:text-gray-400 transition duration-300 ease-in-out focus:outline-none",
-                          attrs: { href: "#" },
-                          on: {
-                            click: function($event) {
-                              return _vm.createColumns(
-                                rowIndex,
-                                row.columns,
-                                row.id
-                              )
-                            }
-                          }
-                        },
-                        [_c("i", { staticClass: "fas fa-business-time" })]
-                      )
-                    ]
-                  ),
-              _vm._v(" "),
-              _c("div", { staticClass: "flex flex-wrap" }, [
-                _c(
-                  "div",
-                  {
-                    staticClass:
-                      "space-x-2  flex flex-1 pt-3 pb-2 overflow-x-auto overflow-y-hidden"
-                  },
-                  _vm._l(row.columns, function(column, columnIndex) {
-                    return _c(
+          _c(
+            "draggable",
+            {
+              staticClass: "h-full list-group",
+              attrs: {
+                animation: 200,
+                group: "rows",
+                "ghost-class": "ghost-card"
+              }
+            },
+            _vm._l(_vm.kanban.rows, function(row, rowIndex) {
+              return _c("div", { key: row.id, staticClass: "mx-10 my-3" }, [
+                _vm.loadingColumn.rowId === row.id &&
+                _vm.loadingColumn.isLoading
+                  ? _c(
                       "div",
                       {
-                        key: column.id,
                         staticClass:
-                          "flex-1 bg-gray-200 px-3 py-3 column-width rounded"
+                          "border bg-gray-700 pl-3 pr-3 rounded py-2 flex justify-between"
                       },
                       [
-                        _vm.loadingCards.columnId === column.id &&
-                        _vm.loadingCards.isLoading
-                          ? _c("div", { staticClass: "flex" }, [
-                              _c(
-                                "p",
-                                {
-                                  staticClass:
-                                    "flex-auto text-gray-700 font-semibold font-sans tracking-wide pt-1 animate-pulse"
-                                },
-                                [
-                                  _vm._v(
-                                    "\n                            Loading... "
-                                  )
-                                ]
-                              )
-                            ])
-                          : _c("div", { staticClass: "flex" }, [
-                              _c(
-                                "p",
-                                {
-                                  staticClass:
-                                    "flex-auto text-gray-700 font-semibold font-sans tracking-wide pt-1"
-                                },
-                                [
-                                  _vm._v(
-                                    "\n                            " +
-                                      _vm._s(column.name) +
-                                      " "
-                                  )
-                                ]
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "button",
-                                {
-                                  staticClass:
-                                    "w-6 h-6 bg-blue-200 rounded-full hover:bg-blue-300 mouse transition ease-in duration-200 focus:outline-none",
-                                  on: {
-                                    click: function($event) {
-                                      return _vm.createTaskCard(
-                                        rowIndex,
-                                        columnIndex
-                                      )
-                                    }
-                                  }
-                                },
-                                [
-                                  _c("i", {
-                                    staticClass: "fas fa-plus text-white"
-                                  })
-                                ]
-                              )
-                            ]),
+                        _c(
+                          "h2",
+                          {
+                            staticClass:
+                              "text-gray-100 font-medium tracking-wide animate-pulse"
+                          },
+                          [_vm._v("\n                    Loading... ")]
+                        )
+                      ]
+                    )
+                  : _c(
+                      "div",
+                      {
+                        staticClass:
+                          "border bg-gray-700 pl-3 pr-3 rounded py-2 flex justify-between"
+                      },
+                      [
+                        _c(
+                          "h2",
+                          {
+                            staticClass:
+                              "text-gray-100 font-medium tracking-wide"
+                          },
+                          [
+                            _vm._v(
+                              "\n                    " + _vm._s(row.name) + " "
+                            )
+                          ]
+                        ),
                         _vm._v(" "),
                         _c(
-                          "draggable",
+                          "a",
                           {
-                            staticClass: "h-full list-group",
-                            attrs: {
-                              animation: 200,
-                              list: column.task_cards,
-                              disabled: _vm.isDraggableDisabled,
-                              "ghost-class": "ghost-card",
-                              group: "employees"
-                            },
+                            staticClass:
+                              "px-2 text-gray-500 hover:text-gray-400 transition duration-300 ease-in-out focus:outline-none",
+                            attrs: { href: "#" },
                             on: {
-                              change: function($event) {
-                                return _vm.getChangeData(
-                                  $event,
-                                  columnIndex,
-                                  rowIndex
+                              click: function($event) {
+                                return _vm.createColumns(
+                                  rowIndex,
+                                  row.columns,
+                                  row.id
                                 )
                               }
                             }
                           },
-                          _vm._l(column.task_cards, function(task_card) {
-                            return _c("task-card", {
-                              key: task_card.id,
-                              staticClass: "mt-3 cursor-move",
-                              class: { "opacity-60": _vm.isDraggableDisabled },
-                              attrs: { task_card: task_card },
-                              nativeOn: {
-                                click: function($event) {
-                                  return _vm.updateTask(task_card.id)
-                                }
-                              }
-                            })
-                          }),
-                          1
+                          [_c("i", { staticClass: "fas fa-business-time" })]
                         )
-                      ],
-                      1
-                    )
-                  }),
-                  0
-                )
+                      ]
+                    ),
+                _vm._v(" "),
+                _c("div", { staticClass: "flex flex-wrap" }, [
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "space-x-2  flex flex-1 pt-3 pb-2 overflow-x-auto overflow-y-hidden"
+                    },
+                    [
+                      _c(
+                        "draggable",
+                        {
+                          staticClass: "h-full list-group flex",
+                          attrs: {
+                            animation: 200,
+                            group: "columns",
+                            "ghost-class": "ghost-card"
+                          }
+                        },
+                        _vm._l(row.columns, function(column, columnIndex) {
+                          return _c(
+                            "div",
+                            {
+                              key: column.id,
+                              staticClass:
+                                "flex-1 bg-gray-200 px-3 py-3 column-width rounded mr-4"
+                            },
+                            [
+                              _vm.loadingCards.columnId === column.id &&
+                              _vm.loadingCards.isLoading
+                                ? _c("div", { staticClass: "flex" }, [
+                                    _c(
+                                      "p",
+                                      {
+                                        staticClass:
+                                          "flex-auto text-gray-700 font-semibold font-sans tracking-wide pt-1 animate-pulse"
+                                      },
+                                      [
+                                        _vm._v(
+                                          "\n                                    Loading... "
+                                        )
+                                      ]
+                                    )
+                                  ])
+                                : _c("div", { staticClass: "flex" }, [
+                                    _c(
+                                      "p",
+                                      {
+                                        staticClass:
+                                          "flex-auto text-gray-700 font-semibold font-sans tracking-wide pt-1"
+                                      },
+                                      [
+                                        _vm._v(
+                                          "\n                                    " +
+                                            _vm._s(column.name) +
+                                            " "
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass:
+                                          "w-6 h-6 bg-blue-200 rounded-full hover:bg-blue-300 mouse transition ease-in duration-200 focus:outline-none",
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.createTaskCard(
+                                              rowIndex,
+                                              columnIndex
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c("i", {
+                                          staticClass: "fas fa-plus text-white"
+                                        })
+                                      ]
+                                    )
+                                  ]),
+                              _vm._v(" "),
+                              _c(
+                                "draggable",
+                                {
+                                  staticClass: "h-full list-group",
+                                  attrs: {
+                                    animation: 200,
+                                    disabled: _vm.isDraggableDisabled,
+                                    list: column.task_cards,
+                                    "ghost-class": "ghost-card",
+                                    group: "employees"
+                                  },
+                                  on: {
+                                    change: function($event) {
+                                      return _vm.getChangeData(
+                                        $event,
+                                        columnIndex,
+                                        rowIndex
+                                      )
+                                    }
+                                  }
+                                },
+                                _vm._l(column.task_cards, function(task_card) {
+                                  return _c("task-card", {
+                                    key: task_card.id,
+                                    staticClass: "mt-3 cursor-move",
+                                    class: {
+                                      "opacity-60": _vm.isDraggableDisabled
+                                    },
+                                    attrs: { task_card: task_card },
+                                    nativeOn: {
+                                      click: function($event) {
+                                        return _vm.updateTask(task_card.id)
+                                      }
+                                    }
+                                  })
+                                }),
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        }),
+                        0
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "button",
+                        {
+                          staticClass:
+                            "bg-gray-200 rounded-lg rounded p-4 h-full hover:bg-blue-200 mouse transition ease-in duration-200 focus:outline-none",
+                          on: {
+                            click: function($event) {
+                              return _vm.createColumn(rowIndex)
+                            }
+                          }
+                        },
+                        [_c("i", { staticClass: "fas fa-plus text-white" })]
+                      )
+                    ],
+                    1
+                  )
+                ])
               ])
-            ])
-          }),
+            }),
+            0
+          ),
           _vm._v(" "),
           _c("hr", { staticClass: "mt-5" }),
+          _vm._v(" "),
+          _c(
+            "button",
+            {
+              staticClass:
+                "text-gray-500 hover:text-gray-600 font-semibold font-sans tracking-wide bg-gray-200 rounded-lg rounded p-4 m-10 hover:bg-blue-200 mouse transition ease-in duration-200 focus:outline-none",
+              on: {
+                click: function($event) {
+                  return _vm.createRow()
+                }
+              }
+            },
+            [
+              _c("p", { staticClass: "font-bold inline" }, [
+                _vm._v("Create new row")
+              ]),
+              _vm._v(" "),
+              _c("i", { staticClass: "pl-2 fas fa-plus" })
+            ]
+          ),
           _vm._v(" "),
           _c("add-task-card-modal", { attrs: { kanbanData: _vm.kanban } }),
           _vm._v(" "),
@@ -16695,7 +16845,7 @@ var render = function() {
           _vm._v(" "),
           _c("add-column-modal", { attrs: { kanbanData: _vm.kanban } })
         ],
-        2
+        1
       )
     : _vm._e()
 }
@@ -17635,7 +17785,7 @@ var render = function() {
                                   staticStyle: { "margin-top": "7px" },
                                   attrs: {
                                     getOptionLabel: function(option) {
-                                      return option.employee.name
+                                      return option.employee.user.full_name
                                     },
                                     options: this.kanbanData.members,
                                     multiple: ""
@@ -17650,14 +17800,18 @@ var render = function() {
                                               staticClass:
                                                 "mr-3 m-1 float-left",
                                               attrs: {
-                                                name: option.employee.name,
+                                                name:
+                                                  option.employee.user
+                                                    .full_name,
                                                 size: 4
                                               }
                                             }),
                                             _vm._v(" "),
                                             _c("p", { staticClass: "inline" }, [
                                               _vm._v(
-                                                _vm._s(option.employee.name)
+                                                _vm._s(
+                                                  option.employee.user.full_name
+                                                )
                                               )
                                             ])
                                           ]
@@ -17679,7 +17833,7 @@ var render = function() {
                                     ],
                                     null,
                                     false,
-                                    4203605960
+                                    2463455496
                                   ),
                                   model: {
                                     value: _vm.cardData.employeesSelected,
@@ -17834,7 +17988,8 @@ var render = function() {
                                                   staticClass: "mr-3",
                                                   attrs: {
                                                     name:
-                                                      taskCard.employee.name,
+                                                      taskCard.employee.user
+                                                        .full_name,
                                                     size: 6
                                                   }
                                                 }),
@@ -17848,7 +18003,8 @@ var render = function() {
                                                   [
                                                     _vm._v(
                                                       _vm._s(
-                                                        taskCard.employee.name
+                                                        taskCard.employee.user
+                                                          .full_name
                                                       )
                                                     )
                                                   ]
@@ -17906,6 +18062,44 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/Badge.vue?vue&type=template&id=77b75653&":
+/*!************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/kanban/kanbanComponents/Badge.vue?vue&type=template&id=77b75653& ***!
+  \************************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    {
+      staticClass: "px-3 py-1 rounded text-xs font-semibold flex items-center",
+      class: "bg-" + _vm.color + "-100 text-" + _vm.color + "-700"
+    },
+    [
+      _c("span", {
+        staticClass: "w-2 h-2 rounded-full mr-1",
+        class: "bg-" + _vm.color + "-400"
+      }),
+      _vm._v(" "),
+      _c("span", [_vm._t("default")], 2)
+    ]
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/KanbanBar.vue?vue&type=template&id=8c2940e8&scoped=true&":
 /*!****************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/kanban/kanbanComponents/KanbanBar.vue?vue&type=template&id=8c2940e8&scoped=true& ***!
@@ -17949,7 +18143,7 @@ var render = function() {
                       class: { "-ml-3": memberIndex > 0 },
                       attrs: {
                         borderSize: 2,
-                        name: member.employee.name,
+                        name: member.employee.user.full_name,
                         size: 10,
                         tooltip: true
                       }
@@ -18015,10 +18209,8 @@ var render = function() {
     "div",
     {
       staticClass:
-        "bg-white hover:shadow-md shadow rounded px-3 p-2 border-l-4",
-      class: _vm.task_card.employee.is_active
-        ? "border-blue-500"
-        : "border-red-500"
+        "bg-white hover:shadow-md shadow rounded px-3 pt-3 pb-5 border-l-4",
+      class: "border-" + _vm.task_card.employee.is_active + "-400"
     },
     [
       _c("div", { staticClass: "flex justify-between" }, [
@@ -18028,28 +18220,83 @@ var render = function() {
             staticClass:
               "text-gray-700 font-semibold font-sans tracking-wide text-sm mr-3"
           },
-          [_vm._v(" " + _vm._s(_vm.task_card.employee.phone) + " ")]
+          [_vm._v("\n            TASK TITLE ")]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "flex justify-end" },
+          [
+            _vm._l(_vm.task_card.assignedTo, function(user, userIndex) {
+              return [
+                userIndex < 3
+                  ? [
+                      _c("avatar", {
+                        key: userIndex,
+                        class: { "-ml-2": userIndex > 0 },
+                        attrs: {
+                          borderColor: "white",
+                          borderSize: 0,
+                          name: user.name,
+                          size: 6,
+                          tooltip: true
+                        }
+                      })
+                    ]
+                  : _vm._e()
+              ]
+            }),
+            _vm._v(" "),
+            _vm.task_card.assignedTo
+              ? _c("div", { staticClass: "flex" }, [
+                  _vm.task_card.assignedTo.length > 3
+                    ? _c(
+                        "span",
+                        {
+                          staticClass:
+                            "z-10 flex items-center justify-center font-semibold text-gray-800 text-xs w-6 h-6 rounded-full bg-gray-300 border-white border -ml-2 pr-1"
+                        },
+                        [
+                          _vm._v(
+                            "+" +
+                              _vm._s(_vm.task_card.assignedTo.length - 3) +
+                              "\n      "
+                          )
+                        ]
+                      )
+                    : _vm._e()
+                ])
+              : _vm._e()
+          ],
+          2
         )
       ]),
       _vm._v(" "),
       _c(
         "div",
-        { staticClass: "flex justify-between items-center" },
+        { staticClass: "flex mt-4 justify-between items-center" },
         [
-          _c("div", { staticClass: "flex flex-wrap items-center" }, [
-            _c("span", { staticClass: "text-sm text-gray-600" }, [
-              _vm._v(" " + _vm._s(_vm.task_card.employee.name) + " ")
-            ])
-          ]),
+          _c(
+            "div",
+            { staticClass: "flex flex-wrap items-center" },
+            [
+              _c("avatar", {
+                staticClass: "border border-white",
+                attrs: { name: _vm.task_card.creator, size: 6, tooltip: true }
+              }),
+              _vm._v(" "),
+              _c("span", { staticClass: "text-sm text-gray-600 px-1" }, [
+                _vm._v(" • " + _vm._s(_vm.task_card.date) + " ")
+              ])
+            ],
+            1
+          ),
           _vm._v(" "),
-          _c("avatar", {
-            staticClass: "border border-white",
-            attrs: {
-              name: _vm.task_card.employee.name,
-              size: 6,
-              tooltip: false
-            }
-          })
+          _vm.task_card.badge
+            ? _c("badge", { attrs: { color: _vm.task_card.badge.color } }, [
+                _vm._v(_vm._s(_vm.task_card.badge.title))
+              ])
+            : _vm._e()
         ],
         1
       )
@@ -39867,6 +40114,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddTaskCardModal_vue_vue_type_template_id_0d057cd7___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddTaskCardModal_vue_vue_type_template_id_0d057cd7___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./src/resources/js/components/kanban/kanbanComponents/Badge.vue":
+/*!***********************************************************************!*\
+  !*** ./src/resources/js/components/kanban/kanbanComponents/Badge.vue ***!
+  \***********************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Badge_vue_vue_type_template_id_77b75653___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Badge.vue?vue&type=template&id=77b75653& */ "./src/resources/js/components/kanban/kanbanComponents/Badge.vue?vue&type=template&id=77b75653&");
+/* harmony import */ var _Badge_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Badge.vue?vue&type=script&lang=js& */ "./src/resources/js/components/kanban/kanbanComponents/Badge.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Badge_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Badge_vue_vue_type_template_id_77b75653___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Badge_vue_vue_type_template_id_77b75653___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "src/resources/js/components/kanban/kanbanComponents/Badge.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./src/resources/js/components/kanban/kanbanComponents/Badge.vue?vue&type=script&lang=js&":
+/*!************************************************************************************************!*\
+  !*** ./src/resources/js/components/kanban/kanbanComponents/Badge.vue?vue&type=script&lang=js& ***!
+  \************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Badge_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./Badge.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/Badge.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Badge_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./src/resources/js/components/kanban/kanbanComponents/Badge.vue?vue&type=template&id=77b75653&":
+/*!******************************************************************************************************!*\
+  !*** ./src/resources/js/components/kanban/kanbanComponents/Badge.vue?vue&type=template&id=77b75653& ***!
+  \******************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Badge_vue_vue_type_template_id_77b75653___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./Badge.vue?vue&type=template&id=77b75653& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/Badge.vue?vue&type=template&id=77b75653&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Badge_vue_vue_type_template_id_77b75653___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Badge_vue_vue_type_template_id_77b75653___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
