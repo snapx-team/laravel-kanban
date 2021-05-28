@@ -33,8 +33,8 @@ export function getTags() {
 
 // Columns
 
-export function createColumns(columnData) {
-    return axios.post('create-columns', columnData);
+export function createRowAndColumns(columnData) {
+    return axios.post('save-row-and-columns', columnData);
 }
 
 // Employee Cards

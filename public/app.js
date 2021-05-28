@@ -4565,46 +4565,6 @@
 
 /***/ }),
 
-/***/ "./node_modules/add-zero/index.js":
-/*!****************************************!*\
-  !*** ./node_modules/add-zero/index.js ***!
-  \****************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_RESULT__;(function(exports) {
-
-  'use strict';
-
-  function addZero(value, digits) {
-    digits = digits || 2;
-
-    var isNegative = Number(value) < 0;
-    var buffer = value.toString();
-    var size = 0;
-
-    // Strip minus sign if number is negative
-    if(isNegative) {
-      buffer = buffer.slice(1);
-    }
-
-    size = digits - buffer.length + 1;
-    buffer = new Array(size).join('0').concat(buffer);
-
-    // Adds back minus sign if needed
-    return (isNegative ? '-' : '') + buffer;
-  }
-
-  if(true) {
-    !(__WEBPACK_AMD_DEFINE_RESULT__ = (function() { return addZero; }).call(exports, __webpack_require__, exports, module),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-  } else {}
-
-})(this);
-
-
-/***/ }),
-
 /***/ "./node_modules/axios/index.js":
 /*!*************************************!*\
   !*** ./node_modules/axios/index.js ***!
@@ -7625,9 +7585,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _kanbanComponents_TaskCard_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./kanbanComponents/TaskCard.vue */ "./src/resources/js/components/kanban/kanbanComponents/TaskCard.vue");
 /* harmony import */ var _kanbanComponents_AddTaskCardModal_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./kanbanComponents/AddTaskCardModal.vue */ "./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue");
 /* harmony import */ var _kanbanComponents_AddMemberModal_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./kanbanComponents/AddMemberModal.vue */ "./src/resources/js/components/kanban/kanbanComponents/AddMemberModal.vue");
-/* harmony import */ var _kanbanComponents_AddColumnModal_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./kanbanComponents/AddColumnModal.vue */ "./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue");
-/* harmony import */ var _kanbanComponents_KanbanBar_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./kanbanComponents/KanbanBar.vue */ "./src/resources/js/components/kanban/kanbanComponents/KanbanBar.vue");
-/* harmony import */ var _mixins_ajaxCallsMixin__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../mixins/ajaxCallsMixin */ "./src/resources/js/mixins/ajaxCallsMixin.js");
+/* harmony import */ var _kanbanComponents_KanbanBar_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./kanbanComponents/KanbanBar.vue */ "./src/resources/js/components/kanban/kanbanComponents/KanbanBar.vue");
+/* harmony import */ var _mixins_ajaxCallsMixin__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../mixins/ajaxCallsMixin */ "./src/resources/js/mixins/ajaxCallsMixin.js");
+/* harmony import */ var _kanbanComponents_AddRowAndColumnsModal__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./kanbanComponents/AddRowAndColumnsModal */ "./src/resources/js/components/kanban/kanbanComponents/AddRowAndColumnsModal.vue");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -7724,6 +7684,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
 
 
 
@@ -7734,21 +7696,21 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 /* harmony default export */ __webpack_exports__["default"] = ({
   inject: ["eventHub"],
   components: {
+    AddRowAndColumnsModal: _kanbanComponents_AddRowAndColumnsModal__WEBPACK_IMPORTED_MODULE_6__["default"],
     TaskCard: _kanbanComponents_TaskCard_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
     draggable: vuedraggable__WEBPACK_IMPORTED_MODULE_0___default.a,
     AddTaskCardModal: _kanbanComponents_AddTaskCardModal_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
     AddMemberModal: _kanbanComponents_AddMemberModal_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
-    AddColumnModal: _kanbanComponents_AddColumnModal_vue__WEBPACK_IMPORTED_MODULE_4__["default"],
-    KanbanBar: _kanbanComponents_KanbanBar_vue__WEBPACK_IMPORTED_MODULE_5__["default"]
+    KanbanBar: _kanbanComponents_KanbanBar_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
   },
-  mixins: [_mixins_ajaxCallsMixin__WEBPACK_IMPORTED_MODULE_6__["ajaxCalls"]],
+  mixins: [_mixins_ajaxCallsMixin__WEBPACK_IMPORTED_MODULE_5__["ajaxCalls"]],
   props: {
     'id': Number
   },
   data: function data() {
     return {
       kanban: null,
-      loadingColumn: {
+      loadingRow: {
         rowId: null,
         isLoading: false
       },
@@ -7786,8 +7748,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     this.eventHub.$on("remove-member", function (memberData) {
       _this.deleteMember(memberData);
     });
-    this.eventHub.$on("save-columns", function (columnData) {
-      _this.saveColumns(columnData);
+    this.eventHub.$on("save-row-and-columns", function (rowData) {
+      _this.saveRowAndColumns(rowData);
     });
   },
   beforeDestroy: function beforeDestroy() {
@@ -7795,7 +7757,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     this.eventHub.$off('delete-kanban-task-cards');
     this.eventHub.$off('save-members');
     this.eventHub.$off('remove-member');
-    this.eventHub.$off('save-columns');
+    this.eventHub.$off('save-row-and-columns');
   },
   methods: {
     createTaskCard: function createTaskCard(rowIndex, columnIndex) {
@@ -7810,21 +7772,23 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         columnId: columnId
       });
     },
-    createColumns: function createColumns(rowIndex, rowColumns, rowId) {
-      this.eventHub.$emit("create-columns", {
+    createRowAndColumns: function createRowAndColumns(rowIndex, rowColumns, rowId, rowName) {
+      this.eventHub.$emit("create-row-and-columns", {
         rowIndex: rowIndex,
         rowColumns: rowColumns,
-        rowId: rowId
+        rowId: rowId,
+        rowName: rowName
       });
     },
     // Whenever a user drags a card
-    getChangeData: function getChangeData(event, columnIndex, rowIndex) {
+    getTaskChangeData: function getTaskChangeData(event, columnIndex, rowIndex) {
       var _this2 = this;
 
       var eventName = Object.keys(event)[0];
       var taskCardData = this.kanban.rows[rowIndex].columns[columnIndex].task_cards;
       var columnId = this.kanban.rows[rowIndex].columns[columnIndex].id;
       this.isDraggableDisabled = true;
+      console.log(eventName);
 
       switch (eventName) {
         case "moved":
@@ -7851,8 +7815,31 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           alert('event "' + eventName + '" not handled: ');
       }
     },
-    saveMember: function saveMember(selectedMembers) {
+    // Whenever a user drags a column
+    getColumnChangeData: function getColumnChangeData(event, rowIndex) {
       var _this3 = this;
+
+      if (event.oldIndex !== event.newIndex) {
+        var columns = this.kanban.rows[rowIndex].columns;
+        this.isDraggableDisabled = true;
+        this.asyncUpdateColumnIndexes(columns).then(function () {
+          _this3.isDraggableDisabled = false;
+        });
+      }
+    },
+    // Whenever a user drags a row
+    getRowChangeData: function getRowChangeData(event) {
+      var _this4 = this;
+
+      if (event.oldIndex !== event.newIndex) {
+        this.isDraggableDisabled = true;
+        this.asyncUpdateRowIndexes(this.kanban.rows).then(function () {
+          _this4.isDraggableDisabled = false;
+        });
+      }
+    },
+    saveMember: function saveMember(selectedMembers) {
+      var _this5 = this;
 
       this.loadingMembers = {
         memberId: null,
@@ -7862,9 +7849,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var cloneSelectedMembers = _objectSpread({}, selectedMembers);
 
       this.asyncAddMembers(cloneSelectedMembers, this.kanban.id).then(function () {
-        _this3.asyncGetMembers(_this3.kanban.id).then(function (data) {
-          _this3.kanban.members = data.data;
-          _this3.loadingMembers = {
+        _this5.asyncGetMembers(_this5.kanban.id).then(function (data) {
+          _this5.kanban.members = data.data;
+          _this5.loadingMembers = {
             memberId: null,
             isLoading: false
           };
@@ -7876,17 +7863,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
     },
     deleteMember: function deleteMember(member) {
-      var _this4 = this;
+      var _this6 = this;
 
       this.asyncDeleteMember(member.id).then(function () {
-        _this4.loadingMembers = {
+        _this6.loadingMembers = {
           memberId: member.id,
           isLoading: true
         };
 
-        _this4.asyncGetMembers(_this4.kanban.id).then(function (data) {
-          _this4.kanban.members = data.data;
-          _this4.loadingMembers = {
+        _this6.asyncGetMembers(_this6.kanban.id).then(function (data) {
+          _this6.kanban.members = data.data;
+          _this6.loadingMembers = {
             memberId: null,
             isLoading: false
           };
@@ -7899,7 +7886,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.getKanban(this.kanban.id);
     },
     saveTaskCards: function saveTaskCards(cardData) {
-      var _this5 = this;
+      var _this7 = this;
 
       var cloneCardData = _objectSpread({}, cardData);
 
@@ -7908,9 +7895,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         isLoading: true
       };
       this.asyncCreateKanbanTaskCards(cloneCardData).then(function () {
-        _this5.asyncGetTaskCardsByColumn(cloneCardData.columnId).then(function (data) {
-          _this5.kanban.rows[cloneCardData.selectedRowIndex].columns[cloneCardData.selectedColumnIndex].task_cards = data.data;
-          _this5.loadingCards = {
+        _this7.asyncGetTaskCardsByColumn(cloneCardData.columnId).then(function (data) {
+          _this7.kanban.rows[cloneCardData.selectedRowIndex].columns[cloneCardData.selectedColumnIndex].task_cards = data.data;
+          _this7.loadingCards = {
             columnId: null,
             isLoading: false
           };
@@ -7922,7 +7909,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
     },
     deleteTaskCard: function deleteTaskCard(cardData) {
-      var _this6 = this;
+      var _this8 = this;
 
       var cloneCardData = _objectSpread({}, cardData);
 
@@ -7931,9 +7918,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         isLoading: true
       };
       this.asyncDeleteKanbanTaskCard(cloneCardData.selectedCardData.id).then(function () {
-        _this6.asyncGetTaskCardsByColumn(cloneCardData.selectedCardData.column_id).then(function (data) {
-          _this6.kanban.rows[cloneCardData.selectedRowIndex].columns[cloneCardData.selectedColumnIndex].task_cards = data.data;
-          _this6.loadingCards = {
+        _this8.asyncGetTaskCardsByColumn(cloneCardData.selectedCardData.column_id).then(function (data) {
+          _this8.kanban.rows[cloneCardData.selectedRowIndex].columns[cloneCardData.selectedColumnIndex].task_cards = data.data;
+          _this8.loadingCards = {
             columnId: null,
             isLoading: false
           };
@@ -7944,19 +7931,26 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         console.log(res);
       });
     },
-    saveColumns: function saveColumns(columnData) {
-      var _this7 = this;
+    saveRowAndColumns: function saveRowAndColumns(rowData) {
+      var _this9 = this;
 
-      var cloneColumnData = _objectSpread({}, columnData);
+      var cloneRowData = _objectSpread({}, rowData);
 
-      var rowIndex = cloneColumnData.rowIndex;
-      this.loadingColumn = {
+      var rowIndex = cloneRowData.rowIndex;
+      if (cloneRowData.rowId !== null) this.loadingRow = {
         rowId: this.kanban.rows[rowIndex].id,
         isLoading: true
       };
-      this.asyncCreateColumns(cloneColumnData).then(function (data) {
-        _this7.kanban.rows[rowIndex].columns = data.data;
-        _this7.loadingColumn = {
+      this.asyncCreateRowAndColumns(cloneRowData).then(function (data) {
+        if (cloneRowData.rowId !== null) {
+          _this9.kanban.rows[rowIndex] = data.data[0];
+        } else {
+          console.log(data);
+
+          _this9.kanban.rows.push(data.data[0]);
+        }
+
+        _this9.loadingRow = {
           rowId: null,
           isLoading: false
         };
@@ -7965,273 +7959,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
     },
     getKanban: function getKanban(kanbanID) {
-      var _this8 = this;
+      var _this10 = this;
 
       this.eventHub.$emit("set-loading-state", true);
       this.asyncGetkanbanData(kanbanID).then(function (data) {
-        _this8.kanban = data.data;
+        _this10.kanban = data.data;
 
-        _this8.eventHub.$emit("set-loading-state", false);
+        _this10.eventHub.$emit("set-loading-state", false);
 
         console.log(data);
       })["catch"](function (res) {
         console.log(res);
       });
-    }
-  }
-});
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=script&lang=js&":
-/*!*****************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=script&lang=js& ***!
-  \*****************************************************************************************************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vue_time_ranges_picker_edit_src_TimeRangesPicker_index_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-time-ranges-picker-edit/src/TimeRangesPicker/index.vue */ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/index.vue");
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  inject: ["eventHub"],
-  components: {
-    VueTimeRangesPicker: vue_time_ranges_picker_edit_src_TimeRangesPicker_index_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
-  },
-  props: {
-    kanbanData: Object
-  },
-  data: function data() {
-    return {
-      modalOpen: false,
-      isSavingColumn: false,
-      columnData: {
-        rowIndex: null,
-        rowId: null,
-        ranges: [],
-        numberOfShifts: null
-      }
-    };
-  },
-  created: function created() {
-    var _this = this;
-
-    this.eventHub.$on("create-columns", function (rowData) {
-      _this.columnData.rowIndex = rowData.rowIndex;
-      _this.columnData.rowId = rowData.rowId;
-      _this.columnData.ranges = rowData.rowColumns;
-      _this.columnData.numberOfShifts = Object.keys(_this.columnData.ranges).length;
-      _this.modalOpen = true;
-    });
-  },
-  beforeDestroy: function beforeDestroy() {
-    this.eventHub.$off('create-columns');
-  },
-  computed: {
-    rangesComputed: function rangesComputed() {
-      var _iterator = _createForOfIteratorHelper(this.columnData.ranges.entries()),
-          _step;
-
-      try {
-        for (_iterator.s(); !(_step = _iterator.n()).done;) {
-          var _step$value = _slicedToArray(_step.value, 2),
-              index = _step$value[0],
-              column = _step$value[1];
-
-          column["scaleColor"] = this.getColor(index);
-          column["startTime"] = column.shift_start;
-          column["endTime"] = column.shift_end;
-          column["name"] = column["startTime"] + " - " + column["endTime"];
-        }
-      } catch (err) {
-        _iterator.e(err);
-      } finally {
-        _iterator.f();
-      }
-
-      return this.columnData.ranges;
-    }
-  },
-  methods: {
-    updateNumberOfShifts: function updateNumberOfShifts(value) {
-      if (value > 0 && value < 11) this.columnData.numberOfShifts = value;
-      this.generateNewRanges();
-    },
-    handleRangesChange: function handleRangesChange(event) {
-      var ranges = event.map(function (timeRange) {
-        return {
-          shift_start: timeRange.startTime,
-          shift_end: timeRange.endTime
-        };
-      });
-      this.columnData.ranges = ranges;
-    },
-    generateNewRanges: function generateNewRanges() {
-      var addMinutes = 0;
-      var startTime = new Date();
-      startTime.setHours(0, 0, 0, 0);
-      var newRanges = [];
-
-      for (var i = 1; i <= this.columnData.numberOfShifts; i++) {
-        addMinutes = 1440 / this.columnData.numberOfShifts;
-        var endTime = new Date(startTime.getTime()); //rounds numbers to the nearest 15 minutes
-
-        var coeff = 1000 * 60 * 15;
-        endTime.setMinutes(endTime.getMinutes() + addMinutes);
-        endTime = new Date(Math.round(endTime.getTime() / coeff) * coeff);
-        var newRange = {
-          shift_start: startTime.toLocaleString("en-US", {
-            hour: "numeric",
-            minute: "numeric",
-            hour12: true
-          }),
-          shift_end: endTime.toLocaleString("en-US", {
-            hour: "numeric",
-            minute: "numeric",
-            hour12: true
-          })
-        };
-        newRanges.push(newRange);
-        startTime = new Date(endTime.getTime());
-      }
-
-      this.columnData.ranges = newRanges;
-    },
-    getColor: function getColor(index) {
-      switch (index) {
-        case 0:
-          return "#059669";
-
-        case 1:
-          return "#1D4ED8";
-
-        case 2:
-          return "#6D28D9";
-
-        case 3:
-          return "#BE185D";
-
-        case 4:
-          return "#1D4ED8";
-
-        case 5:
-          return "#4338CA";
-
-        case 6:
-          return "#B45309";
-
-        default:
-          return "#B91C1C";
-      }
-    },
-    saveColumns: function saveColumns(event) {
-      event.target.disabled = true;
-      this.eventHub.$emit("save-columns", this.columnData);
-      this.modalOpen = false;
-      this.columnData.rowIndex = null;
     }
   }
 });
@@ -8421,6 +8160,189 @@ __webpack_require__.r(__webpack_exports__);
     },
     removeMember: function removeMember($memberData) {
       this.eventHub.$emit("remove-member", $memberData);
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddRowAndColumnsModal.vue?vue&type=script&lang=js&":
+/*!************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/kanban/kanbanComponents/AddRowAndColumnsModal.vue?vue&type=script&lang=js& ***!
+  \************************************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  inject: ["eventHub"],
+  data: function data() {
+    return {
+      modalOpen: false,
+      isSavingColumn: false,
+      isEdit: false,
+      rowData: {
+        name: null,
+        rowIndex: null,
+        rowId: null,
+        columns: []
+      }
+    };
+  },
+  created: function created() {
+    var _this = this;
+
+    this.eventHub.$on("create-row-and-columns", function (rowData) {
+      _this.rowData.name = rowData.rowName;
+      _this.rowData.rowIndex = rowData.rowIndex;
+      _this.rowData.rowId = rowData.rowId;
+      _this.rowData.columns = rowData.rowColumns.map(function (a) {
+        return _objectSpread({}, a);
+      });
+      if (rowData.rowId !== null) _this.isEdit = true;else _this.isEdit = false;
+      _this.modalOpen = true;
+    });
+  },
+  beforeDestroy: function beforeDestroy() {
+    this.eventHub.$off('create-row-and-columns');
+  },
+  methods: {
+    increment: function increment() {
+      this.rowData.columns.push({
+        id: null,
+        name: null
+      });
+    },
+    decrement: function decrement(index) {
+      this.rowData.columns.splice(index, 1);
+    },
+    saveRow: function saveRow() {
+      this.eventHub.$emit("save-row-and-columns", this.rowData);
+      this.modalOpen = false;
+      this.rowData.rowIndex = null;
     }
   }
 });
@@ -8931,63 +8853,6 @@ exports.push([module.i, "\n.rotate-45[data-v-8c2940e8] {\n    --transform-rotate
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/ChosenTimePointers/index.css?vue&type=style&index=0&id=4dceeeb0&scoped=true&lang=css&":
-/*!******************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/ChosenTimePointers/index.css?vue&type=style&index=0&id=4dceeeb0&scoped=true&lang=css& ***!
-  \******************************************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../../../css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
-// imports
-
-
-// module
-exports.push([module.i, ".circular-chart[data-v-4dceeeb0] {\r\n  display: block;\r\n\r\n  width: 100%;\r\n  height: inherit;\r\n\r\n  -webkit-user-select: none;\r\n\r\n     -moz-user-select: none;\r\n\r\n      -ms-user-select: none;\r\n\r\n          user-select: none;\n}\n.time-pointer[data-v-4dceeeb0] {\r\n  cursor: pointer;\r\n\r\n  outline: none;\r\n\r\n  fill: white;\r\n  stroke-width: 3px;\n}\n.chosen-time[data-v-4dceeeb0] {\r\n  font-size: 7px;\r\n  font-weight: 600;\n}\r\n", ""]);
-
-// exports
-
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/QuartersTexts/index.css?vue&type=style&index=0&id=c4335e8c&scoped=true&lang=css&":
-/*!*************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/QuartersTexts/index.css?vue&type=style&index=0&id=c4335e8c&scoped=true&lang=css& ***!
-  \*************************************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../../../css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
-// imports
-
-
-// module
-exports.push([module.i, ".quarter-texts[data-v-c4335e8c] {\r\n  transform: translateY(3px);\n}\n.hour[data-v-c4335e8c] {\r\n  transform: translateY(3px);\r\n\r\n  font-size: 7px;\n}\r\n", ""]);
-
-// exports
-
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/index.css?vue&type=style&index=0&id=0b69a50a&scoped=true&lang=css&":
-/*!***********************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/index.css?vue&type=style&index=0&id=0b69a50a&scoped=true&lang=css& ***!
-  \***********************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../../css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
-// imports
-
-
-// module
-exports.push([module.i, ".range-picker-container[data-v-0b69a50a] {\r\n  height: 100%;\r\n  -webkit-user-select: none;\r\n     -moz-user-select: none;\r\n      -ms-user-select: none;\r\n          user-select: none;\r\n  touch-action: none;\r\n  -webkit-touch-callout: none;\n}\n.circular-chart[data-v-0b69a50a] {\r\n  display: block;\r\n\r\n  width: 100%;\r\n  height: inherit;\r\n  -moz-user-select: none;\r\n   -ms-user-select: none;\r\n       user-select: none;\r\n  -webkit-user-select: none;\n}\r\n", ""]);
-
-// exports
-
-
-/***/ }),
-
 /***/ "./node_modules/css-loader/lib/css-base.js":
 /*!*************************************************!*\
   !*** ./node_modules/css-loader/lib/css-base.js ***!
@@ -9465,31 +9330,6 @@ process.umask = function() { return 0; };
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js"), __webpack_require__(/*! ./../process/browser.js */ "./node_modules/process/browser.js")))
-
-/***/ }),
-
-/***/ "./node_modules/simple-zeropad/index.js":
-/*!**********************************************!*\
-  !*** ./node_modules/simple-zeropad/index.js ***!
-  \**********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = function (num) {
-    num = parseFloat(num, 10);
-
-    if (isNaN(num)) {
-        throw new TypeError('zeropad parameter must be a string or a number');
-    }
-    if (num < 10) {
-        return '0' + num;
-    }
-    return num;
-};
-
 
 /***/ }),
 
@@ -13328,96 +13168,6 @@ if(false) {}
 
 /***/ }),
 
-/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/ChosenTimePointers/index.css?vue&type=style&index=0&id=4dceeeb0&scoped=true&lang=css&":
-/*!**********************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/ChosenTimePointers/index.css?vue&type=style&index=0&id=4dceeeb0&scoped=true&lang=css& ***!
-  \**********************************************************************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-var content = __webpack_require__(/*! !../../../../css-loader??ref--6-1!../../../../vue-loader/lib/loaders/stylePostLoader.js!../../../../postcss-loader/src??ref--6-2!./index.css?vue&type=style&index=0&id=4dceeeb0&scoped=true&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/ChosenTimePointers/index.css?vue&type=style&index=0&id=4dceeeb0&scoped=true&lang=css&");
-
-if(typeof content === 'string') content = [[module.i, content, '']];
-
-var transform;
-var insertInto;
-
-
-
-var options = {"hmr":true}
-
-options.transform = transform
-options.insertInto = undefined;
-
-var update = __webpack_require__(/*! ../../../../style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
-
-if(content.locals) module.exports = content.locals;
-
-if(false) {}
-
-/***/ }),
-
-/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/QuartersTexts/index.css?vue&type=style&index=0&id=c4335e8c&scoped=true&lang=css&":
-/*!*****************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/QuartersTexts/index.css?vue&type=style&index=0&id=c4335e8c&scoped=true&lang=css& ***!
-  \*****************************************************************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-var content = __webpack_require__(/*! !../../../../css-loader??ref--6-1!../../../../vue-loader/lib/loaders/stylePostLoader.js!../../../../postcss-loader/src??ref--6-2!./index.css?vue&type=style&index=0&id=c4335e8c&scoped=true&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/QuartersTexts/index.css?vue&type=style&index=0&id=c4335e8c&scoped=true&lang=css&");
-
-if(typeof content === 'string') content = [[module.i, content, '']];
-
-var transform;
-var insertInto;
-
-
-
-var options = {"hmr":true}
-
-options.transform = transform
-options.insertInto = undefined;
-
-var update = __webpack_require__(/*! ../../../../style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
-
-if(content.locals) module.exports = content.locals;
-
-if(false) {}
-
-/***/ }),
-
-/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/index.css?vue&type=style&index=0&id=0b69a50a&scoped=true&lang=css&":
-/*!***************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/index.css?vue&type=style&index=0&id=0b69a50a&scoped=true&lang=css& ***!
-  \***************************************************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-var content = __webpack_require__(/*! !../../../css-loader??ref--6-1!../../../vue-loader/lib/loaders/stylePostLoader.js!../../../postcss-loader/src??ref--6-2!./index.css?vue&type=style&index=0&id=0b69a50a&scoped=true&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/index.css?vue&type=style&index=0&id=0b69a50a&scoped=true&lang=css&");
-
-if(typeof content === 'string') content = [[module.i, content, '']];
-
-var transform;
-var insertInto;
-
-
-
-var options = {"hmr":true}
-
-options.transform = transform
-options.insertInto = undefined;
-
-var update = __webpack_require__(/*! ../../../style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
-
-if(content.locals) module.exports = content.locals;
-
-if(false) {}
-
-/***/ }),
-
 /***/ "./node_modules/style-loader/lib/addStyles.js":
 /*!****************************************************!*\
   !*** ./node_modules/style-loader/lib/addStyles.js ***!
@@ -13999,582 +13749,6 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
                          (this && this.clearImmediate);
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
-
-/***/ }),
-
-/***/ "./node_modules/trim/index.js":
-/*!************************************!*\
-  !*** ./node_modules/trim/index.js ***!
-  \************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-
-exports = module.exports = trim;
-
-function trim(str){
-  return str.replace(/^\s*|\s*$/g, '');
-}
-
-exports.left = function(str){
-  return str.replace(/^\s*/, '');
-};
-
-exports.right = function(str){
-  return str.replace(/\s*$/, '');
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/twelve-to-twentyfour/index.js":
-/*!****************************************************!*\
-  !*** ./node_modules/twelve-to-twentyfour/index.js ***!
-  \****************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var zp = __webpack_require__(/*! simple-zeropad */ "./node_modules/simple-zeropad/index.js");
-var trim = __webpack_require__(/*! trim */ "./node_modules/trim/index.js");
-
-module.exports = function (str, opts) {
-	if (typeof str !== 'string') {
-		throw new TypeError('twelve-to-twentyfour expected a string, got ' + typeof(str));
-	}
-
-	// remove whitespace
-	str = trim(str);
-
-	// Check for pattern 0:00
-	if (str.length === 4 && str.substring(1, 2) === ':') {
-		str = '0' + str;
-	}
-
-	// Allow strings already in the 24-hour format to pass through
-	var reg24 = /^[0-9]{2}:[0-9]{2}(:[0-9]{2})?$/;
-
-	if (reg24.test(str)) {
-		var _error = false;
-
-		var parts = str.split(':').map(function (i) {
-			return parseInt(i, 10);
-		});
-
-		if (parts.length === 2) {
-			if (parts[0] < 24 && parts[1] < 60) {
-				return str;
-			} else {
-				_error = true;
-			}
-		} else if (parts.length === 3) {
-			if (parts[0] < 24 && parts[1] < 60 && parts[2] < 60) {
-				return str;
-			} else {
-				_error = true;
-			}
-		}
-
-		if (_error) {
-			throw new SyntaxError('Invalid 24-hour time string format: ' + str + ' Use 00:00 || 00:00:00');
-		}
-	}
-	// valid strings: '0:00AM' || '0:00 AM' || '00:00PM' || '00:00 PM' || '00:00:00 AM' || '00:00:00AM'
-	var reg12 = /^[0-9]{1,2}:[0-9]{2}(:[0-9]{2})?\s?(AM|PM)$/i;
-	if (!reg12.test(str)) {
-		throw new SyntaxError('Invalid time string format: ' + str + ' Use 0:00AM || 0:00 AM || 00:00PM || 00:00 PM || 00:00:00 AM || 00:00:00AM');
-	}
-
-	// there should be an AM or PM at this point
-	var ampm = str.slice(str.length - 2).toUpperCase();
-	if (!(ampm === 'AM' || ampm === 'PM')) {
-		throw new SyntaxError('12-hour time string must have an `AM` or `PM`.');
-	}
-
-	opts = opts || {};
-
-	var time = str.substring(0, str.length - 2).split(':');
-	var hour = parseInt(time[0], 10);
-	var mins = parseInt(time[1], 10);
-	var secs = time.length === 3 ? parseInt(time[2], 10) : null;
-
-	if (isNaN(hour) || isNaN(mins)) {
-		throw new SyntaxError('Hour and minutes must be numbers: `00:00`');
-	}
-	if (hour > 12) {
-		throw new SyntaxError('Hours must be less than 13 in 12-hour time');
-	}
-	if (mins > 59) {
-		throw new SyntaxError('Minutes must be less than 59');
-	}
-	if (secs && secs > 59) {
-		throw new SyntaxError('Seconds must be less than 59');
-	}
-	if (ampm === 'AM') {
-		if (hour < 12) {
-			return makeTimeString(hour, mins, secs);
-		} else if (hour === 12) {
-			return makeTimeString(0, mins, secs);
-		}
-	} else if (ampm === 'PM') {
-		var newHour = hour === 12 ? 12 : hour + 12;
-		return makeTimeString(newHour, mins, secs);
-	}
-};
-
-function makeTimeString(hour, mins, secs) {
-	var s = '';
-	if (secs) {
-		s = ':' + zp(secs);
-	}
-	return zp(hour) + ':' + zp(mins) + s;
-}
-
-
-/***/ }),
-
-/***/ "./node_modules/twentyfour-to-twelve/index.js":
-/*!****************************************************!*\
-  !*** ./node_modules/twentyfour-to-twelve/index.js ***!
-  \****************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var zp = __webpack_require__(/*! simple-zeropad */ "./node_modules/simple-zeropad/index.js");
-var trim = __webpack_require__(/*! trim */ "./node_modules/trim/index.js");
-var validComps = [23, 59, 59];
-
-module.exports = function (str) {
-	if (typeof str !== 'string') {
-		throw new TypeError('Expected a string');
-	}
-	str = trim(str);
-
-	var reg24 = /^[0-9]{2}:[0-9]{2}(:[0-9]{2})?$/;
-
-	if (!reg24.test(str)) {
-		throw new Error('String must be a 24-hour time');
-	}
-	var comps = str.split(':');
-
-	var hour = parseInt(comps[0], 10);
-	var ampm = (hour < 12 || hour === 0) ? 'AM' : 'PM';
-
-	if (hour === 0) {
-		comps[0] = 12;
-	} else if (hour > 12) {
-		comps[0] = hour - 12;
-	}
-
-	var s = '';
-
-	comps.map(function (item, i) {
-		var num = parseInt(item, 10);
-
-		if (num > validComps[i]) {
-			throw new Error('Invalid time: ' + str);
-		}
-		s += zp(num);
-
-		if (i !== comps.length - 1) {
-			s += ':';
-		}
-	});
-
-	s += ' ' + ampm;
-	return s;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/ChosenTimePointers/index.vue?vue&type=template&id=4dceeeb0&scoped=true&":
-/*!*****************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/ChosenTimePointers/index.vue?vue&type=template&id=4dceeeb0&scoped=true& ***!
-  \*****************************************************************************************************************************************************************************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "g",
-    {
-      staticClass: "time-points",
-      style: {
-        transform:
-          "translate(" +
-          _vm.viewBoxSize / 2 +
-          "px, " +
-          _vm.viewBoxSize / 2 +
-          "px)"
-      }
-    },
-    [
-      _c(
-        "filter",
-        { attrs: { id: "dropshadow", height: "130%" } },
-        [
-          _c("feGaussianBlur", {
-            attrs: { in: "SourceAlpha", stdDeviation: "0.49" }
-          }),
-          _vm._v(" "),
-          _c("feOffset", { attrs: { dx: "0", dy: "0", result: "offsetblur" } }),
-          _vm._v(" "),
-          _c(
-            "feComponentTransfer",
-            [_c("feFuncA", { attrs: { type: "linear", slope: "0.35" } })],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "feMerge",
-            [
-              _c("feMergeNode"),
-              _vm._v(" "),
-              _c("feMergeNode", { attrs: { in: "SourceGraphic" } })
-            ],
-            1
-          )
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c(
-        "g",
-        [
-          _vm.isShowChosenTime
-            ? _c(
-                "g",
-                _vm._l(_vm.movePointers, function(pointer) {
-                  return _c(
-                    "g",
-                    {
-                      key: pointer.name + "-text",
-                      style: {
-                        transform:
-                          "rotate(" +
-                          pointer.coordinates.degree +
-                          "deg) translate(" +
-                          (_vm.circleRadius + 12) +
-                          "px, 0px )",
-                        "transform-origin": "-7.8% -0.5%"
-                      }
-                    },
-                    [
-                      _c(
-                        "text",
-                        {
-                          staticClass: "chosen-time",
-                          style: {
-                            "transform-origin": "0 -0.5%",
-                            fill: _vm.chosenTimeColor
-                          },
-                          attrs: {
-                            transform: _vm.transformStyle(
-                              pointer.coordinates.degree
-                            )
-                          }
-                        },
-                        [
-                          _vm._v(
-                            _vm._s(
-                              _vm.timeNumberToText(
-                                pointer.time,
-                                _vm.isTwelfthMode
-                              )
-                            )
-                          )
-                        ]
-                      )
-                    ]
-                  )
-                }),
-                0
-              )
-            : _vm._e(),
-          _vm._v(" "),
-          _vm._l(_vm.movePointers, function(pointer) {
-            return _c("circle", {
-              key: pointer.name,
-              ref: pointer.name,
-              refInFor: true,
-              class: {
-                "time-pointer": true,
-                "time-pointer_active": pointer.isActive
-              },
-              style: {
-                transform: "rotate(" + pointer.coordinates.degree + "deg)",
-                fill: pointer.isActive
-                  ? _vm.activePointerColor
-                  : _vm.pointerColor
-              },
-              attrs: {
-                id: pointer.name,
-                cx: _vm.circleRadius,
-                r: pointer.isActive
-                  ? _vm.activePointerRadius
-                  : _vm.pointerRadius,
-                cy: "0",
-                filter: "url(#dropshadow)"
-              },
-              on: { pointerdown: _vm.handleStartMove }
-            })
-          })
-        ],
-        2
-      )
-    ]
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/HoursMarks/index.vue?vue&type=template&id=a26e8d5c&":
-/*!*********************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/HoursMarks/index.vue?vue&type=template&id=a26e8d5c& ***!
-  \*********************************************************************************************************************************************************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "g",
-    { staticClass: "marks" },
-    _vm._l(_vm.marks, function(mark) {
-      return _c("circle", {
-        key: mark.name,
-        style: {
-          fill: _vm.hoursMarksColor,
-          transform:
-            "translate(" +
-            _vm.viewBoxSize / 2 +
-            "px, " +
-            _vm.viewBoxSize / 2 +
-            "px) rotate(" +
-            mark.index * _vm.oneHourDegree +
-            "deg)"
-        },
-        attrs: { cy: _vm.circleRadius + 9, cx: "0", r: "1.5" }
-      })
-    }),
-    0
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/QuartersTexts/index.vue?vue&type=template&id=c4335e8c&scoped=true&":
-/*!************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/QuartersTexts/index.vue?vue&type=template&id=c4335e8c&scoped=true& ***!
-  \************************************************************************************************************************************************************************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "g",
-    { staticClass: "quarter-texts" },
-    _vm._l(_vm.quarterTexts, function(quarterText) {
-      return _c(
-        "text",
-        {
-          key: quarterText.name,
-          staticClass: "hour",
-          style: {
-            transform:
-              "translate(" + quarterText.x + "px, " + quarterText.y + "px)",
-            fill: _vm.quarterTextColor
-          },
-          attrs: { "text-anchor": "middle" }
-        },
-        [_c("tspan", [_vm._v(_vm._s(quarterText.name))])]
-      )
-    }),
-    0
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/RangesScales/index.vue?vue&type=template&id=3396e68c&":
-/*!***********************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/RangesScales/index.vue?vue&type=template&id=3396e68c& ***!
-  \***********************************************************************************************************************************************************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "g",
-    _vm._l(_vm.ranges, function(range) {
-      return _c(
-        "g",
-        { key: range.name, attrs: { id: range.name } },
-        _vm._l(range.arcs, function(arc) {
-          return _c("path", {
-            key: arc.name,
-            style: { stroke: range.scaleColor },
-            attrs: {
-              id: range.name,
-              d:
-                "\n        M" +
-                arc.start.x +
-                "," +
-                arc.start.y +
-                " \n        A" +
-                _vm.circleRadius +
-                "," +
-                _vm.circleRadius +
-                " \n        0 0 1 " +
-                arc.end.x +
-                ", " +
-                arc.end.y,
-              "stroke-width": _vm.circleStrokeWidth,
-              fill: "transparent"
-            }
-          })
-        }),
-        0
-      )
-    }),
-    0
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/index.vue?vue&type=template&id=0b69a50a&scoped=true&":
-/*!**********************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/index.vue?vue&type=template&id=0b69a50a&scoped=true& ***!
-  \**********************************************************************************************************************************************************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "range-picker-container" }, [
-    _c(
-      "svg",
-      {
-        ref: "input-viewbox",
-        staticClass: "circular-chart",
-        attrs: {
-          viewBox: "0 0 " + _vm.viewBoxSize + " " + _vm.viewBoxSize,
-          "touch-action": "none"
-        },
-        on: {
-          pointerdown: _vm.handleStartMove,
-          pointermove: _vm.handleMove,
-          pointerup: _vm.handleEndMove,
-          mouseleave: _vm.handleEndMove,
-          mouseup: _vm.handleEndMove
-        }
-      },
-      [
-        _c("RangesScales", {
-          attrs: {
-            ranges: _vm.ranges,
-            circleStrokeWidth: _vm.combinedViewOptions.circleStrokeWidth
-          }
-        }),
-        _vm._v(" "),
-        _vm.combinedViewOptions.isShowHoursMarks
-          ? _c("HoursMarks", {
-              attrs: {
-                hoursMarksColor: _vm.combinedViewOptions.hoursMarksColor
-              }
-            })
-          : _vm._e(),
-        _vm._v(" "),
-        _vm.combinedViewOptions.isShowQuartersText
-          ? _c("QuartersTexts", {
-              attrs: {
-                isTwelfthMode: _vm.isTwelfthMode,
-                quarterTextColor: _vm.combinedViewOptions.quarterTextColor
-              }
-            })
-          : _vm._e(),
-        _vm._v(" "),
-        _c("ChosenTimePointers", {
-          attrs: {
-            isTwelfthMode: _vm.isTwelfthMode,
-            movePointers: _vm.movePointers,
-            chosenTimeColor: _vm.combinedViewOptions.chosenTimeColor,
-            pointerColor: _vm.combinedViewOptions.pointerColor,
-            activePointerColor: _vm.combinedViewOptions.activePointerColor,
-            pointerRadius: _vm.combinedViewOptions.pointerRadius,
-            activePointerRadius: _vm.combinedViewOptions.activePointerRadius,
-            isShowChosenTime: _vm.combinedViewOptions.isShowChosenTime
-          },
-          on: { startMove: _vm.handleStartMove }
-        }),
-        _vm._v(" "),
-        _c("circle", {
-          ref: "input-center",
-          attrs: { cx: _vm.viewBoxSize / 2, cy: _vm.viewBoxSize / 2, r: "0" }
-        })
-      ],
-      1
-    )
-  ])
-}
-var staticRenderFns = []
-render._withStripped = true
-
-
 
 /***/ }),
 
@@ -16603,14 +15777,18 @@ var render = function() {
               staticClass: "h-full list-group",
               attrs: {
                 animation: 200,
-                group: "rows",
-                "ghost-class": "ghost-card"
+                "ghost-class": "ghost-card",
+                disabled: _vm.isDraggableDisabled
+              },
+              on: {
+                end: function($event) {
+                  return _vm.getRowChangeData($event)
+                }
               }
             },
             _vm._l(_vm.kanban.rows, function(row, rowIndex) {
               return _c("div", { key: row.id, staticClass: "mx-10 my-3" }, [
-                _vm.loadingColumn.rowId === row.id &&
-                _vm.loadingColumn.isLoading
+                _vm.loadingRow.rowId === row.id && _vm.loadingRow.isLoading
                   ? _c(
                       "div",
                       {
@@ -16653,13 +15831,13 @@ var render = function() {
                           {
                             staticClass:
                               "px-2 text-gray-500 hover:text-gray-400 transition duration-300 ease-in-out focus:outline-none",
-                            attrs: { href: "#" },
                             on: {
                               click: function($event) {
-                                return _vm.createColumns(
+                                return _vm.createRowAndColumns(
                                   rowIndex,
                                   row.columns,
-                                  row.id
+                                  row.id,
+                                  row.name
                                 )
                               }
                             }
@@ -16683,8 +15861,14 @@ var render = function() {
                           staticClass: "h-full list-group flex",
                           attrs: {
                             animation: 200,
-                            group: "columns",
-                            "ghost-class": "ghost-card"
+                            "ghost-class": "ghost-card",
+                            group: "row-" + row.id,
+                            disabled: _vm.isDraggableDisabled
+                          },
+                          on: {
+                            end: function($event) {
+                              return _vm.getTaskChangeData($event, rowIndex)
+                            }
                           }
                         },
                         _vm._l(row.columns, function(column, columnIndex) {
@@ -16759,11 +15943,11 @@ var render = function() {
                                     disabled: _vm.isDraggableDisabled,
                                     list: column.task_cards,
                                     "ghost-class": "ghost-card",
-                                    group: "employees"
+                                    group: "tasks"
                                   },
                                   on: {
                                     change: function($event) {
-                                      return _vm.getChangeData(
+                                      return _vm.getTaskChangeData(
                                         $event,
                                         columnIndex,
                                         rowIndex
@@ -16793,20 +15977,6 @@ var render = function() {
                           )
                         }),
                         0
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "button",
-                        {
-                          staticClass:
-                            "bg-gray-200 rounded-lg rounded p-4 h-full hover:bg-blue-200 mouse transition ease-in duration-200 focus:outline-none",
-                          on: {
-                            click: function($event) {
-                              return _vm.createColumn(rowIndex)
-                            }
-                          }
-                        },
-                        [_c("i", { staticClass: "fas fa-plus text-white" })]
                       )
                     ],
                     1
@@ -16826,7 +15996,12 @@ var render = function() {
                 "text-gray-500 hover:text-gray-600 font-semibold font-sans tracking-wide bg-gray-200 rounded-lg rounded p-4 m-10 hover:bg-blue-200 mouse transition ease-in duration-200 focus:outline-none",
               on: {
                 click: function($event) {
-                  return _vm.createRow()
+                  return _vm.createRowAndColumns(
+                    _vm.kanban.rows.length,
+                    [],
+                    null,
+                    null
+                  )
                 }
               }
             },
@@ -16843,327 +16018,11 @@ var render = function() {
           _vm._v(" "),
           _c("add-member-modal", { attrs: { kanbanData: _vm.kanban } }),
           _vm._v(" "),
-          _c("add-column-modal", { attrs: { kanbanData: _vm.kanban } })
+          _c("add-row-and-columns-modal", { attrs: { kanbanData: _vm.kanban } })
         ],
         1
       )
     : _vm._e()
-}
-var staticRenderFns = []
-render._withStripped = true
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=template&id=2762be96&":
-/*!*********************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=template&id=2762be96& ***!
-  \*********************************************************************************************************************************************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    [
-      _c(
-        "transition",
-        {
-          attrs: {
-            "enter-active-class": "transition duration-500 ease-out transform",
-            "enter-class": " opacity-0 bg-blue-200",
-            "leave-active-class": "transition duration-300 ease-in transform",
-            "leave-to-class": "opacity-0 bg-blue-200"
-          }
-        },
-        [
-          _vm.modalOpen
-            ? _c("div", {
-                staticClass:
-                  "overflow-auto fixed inset-0 bg-gray-700 bg-opacity-50 z-30"
-              })
-            : _vm._e()
-        ]
-      ),
-      _vm._v(" "),
-      _c(
-        "transition",
-        {
-          attrs: {
-            "enter-active-class": "transition duration-300 ease-out transform ",
-            "enter-class": "scale-95 opacity-0 -translate-y-10",
-            "enter-to-class": "scale-100 opacity-100",
-            "leave-active-class": "transition duration-150 ease-in transform",
-            "leave-class": "scale-100 opacity-100",
-            "leave-to-class": "scale-95 opacity-0"
-          }
-        },
-        [
-          _vm.modalOpen
-            ? _c(
-                "div",
-                {
-                  staticClass:
-                    "fixed inset-0 z-40 flex items-start justify-center"
-                },
-                [
-                  _c("div", {
-                    staticClass: "overflow-auto fixed h-full w-full",
-                    on: {
-                      click: function($event) {
-                        _vm.modalOpen = false
-                      }
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c(
-                    "div",
-                    {
-                      staticClass:
-                        "flex flex-col overflow-auto z-50 w-100 bg-white rounded-md shadow-2xl m-10",
-                      staticStyle: {
-                        width: "700px",
-                        "min-height": "300px",
-                        "max-height": "80%"
-                      }
-                    },
-                    [
-                      _c(
-                        "div",
-                        {
-                          staticClass:
-                            "flex justify-between p-5 bg-indigo-800 border-b"
-                        },
-                        [
-                          _c("div", { staticClass: "space-y-1" }, [
-                            _c(
-                              "h1",
-                              { staticClass: "text-2xl text-white pb-2" },
-                              [_vm._v("Set Shifts & Time Ranges")]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "p",
-                              {
-                                staticClass:
-                                  "text-sm font-medium leading-5 text-gray-500"
-                              },
-                              [
-                                _vm._v(
-                                  "\n                            Choose the number of shifts for this day and set each shift time range "
-                                )
-                              ]
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("div", [
-                            _c(
-                              "button",
-                              {
-                                staticClass:
-                                  "focus:outline-none flex flex-col items-center text-gray-400 hover:text-gray-500 transition duration-150 ease-in-out pl-8",
-                                attrs: { type: "button" },
-                                on: {
-                                  click: function($event) {
-                                    _vm.modalOpen = false
-                                  }
-                                }
-                              },
-                              [
-                                _c("i", { staticClass: "fas fa-times" }),
-                                _vm._v(" "),
-                                _c(
-                                  "span",
-                                  {
-                                    staticClass:
-                                      "text-xs font-semibold text-center leading-3 uppercase"
-                                  },
-                                  [_vm._v("Esc")]
-                                )
-                              ]
-                            )
-                          ])
-                        ]
-                      ),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "overflow-auto px-8 py-6" }, [
-                        _c("div", { staticClass: "block" }, [
-                          _c(
-                            "p",
-                            {
-                              staticClass:
-                                "text-center font-bold text-red-600 py-5"
-                            },
-                            [
-                              _vm._v(
-                                "\n                            Updating shift times and/or changing number of shifts will remove current shifts and all\n                            employees associations. "
-                              )
-                            ]
-                          ),
-                          _vm._v(" "),
-                          _vm.columnData.numberOfShifts > 0
-                            ? _c(
-                                "div",
-                                [
-                                  _c("vue-time-ranges-picker", {
-                                    staticClass: "px-10 max-w-lg m-auto",
-                                    attrs: {
-                                      isTwelfthMode: true,
-                                      stepOfMoving: 0.25,
-                                      value: _vm.rangesComputed
-                                    },
-                                    on: { change: _vm.handleRangesChange }
-                                  })
-                                ],
-                                1
-                              )
-                            : _vm._e()
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          {
-                            staticClass:
-                              "flex flex-row justify-center h-10 rounded-lg relative bg-transparent"
-                          },
-                          [
-                            _c(
-                              "button",
-                              {
-                                staticClass:
-                                  "bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none",
-                                on: {
-                                  click: function($event) {
-                                    return _vm.updateNumberOfShifts(
-                                      _vm.columnData.numberOfShifts - 1
-                                    )
-                                  }
-                                }
-                              },
-                              [
-                                _c(
-                                  "span",
-                                  { staticClass: "m-auto text-2xl font-thin" },
-                                  [_vm._v("−")]
-                                )
-                              ]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "div",
-                              {
-                                staticClass:
-                                  "text-center bg-gray-200 font-semibold flex items-center text-gray-700 px-5"
-                              },
-                              [
-                                _vm._v(
-                                  "\n                            " +
-                                    _vm._s(_vm.columnData.numberOfShifts) +
-                                    "\n                        "
-                                )
-                              ]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "button",
-                              {
-                                staticClass:
-                                  "bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer",
-                                on: {
-                                  click: function($event) {
-                                    return _vm.updateNumberOfShifts(
-                                      _vm.columnData.numberOfShifts + 1
-                                    )
-                                  }
-                                }
-                              },
-                              [
-                                _c(
-                                  "span",
-                                  { staticClass: "m-auto text-2xl font-thin" },
-                                  [_vm._v("+")]
-                                )
-                              ]
-                            )
-                          ]
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "p",
-                          {
-                            staticClass: "text-center text-gray-600 pt-5 pb-10"
-                          },
-                          [
-                            _vm._v(
-                              "\n                        Use the counter below to increment/decrement the number of shifts and set the shift times\n                        using the wheel. Click save to apply change. "
-                            )
-                          ]
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          {
-                            staticClass:
-                              "w-full grid sm:grid-cols-2 gap-3 sm:gap-3"
-                          },
-                          [
-                            _c(
-                              "button",
-                              {
-                                staticClass:
-                                  "px-4 py-3 border border-gray-200 rounded text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-600 transition duration-300 ease-in-out",
-                                attrs: { type: "button" },
-                                on: {
-                                  click: function($event) {
-                                    _vm.modalOpen = false
-                                  }
-                                }
-                              },
-                              [
-                                _vm._v(
-                                  "\n                            Cancel\n                        "
-                                )
-                              ]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "button",
-                              {
-                                staticClass:
-                                  "px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out",
-                                on: {
-                                  click: function($event) {
-                                    return _vm.saveColumns($event)
-                                  }
-                                }
-                              },
-                              [
-                                _vm._v(
-                                  "\n                            Save Column\n                        "
-                                )
-                              ]
-                            )
-                          ]
-                        )
-                      ])
-                    ]
-                  )
-                ]
-              )
-            : _vm._e()
-        ]
-      )
-    ],
-    1
-  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -17592,6 +16451,414 @@ var render = function() {
                             ]
                           )
                         ]
+                      )
+                    ]
+                  )
+                ]
+              )
+            : _vm._e()
+        ]
+      )
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddRowAndColumnsModal.vue?vue&type=template&id=4fcbb2be&":
+/*!****************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/kanban/kanbanComponents/AddRowAndColumnsModal.vue?vue&type=template&id=4fcbb2be& ***!
+  \****************************************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    [
+      _c(
+        "transition",
+        {
+          attrs: {
+            "enter-active-class": "transition duration-500 ease-out transform",
+            "enter-class": " opacity-0 bg-blue-200",
+            "leave-active-class": "transition duration-300 ease-in transform",
+            "leave-to-class": "opacity-0 bg-blue-200"
+          }
+        },
+        [
+          _vm.modalOpen
+            ? _c("div", {
+                staticClass:
+                  "overflow-auto fixed inset-0 bg-gray-700 bg-opacity-50 z-30"
+              })
+            : _vm._e()
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "transition",
+        {
+          attrs: {
+            "enter-active-class": "transition duration-300 ease-out transform ",
+            "enter-class": "scale-95 opacity-0 -translate-y-10",
+            "enter-to-class": "scale-100 opacity-100",
+            "leave-active-class": "transition duration-150 ease-in transform",
+            "leave-class": "scale-100 opacity-100",
+            "leave-to-class": "scale-95 opacity-0"
+          }
+        },
+        [
+          _vm.modalOpen
+            ? _c(
+                "div",
+                {
+                  staticClass:
+                    "fixed inset-0 z-40 flex items-start justify-center"
+                },
+                [
+                  _c("div", {
+                    staticClass: "overflow-auto fixed h-full w-full",
+                    on: {
+                      click: function($event) {
+                        _vm.modalOpen = false
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "flex flex-col overflow-auto z-50 w-100 bg-white rounded-md shadow-2xl m-10",
+                      staticStyle: {
+                        width: "700px",
+                        "min-height": "300px",
+                        "max-height": "80%"
+                      }
+                    },
+                    [
+                      _c(
+                        "div",
+                        {
+                          staticClass:
+                            "flex justify-between p-5 bg-indigo-800 border-b"
+                        },
+                        [
+                          _c("div", { staticClass: "space-y-1" }, [
+                            _vm.isEdit
+                              ? _c(
+                                  "h1",
+                                  { staticClass: "text-2xl text-white pb-2" },
+                                  [_vm._v("Add Row and Columns")]
+                                )
+                              : _c(
+                                  "h1",
+                                  { staticClass: "text-2xl text-white pb-2" },
+                                  [_vm._v("Edit Row and Columns")]
+                                ),
+                            _vm._v(" "),
+                            _vm.isEdit
+                              ? _c(
+                                  "p",
+                                  {
+                                    staticClass:
+                                      "text-sm font-medium leading-5 text-gray-500"
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                            Create new row and add any column you want associated to it "
+                                    )
+                                  ]
+                                )
+                              : _c(
+                                  "p",
+                                  {
+                                    staticClass:
+                                      "text-sm font-medium leading-5 text-gray-500"
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                            Edit or Delete row and columns. Deleting Row will delete all subsequent columns. Any\n                            column deleted will also delete tasks associated to them. "
+                                    )
+                                  ]
+                                )
+                          ]),
+                          _vm._v(" "),
+                          _c("div", [
+                            _c(
+                              "button",
+                              {
+                                staticClass:
+                                  "focus:outline-none flex flex-col items-center text-gray-400 hover:text-gray-500 transition duration-150 ease-in-out pl-8",
+                                attrs: { type: "button" },
+                                on: {
+                                  click: function($event) {
+                                    _vm.modalOpen = false
+                                  }
+                                }
+                              },
+                              [
+                                _c("i", { staticClass: "fas fa-times" }),
+                                _vm._v(" "),
+                                _c(
+                                  "span",
+                                  {
+                                    staticClass:
+                                      "text-xs font-semibold text-center leading-3 uppercase"
+                                  },
+                                  [_vm._v("Esc")]
+                                )
+                              ]
+                            )
+                          ])
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        { staticClass: "space-y-5 overflow-auto px-8 py-6" },
+                        [
+                          _c(
+                            "div",
+                            {
+                              staticClass:
+                                "block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"
+                            },
+                            [
+                              _vm._v(
+                                "\n                        Row Title\n                    "
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.rowData.name,
+                                expression: "rowData.name"
+                              }
+                            ],
+                            staticClass:
+                              "px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4",
+                            attrs: {
+                              placeholder: "Write a title for the column",
+                              type: "text"
+                            },
+                            domProps: { value: _vm.rowData.name },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.rowData,
+                                  "name",
+                                  $event.target.value
+                                )
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("hr"),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            {
+                              staticClass:
+                                "block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600 "
+                            },
+                            [
+                              _vm._v(
+                                "\n                        Column Titles\n                    "
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _vm._l(_vm.rowData.columns, function(
+                            column,
+                            columnIndex
+                          ) {
+                            return _c(
+                              "div",
+                              { key: columnIndex, staticClass: "space-y-6" },
+                              [
+                                _c("div", { staticClass: "flex " }, [
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: column.name,
+                                        expression: "column.name"
+                                      }
+                                    ],
+                                    staticClass:
+                                      "px-3 py-2 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4",
+                                    attrs: {
+                                      placeholder:
+                                        "Write a title for the column",
+                                      type: "text"
+                                    },
+                                    domProps: { value: column.name },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          column,
+                                          "name",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  column.id === null
+                                    ? _c(
+                                        "button",
+                                        {
+                                          staticClass:
+                                            "w-24 text-sm text-gray-600 hover:text-gray-800 transition duration-300 ease-in-out focus:outline-none",
+                                          on: {
+                                            click: function($event) {
+                                              return _vm.decrement(columnIndex)
+                                            }
+                                          }
+                                        },
+                                        [
+                                          _c("span", { staticClass: "px-4" }, [
+                                            _vm._v("Remove")
+                                          ])
+                                        ]
+                                      )
+                                    : _c(
+                                        "button",
+                                        {
+                                          staticClass:
+                                            "w-24 text-sm text-gray-600 hover:text-gray-800 transition duration-300 ease-in-out focus:outline-none",
+                                          on: {
+                                            click: function($event) {
+                                              return _vm.decrement(columnIndex)
+                                            }
+                                          }
+                                        },
+                                        [
+                                          _c(
+                                            "span",
+                                            {
+                                              staticClass:
+                                                "px-4 text-red-600 w-12"
+                                            },
+                                            [_vm._v("Delete")]
+                                          )
+                                        ]
+                                      )
+                                ])
+                              ]
+                            )
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "button",
+                            {
+                              staticClass:
+                                "mt-4 -ml-1 flex items-center text-sm font-medium text-gray-600 hover:text-gray-800 transition duration-300 ease-in-out focus:outline-none",
+                              on: { click: _vm.increment }
+                            },
+                            [
+                              _c("i", { staticClass: "fas fa-plus" }),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "ml-1 font-bold" }, [
+                                _vm._v("Add Column")
+                              ])
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            {
+                              staticClass:
+                                "w-full grid sm:grid-cols-2 gap-3 sm:gap-3"
+                            },
+                            [
+                              _c(
+                                "button",
+                                {
+                                  staticClass:
+                                    "px-4 py-3 border border-gray-200 rounded text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-600 transition duration-300 ease-in-out",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      _vm.modalOpen = false
+                                    }
+                                  }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                            Cancel\n                        "
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "button",
+                                {
+                                  staticClass:
+                                    "px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.saveRow()
+                                    }
+                                  }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                            Save Row\n                        "
+                                  )
+                                ]
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _vm.isEdit
+                            ? _c(
+                                "button",
+                                {
+                                  staticClass:
+                                    "mt-4  text-sm text-red-600 hover:text-red-800 transition duration-300 ease-in-out focus:outline-none",
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.deleteRow()
+                                    }
+                                  }
+                                },
+                                [
+                                  _c("i", { staticClass: "fas fa-trash mr-2" }),
+                                  _vm._v(
+                                    "\n                        Delete Row\n                    "
+                                  )
+                                ]
+                              )
+                            : _vm._e()
+                        ],
+                        2
                       )
                     ]
                   )
@@ -21612,1286 +20879,6 @@ if(false) {}
 
 !function(t,e){ true?module.exports=e():undefined}("undefined"!=typeof self?self:this,(function(){return function(t){var e={};function n(o){if(e[o])return e[o].exports;var i=e[o]={i:o,l:!1,exports:{}};return t[o].call(i.exports,i,i.exports,n),i.l=!0,i.exports}return n.m=t,n.c=e,n.d=function(t,e,o){n.o(t,e)||Object.defineProperty(t,e,{enumerable:!0,get:o})},n.r=function(t){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})},n.t=function(t,e){if(1&e&&(t=n(t)),8&e)return t;if(4&e&&"object"==typeof t&&t&&t.__esModule)return t;var o=Object.create(null);if(n.r(o),Object.defineProperty(o,"default",{enumerable:!0,value:t}),2&e&&"string"!=typeof t)for(var i in t)n.d(o,i,function(e){return t[e]}.bind(null,i));return o},n.n=function(t){var e=t&&t.__esModule?function(){return t.default}:function(){return t};return n.d(e,"a",e),e},n.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},n.p="/",n(n.s=8)}([function(t,e,n){var o=n(4),i=n(5),s=n(6);t.exports=function(t){return o(t)||i(t)||s()}},function(t,e){function n(e){return"function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?t.exports=n=function(t){return typeof t}:t.exports=n=function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},n(e)}t.exports=n},function(t,e,n){},function(t,e){t.exports=function(t,e,n){return e in t?Object.defineProperty(t,e,{value:n,enumerable:!0,configurable:!0,writable:!0}):t[e]=n,t}},function(t,e){t.exports=function(t){if(Array.isArray(t)){for(var e=0,n=new Array(t.length);e<t.length;e++)n[e]=t[e];return n}}},function(t,e){t.exports=function(t){if(Symbol.iterator in Object(t)||"[object Arguments]"===Object.prototype.toString.call(t))return Array.from(t)}},function(t,e){t.exports=function(){throw new TypeError("Invalid attempt to spread non-iterable instance")}},function(t,e,n){"use strict";var o=n(2);n.n(o).a},function(t,e,n){"use strict";n.r(e);var o=n(0),i=n.n(o),s=n(1),r=n.n(s),a=n(3),l=n.n(a),c={props:{autoscroll:{type:Boolean,default:!0}},watch:{typeAheadPointer:function(){this.autoscroll&&this.maybeAdjustScroll()}},methods:{maybeAdjustScroll:function(){var t,e=(null===(t=this.$refs.dropdownMenu)||void 0===t?void 0:t.children[this.typeAheadPointer])||!1;if(e){var n=this.getDropdownViewport(),o=e.getBoundingClientRect(),i=o.top,s=o.bottom,r=o.height;if(i<n.top)return this.$refs.dropdownMenu.scrollTop=e.offsetTop;if(s>n.bottom)return this.$refs.dropdownMenu.scrollTop=e.offsetTop-(n.height-r)}},getDropdownViewport:function(){return this.$refs.dropdownMenu?this.$refs.dropdownMenu.getBoundingClientRect():{height:0,top:0,bottom:0}}}},u={data:function(){return{typeAheadPointer:-1}},watch:{filteredOptions:function(){for(var t=0;t<this.filteredOptions.length;t++)if(this.selectable(this.filteredOptions[t])){this.typeAheadPointer=t;break}}},methods:{typeAheadUp:function(){for(var t=this.typeAheadPointer-1;t>=0;t--)if(this.selectable(this.filteredOptions[t])){this.typeAheadPointer=t;break}},typeAheadDown:function(){for(var t=this.typeAheadPointer+1;t<this.filteredOptions.length;t++)if(this.selectable(this.filteredOptions[t])){this.typeAheadPointer=t;break}},typeAheadSelect:function(){var t=this.filteredOptions[this.typeAheadPointer];t&&this.select(t)}}},p={props:{loading:{type:Boolean,default:!1}},data:function(){return{mutableLoading:!1}},watch:{search:function(){this.$emit("search",this.search,this.toggleLoading)},loading:function(t){this.mutableLoading=t}},methods:{toggleLoading:function(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:null;return this.mutableLoading=null==t?!this.mutableLoading:t}}};function h(t,e,n,o,i,s,r,a){var l,c="function"==typeof t?t.options:t;if(e&&(c.render=e,c.staticRenderFns=n,c._compiled=!0),o&&(c.functional=!0),s&&(c._scopeId="data-v-"+s),r?(l=function(t){(t=t||this.$vnode&&this.$vnode.ssrContext||this.parent&&this.parent.$vnode&&this.parent.$vnode.ssrContext)||"undefined"==typeof __VUE_SSR_CONTEXT__||(t=__VUE_SSR_CONTEXT__),i&&i.call(this,t),t&&t._registeredComponents&&t._registeredComponents.add(r)},c._ssrRegister=l):i&&(l=a?function(){i.call(this,this.$root.$options.shadowRoot)}:i),l)if(c.functional){c._injectStyles=l;var u=c.render;c.render=function(t,e){return l.call(e),u(t,e)}}else{var p=c.beforeCreate;c.beforeCreate=p?[].concat(p,l):[l]}return{exports:t,options:c}}var d={Deselect:h({},(function(){var t=this.$createElement,e=this._self._c||t;return e("svg",{attrs:{xmlns:"http://www.w3.org/2000/svg",width:"10",height:"10"}},[e("path",{attrs:{d:"M6.895455 5l2.842897-2.842898c.348864-.348863.348864-.914488 0-1.263636L9.106534.261648c-.348864-.348864-.914489-.348864-1.263636 0L5 3.104545 2.157102.261648c-.348863-.348864-.914488-.348864-1.263636 0L.261648.893466c-.348864.348864-.348864.914489 0 1.263636L3.104545 5 .261648 7.842898c-.348864.348863-.348864.914488 0 1.263636l.631818.631818c.348864.348864.914773.348864 1.263636 0L5 6.895455l2.842898 2.842897c.348863.348864.914772.348864 1.263636 0l.631818-.631818c.348864-.348864.348864-.914489 0-1.263636L6.895455 5z"}})])}),[],!1,null,null,null).exports,OpenIndicator:h({},(function(){var t=this.$createElement,e=this._self._c||t;return e("svg",{attrs:{xmlns:"http://www.w3.org/2000/svg",width:"14",height:"10"}},[e("path",{attrs:{d:"M9.211364 7.59931l4.48338-4.867229c.407008-.441854.407008-1.158247 0-1.60046l-.73712-.80023c-.407008-.441854-1.066904-.441854-1.474243 0L7 5.198617 2.51662.33139c-.407008-.441853-1.066904-.441853-1.474243 0l-.737121.80023c-.407008.441854-.407008 1.158248 0 1.600461l4.48338 4.867228L7 10l2.211364-2.40069z"}})])}),[],!1,null,null,null).exports},f={inserted:function(t,e,n){var o=n.context;if(o.appendToBody){var i=o.$refs.toggle.getBoundingClientRect(),s=i.height,r=i.top,a=i.left,l=i.width,c=window.scrollX||window.pageXOffset,u=window.scrollY||window.pageYOffset;t.unbindPosition=o.calculatePosition(t,o,{width:l+"px",left:c+a+"px",top:u+r+s+"px"}),document.body.appendChild(t)}},unbind:function(t,e,n){n.context.appendToBody&&(t.unbindPosition&&"function"==typeof t.unbindPosition&&t.unbindPosition(),t.parentNode&&t.parentNode.removeChild(t))}};var y=function(t){var e={};return Object.keys(t).sort().forEach((function(n){e[n]=t[n]})),JSON.stringify(e)},b=0;var g=function(){return++b};function v(t,e){var n=Object.keys(t);if(Object.getOwnPropertySymbols){var o=Object.getOwnPropertySymbols(t);e&&(o=o.filter((function(e){return Object.getOwnPropertyDescriptor(t,e).enumerable}))),n.push.apply(n,o)}return n}function m(t){for(var e=1;e<arguments.length;e++){var n=null!=arguments[e]?arguments[e]:{};e%2?v(Object(n),!0).forEach((function(e){l()(t,e,n[e])})):Object.getOwnPropertyDescriptors?Object.defineProperties(t,Object.getOwnPropertyDescriptors(n)):v(Object(n)).forEach((function(e){Object.defineProperty(t,e,Object.getOwnPropertyDescriptor(n,e))}))}return t}var _={components:m({},d),mixins:[c,u,p],directives:{appendToBody:f},props:{value:{},components:{type:Object,default:function(){return{}}},options:{type:Array,default:function(){return[]}},disabled:{type:Boolean,default:!1},clearable:{type:Boolean,default:!0},searchable:{type:Boolean,default:!0},multiple:{type:Boolean,default:!1},placeholder:{type:String,default:""},transition:{type:String,default:"vs__fade"},clearSearchOnSelect:{type:Boolean,default:!0},closeOnSelect:{type:Boolean,default:!0},label:{type:String,default:"label"},autocomplete:{type:String,default:"off"},reduce:{type:Function,default:function(t){return t}},selectable:{type:Function,default:function(t){return!0}},getOptionLabel:{type:Function,default:function(t){return"object"===r()(t)?t.hasOwnProperty(this.label)?t[this.label]:console.warn('[vue-select warn]: Label key "option.'.concat(this.label,'" does not')+" exist in options object ".concat(JSON.stringify(t),".\n")+"https://vue-select.org/api/props.html#getoptionlabel"):t}},getOptionKey:{type:Function,default:function(t){if("object"!==r()(t))return t;try{return t.hasOwnProperty("id")?t.id:y(t)}catch(e){return console.warn("[vue-select warn]: Could not stringify this option to generate unique key. Please provide'getOptionKey' prop to return a unique key for each option.\nhttps://vue-select.org/api/props.html#getoptionkey",t,e)}}},onTab:{type:Function,default:function(){this.selectOnTab&&!this.isComposing&&this.typeAheadSelect()}},taggable:{type:Boolean,default:!1},tabindex:{type:Number,default:null},pushTags:{type:Boolean,default:!1},filterable:{type:Boolean,default:!0},filterBy:{type:Function,default:function(t,e,n){return(e||"").toLowerCase().indexOf(n.toLowerCase())>-1}},filter:{type:Function,default:function(t,e){var n=this;return t.filter((function(t){var o=n.getOptionLabel(t);return"number"==typeof o&&(o=o.toString()),n.filterBy(t,o,e)}))}},createOption:{type:Function,default:function(t){return"object"===r()(this.optionList[0])?l()({},this.label,t):t}},resetOnOptionsChange:{default:!1,validator:function(t){return["function","boolean"].includes(r()(t))}},clearSearchOnBlur:{type:Function,default:function(t){var e=t.clearSearchOnSelect,n=t.multiple;return e&&!n}},noDrop:{type:Boolean,default:!1},inputId:{type:String},dir:{type:String,default:"auto"},selectOnTab:{type:Boolean,default:!1},selectOnKeyCodes:{type:Array,default:function(){return[13]}},searchInputQuerySelector:{type:String,default:"[type=search]"},mapKeydown:{type:Function,default:function(t,e){return t}},appendToBody:{type:Boolean,default:!1},calculatePosition:{type:Function,default:function(t,e,n){var o=n.width,i=n.top,s=n.left;t.style.top=i,t.style.left=s,t.style.width=o}}},data:function(){return{uid:g(),search:"",open:!1,isComposing:!1,pushedTags:[],_value:[]}},watch:{options:function(t,e){var n=this;!this.taggable&&("function"==typeof n.resetOnOptionsChange?n.resetOnOptionsChange(t,e,n.selectedValue):n.resetOnOptionsChange)&&this.clearSelection(),this.value&&this.isTrackingValues&&this.setInternalValueFromOptions(this.value)},value:function(t){this.isTrackingValues&&this.setInternalValueFromOptions(t)},multiple:function(){this.clearSelection()},open:function(t){this.$emit(t?"open":"close")}},created:function(){this.mutableLoading=this.loading,void 0!==this.value&&this.isTrackingValues&&this.setInternalValueFromOptions(this.value),this.$on("option:created",this.pushTag)},methods:{setInternalValueFromOptions:function(t){var e=this;Array.isArray(t)?this.$data._value=t.map((function(t){return e.findOptionFromReducedValue(t)})):this.$data._value=this.findOptionFromReducedValue(t)},select:function(t){this.$emit("option:selecting",t),this.isOptionSelected(t)||(this.taggable&&!this.optionExists(t)&&this.$emit("option:created",t),this.multiple&&(t=this.selectedValue.concat(t)),this.updateValue(t),this.$emit("option:selected",t)),this.onAfterSelect(t)},deselect:function(t){var e=this;this.$emit("option:deselecting",t),this.updateValue(this.selectedValue.filter((function(n){return!e.optionComparator(n,t)}))),this.$emit("option:deselected",t)},clearSelection:function(){this.updateValue(this.multiple?[]:null)},onAfterSelect:function(t){this.closeOnSelect&&(this.open=!this.open,this.searchEl.blur()),this.clearSearchOnSelect&&(this.search="")},updateValue:function(t){var e=this;void 0===this.value&&(this.$data._value=t),null!==t&&(t=Array.isArray(t)?t.map((function(t){return e.reduce(t)})):this.reduce(t)),this.$emit("input",t)},toggleDropdown:function(t){var e=t.target!==this.searchEl;e&&t.preventDefault();var n=[].concat(i()(this.$refs.deselectButtons||[]),i()([this.$refs.clearButton]||false));void 0===this.searchEl||n.filter(Boolean).some((function(e){return e.contains(t.target)||e===t.target}))?t.preventDefault():this.open&&e?this.searchEl.blur():this.disabled||(this.open=!0,this.searchEl.focus())},isOptionSelected:function(t){var e=this;return this.selectedValue.some((function(n){return e.optionComparator(n,t)}))},optionComparator:function(t,e){return this.getOptionKey(t)===this.getOptionKey(e)},findOptionFromReducedValue:function(t){var e=this,n=[].concat(i()(this.options),i()(this.pushedTags)).filter((function(n){return JSON.stringify(e.reduce(n))===JSON.stringify(t)}));return 1===n.length?n[0]:n.find((function(t){return e.optionComparator(t,e.$data._value)}))||t},closeSearchOptions:function(){this.open=!1,this.$emit("search:blur")},maybeDeleteValue:function(){if(!this.searchEl.value.length&&this.selectedValue&&this.selectedValue.length&&this.clearable){var t=null;this.multiple&&(t=i()(this.selectedValue.slice(0,this.selectedValue.length-1))),this.updateValue(t)}},optionExists:function(t){var e=this;return this.optionList.some((function(n){return e.optionComparator(n,t)}))},normalizeOptionForSlot:function(t){return"object"===r()(t)?t:l()({},this.label,t)},pushTag:function(t){this.pushedTags.push(t)},onEscape:function(){this.search.length?this.search="":this.searchEl.blur()},onSearchBlur:function(){if(!this.mousedown||this.searching){var t=this.clearSearchOnSelect,e=this.multiple;return this.clearSearchOnBlur({clearSearchOnSelect:t,multiple:e})&&(this.search=""),void this.closeSearchOptions()}this.mousedown=!1,0!==this.search.length||0!==this.options.length||this.closeSearchOptions()},onSearchFocus:function(){this.open=!0,this.$emit("search:focus")},onMousedown:function(){this.mousedown=!0},onMouseUp:function(){this.mousedown=!1},onSearchKeyDown:function(t){var e=this,n=function(t){return t.preventDefault(),!e.isComposing&&e.typeAheadSelect()},o={8:function(t){return e.maybeDeleteValue()},9:function(t){return e.onTab()},27:function(t){return e.onEscape()},38:function(t){return t.preventDefault(),e.typeAheadUp()},40:function(t){return t.preventDefault(),e.typeAheadDown()}};this.selectOnKeyCodes.forEach((function(t){return o[t]=n}));var i=this.mapKeydown(o,this);if("function"==typeof i[t.keyCode])return i[t.keyCode](t)}},computed:{isTrackingValues:function(){return void 0===this.value||this.$options.propsData.hasOwnProperty("reduce")},selectedValue:function(){var t=this.value;return this.isTrackingValues&&(t=this.$data._value),t?[].concat(t):[]},optionList:function(){return this.options.concat(this.pushTags?this.pushedTags:[])},searchEl:function(){return this.$scopedSlots.search?this.$refs.selectedOptions.querySelector(this.searchInputQuerySelector):this.$refs.search},scope:function(){var t=this,e={search:this.search,loading:this.loading,searching:this.searching,filteredOptions:this.filteredOptions};return{search:{attributes:m({disabled:this.disabled,placeholder:this.searchPlaceholder,tabindex:this.tabindex,readonly:!this.searchable,id:this.inputId,"aria-autocomplete":"list","aria-labelledby":"vs".concat(this.uid,"__combobox"),"aria-controls":"vs".concat(this.uid,"__listbox"),ref:"search",type:"search",autocomplete:this.autocomplete,value:this.search},this.dropdownOpen&&this.filteredOptions[this.typeAheadPointer]?{"aria-activedescendant":"vs".concat(this.uid,"__option-").concat(this.typeAheadPointer)}:{}),events:{compositionstart:function(){return t.isComposing=!0},compositionend:function(){return t.isComposing=!1},keydown:this.onSearchKeyDown,blur:this.onSearchBlur,focus:this.onSearchFocus,input:function(e){return t.search=e.target.value}}},spinner:{loading:this.mutableLoading},noOptions:{search:this.search,loading:this.loading,searching:this.searching},openIndicator:{attributes:{ref:"openIndicator",role:"presentation",class:"vs__open-indicator"}},listHeader:e,listFooter:e,header:m({},e,{deselect:this.deselect}),footer:m({},e,{deselect:this.deselect})}},childComponents:function(){return m({},d,{},this.components)},stateClasses:function(){return{"vs--open":this.dropdownOpen,"vs--single":!this.multiple,"vs--searching":this.searching&&!this.noDrop,"vs--searchable":this.searchable&&!this.noDrop,"vs--unsearchable":!this.searchable,"vs--loading":this.mutableLoading,"vs--disabled":this.disabled}},searching:function(){return!!this.search},dropdownOpen:function(){return!this.noDrop&&(this.open&&!this.mutableLoading)},searchPlaceholder:function(){if(this.isValueEmpty&&this.placeholder)return this.placeholder},filteredOptions:function(){var t=[].concat(this.optionList);if(!this.filterable&&!this.taggable)return t;var e=this.search.length?this.filter(t,this.search,this):t;if(this.taggable&&this.search.length){var n=this.createOption(this.search);this.optionExists(n)||e.unshift(n)}return e},isValueEmpty:function(){return 0===this.selectedValue.length},showClearButton:function(){return!this.multiple&&this.clearable&&!this.open&&!this.isValueEmpty}}},O=(n(7),h(_,(function(){var t=this,e=t.$createElement,n=t._self._c||e;return n("div",{staticClass:"v-select",class:t.stateClasses,attrs:{dir:t.dir}},[t._t("header",null,null,t.scope.header),t._v(" "),n("div",{ref:"toggle",staticClass:"vs__dropdown-toggle",attrs:{id:"vs"+t.uid+"__combobox",role:"combobox","aria-expanded":t.dropdownOpen.toString(),"aria-owns":"vs"+t.uid+"__listbox","aria-label":"Search for option"},on:{mousedown:function(e){return t.toggleDropdown(e)}}},[n("div",{ref:"selectedOptions",staticClass:"vs__selected-options"},[t._l(t.selectedValue,(function(e){return t._t("selected-option-container",[n("span",{key:t.getOptionKey(e),staticClass:"vs__selected"},[t._t("selected-option",[t._v("\n            "+t._s(t.getOptionLabel(e))+"\n          ")],null,t.normalizeOptionForSlot(e)),t._v(" "),t.multiple?n("button",{ref:"deselectButtons",refInFor:!0,staticClass:"vs__deselect",attrs:{disabled:t.disabled,type:"button",title:"Deselect "+t.getOptionLabel(e),"aria-label":"Deselect "+t.getOptionLabel(e)},on:{click:function(n){return t.deselect(e)}}},[n(t.childComponents.Deselect,{tag:"component"})],1):t._e()],2)],{option:t.normalizeOptionForSlot(e),deselect:t.deselect,multiple:t.multiple,disabled:t.disabled})})),t._v(" "),t._t("search",[n("input",t._g(t._b({staticClass:"vs__search"},"input",t.scope.search.attributes,!1),t.scope.search.events))],null,t.scope.search)],2),t._v(" "),n("div",{ref:"actions",staticClass:"vs__actions"},[n("button",{directives:[{name:"show",rawName:"v-show",value:t.showClearButton,expression:"showClearButton"}],ref:"clearButton",staticClass:"vs__clear",attrs:{disabled:t.disabled,type:"button",title:"Clear Selected","aria-label":"Clear Selected"},on:{click:t.clearSelection}},[n(t.childComponents.Deselect,{tag:"component"})],1),t._v(" "),t._t("open-indicator",[t.noDrop?t._e():n(t.childComponents.OpenIndicator,t._b({tag:"component"},"component",t.scope.openIndicator.attributes,!1))],null,t.scope.openIndicator),t._v(" "),t._t("spinner",[n("div",{directives:[{name:"show",rawName:"v-show",value:t.mutableLoading,expression:"mutableLoading"}],staticClass:"vs__spinner"},[t._v("Loading...")])],null,t.scope.spinner)],2)]),t._v(" "),n("transition",{attrs:{name:t.transition}},[t.dropdownOpen?n("ul",{directives:[{name:"append-to-body",rawName:"v-append-to-body"}],key:"vs"+t.uid+"__listbox",ref:"dropdownMenu",staticClass:"vs__dropdown-menu",attrs:{id:"vs"+t.uid+"__listbox",role:"listbox",tabindex:"-1"},on:{mousedown:function(e){return e.preventDefault(),t.onMousedown(e)},mouseup:t.onMouseUp}},[t._t("list-header",null,null,t.scope.listHeader),t._v(" "),t._l(t.filteredOptions,(function(e,o){return n("li",{key:t.getOptionKey(e),staticClass:"vs__dropdown-option",class:{"vs__dropdown-option--selected":t.isOptionSelected(e),"vs__dropdown-option--highlight":o===t.typeAheadPointer,"vs__dropdown-option--disabled":!t.selectable(e)},attrs:{role:"option",id:"vs"+t.uid+"__option-"+o,"aria-selected":o===t.typeAheadPointer||null},on:{mouseover:function(n){t.selectable(e)&&(t.typeAheadPointer=o)},mousedown:function(n){n.preventDefault(),n.stopPropagation(),t.selectable(e)&&t.select(e)}}},[t._t("option",[t._v("\n          "+t._s(t.getOptionLabel(e))+"\n        ")],null,t.normalizeOptionForSlot(e))],2)})),t._v(" "),0===t.filteredOptions.length?n("li",{staticClass:"vs__no-options"},[t._t("no-options",[t._v("Sorry, no matching options.")],null,t.scope.noOptions)],2):t._e(),t._v(" "),t._t("list-footer",null,null,t.scope.listFooter)],2):n("ul",{staticStyle:{display:"none",visibility:"hidden"},attrs:{id:"vs"+t.uid+"__listbox",role:"listbox"}})]),t._v(" "),t._t("footer",null,null,t.scope.footer)],2)}),[],!1,null,null,null).exports),w={ajax:p,pointer:u,pointerScroll:c};n.d(e,"VueSelect",(function(){return O})),n.d(e,"mixins",(function(){return w}));e.default=O}])}));
 //# sourceMappingURL=vue-select.js.map
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/ChosenTimePointers/index.css?vue&type=style&index=0&id=4dceeeb0&scoped=true&lang=css&":
-/*!*************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/ChosenTimePointers/index.css?vue&type=style&index=0&id=4dceeeb0&scoped=true&lang=css& ***!
-  \*************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _style_loader_index_js_css_loader_index_js_ref_6_1_vue_loader_lib_loaders_stylePostLoader_js_postcss_loader_src_index_js_ref_6_2_index_css_vue_type_style_index_0_id_4dceeeb0_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../style-loader!../../../../css-loader??ref--6-1!../../../../vue-loader/lib/loaders/stylePostLoader.js!../../../../postcss-loader/src??ref--6-2!./index.css?vue&type=style&index=0&id=4dceeeb0&scoped=true&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/ChosenTimePointers/index.css?vue&type=style&index=0&id=4dceeeb0&scoped=true&lang=css&");
-/* harmony import */ var _style_loader_index_js_css_loader_index_js_ref_6_1_vue_loader_lib_loaders_stylePostLoader_js_postcss_loader_src_index_js_ref_6_2_index_css_vue_type_style_index_0_id_4dceeeb0_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_style_loader_index_js_css_loader_index_js_ref_6_1_vue_loader_lib_loaders_stylePostLoader_js_postcss_loader_src_index_js_ref_6_2_index_css_vue_type_style_index_0_id_4dceeeb0_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _style_loader_index_js_css_loader_index_js_ref_6_1_vue_loader_lib_loaders_stylePostLoader_js_postcss_loader_src_index_js_ref_6_2_index_css_vue_type_style_index_0_id_4dceeeb0_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _style_loader_index_js_css_loader_index_js_ref_6_1_vue_loader_lib_loaders_stylePostLoader_js_postcss_loader_src_index_js_ref_6_2_index_css_vue_type_style_index_0_id_4dceeeb0_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/ChosenTimePointers/index.js?vue&type=script&lang=js&?4f0e":
-/*!*******************************************************************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/ChosenTimePointers?vue&type=script&lang=js& ***!
-  \*******************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!.?vue&type=script&lang=js& */ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/ChosenTimePointers/index.js?vue&type=script&lang=js&?e02d");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/ChosenTimePointers/index.js?vue&type=script&lang=js&?e02d":
-/*!*******************************************************************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/ChosenTimePointers?vue&type=script&lang=js& ***!
-  \*******************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _core_consts__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../core/consts */ "./node_modules/vue-time-ranges-picker-edit/src/core/consts.js");
-/* harmony import */ var _core_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../core/helpers */ "./node_modules/vue-time-ranges-picker-edit/src/core/helpers.js");
-
-
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  name: 'ChosenTimePointers',
-
-  props: {
-    isTwelfthMode: {
-      type: Boolean,
-      default: () => false,
-    },
-    movePointers: {
-      type: Array,
-      required: true,
-    },
-    chosenTimeColor: {
-      type: String,
-      required: true,
-    },
-    pointerColor: {
-      type: String,
-      required: true,
-    },
-    activePointerColor: {
-      type: String,
-      required: true,
-    },
-    pointerRadius: {
-      type: Number,
-      required: true,
-    },
-    activePointerRadius: {
-      type: Number,
-      required: true,
-    },
-    isShowChosenTime: {
-      type: Boolean,
-      required: true,
-    },
-  },
-
-  data() {
-    return {
-      circleRadius: _core_consts__WEBPACK_IMPORTED_MODULE_0__["CIRCLE_RADIUS"],
-      viewBoxSize: _core_consts__WEBPACK_IMPORTED_MODULE_0__["VIEW_BOX_SIZE"],
-      oneHourDegree: _core_consts__WEBPACK_IMPORTED_MODULE_0__["ONE_HOUR_DEGREE"],
-      movePointersLength: 0,
-    };
-  },
-
-  beforeUpdate() {
-    if (this.movePointers.length !== this.movePointersLength) {
-      this.updateAbsoluteCoordinates();
-    }
-  },
-
-  mounted() {
-    this.updateAbsoluteCoordinates();
-  },
-
-  methods: {
-    timeNumberToText: _core_helpers__WEBPACK_IMPORTED_MODULE_1__["timeNumberToText"],
-
-    handleStartMove(e) {
-      this.$emit('startMove', e);
-    },
-
-    transformStyle(deg) {
-      let style = `rotate(${-deg} 0 0)`;
-      return style;
-    },
-
-    updateAbsoluteCoordinates() {
-      for (let i = 0; i < this.movePointers.length; i++) {
-        this.movePointersLength = this.movePointers.length;
-        const movePointer = this.movePointers[i];
-        const refName = Object.keys(this.$refs).find(refName => {
-          if (refName === movePointer.name) {
-            return true;
-          }
-        });
-        if (!refName) {
-          continue;
-        }
-        const ref = this.$refs[refName][0];
-        movePointer.setRef(ref);
-      }
-    },
-  },
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/ChosenTimePointers/index.vue":
-/*!****************************************************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/ChosenTimePointers/index.vue ***!
-  \****************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _index_vue_vue_type_template_id_4dceeeb0_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./index.vue?vue&type=template&id=4dceeeb0&scoped=true& */ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/ChosenTimePointers/index.vue?vue&type=template&id=4dceeeb0&scoped=true&");
-/* harmony import */ var _index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! .?vue&type=script&lang=js& */ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/ChosenTimePointers/index.js?vue&type=script&lang=js&?4f0e");
-/* empty/unused harmony star reexport *//* harmony import */ var _index_css_vue_type_style_index_0_id_4dceeeb0_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./index.css?vue&type=style&index=0&id=4dceeeb0&scoped=true&lang=css& */ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/ChosenTimePointers/index.css?vue&type=style&index=0&id=4dceeeb0&scoped=true&lang=css&");
-/* harmony import */ var _vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-
-/* normalize component */
-
-var component = Object(_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
-  _index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _index_vue_vue_type_template_id_4dceeeb0_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _index_vue_vue_type_template_id_4dceeeb0_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
-  false,
-  null,
-  "4dceeeb0",
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/ChosenTimePointers/index.vue"
-/* harmony default export */ __webpack_exports__["default"] = (component.exports);
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/ChosenTimePointers/index.vue?vue&type=template&id=4dceeeb0&scoped=true&":
-/*!***********************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/ChosenTimePointers/index.vue?vue&type=template&id=4dceeeb0&scoped=true& ***!
-  \***********************************************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _vue_loader_lib_loaders_templateLoader_js_vue_loader_options_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_template_id_4dceeeb0_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../vue-loader/lib??vue-loader-options!./index.vue?vue&type=template&id=4dceeeb0&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/ChosenTimePointers/index.vue?vue&type=template&id=4dceeeb0&scoped=true&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _vue_loader_lib_loaders_templateLoader_js_vue_loader_options_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_template_id_4dceeeb0_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _vue_loader_lib_loaders_templateLoader_js_vue_loader_options_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_template_id_4dceeeb0_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/HoursMarks/index.js?vue&type=script&lang=js&?219c":
-/*!***********************************************************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/HoursMarks?vue&type=script&lang=js& ***!
-  \***********************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _core_consts__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../core/consts */ "./node_modules/vue-time-ranges-picker-edit/src/core/consts.js");
-
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  name: 'HoursMarks',
-  props: {
-    hoursMarksColor: {
-      type: String,
-      required: true,
-    },
-  },
-
-  data() {
-    const marks = [];
-    for (let i = 0; i < _core_consts__WEBPACK_IMPORTED_MODULE_0__["HOURS_AMOUNT"]; i++) {
-      marks.push({ index: i + 1 });
-    }
-
-    return {
-      marks,
-      circleRadius: _core_consts__WEBPACK_IMPORTED_MODULE_0__["CIRCLE_RADIUS"],
-      viewBoxSize: _core_consts__WEBPACK_IMPORTED_MODULE_0__["VIEW_BOX_SIZE"],
-      oneHourDegree: _core_consts__WEBPACK_IMPORTED_MODULE_0__["ONE_HOUR_DEGREE"],
-    };
-  },
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/HoursMarks/index.js?vue&type=script&lang=js&?d5fa":
-/*!***********************************************************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/HoursMarks?vue&type=script&lang=js& ***!
-  \***********************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!.?vue&type=script&lang=js& */ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/HoursMarks/index.js?vue&type=script&lang=js&?219c");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/HoursMarks/index.vue":
-/*!********************************************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/HoursMarks/index.vue ***!
-  \********************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _index_vue_vue_type_template_id_a26e8d5c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./index.vue?vue&type=template&id=a26e8d5c& */ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/HoursMarks/index.vue?vue&type=template&id=a26e8d5c&");
-/* harmony import */ var _index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! .?vue&type=script&lang=js& */ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/HoursMarks/index.js?vue&type=script&lang=js&?d5fa");
-/* empty/unused harmony star reexport *//* harmony import */ var _vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-
-var component = Object(_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _index_vue_vue_type_template_id_a26e8d5c___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _index_vue_vue_type_template_id_a26e8d5c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/HoursMarks/index.vue"
-/* harmony default export */ __webpack_exports__["default"] = (component.exports);
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/HoursMarks/index.vue?vue&type=template&id=a26e8d5c&":
-/*!***************************************************************************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/HoursMarks/index.vue?vue&type=template&id=a26e8d5c& ***!
-  \***************************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _vue_loader_lib_loaders_templateLoader_js_vue_loader_options_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_template_id_a26e8d5c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../vue-loader/lib??vue-loader-options!./index.vue?vue&type=template&id=a26e8d5c& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/HoursMarks/index.vue?vue&type=template&id=a26e8d5c&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _vue_loader_lib_loaders_templateLoader_js_vue_loader_options_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_template_id_a26e8d5c___WEBPACK_IMPORTED_MODULE_0__["render"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _vue_loader_lib_loaders_templateLoader_js_vue_loader_options_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_template_id_a26e8d5c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/QuartersTexts/index.css?vue&type=style&index=0&id=c4335e8c&scoped=true&lang=css&":
-/*!********************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/QuartersTexts/index.css?vue&type=style&index=0&id=c4335e8c&scoped=true&lang=css& ***!
-  \********************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _style_loader_index_js_css_loader_index_js_ref_6_1_vue_loader_lib_loaders_stylePostLoader_js_postcss_loader_src_index_js_ref_6_2_index_css_vue_type_style_index_0_id_c4335e8c_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../style-loader!../../../../css-loader??ref--6-1!../../../../vue-loader/lib/loaders/stylePostLoader.js!../../../../postcss-loader/src??ref--6-2!./index.css?vue&type=style&index=0&id=c4335e8c&scoped=true&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/QuartersTexts/index.css?vue&type=style&index=0&id=c4335e8c&scoped=true&lang=css&");
-/* harmony import */ var _style_loader_index_js_css_loader_index_js_ref_6_1_vue_loader_lib_loaders_stylePostLoader_js_postcss_loader_src_index_js_ref_6_2_index_css_vue_type_style_index_0_id_c4335e8c_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_style_loader_index_js_css_loader_index_js_ref_6_1_vue_loader_lib_loaders_stylePostLoader_js_postcss_loader_src_index_js_ref_6_2_index_css_vue_type_style_index_0_id_c4335e8c_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _style_loader_index_js_css_loader_index_js_ref_6_1_vue_loader_lib_loaders_stylePostLoader_js_postcss_loader_src_index_js_ref_6_2_index_css_vue_type_style_index_0_id_c4335e8c_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _style_loader_index_js_css_loader_index_js_ref_6_1_vue_loader_lib_loaders_stylePostLoader_js_postcss_loader_src_index_js_ref_6_2_index_css_vue_type_style_index_0_id_c4335e8c_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/QuartersTexts/index.js?vue&type=script&lang=js&?6187":
-/*!**************************************************************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/QuartersTexts?vue&type=script&lang=js& ***!
-  \**************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _core_consts__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../core/consts */ "./node_modules/vue-time-ranges-picker-edit/src/core/consts.js");
-/* harmony import */ var _core_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../core/helpers */ "./node_modules/vue-time-ranges-picker-edit/src/core/helpers.js");
-
-
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  name: 'QuartersTexts',
-  props: {
-    isTwelfthMode: {
-      type: Boolean,
-      default: () => false,
-    },
-    quarterTextColor: {
-      type: String,
-      required: true,
-    },
-  },
-
-  data() {
-    const offsetRadius = -15;
-    return {
-      viewBoxSize: _core_consts__WEBPACK_IMPORTED_MODULE_0__["VIEW_BOX_SIZE"],
-      offsetRadius,
-    };
-  },
-
-  computed: {
-    quarterTexts() {
-      const { offsetRadius } = this;
-      let quarterTexts = [
-        {
-          name: '06:00',
-          ...Object(_core_helpers__WEBPACK_IMPORTED_MODULE_1__["getTimeCoordinates"])(6, offsetRadius),
-        },
-        {
-          name: '12:00',
-          ...Object(_core_helpers__WEBPACK_IMPORTED_MODULE_1__["getTimeCoordinates"])(12, offsetRadius),
-        },
-        {
-          name: '06:00',
-          ...Object(_core_helpers__WEBPACK_IMPORTED_MODULE_1__["getTimeCoordinates"])(18, offsetRadius),
-        },
-        {
-          name: '12:00',
-          ...Object(_core_helpers__WEBPACK_IMPORTED_MODULE_1__["getTimeCoordinates"])(0, offsetRadius),
-        },
-      ];
-      if (this.isTwelfthMode) {
-        quarterTexts = [
-          {
-            name: '6 AM',
-            ...Object(_core_helpers__WEBPACK_IMPORTED_MODULE_1__["getTimeCoordinates"])(6, offsetRadius),
-          },
-          {
-            name: '12 PM',
-            ...Object(_core_helpers__WEBPACK_IMPORTED_MODULE_1__["getTimeCoordinates"])(12, offsetRadius),
-          },
-          {
-            name: '6PM',
-            ...Object(_core_helpers__WEBPACK_IMPORTED_MODULE_1__["getTimeCoordinates"])(18, offsetRadius),
-          },
-          {
-            name: '12 AM',
-            ...Object(_core_helpers__WEBPACK_IMPORTED_MODULE_1__["getTimeCoordinates"])(0, offsetRadius),
-          },
-        ];
-      }
-      return quarterTexts;
-    },
-  },
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/QuartersTexts/index.js?vue&type=script&lang=js&?95cc":
-/*!**************************************************************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/QuartersTexts?vue&type=script&lang=js& ***!
-  \**************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!.?vue&type=script&lang=js& */ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/QuartersTexts/index.js?vue&type=script&lang=js&?6187");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/QuartersTexts/index.vue":
-/*!***********************************************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/QuartersTexts/index.vue ***!
-  \***********************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _index_vue_vue_type_template_id_c4335e8c_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./index.vue?vue&type=template&id=c4335e8c&scoped=true& */ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/QuartersTexts/index.vue?vue&type=template&id=c4335e8c&scoped=true&");
-/* harmony import */ var _index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! .?vue&type=script&lang=js& */ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/QuartersTexts/index.js?vue&type=script&lang=js&?95cc");
-/* empty/unused harmony star reexport *//* harmony import */ var _index_css_vue_type_style_index_0_id_c4335e8c_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./index.css?vue&type=style&index=0&id=c4335e8c&scoped=true&lang=css& */ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/QuartersTexts/index.css?vue&type=style&index=0&id=c4335e8c&scoped=true&lang=css&");
-/* harmony import */ var _vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-
-/* normalize component */
-
-var component = Object(_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
-  _index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _index_vue_vue_type_template_id_c4335e8c_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _index_vue_vue_type_template_id_c4335e8c_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
-  false,
-  null,
-  "c4335e8c",
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/QuartersTexts/index.vue"
-/* harmony default export */ __webpack_exports__["default"] = (component.exports);
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/QuartersTexts/index.vue?vue&type=template&id=c4335e8c&scoped=true&":
-/*!******************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/QuartersTexts/index.vue?vue&type=template&id=c4335e8c&scoped=true& ***!
-  \******************************************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _vue_loader_lib_loaders_templateLoader_js_vue_loader_options_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_template_id_c4335e8c_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../vue-loader/lib??vue-loader-options!./index.vue?vue&type=template&id=c4335e8c&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/QuartersTexts/index.vue?vue&type=template&id=c4335e8c&scoped=true&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _vue_loader_lib_loaders_templateLoader_js_vue_loader_options_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_template_id_c4335e8c_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _vue_loader_lib_loaders_templateLoader_js_vue_loader_options_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_template_id_c4335e8c_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/RangesScales/index.js?vue&type=script&lang=js&?0926":
-/*!*************************************************************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/RangesScales?vue&type=script&lang=js& ***!
-  \*************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _core_consts__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../core/consts */ "./node_modules/vue-time-ranges-picker-edit/src/core/consts.js");
-
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  name: 'RangesScales',
-  props: {
-    ranges: {
-      type: Array,
-      required: true,
-    },
-    circleStrokeWidth: {
-      type: Number,
-      required: true,
-    },
-  },
-
-  data() {
-    return {
-      circleRadius: _core_consts__WEBPACK_IMPORTED_MODULE_0__["CIRCLE_RADIUS"],
-    };
-  },
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/RangesScales/index.js?vue&type=script&lang=js&?f08d":
-/*!*************************************************************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/RangesScales?vue&type=script&lang=js& ***!
-  \*************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!.?vue&type=script&lang=js& */ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/RangesScales/index.js?vue&type=script&lang=js&?0926");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/RangesScales/index.vue":
-/*!**********************************************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/RangesScales/index.vue ***!
-  \**********************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _index_vue_vue_type_template_id_3396e68c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./index.vue?vue&type=template&id=3396e68c& */ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/RangesScales/index.vue?vue&type=template&id=3396e68c&");
-/* harmony import */ var _index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! .?vue&type=script&lang=js& */ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/RangesScales/index.js?vue&type=script&lang=js&?f08d");
-/* empty/unused harmony star reexport *//* harmony import */ var _vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-
-var component = Object(_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _index_vue_vue_type_template_id_3396e68c___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _index_vue_vue_type_template_id_3396e68c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/RangesScales/index.vue"
-/* harmony default export */ __webpack_exports__["default"] = (component.exports);
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/RangesScales/index.vue?vue&type=template&id=3396e68c&":
-/*!*****************************************************************************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/RangesScales/index.vue?vue&type=template&id=3396e68c& ***!
-  \*****************************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _vue_loader_lib_loaders_templateLoader_js_vue_loader_options_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_template_id_3396e68c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../vue-loader/lib??vue-loader-options!./index.vue?vue&type=template&id=3396e68c& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/RangesScales/index.vue?vue&type=template&id=3396e68c&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _vue_loader_lib_loaders_templateLoader_js_vue_loader_options_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_template_id_3396e68c___WEBPACK_IMPORTED_MODULE_0__["render"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _vue_loader_lib_loaders_templateLoader_js_vue_loader_options_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_template_id_3396e68c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/index.css?vue&type=style&index=0&id=0b69a50a&scoped=true&lang=css&":
-/*!******************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/index.css?vue&type=style&index=0&id=0b69a50a&scoped=true&lang=css& ***!
-  \******************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _style_loader_index_js_css_loader_index_js_ref_6_1_vue_loader_lib_loaders_stylePostLoader_js_postcss_loader_src_index_js_ref_6_2_index_css_vue_type_style_index_0_id_0b69a50a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../style-loader!../../../css-loader??ref--6-1!../../../vue-loader/lib/loaders/stylePostLoader.js!../../../postcss-loader/src??ref--6-2!./index.css?vue&type=style&index=0&id=0b69a50a&scoped=true&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/index.css?vue&type=style&index=0&id=0b69a50a&scoped=true&lang=css&");
-/* harmony import */ var _style_loader_index_js_css_loader_index_js_ref_6_1_vue_loader_lib_loaders_stylePostLoader_js_postcss_loader_src_index_js_ref_6_2_index_css_vue_type_style_index_0_id_0b69a50a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_style_loader_index_js_css_loader_index_js_ref_6_1_vue_loader_lib_loaders_stylePostLoader_js_postcss_loader_src_index_js_ref_6_2_index_css_vue_type_style_index_0_id_0b69a50a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _style_loader_index_js_css_loader_index_js_ref_6_1_vue_loader_lib_loaders_stylePostLoader_js_postcss_loader_src_index_js_ref_6_2_index_css_vue_type_style_index_0_id_0b69a50a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _style_loader_index_js_css_loader_index_js_ref_6_1_vue_loader_lib_loaders_stylePostLoader_js_postcss_loader_src_index_js_ref_6_2_index_css_vue_type_style_index_0_id_0b69a50a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/index.js?vue&type=script&lang=js&?471b":
-/*!************************************************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker?vue&type=script&lang=js& ***!
-  \************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!.?vue&type=script&lang=js& */ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/index.js?vue&type=script&lang=js&?55e8");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/index.js?vue&type=script&lang=js&?55e8":
-/*!************************************************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker?vue&type=script&lang=js& ***!
-  \************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _core_consts__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../core/consts */ "./node_modules/vue-time-ranges-picker-edit/src/core/consts.js");
-/* harmony import */ var _core_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../core/helpers */ "./node_modules/vue-time-ranges-picker-edit/src/core/helpers.js");
-/* harmony import */ var _core_RangesController__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../core/RangesController */ "./node_modules/vue-time-ranges-picker-edit/src/core/RangesController.js");
-/* harmony import */ var _RangesScales_index_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./RangesScales/index.vue */ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/RangesScales/index.vue");
-/* harmony import */ var _HoursMarks_index_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./HoursMarks/index.vue */ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/HoursMarks/index.vue");
-/* harmony import */ var _QuartersTexts_index_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./QuartersTexts/index.vue */ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/QuartersTexts/index.vue");
-/* harmony import */ var _ChosenTimePointers_index_vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./ChosenTimePointers/index.vue */ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/ChosenTimePointers/index.vue");
-
-
-
-
-
-
-
-
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  name: 'TimeRangesPicker',
-
-  components: {
-    RangesScales: _RangesScales_index_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
-    HoursMarks: _HoursMarks_index_vue__WEBPACK_IMPORTED_MODULE_4__["default"],
-    QuartersTexts: _QuartersTexts_index_vue__WEBPACK_IMPORTED_MODULE_5__["default"],
-    ChosenTimePointers: _ChosenTimePointers_index_vue__WEBPACK_IMPORTED_MODULE_6__["default"],
-  },
-
-  props: {
-    value: {
-      type: Array,
-      default: () => {},
-    },
-    isTwelfthMode: {
-      type: Boolean,
-      default: () => false,
-    },
-    stepOfMoving: {
-      type: Number,
-      default: () => _core_consts__WEBPACK_IMPORTED_MODULE_0__["STEP_OF_MOVING"],
-    },
-    extraPointerRadius: {
-      type: Number,
-      default: () => _core_consts__WEBPACK_IMPORTED_MODULE_0__["EXTRA_POINTER_RADIUS"],
-    },
-    viewOptions: {
-      type: Object,
-      default: () => _core_consts__WEBPACK_IMPORTED_MODULE_0__["DEFAULT_VIEW_OPTIONS"],
-    },
-  },
-
-  data() {
-    const viewBoxSize = _core_consts__WEBPACK_IMPORTED_MODULE_0__["VIEW_BOX_SIZE"];
-    return {
-      viewBoxSize,
-      innerValue: [],
-      rangesController: null,
-      ranges: [],
-      movePointers: [],
-    };
-  },
-
-  computed: {
-    combinedViewOptions() {
-      return {
-        ..._core_consts__WEBPACK_IMPORTED_MODULE_0__["DEFAULT_VIEW_OPTIONS"],
-        ...this.viewOptions,
-      };
-    },
-  },
-
-  created() {
-    this.getInfoFromValue(this.value);
-  },
-
-  watch: {
-    value: {
-      handler(newValue) {
-        this.getInfoFromValue(newValue);
-      },
-    },
-    stepOfMoving(newValue) {
-      this.rangesController.setStepOfMoving(newValue);
-    },
-  },
-
-  methods: {
-    timeNumberToText: _core_helpers__WEBPACK_IMPORTED_MODULE_1__["timeNumberToText"],
-
-    getInfoFromValue(newValue) {
-      const { isTwelfthMode, stepOfMoving } = this;
-      const innerValue = newValue.map(range => {
-        return {
-          ...range,
-          startTime: Object(_core_helpers__WEBPACK_IMPORTED_MODULE_1__["timeTextToNumber"])(range.startTime, isTwelfthMode),
-          endTime: Object(_core_helpers__WEBPACK_IMPORTED_MODULE_1__["timeTextToNumber"])(range.endTime, isTwelfthMode),
-        };
-      });
-      const rangesController = new _core_RangesController__WEBPACK_IMPORTED_MODULE_2__["default"](innerValue, stepOfMoving);
-
-      this.innerValue = innerValue;
-      this.rangesController = rangesController;
-      this.ranges = rangesController.ranges;
-
-      const newMovePointers = rangesController.movePointers;
-      if (this.movePointers && this.movePointers.length == newMovePointers.length) {
-        newMovePointers.map(newMovePointer => {
-          const oldMovePointer = this.movePointers.find(movePointer => {
-            if (movePointer.name === newMovePointer.name) {
-              return true;
-            }
-          });
-          newMovePointer.setRef(oldMovePointer.ref);
-        });
-        return (this.movePointers = newMovePointers);
-      }
-
-      this.movePointers = rangesController.movePointers;
-    },
-
-    handleStartMove(e) {
-      const activePointName = e.target.id;
-      let pointer = this.rangesController.getPointer(activePointName);
-      if (!pointer) {
-        pointer = this.tryToFindPointerNear(e);
-      }
-      if (!pointer) {
-        return;
-      }
-      const inputCenterElement = this.$refs['input-center'];
-      const { x: centerX, y: centerY } = inputCenterElement.getBoundingClientRect();
-      this.rangesController.setBasicVector([centerX, centerY]);
-
-      pointer.startMove();
-    },
-
-    handleMove(e) {
-      const activeMovePointers = this.rangesController.getActiveMovePointers();
-      if (!activeMovePointers.length) {
-        return;
-      }
-      const currentX = e.clientX;
-      const currentY = e.clientY;
-      for (let i = 0; i < activeMovePointers.length; i++) {
-        const pointer = activeMovePointers[i];
-        pointer.move(currentX, currentY);
-      }
-    },
-
-    handleEndMove() {
-      const activeMovePointers = this.rangesController.getActiveMovePointers();
-      if (!activeMovePointers.length) {
-        return;
-      }
-      this.rangesController.completeMove();
-      const ranges = this.rangesController.ranges;
-      const { isTwelfthMode } = this;
-      const rangesData = ranges.map(range => {
-        return {
-          startTime: Object(_core_helpers__WEBPACK_IMPORTED_MODULE_1__["timeNumberToText"])(range.startMovePointer.time, isTwelfthMode),
-          endTime: Object(_core_helpers__WEBPACK_IMPORTED_MODULE_1__["timeNumberToText"])(range.endMovePointer.time, isTwelfthMode),
-        };
-      });
-      this.$emit('change', rangesData);
-    },
-
-    tryToFindPointerNear(e) {
-      const { clientX, clientY } = e;
-      const { movePointers } = this;
-      let nearPointersData = movePointers
-        .map(pointer => {
-          const { ref } = pointer;
-
-          const rect = ref.getBoundingClientRect();
-          const { x: pointerX, y: pointerY } = rect;
-          return {
-            pointer,
-            distance: Math.abs(clientX - pointerX) + Math.abs(clientY - pointerY),
-          };
-        })
-        .filter(({ distance }) => {
-          if (distance < this.extraPointerRadius) {
-            return true;
-          }
-        });
-
-      if (!nearPointersData.length) {
-        return;
-      }
-
-      let nearestPointerData = nearPointersData.sort((a, b) => {
-        return a.distance - b.distance;
-      })[0];
-
-      return nearestPointerData.pointer;
-    },
-  },
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/index.vue":
-/*!*********************************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/index.vue ***!
-  \*********************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _index_vue_vue_type_template_id_0b69a50a_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./index.vue?vue&type=template&id=0b69a50a&scoped=true& */ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/index.vue?vue&type=template&id=0b69a50a&scoped=true&");
-/* harmony import */ var _index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! .?vue&type=script&lang=js& */ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/index.js?vue&type=script&lang=js&?471b");
-/* empty/unused harmony star reexport *//* harmony import */ var _index_css_vue_type_style_index_0_id_0b69a50a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./index.css?vue&type=style&index=0&id=0b69a50a&scoped=true&lang=css& */ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/index.css?vue&type=style&index=0&id=0b69a50a&scoped=true&lang=css&");
-/* harmony import */ var _vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-
-/* normalize component */
-
-var component = Object(_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
-  _index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _index_vue_vue_type_template_id_0b69a50a_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _index_vue_vue_type_template_id_0b69a50a_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
-  false,
-  null,
-  "0b69a50a",
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/index.vue"
-/* harmony default export */ __webpack_exports__["default"] = (component.exports);
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/index.vue?vue&type=template&id=0b69a50a&scoped=true&":
-/*!****************************************************************************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/index.vue?vue&type=template&id=0b69a50a&scoped=true& ***!
-  \****************************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _vue_loader_lib_loaders_templateLoader_js_vue_loader_options_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_template_id_0b69a50a_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../vue-loader/lib??vue-loader-options!./index.vue?vue&type=template&id=0b69a50a&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/index.vue?vue&type=template&id=0b69a50a&scoped=true&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _vue_loader_lib_loaders_templateLoader_js_vue_loader_options_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_template_id_0b69a50a_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _vue_loader_lib_loaders_templateLoader_js_vue_loader_options_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_template_id_0b69a50a_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/core/MovePointer.js":
-/*!**************************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/core/MovePointer.js ***!
-  \**************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-class MovePointer {
-  constructor(pointData) {
-    const { time, index, controller, coordinates } = pointData;
-    this.name = 'point' + index;
-    this.controller = controller;
-    this.time = time;
-    this.coordinates = coordinates;
-    this.index = index;
-    this.isActive = false;
-  }
-
-  startMove() {
-    this.isActive = true;
-  }
-
-  completeMove() {
-    this.isActive = false;
-  }
-
-  move(currentX, currentY) {
-    if (this.isDisabled) {
-      return;
-    }
-
-    const {
-      centerX,
-      centerY,
-      zeroAngleX,
-      zeroAngleY,
-      vectorLength: basicVectorLength,
-    } = this.controller.basicVector;
-
-    const currentVector = [currentX - centerX, currentY - centerY];
-    const scalarMultiple = zeroAngleX * currentVector[0] + zeroAngleY * currentVector[1];
-    const currentVectorLength = Math.sqrt(currentVector[0] ** 2 + currentVector[1] ** 2);
-    const angleInRadians = Math.acos(scalarMultiple / (basicVectorLength * currentVectorLength));
-    let angleInDegrees = (angleInRadians * 180) / Math.PI;
-    if (!angleInDegrees) {
-      return;
-    }
-    if (currentY < centerY) {
-      angleInDegrees = 360 - angleInDegrees;
-    }
-
-    this.controller.handlePointerMove(this, angleInDegrees);
-  }
-
-  setRef(ref) {
-    this.ref = ref;
-  }
-}
-
-/* harmony default export */ __webpack_exports__["default"] = (MovePointer);
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/core/Range.js":
-/*!********************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/core/Range.js ***!
-  \********************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _consts__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./consts */ "./node_modules/vue-time-ranges-picker-edit/src/core/consts.js");
-/* harmony import */ var _helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./helpers */ "./node_modules/vue-time-ranges-picker-edit/src/core/helpers.js");
-
-
-
-class Range {
-  constructor(args) {
-    const { startMovePointer, endMovePointer, scaleColor } = args;
-    const arcs = this.createArcs(startMovePointer, endMovePointer);
-    this.name = startMovePointer.name + '-' + endMovePointer.name + '-range';
-    this.startMovePointer = startMovePointer;
-    this.endMovePointer = endMovePointer;
-    this.scaleColor = scaleColor;
-    this.arcs = arcs;
-  }
-
-  createArcs(startPointer, endPointer) {
-    const startTime = startPointer.time;
-    const endTime = endPointer.time;
-
-    const arcs = [];
-    let diff = endTime - startTime;
-    if (diff < 0) {
-      diff = _consts__WEBPACK_IMPORTED_MODULE_0__["HOURS_AMOUNT"] - -diff;
-    }
-
-    /**
-     * we cant create arc with more than 180 degrees, so,
-     * if wen need more than 180, we create two arcs
-     */
-    if (diff <= _consts__WEBPACK_IMPORTED_MODULE_0__["HOURS_AMOUNT"] / 2) {
-      const start = startPointer.coordinates;
-      const end = endPointer.coordinates;
-      arcs.push({
-        name: startTime + '-' + endTime + '-arc',
-        start,
-        end,
-      });
-    } else {
-      let borderTime = startPointer.time + _consts__WEBPACK_IMPORTED_MODULE_0__["HOURS_AMOUNT"] / 2;
-      if (borderTime > _consts__WEBPACK_IMPORTED_MODULE_0__["HOURS_AMOUNT"]) {
-        borderTime = borderTime - _consts__WEBPACK_IMPORTED_MODULE_0__["HOURS_AMOUNT"];
-      }
-      const borderTimeCoordinates = Object(_helpers__WEBPACK_IMPORTED_MODULE_1__["getTimeCoordinates"])(borderTime);
-
-      const firstStart = startPointer.coordinates;
-      const firstEnd = borderTimeCoordinates;
-      const secondStart = borderTimeCoordinates;
-      const secondEnd = endPointer.coordinates;
-      arcs.push({ name: startPointer.name + '-arc', start: firstStart, end: firstEnd });
-      arcs.push({ name: endPointer.name + '-arc', start: secondStart, end: secondEnd });
-    }
-    return arcs;
-  }
-}
-
-/* harmony default export */ __webpack_exports__["default"] = (Range);
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/core/RangesController.js":
-/*!*******************************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/core/RangesController.js ***!
-  \*******************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _consts__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./consts */ "./node_modules/vue-time-ranges-picker-edit/src/core/consts.js");
-/* harmony import */ var _helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./helpers */ "./node_modules/vue-time-ranges-picker-edit/src/core/helpers.js");
-/* harmony import */ var _MovePointer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./MovePointer */ "./node_modules/vue-time-ranges-picker-edit/src/core/MovePointer.js");
-/* harmony import */ var _Range_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Range.js */ "./node_modules/vue-time-ranges-picker-edit/src/core/Range.js");
-
-
-
-
-
-
-class RangesController {
-  constructor(rangesData, stepOfMoving) {
-    this.stepOfMoving = stepOfMoving;
-
-    const movePointers = rangesData.map((pointerData, index) => {
-      const { startTime } = pointerData;
-      return new _MovePointer__WEBPACK_IMPORTED_MODULE_2__["default"]({
-        time: startTime,
-        index,
-        controller: this,
-        coordinates: Object(_helpers__WEBPACK_IMPORTED_MODULE_1__["getTimeCoordinates"])(startTime),
-      });
-    });
-    this.movePointers = movePointers;
-
-    this.ranges = rangesData.map(({ scaleColor }, index) => {
-      const startMovePointer = movePointers[index];
-      const endMovePointer = movePointers[index + 1] ? movePointers[index + 1] : movePointers[0];
-      return new _Range_js__WEBPACK_IMPORTED_MODULE_3__["default"]({
-        startMovePointer,
-        endMovePointer,
-        scaleColor,
-      });
-    });
-  }
-
-  setStepOfMoving(stepValue) {
-    this.stepOfMoving = stepValue;
-  }
-
-  setBasicVector(center) {
-    const [centerX, centerY] = center;
-    const basicVector = [_consts__WEBPACK_IMPORTED_MODULE_0__["CIRCLE_RADIUS"], 0];
-
-    const vectorLength = Math.sqrt(basicVector[0] ** 2 + basicVector[1] ** 2);
-    this.basicVector = {
-      centerX,
-      centerY,
-      zeroAngleX: basicVector[0],
-      zeroAngleY: basicVector[1],
-      vectorLength,
-    };
-  }
-
-  getPointer(name) {
-    const pointer = this.movePointers.find(pointer => {
-      return pointer.name === name;
-    });
-    return pointer;
-  }
-
-  getActiveMovePointers() {
-    const pointers = this.movePointers.filter(pointer => pointer.isActive === true);
-    return pointers;
-  }
-
-  handlePointerMove(pointer, degree) {
-    const { coordinates, time } = this.getNewPointerData(degree);
-    const rangeWithStartPointer = this.ranges.find(r => r.startMovePointer.name === pointer.name);
-    const rangeWithEndPointer = this.ranges.find(r => r.endMovePointer.name === pointer.name);
-
-    const isMovingAllowed = this.checkIfMovingAllowed(
-      time,
-      rangeWithEndPointer.startMovePointer.time,
-      rangeWithStartPointer.endMovePointer.time,
-    );
-    if (!isMovingAllowed) {
-      return;
-    }
-
-    pointer.coordinates = coordinates;
-    pointer.time = time;
-
-    rangeWithStartPointer.arcs = rangeWithStartPointer.createArcs(
-      pointer,
-      rangeWithStartPointer.endMovePointer,
-    );
-    rangeWithEndPointer.arcs = rangeWithEndPointer.createArcs(
-      rangeWithEndPointer.startMovePointer,
-      pointer,
-    );
-  }
-
-  completeMove() {
-    const pointers = this.getActiveMovePointers();
-    pointers.forEach(pointer => {
-      pointer.completeMove();
-    });
-  }
-
-  getNewPointerData(degree) {
-    let newDegree;
-    const { stepOfMoving } = this;
-
-    const stepDegree = _consts__WEBPACK_IMPORTED_MODULE_0__["ONE_HOUR_DEGREE"] * stepOfMoving;
-    const halfStepDegree = stepDegree / 2;
-    const remainder = degree % stepDegree;
-    const floor = degree - remainder;
-    if (remainder > halfStepDegree) {
-      newDegree = floor + stepDegree;
-    } else {
-      newDegree = floor;
-    }
-
-    const newTime = Object(_helpers__WEBPACK_IMPORTED_MODULE_1__["getTimeByDegree"])(newDegree);
-    const newCoordinates = Object(_helpers__WEBPACK_IMPORTED_MODULE_1__["getTimeCoordinates"])(newTime);
-    return {
-      coordinates: newCoordinates,
-      time: newTime,
-    };
-  }
-
-  checkIfMovingAllowed(movingTime, backBorderTime, forwardBorderTime) {
-    if (document.querySelectorAll(".time-pointer").length !== 2) {
-      if (forwardBorderTime >= backBorderTime) {
-        if (movingTime <= backBorderTime || movingTime >= forwardBorderTime) {
-          return false;
-        }
-      } else {
-        if (movingTime >= forwardBorderTime && movingTime <= backBorderTime) {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
-}
-
-/* harmony default export */ __webpack_exports__["default"] = (RangesController);
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/core/consts.js":
-/*!*********************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/core/consts.js ***!
-  \*********************************************************************/
-/*! exports provided: CIRCLE_LENGTH, HOURS_AMOUNT, ONE_HOUR_DEGREE, CIRCLE_RADIUS, CIRCLE_DIAMETER, CIRCLE_STROKE_WIDTH, VIEW_BOX_SIZE, DEFAULT_VIEW_OPTIONS, EXTRA_POINTER_RADIUS, STEP_OF_MOVING */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CIRCLE_LENGTH", function() { return CIRCLE_LENGTH; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HOURS_AMOUNT", function() { return HOURS_AMOUNT; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ONE_HOUR_DEGREE", function() { return ONE_HOUR_DEGREE; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CIRCLE_RADIUS", function() { return CIRCLE_RADIUS; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CIRCLE_DIAMETER", function() { return CIRCLE_DIAMETER; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CIRCLE_STROKE_WIDTH", function() { return CIRCLE_STROKE_WIDTH; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "VIEW_BOX_SIZE", function() { return VIEW_BOX_SIZE; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DEFAULT_VIEW_OPTIONS", function() { return DEFAULT_VIEW_OPTIONS; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EXTRA_POINTER_RADIUS", function() { return EXTRA_POINTER_RADIUS; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "STEP_OF_MOVING", function() { return STEP_OF_MOVING; });
-const CIRCLE_LENGTH = 360;
-const HOURS_AMOUNT = 24;
-const ONE_HOUR_DEGREE = CIRCLE_LENGTH / HOURS_AMOUNT;
-const CIRCLE_RADIUS = CIRCLE_LENGTH / (2 * Math.PI);
-const CIRCLE_DIAMETER = CIRCLE_RADIUS * 2;
-const CIRCLE_STROKE_WIDTH = 6;
-const VIEW_BOX_SIZE = 220;
-
-const DEFAULT_VIEW_OPTIONS = {
-  isShowChosenTime: true,
-  isShowQuartersText: true,
-  isShowHoursMarks: true,
-  chosenTimeColor: 'grey',
-  pointerColor: 'white',
-  activePointerColor: 'rgba(240, 240, 240, 0.9)',
-  pointerRadius: 6,
-  activePointerRadius: 5.5,
-  circleStrokeWidth: 8,
-  hoursMarksColor: 'grey',
-  quarterTextColor: 'grey',
-};
-
-const EXTRA_POINTER_RADIUS = 70;
-const STEP_OF_MOVING = 0.5;
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-time-ranges-picker-edit/src/core/helpers.js":
-/*!**********************************************************************!*\
-  !*** ./node_modules/vue-time-ranges-picker-edit/src/core/helpers.js ***!
-  \**********************************************************************/
-/*! exports provided: timeTextToNumber, timeNumberToText, getTimeByDegree, getTimeCoordinates */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "timeTextToNumber", function() { return timeTextToNumber; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "timeNumberToText", function() { return timeNumberToText; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTimeByDegree", function() { return getTimeByDegree; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTimeCoordinates", function() { return getTimeCoordinates; });
-/* harmony import */ var add_zero__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! add-zero */ "./node_modules/add-zero/index.js");
-/* harmony import */ var add_zero__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(add_zero__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var twentyfour_to_twelve__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! twentyfour-to-twelve */ "./node_modules/twentyfour-to-twelve/index.js");
-/* harmony import */ var twentyfour_to_twelve__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(twentyfour_to_twelve__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var twelve_to_twentyfour__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! twelve-to-twentyfour */ "./node_modules/twelve-to-twentyfour/index.js");
-/* harmony import */ var twelve_to_twentyfour__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(twelve_to_twentyfour__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _consts__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./consts */ "./node_modules/vue-time-ranges-picker-edit/src/core/consts.js");
-
-
-
-
-
-
-const timeTextToNumber = (timeText, isTwelfthMode) => {
-  let parsedTime = timeText;
-  if (isTwelfthMode) {
-    parsedTime = twelve_to_twentyfour__WEBPACK_IMPORTED_MODULE_2___default()(timeText);
-  }
-  const [hours, minutes] = parsedTime.split(':');
-  return parseInt(hours, 10) + parseFloat(minutes / 60, 10);
-};
-
-const timeNumberToText = (timeNumber, isTwelfthMode) => {
-  let hours = Math.floor(timeNumber);
-  const remainder = timeNumber - hours;
-  let minutes = remainder * 60;
-  const twentyFourText = add_zero__WEBPACK_IMPORTED_MODULE_0___default()(hours) + ':' + add_zero__WEBPACK_IMPORTED_MODULE_0___default()(minutes);
-  if (isTwelfthMode) {
-    return twentyfour_to_twelve__WEBPACK_IMPORTED_MODULE_1___default()(twentyFourText);
-  }
-  return twentyFourText;
-};
-
-const getTimeByDegree = degree => {
-  let time = (degree + 90) / _consts__WEBPACK_IMPORTED_MODULE_3__["ONE_HOUR_DEGREE"];
-  if (time >= _consts__WEBPACK_IMPORTED_MODULE_3__["HOURS_AMOUNT"]) {
-    time = time - _consts__WEBPACK_IMPORTED_MODULE_3__["HOURS_AMOUNT"];
-  }
-  return time;
-};
-
-const getTimeCoordinates = (time, radiusOffset = 0) => {
-  // minus 90 because time starts at top of circle
-  let degree = time * _consts__WEBPACK_IMPORTED_MODULE_3__["ONE_HOUR_DEGREE"] - 90;
-  if (degree <= 0) {
-    degree = 360 + degree;
-  }
-  const x =
-    _consts__WEBPACK_IMPORTED_MODULE_3__["VIEW_BOX_SIZE"] / 2 + (_consts__WEBPACK_IMPORTED_MODULE_3__["CIRCLE_RADIUS"] + radiusOffset) * Math.cos((degree * Math.PI) / 180);
-  const y =
-    _consts__WEBPACK_IMPORTED_MODULE_3__["VIEW_BOX_SIZE"] / 2 + (_consts__WEBPACK_IMPORTED_MODULE_3__["CIRCLE_RADIUS"] + radiusOffset) * Math.sin((degree * Math.PI) / 180);
-  return {
-    degree,
-    x,
-    y,
-  };
-};
-
 
 /***/ }),
 
@@ -39035,7 +37022,7 @@ __webpack_require__.r(__webpack_exports__);
 /*!*********************************!*\
   !*** ./src/resources/js/api.js ***!
   \*********************************/
-/*! exports provided: getkanbanData, getDashboardData, getBoards, createBoard, deleteBoard, getTags, createColumns, createTaskCards, getTaskCardsByColumn, deleteTaskCard, updateTaskCardIndexes, updateTaskCardColumnId, getEmployees, createEmployee, deleteEmployee, getMembers, addMembers, deleteMember */
+/*! exports provided: getkanbanData, getDashboardData, getBoards, createBoard, deleteBoard, getTags, createRowAndColumns, createTaskCards, getTaskCardsByColumn, deleteTaskCard, updateTaskCardIndexes, updateTaskCardColumnId, getEmployees, createEmployee, deleteEmployee, getMembers, addMembers, deleteMember */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -39046,7 +37033,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createBoard", function() { return createBoard; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deleteBoard", function() { return deleteBoard; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTags", function() { return getTags; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createColumns", function() { return createColumns; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createRowAndColumns", function() { return createRowAndColumns; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createTaskCards", function() { return createTaskCards; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTaskCardsByColumn", function() { return getTaskCardsByColumn; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deleteTaskCard", function() { return deleteTaskCard; });
@@ -39084,8 +37071,8 @@ function getTags() {
   return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('get-tags');
 } // Columns
 
-function createColumns(columnData) {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('create-columns', columnData);
+function createRowAndColumns(columnData) {
+  return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('save-row-and-columns', columnData);
 } // Employee Cards
 
 function createTaskCards(taskCardData) {
@@ -39912,75 +37899,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue":
-/*!********************************************************************************!*\
-  !*** ./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue ***!
-  \********************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _AddColumnModal_vue_vue_type_template_id_2762be96___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AddColumnModal.vue?vue&type=template&id=2762be96& */ "./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=template&id=2762be96&");
-/* harmony import */ var _AddColumnModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AddColumnModal.vue?vue&type=script&lang=js& */ "./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _AddColumnModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _AddColumnModal_vue_vue_type_template_id_2762be96___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _AddColumnModal_vue_vue_type_template_id_2762be96___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue"
-/* harmony default export */ __webpack_exports__["default"] = (component.exports);
-
-/***/ }),
-
-/***/ "./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=script&lang=js&":
-/*!*********************************************************************************************************!*\
-  !*** ./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=script&lang=js& ***!
-  \*********************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AddColumnModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddColumnModal.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AddColumnModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=template&id=2762be96&":
-/*!***************************************************************************************************************!*\
-  !*** ./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=template&id=2762be96& ***!
-  \***************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddColumnModal_vue_vue_type_template_id_2762be96___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddColumnModal.vue?vue&type=template&id=2762be96& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=template&id=2762be96&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddColumnModal_vue_vue_type_template_id_2762be96___WEBPACK_IMPORTED_MODULE_0__["render"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddColumnModal_vue_vue_type_template_id_2762be96___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
-
-
-
-/***/ }),
-
 /***/ "./src/resources/js/components/kanban/kanbanComponents/AddMemberModal.vue":
 /*!********************************************************************************!*\
   !*** ./src/resources/js/components/kanban/kanbanComponents/AddMemberModal.vue ***!
@@ -40045,6 +37963,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddMemberModal_vue_vue_type_template_id_5d9ef3d2___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddMemberModal_vue_vue_type_template_id_5d9ef3d2___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./src/resources/js/components/kanban/kanbanComponents/AddRowAndColumnsModal.vue":
+/*!***************************************************************************************!*\
+  !*** ./src/resources/js/components/kanban/kanbanComponents/AddRowAndColumnsModal.vue ***!
+  \***************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _AddRowAndColumnsModal_vue_vue_type_template_id_4fcbb2be___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AddRowAndColumnsModal.vue?vue&type=template&id=4fcbb2be& */ "./src/resources/js/components/kanban/kanbanComponents/AddRowAndColumnsModal.vue?vue&type=template&id=4fcbb2be&");
+/* harmony import */ var _AddRowAndColumnsModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AddRowAndColumnsModal.vue?vue&type=script&lang=js& */ "./src/resources/js/components/kanban/kanbanComponents/AddRowAndColumnsModal.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _AddRowAndColumnsModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _AddRowAndColumnsModal_vue_vue_type_template_id_4fcbb2be___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _AddRowAndColumnsModal_vue_vue_type_template_id_4fcbb2be___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "src/resources/js/components/kanban/kanbanComponents/AddRowAndColumnsModal.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./src/resources/js/components/kanban/kanbanComponents/AddRowAndColumnsModal.vue?vue&type=script&lang=js&":
+/*!****************************************************************************************************************!*\
+  !*** ./src/resources/js/components/kanban/kanbanComponents/AddRowAndColumnsModal.vue?vue&type=script&lang=js& ***!
+  \****************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AddRowAndColumnsModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddRowAndColumnsModal.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddRowAndColumnsModal.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AddRowAndColumnsModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./src/resources/js/components/kanban/kanbanComponents/AddRowAndColumnsModal.vue?vue&type=template&id=4fcbb2be&":
+/*!**********************************************************************************************************************!*\
+  !*** ./src/resources/js/components/kanban/kanbanComponents/AddRowAndColumnsModal.vue?vue&type=template&id=4fcbb2be& ***!
+  \**********************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddRowAndColumnsModal_vue_vue_type_template_id_4fcbb2be___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddRowAndColumnsModal.vue?vue&type=template&id=4fcbb2be& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddRowAndColumnsModal.vue?vue&type=template&id=4fcbb2be&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddRowAndColumnsModal_vue_vue_type_template_id_4fcbb2be___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddRowAndColumnsModal_vue_vue_type_template_id_4fcbb2be___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
@@ -40390,10 +38377,10 @@ var ajaxCalls = {
       });
     },
     // Columns
-    asyncCreateColumns: function asyncCreateColumns(columnData) {
+    asyncCreateRowAndColumns: function asyncCreateRowAndColumns(rowData) {
       var _this3 = this;
 
-      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('create-columns', columnData)["catch"](function (error) {
+      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('save-row-and-columns', rowData)["catch"](function (error) {
         _this3.triggerErrorToast(error.response.data.message);
       });
     },
@@ -40422,11 +38409,25 @@ var ajaxCalls = {
         _this6.triggerErrorToast(error.response.data.message);
       });
     },
-    asyncUpdateTaskCardColumnId: function asyncUpdateTaskCardColumnId(columnId, taskCardId) {
+    asyncUpdateColumnIndexes: function asyncUpdateColumnIndexes(columns) {
       var _this7 = this;
 
-      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('update-task-card-column/' + columnId + '/' + taskCardId)["catch"](function (error) {
+      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('update-column-indexes', columns)["catch"](function (error) {
         _this7.triggerErrorToast(error.response.data.message);
+      });
+    },
+    asyncUpdateRowIndexes: function asyncUpdateRowIndexes(rows) {
+      var _this8 = this;
+
+      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('update-row-indexes', rows)["catch"](function (error) {
+        _this8.triggerErrorToast(error.response.data.message);
+      });
+    },
+    asyncUpdateTaskCardColumnId: function asyncUpdateTaskCardColumnId(columnId, taskCardId) {
+      var _this9 = this;
+
+      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('update-task-card-column/' + columnId + '/' + taskCardId)["catch"](function (error) {
+        _this9.triggerErrorToast(error.response.data.message);
       });
     },
     // Employees
@@ -40437,17 +38438,17 @@ var ajaxCalls = {
       return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('get-kanban-employees');
     },
     asyncCreateKanbanEmployee: function asyncCreateKanbanEmployee(employeeData) {
-      var _this8 = this;
+      var _this10 = this;
 
       return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('create-kanban-employee', employeeData)["catch"](function (error) {
-        _this8.triggerErrorToast(error.response.data.message);
+        _this10.triggerErrorToast(error.response.data.message);
       });
     },
     asyncDeleteKanbanEmployee: function asyncDeleteKanbanEmployee(employeeId) {
-      var _this9 = this;
+      var _this11 = this;
 
       return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('delete-kanban-employee/' + employeeId)["catch"](function (error) {
-        _this9.triggerErrorToast(error.response.data.message);
+        _this11.triggerErrorToast(error.response.data.message);
       });
     },
     // Members
@@ -40455,17 +38456,17 @@ var ajaxCalls = {
       return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('get-members/' + boardId);
     },
     asyncAddMembers: function asyncAddMembers(memberData, boardId) {
-      var _this10 = this;
+      var _this12 = this;
 
       return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('create-members/' + boardId, memberData)["catch"](function (error) {
-        _this10.triggerErrorToast(error.response.data.message);
+        _this12.triggerErrorToast(error.response.data.message);
       });
     },
     asyncDeleteMember: function asyncDeleteMember(memberId) {
-      var _this11 = this;
+      var _this13 = this;
 
       return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('delete-member/' + memberId)["catch"](function (error) {
-        _this11.triggerErrorToast(error.response.data.message);
+        _this13.triggerErrorToast(error.response.data.message);
       });
     },
     triggerSuccessToast: function triggerSuccessToast(message) {

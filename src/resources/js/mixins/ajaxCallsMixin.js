@@ -38,8 +38,8 @@ export const ajaxCalls = {
 
         // Columns
 
-        asyncCreateColumns(columnData) {
-            return axios.post('create-columns', columnData).catch((error) => {
+        asyncCreateRowAndColumns(rowData) {
+            return axios.post('save-row-and-columns', rowData).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
@@ -64,6 +64,18 @@ export const ajaxCalls = {
 
         asyncUpdateTaskCardIndexes(taskCards) {
             return axios.post('update-task-card-indexes', taskCards).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
+        },
+
+        asyncUpdateColumnIndexes(columns) {
+            return axios.post('update-column-indexes', columns).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
+        },
+
+        asyncUpdateRowIndexes(rows) {
+            return axios.post('update-row-indexes', rows).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },

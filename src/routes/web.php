@@ -24,12 +24,15 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             Route::get('/get-tags', 'BoardsController@getTags');
 
             // Columns
-            Route::post('/create-columns', 'ColumnController@createOrUpdateColumns');
+            Route::post('/save-row-and-columns', 'RowAndColumnsController@createOrUpdateRowAndColumns');
 
             // Employee Cards
             Route::post('/create-kanban-task-cards', 'TaskCardController@createTaskCards');
             Route::post('/get-task-cards-by-column/{id}', 'TaskCardController@getTaskCardsByColumn');
             Route::post('/update-task-card-indexes', 'TaskCardController@updateTaskCardIndexes');
+            Route::post('/update-column-indexes', 'RowAndColumnsController@updateColumnIndexes');
+            Route::post('/update-row-indexes', 'RowAndColumnsController@updateRowIndexes');
+
             Route::post('/update-task-card-column/{columnId}/{taskCardId}', 'TaskCardController@updateTaskCardColumnId');
             Route::post('/delete-kanban-task-card/{id}', 'TaskCardController@deleteTaskCard');
 

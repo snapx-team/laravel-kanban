@@ -5,12 +5,17 @@
                     :kanbanName="kanban.name"
                     :loadingMembers="loadingMembers"></kanban-bar>
 
-        <draggable :animation="200" group="rows" class="h-full list-group" ghost-class="ghost-card">
+        <draggable @end="getRowChangeData($event)"
+                   :animation="200"
+                   class="h-full list-group"
+                   ghost-class="ghost-card"
+                   :disabled="isDraggableDisabled"
+                   >
 
             <div :key="row.id" class="mx-10 my-3" v-for="(row, rowIndex) in kanban.rows">
 
                 <div class="border bg-gray-700 pl-3 pr-3 rounded py-2 flex justify-between"
-                     v-if="loadingColumn.rowId === row.id && loadingColumn.isLoading ">
+                     v-if="loadingRow.rowId === row.id && loadingRow.isLoading ">
                     <h2 class="text-gray-100 font-medium tracking-wide animate-pulse">
                         Loading... </h2>
                 </div>
@@ -18,9 +23,8 @@
                     <h2 class="text-gray-100 font-medium tracking-wide">
                         {{ row.name }} </h2>
 
-                    <a @click="createColumns(rowIndex, row.columns, row.id)"
-                       class="px-2 text-gray-500 hover:text-gray-400 transition duration-300 ease-in-out focus:outline-none"
-                       href="#">
+                    <a @click="createRowAndColumns(rowIndex, row.columns, row.id, row.name)"
+                       class="px-2 text-gray-500 hover:text-gray-400 transition duration-300 ease-in-out focus:outline-none">
                         <i class="fas fa-business-time"></i>
                     </a>
                 </div>
@@ -28,9 +32,11 @@
                     <div class="space-x-2  flex flex-1 pt-3 pb-2 overflow-x-auto overflow-y-hidden">
 
                         <draggable :animation="200"
-                                   group="columns"
                                    class="h-full list-group flex"
-                                   ghost-class="ghost-card">
+                                   ghost-class="ghost-card"
+                                   :group="'row-'+ row.id"
+                                   :disabled="isDraggableDisabled"
+                                   @end="getTaskChangeData($event, rowIndex)">
                             <div :key="column.id"
                                  class="flex-1 bg-gray-200 px-3 py-3 column-width rounded mr-4"
                                  v-for="(column, columnIndex) in row.columns">
@@ -51,10 +57,10 @@
                                 <draggable :animation="200"
                                            :disabled="isDraggableDisabled"
                                            :list="column.task_cards"
-                                           @change="getChangeData($event, columnIndex, rowIndex)"
+                                           @change="getTaskChangeData($event, columnIndex, rowIndex)"
                                            class="h-full list-group"
                                            ghost-class="ghost-card"
-                                           group="employees">
+                                           group="tasks">
                                     <task-card :class="{'opacity-60':isDraggableDisabled}"
                                                :key="task_card.id"
                                                :task_card="task_card"
@@ -64,10 +70,6 @@
                                 </draggable>
                             </div>
                         </draggable>
-                        <button @click="createColumn(rowIndex)"
-                                class="bg-gray-200 rounded-lg rounded p-4 h-full hover:bg-blue-200 mouse transition ease-in duration-200 focus:outline-none">
-                            <i class="fas fa-plus text-white"></i>
-                        </button>
                     </div>
                 </div>
             </div>
@@ -76,7 +78,7 @@
 
         <hr class="mt-5"/>
 
-        <button @click="createRow()"
+        <button @click="createRowAndColumns(kanban.rows.length, [], null, null)"
                 class="text-gray-500 hover:text-gray-600 font-semibold font-sans tracking-wide bg-gray-200 rounded-lg rounded p-4 m-10 hover:bg-blue-200 mouse transition ease-in duration-200 focus:outline-none">
             <p class="font-bold inline">Create new row</p>
             <i class="pl-2 fas fa-plus"></i>
@@ -84,7 +86,7 @@
 
         <add-task-card-modal :kanbanData="kanban"></add-task-card-modal>
         <add-member-modal :kanbanData="kanban"></add-member-modal>
-        <add-column-modal :kanbanData="kanban"></add-column-modal>
+        <add-row-and-columns-modal :kanbanData="kanban"></add-row-and-columns-modal>
     </div>
 </template>
 
@@ -93,18 +95,18 @@
     import TaskCard from "./kanbanComponents/TaskCard.vue";
     import AddTaskCardModal from "./kanbanComponents/AddTaskCardModal.vue";
     import AddMemberModal from "./kanbanComponents/AddMemberModal.vue";
-    import AddColumnModal from "./kanbanComponents/AddColumnModal.vue";
     import KanbanBar from "./kanbanComponents/KanbanBar.vue";
     import {ajaxCalls} from "../../mixins/ajaxCallsMixin";
+    import AddRowAndColumnsModal from "./kanbanComponents/AddRowAndColumnsModal";
 
     export default {
         inject: ["eventHub"],
         components: {
+            AddRowAndColumnsModal,
             TaskCard,
             draggable,
             AddTaskCardModal,
             AddMemberModal,
-            AddColumnModal,
             KanbanBar,
         },
 
@@ -115,7 +117,7 @@
         data() {
             return {
                 kanban: null,
-                loadingColumn: {rowId: null, isLoading: false},
+                loadingRow: {rowId: null, isLoading: false},
                 loadingCards: {columnId: null, isLoading: false},
                 loadingMembers: {memberId: null, isLoading: false},
                 isDraggableDisabled: false
@@ -145,8 +147,8 @@
             this.eventHub.$on("remove-member", (memberData) => {
                 this.deleteMember(memberData);
             });
-            this.eventHub.$on("save-columns", (columnData) => {
-                this.saveColumns(columnData);
+            this.eventHub.$on("save-row-and-columns", (rowData) => {
+                this.saveRowAndColumns(rowData);
             });
         },
 
@@ -155,7 +157,7 @@
             this.eventHub.$off('delete-kanban-task-cards');
             this.eventHub.$off('save-members');
             this.eventHub.$off('remove-member');
-            this.eventHub.$off('save-columns');
+            this.eventHub.$off('save-row-and-columns');
         },
 
         methods: {
@@ -172,20 +174,24 @@
                     columnId,
                 });
             },
-            createColumns(rowIndex, rowColumns, rowId) {
-                this.eventHub.$emit("create-columns", {
+            createRowAndColumns(rowIndex, rowColumns, rowId, rowName) {
+                this.eventHub.$emit("create-row-and-columns", {
                     rowIndex,
                     rowColumns,
                     rowId,
+                    rowName,
                 });
             },
 
             // Whenever a user drags a card
-            getChangeData(event, columnIndex, rowIndex) {
+            getTaskChangeData(event, columnIndex, rowIndex) {
                 var eventName = Object.keys(event)[0];
                 let taskCardData = this.kanban.rows[rowIndex].columns[columnIndex].task_cards
                 let columnId = this.kanban.rows[rowIndex].columns[columnIndex].id
                 this.isDraggableDisabled = true
+
+                console.log(eventName);
+
 
                 switch (eventName) {
                     case "moved":
@@ -202,6 +208,25 @@
                         break;
                     default:
                         alert('event "' + eventName + '" not handled: ');
+                }
+            },
+
+            // Whenever a user drags a column
+            getColumnChangeData(event, rowIndex) {
+
+                if(event.oldIndex !== event.newIndex){
+                    let columns = this.kanban.rows[rowIndex].columns;
+                    this.isDraggableDisabled = true;
+                    this.asyncUpdateColumnIndexes(columns).then(() => {this.isDraggableDisabled = false});
+                }
+
+            },
+
+            // Whenever a user drags a row
+            getRowChangeData(event) {
+                if(event.oldIndex !== event.newIndex) {
+                    this.isDraggableDisabled = true
+                    this.asyncUpdateRowIndexes(this.kanban.rows).then(() => {this.isDraggableDisabled = false});
                 }
             },
 
@@ -252,14 +277,25 @@
                 }).catch(res => {console.log(res)});
             },
 
-            saveColumns(columnData) {
-                const cloneColumnData = {...columnData};
-                var rowIndex = cloneColumnData.rowIndex;
-                this.loadingColumn = {rowId: this.kanban.rows[rowIndex].id, isLoading: true}
+            saveRowAndColumns(rowData) {
+                const cloneRowData = {...rowData};
+                var rowIndex = cloneRowData.rowIndex;
 
-                this.asyncCreateColumns(cloneColumnData).then((data) => {
-                    this.kanban.rows[rowIndex].columns = data.data;
-                    this.loadingColumn = {rowId: null, isLoading: false}
+                if (cloneRowData.rowId !== null)
+                    this.loadingRow = {rowId: this.kanban.rows[rowIndex].id, isLoading: true}
+
+                this.asyncCreateRowAndColumns(cloneRowData).then((data) => {
+
+                    if (cloneRowData.rowId !== null) {
+                        this.kanban.rows[rowIndex] = data.data[0];
+
+                    }
+                    else {
+                        console.log(data);
+                        this.kanban.rows.push(data.data[0]);
+                    }
+
+                    this.loadingRow = {rowId: null, isLoading: false}
 
                 }).catch(res => {console.log(res)});
             },
