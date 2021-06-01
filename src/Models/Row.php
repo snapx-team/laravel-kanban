@@ -19,7 +19,7 @@ class Row extends Model
 
     public function columns(): HasMany
     {
-        return $this->HasMany(Column::class);
+        return $this->HasMany(Column::class)->orderBy('index');
     }
 
 }

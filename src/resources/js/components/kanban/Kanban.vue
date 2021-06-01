@@ -7,6 +7,7 @@
 
         <draggable @end="getRowChangeData($event)"
                    :animation="200"
+                   :list="kanban.rows"
                    class="h-full list-group"
                    ghost-class="ghost-card"
                    :disabled="isDraggableDisabled"
@@ -34,9 +35,10 @@
                         <draggable :animation="200"
                                    class="h-full list-group flex"
                                    ghost-class="ghost-card"
+                                   :list="row.columns"
                                    :group="'row-'+ row.id"
                                    :disabled="isDraggableDisabled"
-                                   @end="getTaskChangeData($event, rowIndex)">
+                                   @end="getColumnChangeData($event, rowIndex)">
                             <div :key="column.id"
                                  class="flex-1 bg-gray-200 px-3 py-3 column-width rounded mr-4"
                                  v-for="(column, columnIndex) in row.columns">
@@ -83,6 +85,8 @@
             <p class="font-bold inline">Create new row</p>
             <i class="pl-2 fas fa-plus"></i>
         </button>
+
+        <p>{{kanban}}</p>
 
         <add-task-card-modal :kanbanData="kanban"></add-task-card-modal>
         <add-member-modal :kanbanData="kanban"></add-member-modal>
@@ -215,6 +219,7 @@
             getColumnChangeData(event, rowIndex) {
 
                 if(event.oldIndex !== event.newIndex){
+                    console.log('column');
                     let columns = this.kanban.rows[rowIndex].columns;
                     this.isDraggableDisabled = true;
                     this.asyncUpdateColumnIndexes(columns).then(() => {this.isDraggableDisabled = false});
@@ -224,6 +229,8 @@
 
             // Whenever a user drags a row
             getRowChangeData(event) {
+                console.log('row');
+
                 if(event.oldIndex !== event.newIndex) {
                     this.isDraggableDisabled = true
                     this.asyncUpdateRowIndexes(this.kanban.rows).then(() => {this.isDraggableDisabled = false});

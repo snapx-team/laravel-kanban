@@ -16,7 +16,6 @@ class RowAndColumnsController extends Controller
             if ($rowData['rowId'] !== null) {
                 $updatedRow = Row::where('id', $rowData['rowId'])
                     ->update(['name' => $rowData['name'], 'index' => $rowData['rowIndex']]);
-
                 $rowId = $rowData['rowId'];
             } else {
                 $newRow = Row::create([
@@ -61,6 +60,7 @@ class RowAndColumnsController extends Controller
             foreach ($rows as $row) {
                 $newIndex++;
                 Row::find($row['id'])->update(['index' => $newIndex]);
+
             }
         } catch (\Exception $e) {
             return response([

@@ -7686,6 +7686,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
 
 
 
@@ -7820,6 +7824,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var _this3 = this;
 
       if (event.oldIndex !== event.newIndex) {
+        console.log('column');
         var columns = this.kanban.rows[rowIndex].columns;
         this.isDraggableDisabled = true;
         this.asyncUpdateColumnIndexes(columns).then(function () {
@@ -7830,6 +7835,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     // Whenever a user drags a row
     getRowChangeData: function getRowChangeData(event) {
       var _this4 = this;
+
+      console.log('row');
 
       if (event.oldIndex !== event.newIndex) {
         this.isDraggableDisabled = true;
@@ -15777,6 +15784,7 @@ var render = function() {
               staticClass: "h-full list-group",
               attrs: {
                 animation: 200,
+                list: _vm.kanban.rows,
                 "ghost-class": "ghost-card",
                 disabled: _vm.isDraggableDisabled
               },
@@ -15862,12 +15870,13 @@ var render = function() {
                           attrs: {
                             animation: 200,
                             "ghost-class": "ghost-card",
+                            list: row.columns,
                             group: "row-" + row.id,
                             disabled: _vm.isDraggableDisabled
                           },
                           on: {
                             end: function($event) {
-                              return _vm.getTaskChangeData($event, rowIndex)
+                              return _vm.getColumnChangeData($event, rowIndex)
                             }
                           }
                         },
@@ -16013,6 +16022,8 @@ var render = function() {
               _c("i", { staticClass: "pl-2 fas fa-plus" })
             ]
           ),
+          _vm._v(" "),
+          _c("p", [_vm._v(_vm._s(_vm.kanban))]),
           _vm._v(" "),
           _c("add-task-card-modal", { attrs: { kanbanData: _vm.kanban } }),
           _vm._v(" "),
@@ -38419,6 +38430,7 @@ var ajaxCalls = {
     asyncUpdateRowIndexes: function asyncUpdateRowIndexes(rows) {
       var _this8 = this;
 
+      console.log(rows);
       return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('update-row-indexes', rows)["catch"](function (error) {
         _this8.triggerErrorToast(error.response.data.message);
       });
@@ -38583,8 +38595,8 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_router__WEBPACK_IMPORTED_MODU
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\laragon\www\xguard-schedule\package\laravel-kanban\src\resources\js\app.js */"./src/resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\laragon\www\xguard-schedule\package\laravel-kanban\src\resources\sass\app.scss */"./src/resources/sass/app.scss");
+__webpack_require__(/*! C:\P\xguard-schedule\package\laravel-kanban\src\resources\js\app.js */"./src/resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\P\xguard-schedule\package\laravel-kanban\src\resources\sass\app.scss */"./src/resources/sass/app.scss");
 
 
 /***/ })

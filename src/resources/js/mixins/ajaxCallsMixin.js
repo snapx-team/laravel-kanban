@@ -75,6 +75,7 @@ export const ajaxCalls = {
         },
 
         asyncUpdateRowIndexes(rows) {
+            console.log(rows)
             return axios.post('update-row-indexes', rows).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
