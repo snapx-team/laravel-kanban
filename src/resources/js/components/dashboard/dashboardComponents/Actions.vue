@@ -3,7 +3,25 @@
         <h2 class="text-2xl font-semibold py-5">Actions</h2>
 
         <div class="flex flex-wrap bg-gray-100">
-            <div class="w-full lg:w-1/2 p-6">
+            <div class="w-full xl:w-1/3 p-6">
+                <div @click="createBacklogTask()"
+                     class="cursor-pointer bg-yellow-100 hover:bg-yellow-200 transition duration-300 ease-in-out border-b-4 border-yellow-500 rounded-lg shadow-xl p-5">
+                    <div class="flex flex-row items-center">
+                        <div class="flex-shrink pr-4">
+                            <div class="rounded-full p-5 bg-yellow-500 text-center">
+                                <i class="fas fa-tasks fa-2x fa-inverse w-8 h-8"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1 text-right md:text-center">
+                            <h5 class="font-bold uppercase text-gray-800">
+                                Add Backlog Task </h5>
+                            <h3 class="text-sm text-gray-600">
+                                single & multi-board</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="w-full xl:w-1/3 p-6">
                 <div @click="createBoard()"
                      class="cursor-pointer bg-blue-100 hover:bg-blue-200 transition duration-300 ease-in-out border-b-4 border-blue-500 rounded-lg shadow-xl p-5">
                     <div class="flex flex-row items-center">
@@ -21,7 +39,7 @@
                     </div>
                 </div>
             </div>
-            <div class="w-full lg:w-1/2 p-6">
+            <div class="w-full xl:w-1/3 p-6">
                 <div @click="createEmployee()"
                      class="cursor-pointer bg-green-100 hover:bg-green-200 transition duration-300 ease-in-out border-b-4 border-green-500 rounded-lg shadow-xl p-5">
                     <div class="flex flex-row items-center">
@@ -62,6 +80,9 @@
             },
             createBoard() {
                 this.eventHub.$emit("create-board");
+            },
+            createBacklogTask() {
+                this.eventHub.$emit("create-backlog-task");
             },
         },
     };

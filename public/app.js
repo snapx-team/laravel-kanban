@@ -6509,7 +6509,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _dashboardComponents_Actions_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./dashboardComponents/Actions.vue */ "./src/resources/js/components/dashboard/dashboardComponents/Actions.vue");
 /* harmony import */ var _dashboardComponents_AddOrEditEmployeeModal_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./dashboardComponents/AddOrEditEmployeeModal.vue */ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue");
 /* harmony import */ var _dashboardComponents_AddOrEditBoardModal_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./dashboardComponents/AddOrEditBoardModal.vue */ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditBoardModal.vue");
-/* harmony import */ var _mixins_ajaxCallsMixin__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../mixins/ajaxCallsMixin */ "./src/resources/js/mixins/ajaxCallsMixin.js");
+/* harmony import */ var _dashboardComponents_AddBacklogTaskModal__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./dashboardComponents/AddBacklogTaskModal */ "./src/resources/js/components/dashboard/dashboardComponents/AddBacklogTaskModal.vue");
+/* harmony import */ var _mixins_ajaxCallsMixin__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../mixins/ajaxCallsMixin */ "./src/resources/js/mixins/ajaxCallsMixin.js");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -6538,6 +6539,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+
 
 
 
@@ -6551,9 +6554,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     BoardList: _dashboardComponents_BoardList_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
     Actions: _dashboardComponents_Actions_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
     AddOrEditEmployeeModal: _dashboardComponents_AddOrEditEmployeeModal_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
-    AddOrEditBoardModal: _dashboardComponents_AddOrEditBoardModal_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
+    AddOrEditBoardModal: _dashboardComponents_AddOrEditBoardModal_vue__WEBPACK_IMPORTED_MODULE_4__["default"],
+    AddBacklogTaskModal: _dashboardComponents_AddBacklogTaskModal__WEBPACK_IMPORTED_MODULE_5__["default"]
   },
-  mixins: [_mixins_ajaxCallsMixin__WEBPACK_IMPORTED_MODULE_5__["ajaxCalls"]],
+  mixins: [_mixins_ajaxCallsMixin__WEBPACK_IMPORTED_MODULE_6__["ajaxCalls"]],
   mounted: function mounted() {
     this.getDashboardData();
   },
@@ -6582,6 +6586,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     this.eventHub.$on("delete-kanban-employee", function (employeeId) {
       _this.deleteEmployee(employeeId);
     });
+    this.eventHub.$on("save-backlog-task", function (task) {
+      _this.saveBacklogTask(task);
+    });
   },
   beforeDestroy: function beforeDestroy() {
     this.eventHub.$off('save-employee');
@@ -6597,6 +6604,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       var cloneEmployeeData = _objectSpread({}, employeeData);
 
+      console.log(cloneEmployeeData);
       this.asyncCreateKanbanEmployee(cloneEmployeeData).then(function (res) {
         _this2.asyncGetKanbanEmployees().then(function (data) {
           _this2.dashboardData.employees = data.data;
@@ -6722,6 +6730,24 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   inject: ["eventHub"],
   props: {
@@ -6740,6 +6766,173 @@ __webpack_require__.r(__webpack_exports__);
     },
     createBoard: function createBoard() {
       this.eventHub.$emit("create-board");
+    },
+    createBacklogTask: function createBacklogTask() {
+      this.eventHub.$emit("create-backlog-task");
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddBacklogTaskModal.vue?vue&type=script&lang=js&":
+/*!****************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/dashboard/dashboardComponents/AddBacklogTaskModal.vue?vue&type=script&lang=js& ***!
+  \****************************************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vue_select__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-select */ "./node_modules/vue-select/dist/vue-select.js");
+/* harmony import */ var vue_select__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_select__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _mixins_ajaxCallsMixin__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../mixins/ajaxCallsMixin */ "./src/resources/js/mixins/ajaxCallsMixin.js");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  inject: ["eventHub"],
+  components: {
+    vSelect: vue_select__WEBPACK_IMPORTED_MODULE_0___default.a
+  },
+  mixins: [_mixins_ajaxCallsMixin__WEBPACK_IMPORTED_MODULE_1__["ajaxCalls"]],
+  data: function data() {
+    return {
+      badges: ['test1', 'test2'],
+      task: {
+        name: null
+      },
+      modalOpen: false
+    };
+  },
+  created: function created() {
+    var _this = this;
+
+    this.eventHub.$on("create-backlog-task", function () {
+      _this.modalOpen = true;
+    });
+  },
+  beforeDestroy: function beforeDestroy() {
+    this.eventHub.$off('create-backlog-task');
+  },
+  methods: {
+    saveBacklogTask: function saveBacklogTask(event) {
+      event.target.disabled = true;
+      this.eventHub.$emit("save-backlog-task", this.task);
+      this.modalOpen = false;
     }
   }
 });
@@ -6914,12 +7107,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_select__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_select__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _global_Avatar__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../global/Avatar */ "./src/resources/js/components/global/Avatar.vue");
 /* harmony import */ var _mixins_ajaxCallsMixin__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../mixins/ajaxCallsMixin */ "./src/resources/js/mixins/ajaxCallsMixin.js");
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -7067,11 +7263,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       isEdit: false,
       employeeData: {
         id: null,
-        role: "employee"
+        role: "employee",
+        selectedUsers: [],
+        user: null
       },
       modalOpen: false,
-      allUsers: [],
-      selectedUsers: []
+      allUsers: []
     };
   },
   created: function created() {
@@ -7079,7 +7276,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
     this.eventHub.$on("create-kanban-employees", function (employee) {
       if (employee !== undefined) {
-        _this.employeeData = _objectSpread({}, employee);
+        _this.employeeData.role = employee.role;
+        _this.employeeData.id = employee.id;
+        _this.employeeData.selectedUsers = [{
+          id: employee.user.id
+        }];
+        _this.employeeData.user = employee.user;
         _this.isEdit = true;
       } else {
         _this.employeeData = {
@@ -13875,7 +14077,9 @@ var render = function() {
             _vm._v(" "),
             _c("add-or-edit-employee-modal"),
             _vm._v(" "),
-            _c("add-or-edit-board-modal")
+            _c("add-or-edit-board-modal"),
+            _vm._v(" "),
+            _c("add-backlog-task-modal")
           ],
           1
         )
@@ -13921,7 +14125,23 @@ var render = function() {
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "flex flex-wrap bg-gray-100" }, [
-      _c("div", { staticClass: "w-full lg:w-1/2 p-6" }, [
+      _c("div", { staticClass: "w-full xl:w-1/3 p-6" }, [
+        _c(
+          "div",
+          {
+            staticClass:
+              "cursor-pointer bg-yellow-100 hover:bg-yellow-200 transition duration-300 ease-in-out border-b-4 border-yellow-500 rounded-lg shadow-xl p-5",
+            on: {
+              click: function($event) {
+                return _vm.createBacklogTask()
+              }
+            }
+          },
+          [_vm._m(0)]
+        )
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "w-full xl:w-1/3 p-6" }, [
         _c(
           "div",
           {
@@ -13935,7 +14155,7 @@ var render = function() {
           },
           [
             _c("div", { staticClass: "flex flex-row items-center" }, [
-              _vm._m(0),
+              _vm._m(1),
               _vm._v(" "),
               _c("div", { staticClass: "flex-1 text-right md:text-center" }, [
                 _c("h5", { staticClass: "font-bold uppercase text-gray-800" }, [
@@ -13955,7 +14175,7 @@ var render = function() {
         )
       ]),
       _vm._v(" "),
-      _c("div", { staticClass: "w-full lg:w-1/2 p-6" }, [
+      _c("div", { staticClass: "w-full xl:w-1/3 p-6" }, [
         _c(
           "div",
           {
@@ -13969,7 +14189,7 @@ var render = function() {
           },
           [
             _c("div", { staticClass: "flex flex-row items-center" }, [
-              _vm._m(1),
+              _vm._m(2),
               _vm._v(" "),
               _c("div", { staticClass: "flex-1 text-right md:text-center" }, [
                 _c("h5", { staticClass: "font-bold uppercase text-gray-800" }, [
@@ -13996,6 +14216,30 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "flex flex-row items-center" }, [
+      _c("div", { staticClass: "flex-shrink pr-4" }, [
+        _c(
+          "div",
+          { staticClass: "rounded-full p-5 bg-yellow-500 text-center" },
+          [_c("i", { staticClass: "fas fa-tasks fa-2x fa-inverse w-8 h-8" })]
+        )
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "flex-1 text-right md:text-center" }, [
+        _c("h5", { staticClass: "font-bold uppercase text-gray-800" }, [
+          _vm._v("\n                            Add Backlog Task ")
+        ]),
+        _vm._v(" "),
+        _c("h3", { staticClass: "text-sm text-gray-600" }, [
+          _vm._v("\n                            single & multi-board")
+        ])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
     return _c("div", { staticClass: "flex-shrink pr-4" }, [
       _c("div", { staticClass: "rounded-full p-5 bg-blue-500 text-center" }, [
         _c("i", { staticClass: "fa fa-phone fa-2x fa-inverse w-8 h-8" })
@@ -14013,6 +14257,385 @@ var staticRenderFns = [
     ])
   }
 ]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddBacklogTaskModal.vue?vue&type=template&id=2a6e4a66&":
+/*!********************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/dashboard/dashboardComponents/AddBacklogTaskModal.vue?vue&type=template&id=2a6e4a66& ***!
+  \********************************************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    [
+      _c(
+        "transition",
+        {
+          attrs: {
+            "enter-active-class": "transition duration-500 ease-out transform",
+            "enter-class": " opacity-0 bg-blue-200",
+            "leave-active-class": "transition duration-300 ease-in transform",
+            "leave-to-class": "opacity-0 bg-blue-200"
+          }
+        },
+        [
+          _vm.modalOpen
+            ? _c("div", {
+                staticClass:
+                  "overflow-auto fixed inset-0 bg-gray-700 bg-opacity-50 z-30"
+              })
+            : _vm._e()
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "transition",
+        {
+          attrs: {
+            "enter-active-class": "transition duration-300 ease-out transform ",
+            "enter-class": "scale-95 opacity-0 -translate-y-10",
+            "enter-to-class": "scale-100 opacity-100",
+            "leave-active-class": "transition duration-150 ease-in transform",
+            "leave-class": "scale-100 opacity-100",
+            "leave-to-class": "scale-95 opacity-0"
+          }
+        },
+        [
+          _vm.modalOpen
+            ? _c(
+                "div",
+                {
+                  staticClass:
+                    "fixed inset-0 z-40 flex items-start justify-center"
+                },
+                [
+                  _c("div", {
+                    staticClass: "overflow-auto fixed h-full w-full",
+                    on: {
+                      click: function($event) {
+                        _vm.modalOpen = false
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "flex flex-col overflow-auto z-50 w-100 bg-white rounded-md shadow-2xl m-10",
+                      staticStyle: {
+                        width: "700px",
+                        "min-height": "300px",
+                        "max-height": "80%"
+                      }
+                    },
+                    [
+                      _c(
+                        "div",
+                        {
+                          staticClass:
+                            "flex justify-between p-5 bg-indigo-800 border-b"
+                        },
+                        [
+                          _c("div", { staticClass: "space-y-1" }, [
+                            _c("div", [
+                              _c(
+                                "h1",
+                                { staticClass: "text-2xl text-white pb-2" },
+                                [_vm._v("Create Backlog Task")]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "p",
+                                {
+                                  staticClass:
+                                    "text-sm font-medium leading-5 text-gray-500"
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                                Create tasks and assign it to a single or several Kanban boards "
+                                  )
+                                ]
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", [
+                            _c(
+                              "button",
+                              {
+                                staticClass:
+                                  "focus:outline-none flex flex-col items-center text-gray-400 hover:text-gray-500 transition duration-150 ease-in-out pl-8",
+                                attrs: { type: "button" },
+                                on: {
+                                  click: function($event) {
+                                    _vm.modalOpen = false
+                                  }
+                                }
+                              },
+                              [
+                                _c("i", { staticClass: "fas fa-times" }),
+                                _vm._v(" "),
+                                _c(
+                                  "span",
+                                  {
+                                    staticClass:
+                                      "text-xs font-semibold text-center leading-3 uppercase"
+                                  },
+                                  [_vm._v("Esc")]
+                                )
+                              ]
+                            )
+                          ])
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "form",
+                        { staticClass: "space-y-6 overflow-auto px-8 py-6" },
+                        [
+                          _c("div", { staticClass: "flex space-x-3" }, [
+                            _c("label", { staticClass: "flex-1 space-y-2" }, [
+                              _c(
+                                "span",
+                                {
+                                  staticClass:
+                                    "block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"
+                                },
+                                [_vm._v("Task Name ")]
+                              ),
+                              _vm._v(" "),
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.task.name,
+                                    expression: "task.name"
+                                  }
+                                ],
+                                staticClass:
+                                  "px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4",
+                                attrs: {
+                                  placeholder: "Task Name",
+                                  type: "text"
+                                },
+                                domProps: { value: _vm.task.name },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.$set(
+                                      _vm.task,
+                                      "name",
+                                      $event.target.value
+                                    )
+                                  }
+                                }
+                              })
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "flex" }, [
+                            _c(
+                              "div",
+                              { staticClass: "flex-1 pr-3" },
+                              [
+                                _c(
+                                  "span",
+                                  {
+                                    staticClass:
+                                      "block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"
+                                  },
+                                  [_vm._v("Add Deadline")]
+                                ),
+                                _vm._v(" "),
+                                _c("vSelect", {
+                                  staticClass: "text-gray-700",
+                                  staticStyle: { "margin-top": "7px" },
+                                  attrs: {
+                                    options: _vm.badges,
+                                    label: "title"
+                                  },
+                                  scopedSlots: _vm._u(
+                                    [
+                                      {
+                                        key: "option",
+                                        fn: function(option) {
+                                          return [
+                                            _c("span", {
+                                              staticClass: "fa mr-4",
+                                              class: [
+                                                option.icon,
+                                                "text-" + option.color + "-400 "
+                                              ]
+                                            }),
+                                            _vm._v(
+                                              "\n                                    " +
+                                                _vm._s(option.title) +
+                                                "\n                                "
+                                            )
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        key: "no-options",
+                                        fn: function(ref) {
+                                          var search = ref.search
+                                          var searching = ref.searching
+                                          var loading = ref.loading
+                                          return [
+                                            _vm._v(
+                                              "\n                                    No result .\n                                "
+                                            )
+                                          ]
+                                        }
+                                      }
+                                    ],
+                                    null,
+                                    false,
+                                    3669200678
+                                  ),
+                                  model: {
+                                    value: _vm.task.priority,
+                                    callback: function($$v) {
+                                      _vm.$set(_vm.task, "priority", $$v)
+                                    },
+                                    expression: "task.priority"
+                                  }
+                                })
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              { staticClass: "flex-1" },
+                              [
+                                _c(
+                                  "span",
+                                  {
+                                    staticClass:
+                                      "block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"
+                                  },
+                                  [_vm._v("Badge")]
+                                ),
+                                _vm._v(" "),
+                                _c("vSelect", {
+                                  staticClass: "text-gray-700",
+                                  staticStyle: { "margin-top": "7px" },
+                                  attrs: {
+                                    options: _vm.badges,
+                                    label: "title"
+                                  },
+                                  scopedSlots: _vm._u(
+                                    [
+                                      {
+                                        key: "option",
+                                        fn: function(option) {
+                                          return [
+                                            _c("span", {
+                                              staticClass:
+                                                "fa fa-circle pr-4 text-gray-700",
+                                              class:
+                                                "text-" + option.color + "-400 "
+                                            }),
+                                            _vm._v(
+                                              "\n                                    " +
+                                                _vm._s(option.title) +
+                                                "\n                                "
+                                            )
+                                          ]
+                                        }
+                                      }
+                                    ],
+                                    null,
+                                    false,
+                                    3192359306
+                                  ),
+                                  model: {
+                                    value: _vm.task.badge,
+                                    callback: function($$v) {
+                                      _vm.$set(_vm.task, "badge", $$v)
+                                    },
+                                    expression: "task.badge"
+                                  }
+                                })
+                              ],
+                              1
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            {
+                              staticClass:
+                                "w-full grid sm:grid-cols-2 gap-3 sm:gap-3"
+                            },
+                            [
+                              _c(
+                                "button",
+                                {
+                                  staticClass:
+                                    "px-4 py-3 border border-gray-200 rounded text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-600 transition duration-300 ease-in-out",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      _vm.modalOpen = false
+                                    }
+                                  }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                            Cancel\n                        "
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "button",
+                                {
+                                  staticClass:
+                                    "px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.saveBacklogTask($event)
+                                    }
+                                  }
+                                },
+                                [_c("span", [_vm._v("Create Board")])]
+                              )
+                            ]
+                          )
+                        ]
+                      )
+                    ]
+                  )
+                ]
+              )
+            : _vm._e()
+        ]
+      )
+    ],
+    1
+  )
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -14484,82 +15107,113 @@ var render = function() {
                         { staticClass: "space-y-6 overflow-auto px-8 py-6" },
                         [
                           _c("div", { staticClass: "flex space-x-3" }, [
-                            _c(
-                              "div",
-                              { staticClass: "space-y-2 flex-1" },
-                              [
-                                _c(
-                                  "span",
-                                  {
-                                    staticClass:
-                                      "block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"
-                                  },
-                                  [
-                                    _vm._v(
-                                      "\n                                Employees\n                            "
-                                    )
-                                  ]
-                                ),
-                                _vm._v(" "),
-                                _c("vSelect", {
-                                  staticClass: "text-gray-400",
-                                  staticStyle: { "margin-top": "7px" },
-                                  attrs: {
-                                    options: _vm.allUsers,
-                                    label: "full_name",
-                                    multiple: "",
-                                    placeholder: "Select Members"
-                                  },
-                                  scopedSlots: _vm._u(
-                                    [
+                            _c("div", { staticClass: "space-y-2 flex-1" }, [
+                              _vm.isEdit
+                                ? _c("div", [
+                                    _c(
+                                      "p",
                                       {
-                                        key: "option",
-                                        fn: function(option) {
-                                          return [
-                                            _c("avatar", {
-                                              staticClass:
-                                                "mr-3 m-1 float-left",
-                                              attrs: {
-                                                name: option.full_name,
-                                                size: 4
-                                              }
-                                            }),
-                                            _vm._v(" "),
-                                            _c("p", { staticClass: "inline" }, [
-                                              _vm._v(_vm._s(option.full_name))
-                                            ])
-                                          ]
-                                        }
+                                        staticClass:
+                                          "block text-lg font-bold leading-4 tracking-wide uppercase text-gray-600"
                                       },
-                                      {
-                                        key: "no-options",
-                                        fn: function(ref) {
-                                          var search = ref.search
-                                          var searching = ref.searching
-                                          var loading = ref.loading
-                                          return [
-                                            _vm._v(
-                                              "\n                                    No result .\n                                "
+                                      [
+                                        _vm._v(
+                                          "\n                                    " +
+                                            _vm._s(
+                                              _vm.employeeData.user.full_name
+                                            ) +
+                                            "\n                                "
+                                        )
+                                      ]
+                                    )
+                                  ])
+                                : _c(
+                                    "div",
+                                    [
+                                      _c(
+                                        "span",
+                                        {
+                                          staticClass:
+                                            "block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"
+                                        },
+                                        [
+                                          _vm._v(
+                                            "\n                                    Employees\n                                "
+                                          )
+                                        ]
+                                      ),
+                                      _vm._v(" "),
+                                      _c("vSelect", {
+                                        staticClass: "text-gray-400",
+                                        staticStyle: { "margin-top": "7px" },
+                                        attrs: {
+                                          options: _vm.allUsers,
+                                          label: "full_name",
+                                          multiple: "",
+                                          placeholder: "Select Members"
+                                        },
+                                        scopedSlots: _vm._u(
+                                          [
+                                            {
+                                              key: "option",
+                                              fn: function(option) {
+                                                return [
+                                                  _c("avatar", {
+                                                    staticClass:
+                                                      "mr-3 m-1 float-left",
+                                                    attrs: {
+                                                      name: option.full_name,
+                                                      size: 4
+                                                    }
+                                                  }),
+                                                  _vm._v(" "),
+                                                  _c(
+                                                    "p",
+                                                    { staticClass: "inline" },
+                                                    [
+                                                      _vm._v(
+                                                        _vm._s(option.full_name)
+                                                      )
+                                                    ]
+                                                  )
+                                                ]
+                                              }
+                                            },
+                                            {
+                                              key: "no-options",
+                                              fn: function(ref) {
+                                                var search = ref.search
+                                                var searching = ref.searching
+                                                var loading = ref.loading
+                                                return [
+                                                  _vm._v(
+                                                    "\n                                        No result .\n                                    "
+                                                  )
+                                                ]
+                                              }
+                                            }
+                                          ],
+                                          null,
+                                          false,
+                                          3262527368
+                                        ),
+                                        model: {
+                                          value: _vm.employeeData.selectedUsers,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.employeeData,
+                                              "selectedUsers",
+                                              $$v
                                             )
-                                          ]
+                                          },
+                                          expression:
+                                            "employeeData.selectedUsers"
                                         }
-                                      }
+                                      })
                                     ],
-                                    null,
-                                    false,
-                                    709904776
-                                  ),
-                                  model: {
-                                    value: _vm.selectedUsers,
-                                    callback: function($$v) {
-                                      _vm.selectedUsers = $$v
-                                    },
-                                    expression: "selectedUsers"
-                                  }
-                                })
-                              ],
-                              1
-                            )
+                                    1
+                                  )
+                            ])
                           ]),
                           _vm._v(" "),
                           _c("div", { staticClass: "flex space-x-3" }, [
@@ -37304,6 +37958,75 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./src/resources/js/components/dashboard/dashboardComponents/AddBacklogTaskModal.vue":
+/*!*******************************************************************************************!*\
+  !*** ./src/resources/js/components/dashboard/dashboardComponents/AddBacklogTaskModal.vue ***!
+  \*******************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _AddBacklogTaskModal_vue_vue_type_template_id_2a6e4a66___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AddBacklogTaskModal.vue?vue&type=template&id=2a6e4a66& */ "./src/resources/js/components/dashboard/dashboardComponents/AddBacklogTaskModal.vue?vue&type=template&id=2a6e4a66&");
+/* harmony import */ var _AddBacklogTaskModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AddBacklogTaskModal.vue?vue&type=script&lang=js& */ "./src/resources/js/components/dashboard/dashboardComponents/AddBacklogTaskModal.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _AddBacklogTaskModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _AddBacklogTaskModal_vue_vue_type_template_id_2a6e4a66___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _AddBacklogTaskModal_vue_vue_type_template_id_2a6e4a66___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "src/resources/js/components/dashboard/dashboardComponents/AddBacklogTaskModal.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./src/resources/js/components/dashboard/dashboardComponents/AddBacklogTaskModal.vue?vue&type=script&lang=js&":
+/*!********************************************************************************************************************!*\
+  !*** ./src/resources/js/components/dashboard/dashboardComponents/AddBacklogTaskModal.vue?vue&type=script&lang=js& ***!
+  \********************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AddBacklogTaskModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddBacklogTaskModal.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddBacklogTaskModal.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AddBacklogTaskModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./src/resources/js/components/dashboard/dashboardComponents/AddBacklogTaskModal.vue?vue&type=template&id=2a6e4a66&":
+/*!**************************************************************************************************************************!*\
+  !*** ./src/resources/js/components/dashboard/dashboardComponents/AddBacklogTaskModal.vue?vue&type=template&id=2a6e4a66& ***!
+  \**************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddBacklogTaskModal_vue_vue_type_template_id_2a6e4a66___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddBacklogTaskModal.vue?vue&type=template&id=2a6e4a66& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddBacklogTaskModal.vue?vue&type=template&id=2a6e4a66&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddBacklogTaskModal_vue_vue_type_template_id_2a6e4a66___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddBacklogTaskModal_vue_vue_type_template_id_2a6e4a66___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./src/resources/js/components/dashboard/dashboardComponents/AddOrEditBoardModal.vue":
 /*!*******************************************************************************************!*\
   !*** ./src/resources/js/components/dashboard/dashboardComponents/AddOrEditBoardModal.vue ***!
@@ -38452,7 +39175,7 @@ var ajaxCalls = {
     asyncCreateKanbanEmployee: function asyncCreateKanbanEmployee(employeeData) {
       var _this10 = this;
 
-      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('create-kanban-employee', employeeData)["catch"](function (error) {
+      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('create-kanban-employees', employeeData)["catch"](function (error) {
         _this10.triggerErrorToast(error.response.data.message);
       });
     },

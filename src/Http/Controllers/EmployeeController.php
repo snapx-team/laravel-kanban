@@ -12,18 +12,19 @@ class EmployeeController extends Controller
 {
     public function createEmployees(Request $request)
     {
+        $employeeData = $request->all();
 
         try {
-            if ($request->filled('id')) {
 
-                $employee = Employee::where('id', $request->input('id'))
-                    ->update(['role' => $request->input('role')]);
-            } else {
-                $employee = Employee::create([
-                    'user_id' => $request->input('name'),
-                    'role' => $request->input('role'),
-                ]);
+            foreach ($employeeData['selectedUsers'] as $user) {
+
+                $employee = Employee::updateOrCreate(
+                    ['user_id' => $user['id']],
+                    ['role' => $employeeData['role'],]
+                );
+
             }
+
 
         } catch (\Exception $e) {
             return response([

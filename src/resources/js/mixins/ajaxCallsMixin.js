@@ -98,7 +98,7 @@ export const ajaxCalls = {
         },
 
         asyncCreateKanbanEmployee(employeeData) {
-            return axios.post('create-kanban-employee', employeeData).catch((error) => {
+            return axios.post('create-kanban-employees', employeeData).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },

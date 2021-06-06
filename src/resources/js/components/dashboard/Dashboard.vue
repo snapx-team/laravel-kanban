@@ -16,6 +16,7 @@
                            :employees="dashboardData.employees"></employee-list>
             <add-or-edit-employee-modal></add-or-edit-employee-modal>
             <add-or-edit-board-modal></add-or-edit-board-modal>
+            <add-backlog-task-modal></add-backlog-task-modal>
         </div>
     </div>
 </template>
@@ -26,6 +27,7 @@
     import Actions from "./dashboardComponents/Actions.vue";
     import AddOrEditEmployeeModal from "./dashboardComponents/AddOrEditEmployeeModal.vue";
     import AddOrEditBoardModal from "./dashboardComponents/AddOrEditBoardModal.vue";
+    import AddBacklogTaskModal from "./dashboardComponents/AddBacklogTaskModal";
     import {ajaxCalls} from "../../mixins/ajaxCallsMixin";
 
     export default {
@@ -36,6 +38,7 @@
             Actions,
             AddOrEditEmployeeModal,
             AddOrEditBoardModal,
+            AddBacklogTaskModal
         },
 
         mixins: [ajaxCalls],
@@ -68,6 +71,9 @@
             this.eventHub.$on("delete-kanban-employee", (employeeId) => {
                 this.deleteEmployee(employeeId);
             });
+            this.eventHub.$on("save-backlog-task", (task) => {
+                this.saveBacklogTask(task);
+            });
         },
 
         beforeDestroy(){
@@ -81,6 +87,7 @@
             saveEmployee(employeeData) {
                 this.loadingEmployee = true;
                 const cloneEmployeeData = {...employeeData};
+                console.log(cloneEmployeeData);
                 this.asyncCreateKanbanEmployee(cloneEmployeeData).then(res => {
                     this.asyncGetKanbanEmployees().then((data) => {
                         this.dashboardData.employees = data.data;
