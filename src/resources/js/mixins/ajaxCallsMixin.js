@@ -11,7 +11,7 @@ export const ajaxCalls = {
         // Kanban App Data
 
         asyncGetkanbanData(id) {
-            return axios.get('get-phone-line-data/' + id);
+            return axios.get('get-board-data/' + id);
         },
 
         asyncGetDashboardData() {
@@ -21,7 +21,7 @@ export const ajaxCalls = {
         // Board
 
         asyncGetBoards() {
-            return axios.get('get-phone-lines');
+            return axios.get('get-boards');
         },
 
         asyncCreateBoard(kanbanData) {
@@ -44,10 +44,16 @@ export const ajaxCalls = {
             });
         },
 
-        // Employee Cards
+        // Task Cards
 
-        asyncCreateKanbanTaskCards(taskCardData) {
-            return axios.post('create-kanban-task-cards', taskCardData).catch((error) => {
+        asyncCreateTask(taskCardData) {
+            return axios.post('create-task', taskCardData).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
+        },
+
+        asyncCreateBacklogTasks(backlogTasksData){
+            return axios.post('create-backlog-tasks', backlogTasksData).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
@@ -107,6 +113,19 @@ export const ajaxCalls = {
             return axios.post('delete-kanban-employee/' + employeeId).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
+        },
+
+        // Job Sites
+
+        asyncGetAllJobSites() {
+            return axios.get('get-all-job-sites');
+        },
+
+
+        // Badges
+
+        asyncGetBadges() {
+            return axios.get('get-all-badges');
         },
 
         // Members

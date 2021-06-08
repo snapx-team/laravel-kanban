@@ -16,7 +16,7 @@
                            :employees="dashboardData.employees"></employee-list>
             <add-or-edit-employee-modal></add-or-edit-employee-modal>
             <add-or-edit-board-modal></add-or-edit-board-modal>
-            <add-backlog-task-modal></add-backlog-task-modal>
+            <add-backlog-task-modal :boards="dashboardData.boards"></add-backlog-task-modal>
         </div>
     </div>
 </template>
@@ -54,7 +54,8 @@
                 paginationStep: 5,
                 dashboardData: null,
                 loadingBoard: false,
-                loadingEmployee: false
+                loadingEmployee: false,
+                loadingBacklogTask: false
             };
         },
 
@@ -98,8 +99,8 @@
 
             saveBoard(kanbanData) {
                 this.loadingBoard = true
-                const clonekanbanData = {...kanbanData};
-                this.asyncCreateBoard(clonekanbanData).then(res => {
+                const cloneKanbanData = {...kanbanData};
+                this.asyncCreateBoard(cloneKanbanData).then(res => {
                     this.eventHub.$emit("update-side-bar");
                     this.asyncGetBoards().then((data) => {
                         this.dashboardData.boards = data.data;
@@ -107,6 +108,12 @@
                     }).catch(res => {console.log(res)});
 
                 });
+            },
+
+            saveBacklogTask(backlogTasksData) {
+                this.loadingBacklogTasks = true
+                const cloneBacklogTasksData = {...backlogTasksData};
+                this.asyncCreateBacklogTasks(cloneBacklogTasksData);
             },
 
             deleteBoard(boardId) {

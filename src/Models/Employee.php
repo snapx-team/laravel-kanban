@@ -5,7 +5,7 @@ namespace Xguard\LaravelKanban\Models;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Employee extends Model
 {
@@ -13,10 +13,6 @@ class Employee extends Model
 
     protected $guarded = [];
 
-    public function taskCards(): HasMany
-    {
-        return $this->hasMany(TaskCard::class);
-    }
 
     public function members(): HasMany
     {
@@ -26,5 +22,10 @@ class Employee extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function tasks(): BelongsToMany
+    {
+        return $this->belongsToMany(Task::class, 'kanban_employee-task', 'employee_id', 'task_id');
     }
 }

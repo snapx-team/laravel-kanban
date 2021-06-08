@@ -16,7 +16,6 @@ class CreateKanbanBadgeTable extends Migration
         Schema::create('kanban_badges', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->string('color');
             $table->timestamps();
         });
     }

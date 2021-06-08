@@ -5,6 +5,10 @@ import 'vue-select/dist/vue-select.css';
 import "@fortawesome/fontawesome-free/js/all.js";
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
+import VueQuill from "vue-quill";
+import DatePicker from 'vue2-datepicker';
+
+
 
 Vue.config.productionTip = false;
 
@@ -13,6 +17,11 @@ Vue.use(Toast, {
     maxToasts: 20,
     newestOnTop: true
 });
+
+Vue.use(VueQuill);
+Vue.use(DatePicker);
+
+
 
 new Vue({
     router,

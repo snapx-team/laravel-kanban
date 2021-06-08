@@ -22,8 +22,4 @@ class Member extends Model
         return $this->belongsTo(Board::class);
     }
 
-    public function taskCards(): HasMany
-    {
-        return $this->HasMany(TaskCard::class);
-    }
 }

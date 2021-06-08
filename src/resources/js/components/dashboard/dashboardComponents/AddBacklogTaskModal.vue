@@ -19,7 +19,7 @@
                 <!-- Close when clicked outside -->
                 <div @click="modalOpen = false" class="overflow-auto fixed h-full w-full"></div>
                 <div class="flex flex-col overflow-auto z-50 w-100 bg-white rounded-md shadow-2xl m-10"
-                     style="width: 700px; min-height: 300px; max-height: 80%">
+                     style="width: 900px; min-height: 300px; max-height: 80%">
                     <!-- Task heading -->
                     <div class="flex justify-between p-5 bg-indigo-800 border-b">
                         <div class="space-y-1">
@@ -40,73 +40,166 @@
                         </div>
                     </div>
                     <!-- Task container -->
-                    <form class="space-y-6 overflow-auto px-8 py-6">
-                        <div class="flex space-x-3">
-                            <label class="flex-1 space-y-2">
-                                <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Task Name </span>
-                                <input
-                                    class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
-                                    placeholder="Task Name"
-                                    type="text"
-                                    v-model="task.name"/>
-                            </label>
+                    <div class="flex">
+                        <div class="px-8 py-6 space-y-2 border-r">
+                            <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600 pb-2">Task Options</span>
 
-                        </div>
 
-                        <div class="flex">
-                            <div class="flex-1 pr-3">
-                                <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Add Deadline</span>
-                                <vSelect
-                                    v-model="task.priority"
-                                    :options="badges"
-                                    label="title"
-                                    style="margin-top: 7px"
-                                    class="text-gray-700">
-                                    <template slot="option" slot-scope="option">
-                                      <span class="fa mr-4"
-                                          :class="[option.icon, `text-${option.color}-400 `]">
-                                      </span>
-                                        {{ option.title }}
-                                    </template>
-                                    <template #no-options="{ search, searching, loading }">
-                                        No result .
-                                    </template>
-                                </vSelect>
-                            </div>
-                            <div class="flex-1">
-                                <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Badge</span>
-                                <vSelect
-                                    v-model="task.badge"
-                                    :options="badges"
-                                    label="title"
-                                    style="margin-top: 7px"
-                                    class="text-gray-700"
-                                >
-                                    <template slot="option" slot-scope="option">
-                      <span
-                          class="fa fa-circle pr-4 text-gray-700"
-                          :class="`text-${option.color}-400 `"
-                      ></span>
-                                        {{ option.title }}
-                                    </template>
-                                </vSelect>
+                            <div v-for="(taskOption, taskOptionIndex) in taskOptions"
+                                 class=" grid divide-y divide-gray-400 pt-2">
+                                <label :key="taskOptionIndex" class="flex">
+                                    <input name="task-options" type="checkbox" :value="taskOption.name"
+                                           class="mt-1 form-radio text-indigo-600" v-model="checkedOptions">
+                                    <div class="ml-3 text-gray-700 font-medium">
+                                        <p>{{ taskOption.name }}</p>
+                                    </div>
+
+                                </label>
                             </div>
                         </div>
 
-                        <div class="w-full grid sm:grid-cols-2 gap-3 sm:gap-3">
-                            <button @click="modalOpen = false"
-                                    class="px-4 py-3 border border-gray-200 rounded text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-600 transition duration-300 ease-in-out"
-                                    type="button">
-                                Cancel
-                            </button>
-                            <button @click="saveBacklogTask($event)"
-                                    class="px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
-                                    type="button">
+                        <div class="space-y-6 overflow-auto px-8 py-6 flex-1">
+                            <div class="flex space-x-3">
 
-                                <span>Create Board</span>
-                            </button>
+                                <div class="flex-1 space-y-2">
+                                    <span
+                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Badge</span>
+                                    <vSelect
+                                        v-model="task.badge"
+                                        :options="computedBadges"
+                                        label="name"
+                                        placeholder="Choose or Create"
+                                        style="margin-top: 7px"
+                                        taggable
+                                        class="text-gray-700">
+                                        <template slot="option" slot-scope="option">
+                                            <span class="fa fa-circle mr-4" :style="`color:#${option.color};`"></span>
+                                            {{ option.name }}
+                                        </template>
+                                        <template #no-options="{ search, searching, loading }">
+                                            No result .
+                                        </template>
+                                    </vSelect>
+                                </div>
+
+
+                                <label class="flex-grow space-y-2">
+                                    <span
+                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Task Name </span>
+                                    <input
+                                        class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
+                                        placeholder="Task Name"
+                                        type="text"
+                                        v-model="task.name"/>
+                                </label>
+
+
+                            </div>
+
+                            <div>
+                                <div class="flex-grow space-y-2">
+                                    <span
+                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Description
+                                    </span>
+                                    <quill v-model="task.description" :config="config" output="html"/>
+
+                                </div>
+                            </div>
+
+                            <div class="flex space-x-3">
+                                <div class="flex-1 space-y-2">
+                                    <span
+                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Assign to Kanban</span>
+                                    <vSelect
+                                        v-model="task.selectedKanbans"
+                                        multiple
+                                        :options="boards"
+                                        label="name"
+                                        style="margin-top: 7px"
+                                        placeholder="Select one or more kanban boards"
+                                        class="text-gray-400">
+                                        <template slot="option" slot-scope="option">
+                                            {{ option.name }}
+                                        </template>
+                                        <template #no-options="{ search, searching, loading }">
+                                            No result .
+                                        </template>
+                                    </vSelect>
+                                </div>
+                            </div>
+
+                            <div class="flex space-x-3">
+                                <div class="flex-1" v-if="checkedOptions.includes('Deadline')">
+                                    <div class="flex-1 space-y-2">
+                                        <span
+                                            class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline</span>
+                                        <date-picker type="datetime" v-model="task.deadline"
+                                                     placeholder="YYYY-MM-DD HH:mm"
+                                                     :popup-style="{ position: 'fixed' }" format="YYYY-MM-DD HH:mm"
+                                        ></date-picker>
+
+                                    </div>
+                                </div>
+
+                                <div class="flex-1" v-if="checkedOptions.includes('ERP employee')">
+                                    <div class="flex-1 space-y-2">
+                                    <span
+                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Employee</span>
+                                        <vSelect :options="erpEmployees"
+                                                 class="text-gray-400"
+                                                 label="full_name"
+                                                 placeholder="Select Employee"
+                                                 style="margin-top: 7px"
+                                                 v-model="task.erpEmployee">
+                                            <template slot="option" slot-scope="option">
+                                                <avatar :name="option.full_name" :size="4" class="mr-3 m-1 float-left"></avatar>
+                                                <p class="inline">{{ option.full_name }}</p>
+                                            </template>
+                                            <template #no-options="{ search, searching, loading }">
+                                                No result .
+                                            </template>
+                                        </vSelect>
+                                    </div>
+                                </div>
+
+                                <div class="flex-1" v-if="checkedOptions.includes('ERP Job Site')">
+                                    <div class="flex-1 space-y-2">
+                                    <span
+                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Job Site</span>
+                                        <vSelect :options="erpJobSites"
+                                                 class="text-gray-400"
+                                                 label="name"
+                                                 placeholder="Select Job Site"
+                                                 style="margin-top: 7px"
+                                                 v-model="task.erpJobSite">
+                                            <template slot="option" slot-scope="option">
+                                                <p class="inline">{{ option.name }}</p>
+                                            </template>
+                                            <template #no-options="{ search, searching, loading }">
+                                                No result .
+                                            </template>
+                                        </vSelect>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            <div class="w-full grid sm:grid-cols-2 gap-3 sm:gap-3">
+                                <button @click="modalOpen = false"
+                                        class="px-4 py-3 border border-gray-200 rounded text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-600 transition duration-300 ease-in-out"
+                                        type="button">
+                                    Cancel
+                                </button>
+                                <button @click="saveBacklogTask($event)"
+                                        class="px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
+                                        type="button">
+
+                                    <span>Create Board</span>
+                                </button>
+                            </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </transition>
@@ -115,24 +208,72 @@
 <script>
 
     import vSelect from "vue-select";
+    import Avatar from "../../global/Avatar";
+
     import {ajaxCalls} from "../../../mixins/ajaxCallsMixin";
+    import {helperFunctions} from "../../../mixins/helperFunctionsMixin";
 
     export default {
         inject: ["eventHub"],
 
         components: {
             vSelect,
+            Avatar
         },
 
-        mixins: [ajaxCalls],
+        mixins: [ajaxCalls, helperFunctions],
+
+        props: {
+            boards: {
+                type: Array,
+                default: null,
+            },
+        },
 
         data() {
             return {
-                badges: ['test1','test2'],
+                taskOptions: [
+                    {
+                        name: 'Deadline',
+                    },
+                    {
+                        name: 'ERP employee',
+                    },
+                    {
+                        name: 'ERP Job Site',
+                    },
+                ],
+                checkedOptions: [],
+                config: {
+                    readOnly: false,
+                    placeholder: 'Describe your task in greater detail',
+                    theme: 'snow',
+                    modules: {
+                        toolbar: [['bold', 'italic', 'underline', 'strike'],
+                            ['code-block'],
+                            [{'list': 'ordered'}, {'list': 'bullet'}],
+                            [{'script': 'sub'}, {'script': 'super'}],
+                            [{'color': []}, {'background': []}],
+                            [{'align': []}],
+                            ['clean']
+                        ]
+                    }
+                },
 
                 task: {
                     name: null,
+                    badge: null,
+                    description: null,
+                    selectedKanbans: [],
+                    erpEmployee: null,
+                    erpJobSite: null,
+                    deadline: null,
+                    columnId:null,
+
                 },
+                badges: [{name:'red', id:1}, {name:'blue', id:2},],
+                erpEmployees: [],
+                erpJobSites: [],
                 modalOpen: false,
             };
         },
@@ -141,6 +282,10 @@
             this.eventHub.$on("create-backlog-task", () => {
                 this.modalOpen = true;
             });
+
+            this.getBadges();
+            this.getErpEmployees();
+            this.getJobSites();
         },
 
         beforeDestroy() {
@@ -153,6 +298,40 @@
                 this.eventHub.$emit("save-backlog-task", this.task);
                 this.modalOpen = false;
             },
+
+            getBadges() {
+                this.asyncGetBadges().then((data) => {
+                    // this.badges = data.data;
+                }).catch(res => {
+                    console.log(res)
+                });
+            },
+
+            getErpEmployees() {
+                this.asyncGetAllUsers().then((data) => {
+                    this.erpEmployees = data.data;
+                }).catch(res => {console.log(res)});
+            },
+
+            getJobSites() {
+                this.asyncGetAllJobSites().then((data) => {
+                    this.erpJobSites = data.data;
+                }).catch(res => {
+                    console.log(res)
+                });
+            },
+
         },
+
+        computed:{
+            computedBadges() {
+                return this.badges.map(badge => {
+                    let computedBadges = {};
+                    computedBadges.name = badge.name;
+                    computedBadges.color = this.generateHexColorWithText(badge.name);
+                    return computedBadges;
+                })
+            }
+        }
     };
 </script>
