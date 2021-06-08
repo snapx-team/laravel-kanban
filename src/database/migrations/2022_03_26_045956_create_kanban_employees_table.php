@@ -15,7 +15,7 @@ class CreateKanbanEmployeesTable extends Migration
     {
         Schema::create('kanban_employees', function (Blueprint $table) {
             $table->id();
-            $table->string('user_id');
+            $table->unsignedBigInteger('user_id');
             $table->string('role');
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

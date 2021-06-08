@@ -14,11 +14,11 @@ class Column extends Model
 
     public function row(): BelongsTo
     {
-        return $this->belongsTo(Row::class);
+        return $this->belongsTo(Row::class)->orderBy('index', 'asc');;
     }
 
-    public function employeeCards(): HasMany
+    public function taskCards(): HasMany
     {
-        return $this->hasMany(EmployeeCard::class)->orderBy('index', 'asc');
+        return $this->hasMany(Task::class)->orderBy('index', 'asc');
     }
 }

@@ -1229,10 +1229,10 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuedraggable__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuedraggable */ "./node_modules/vuedraggable/dist/vuedraggable.umd.js");
 /* harmony import */ var vuedraggable__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vuedraggable__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _kanbanComponents_EmployeeCard_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./kanbanComponents/EmployeeCard.vue */ "./src/resources/js/components/kanban/kanbanComponents/EmployeeCard.vue");
-/* harmony import */ var _kanbanComponents_AddEmployeeCardModal_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./kanbanComponents/AddEmployeeCardModal.vue */ "./src/resources/js/components/kanban/kanbanComponents/AddEmployeeCardModal.vue");
+/* harmony import */ var _kanbanComponents_TaskCard_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./kanbanComponents/Task.vue */ "./src/resources/js/components/kanban/kanbanComponents/TaskCard.vue");
+/* harmony import */ var _kanbanComponents_AddTaskCardModal_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./kanbanComponents/AddTaskCardModal.vue */ "./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue");
 /* harmony import */ var _kanbanComponents_AddMemberModal_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./kanbanComponents/AddMemberModal.vue */ "./src/resources/js/components/kanban/kanbanComponents/AddMemberModal.vue");
-/* harmony import */ var _kanbanComponents_AddColumnModal_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./kanbanComponents/AddColumnModal.vue */ "./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue");
+/* harmony import */ var _kanbanComponents_AddColumnModal_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./kanbanComponents/AddRowAndColumnsModal.vue */ "./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue");
 /* harmony import */ var _kanbanComponents_KanbanBar_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./kanbanComponents/KanbanBar.vue */ "./src/resources/js/components/kanban/kanbanComponents/KanbanBar.vue");
 function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
@@ -1335,9 +1335,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 /* harmony default export */ __webpack_exports__["default"] = ({
   inject: ["eventHub"],
   components: {
-    EmployeeCard: _kanbanComponents_EmployeeCard_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
+    TaskCard: _kanbanComponents_TaskCard_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
     draggable: vuedraggable__WEBPACK_IMPORTED_MODULE_0___default.a,
-    AddEmployeeCardModal: _kanbanComponents_AddEmployeeCardModal_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
+    AddTaskCardModal: _kanbanComponents_AddTaskCardModal_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
     AddMemberModal: _kanbanComponents_AddMemberModal_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
     AddColumnModal: _kanbanComponents_AddColumnModal_vue__WEBPACK_IMPORTED_MODULE_4__["default"],
     KanbanBar: _kanbanComponents_KanbanBar_vue__WEBPACK_IMPORTED_MODULE_5__["default"]
@@ -1353,29 +1353,29 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   created: function created() {
     var _this = this;
 
-    this.eventHub.$on("save-employee-cards", function (cardData) {
-      _this.saveEmployeeCards(cardData);
+    this.eventHub.$on("save-task-cards", function (cardData) {
+      _this.saveTaskCards(cardData);
     });
     this.eventHub.$on("save-members", function (selectedMembers) {
       _this.saveMember(selectedMembers);
     });
-    this.eventHub.$on("save-columns", function (columnData) {
+    this.eventHub.$on("save-row-and-columns", function (columnData) {
       _this.saveColumns(columnData);
     });
   },
   methods: {
-    createEmployeeCard: function createEmployeeCard(rowIndex, columnIndex) {
+    createTaskCard: function createTaskCard(rowIndex, columnIndex) {
       var rowName = this.kanban.rows[rowIndex].title;
       var columnName = this.kanban.rows[rowIndex].columns[columnIndex].title;
-      this.eventHub.$emit("create-kanban-employee-cards", {
+      this.eventHub.$emit("create-kanban-task-cards", {
         rowIndex: rowIndex,
         rowName: rowName,
         columnIndex: columnIndex,
         columnName: columnName
       });
     },
-    createColumns: function createColumns(rowIndex, rowColumns) {
-      this.eventHub.$emit("create-columns", {
+    createRowAndColumns: function createRowAndColumns(rowIndex, rowColumns) {
+      this.eventHub.$emit("save-row-and-columns", {
         rowIndex: rowIndex,
         rowColumns: rowColumns
       });
@@ -1412,7 +1412,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     saveMember: function saveMember(selectedMembers) {
       this.kanban.members = [].concat(_toConsumableArray(this.kanban.members), _toConsumableArray(selectedMembers));
     },
-    saveEmployeeCards: function saveEmployeeCards(cardData) {
+    saveTaskCards: function saveTaskCards(cardData) {
       var _iterator = _createForOfIteratorHelper(cardData.employeesSelected),
           _step;
 
@@ -1608,7 +1608,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=script&lang=js&":
 /*!*****************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=script&lang=js& ***!
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/kanban/kanbanComponents/AddRowAndColumnsModal.vue?vue&type=script&lang=js& ***!
   \*****************************************************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -1781,7 +1781,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   created: function created() {
     var _this = this;
 
-    this.eventHub.$on("create-columns", function (rowdata) {
+    this.eventHub.$on("save-row-and-columns", function (rowdata) {
       _this.columnData.rowIndex = rowdata.rowIndex;
       _this.columnData.ranges = rowdata.rowColumns;
       _this.columnData.numberOfShifts = Object.keys(_this.columnData.ranges).length;
@@ -1879,7 +1879,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     },
     saveColumns: function saveColumns(event) {
       event.target.disabled = true;
-      this.eventHub.$emit("save-columns", this.columnData);
+      this.eventHub.$emit("save-row-and-columns", this.columnData);
       this.modalOpen = false;
       this.columnData.rowIndex = null;
     }
@@ -1888,9 +1888,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddEmployeeCardModal.vue?vue&type=script&lang=js&":
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=script&lang=js&":
 /*!***********************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/kanban/kanbanComponents/AddEmployeeCardModal.vue?vue&type=script&lang=js& ***!
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=script&lang=js& ***!
   \***********************************************************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -2081,7 +2081,7 @@ __webpack_require__.r(__webpack_exports__);
     return {
       filter: "",
       modalOpen: false,
-      isSavingEmployeeCard: false,
+      isSavingTaskCard: false,
       cardData: {
         employeesSelected: null,
         selectedRowIndex: null,
@@ -2094,7 +2094,7 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     var _this = this;
 
-    this.eventHub.$on("create-kanban-employee-cards", function (cardData) {
+    this.eventHub.$on("create-kanban-task-cards", function (cardData) {
       _this.openModal(cardData);
     });
   },
@@ -2114,7 +2114,7 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     saveCards: function saveCards(event) {
       event.target.disabled = true;
-      this.eventHub.$emit("save-employee-cards", this.cardData);
+      this.eventHub.$emit("save-task-cards", this.cardData);
       this.modalOpen = false;
       this.cardData.employeesSelected = null;
     },
@@ -2374,9 +2374,9 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/EmployeeCard.vue?vue&type=script&lang=js&":
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/TaskCard.vue?vue&type=script&lang=js&":
 /*!***************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/kanban/kanbanComponents/EmployeeCard.vue?vue&type=script&lang=js& ***!
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/kanban/kanbanComponents/Task.vue?vue&type=script&lang=js& ***!
   \***************************************************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -7467,7 +7467,7 @@ function addStyle (obj, options) {
 	// If a transform function was defined, run it on the css
 	if (options.transform && obj.css) {
 	    result = typeof options.transform === 'function'
-		 ? options.transform(obj.css) 
+		 ? options.transform(obj.css)
 		 : options.transform.default(obj.css);
 
 	    if (result) {
@@ -9988,7 +9988,7 @@ var render = function() {
                       attrs: { href: "#" },
                       on: {
                         click: function($event) {
-                          return _vm.createColumns(rowIndex, row.columns)
+                          return _vm.createRowAndColumns(rowIndex, row.columns)
                         }
                       }
                     },
@@ -10036,7 +10036,7 @@ var render = function() {
                                 "w-6 h-6 bg-blue-200 rounded-full hover:bg-blue-300 mouse transition ease-in duration-200 focus:outline-none",
                               on: {
                                 click: function($event) {
-                                  return _vm.createEmployeeCard(
+                                  return _vm.createTaskCard(
                                     rowIndex,
                                     columnIndex
                                   )
@@ -10068,7 +10068,7 @@ var render = function() {
                             }
                           },
                           _vm._l(column.employees, function(employee) {
-                            return _c("employee-card", {
+                            return _c("task-card", {
                               key: employee.id,
                               staticClass: "mt-3 cursor-move",
                               attrs: { employee: employee },
@@ -10093,7 +10093,7 @@ var render = function() {
           _vm._v(" "),
           _c("hr", { staticClass: "mt-5" }),
           _vm._v(" "),
-          _c("add-employee-card-modal", { attrs: { kanbanData: _vm.kanban } }),
+          _c("add-task-card-modal", { attrs: { kanbanData: _vm.kanban } }),
           _vm._v(" "),
           _c("add-member-modal", { attrs: { kanbanData: _vm.kanban } }),
           _vm._v(" "),
@@ -10112,7 +10112,7 @@ render._withStripped = true
 
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=template&id=2762be96&":
 /*!*********************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=template&id=2762be96& ***!
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/kanban/kanbanComponents/AddRowAndColumnsModal.vue?vue&type=template&id=2762be96& ***!
   \*********************************************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -10426,9 +10426,9 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddEmployeeCardModal.vue?vue&type=template&id=f1c80a64&":
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=template&id=f1c80a64&":
 /*!***************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/kanban/kanbanComponents/AddEmployeeCardModal.vue?vue&type=template&id=f1c80a64& ***!
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=template&id=f1c80a64& ***!
   \***************************************************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -11278,9 +11278,9 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/EmployeeCard.vue?vue&type=template&id=c0a25444&":
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/TaskCard.vue?vue&type=template&id=c0a25444&":
 /*!*******************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/kanban/kanbanComponents/EmployeeCard.vue?vue&type=template&id=c0a25444& ***!
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/kanban/kanbanComponents/Task.vue?vue&type=template&id=c0a25444& ***!
   \*******************************************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -14847,7 +14847,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!.?vue&type=script&lang=js& */ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/ChosenTimePointers/index.js?vue&type=script&lang=js&?e02d");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /***/ }),
 
@@ -14985,7 +14985,7 @@ var component = Object(_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_I
   null,
   "4dceeeb0",
   null
-  
+
 )
 
 /* hot reload */
@@ -15062,7 +15062,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!.?vue&type=script&lang=js& */ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/HoursMarks/index.js?vue&type=script&lang=js&?219c");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /***/ }),
 
@@ -15093,7 +15093,7 @@ var component = Object(_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_I
   null,
   null,
   null
-  
+
 )
 
 /* hot reload */
@@ -15231,7 +15231,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!.?vue&type=script&lang=js& */ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/QuartersTexts/index.js?vue&type=script&lang=js&?6187");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /***/ }),
 
@@ -15264,7 +15264,7 @@ var component = Object(_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_I
   null,
   "c4335e8c",
   null
-  
+
 )
 
 /* hot reload */
@@ -15337,7 +15337,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!.?vue&type=script&lang=js& */ "./node_modules/vue-time-ranges-picker-edit/src/TimeRangesPicker/RangesScales/index.js?vue&type=script&lang=js&?0926");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_index_js_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /***/ }),
 
@@ -15368,7 +15368,7 @@ var component = Object(_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_I
   null,
   null,
   null
-  
+
 )
 
 /* hot reload */
@@ -30523,7 +30523,7 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
   null,
   null,
   null
-  
+
 )
 
 /* hot reload */
@@ -30543,7 +30543,7 @@ component.options.__file = "src/resources/js/App.vue"
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./App.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/App.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /***/ }),
 
@@ -30635,7 +30635,7 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
   null,
   null,
   null
-  
+
 )
 
 /* hot reload */
@@ -30655,7 +30655,7 @@ component.options.__file = "src/resources/js/components/dashboard/Dashboard.vue"
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Dashboard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./Dashboard.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/Dashboard.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Dashboard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Dashboard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /***/ }),
 
@@ -30704,7 +30704,7 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
   null,
   null,
   null
-  
+
 )
 
 /* hot reload */
@@ -30724,7 +30724,7 @@ component.options.__file = "src/resources/js/components/dashboard/dashboardCompo
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Actions_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./Actions.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/Actions.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Actions_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Actions_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /***/ }),
 
@@ -30775,7 +30775,7 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
   null,
   "48631027",
   null
-  
+
 )
 
 /* hot reload */
@@ -30795,7 +30795,7 @@ component.options.__file = "src/resources/js/components/dashboard/dashboardCompo
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditEmployeeModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddOrEditEmployeeModal.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/AddOrEditEmployeeModal.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditEmployeeModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AddOrEditEmployeeModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /***/ }),
 
@@ -30860,7 +30860,7 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
   null,
   null,
   null
-  
+
 )
 
 /* hot reload */
@@ -30880,7 +30880,7 @@ component.options.__file = "src/resources/js/components/dashboard/dashboardCompo
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_EmployeeList_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./EmployeeList.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/dashboard/dashboardComponents/EmployeeList.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_EmployeeList_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_EmployeeList_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /***/ }),
 
@@ -30929,7 +30929,7 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
   null,
   null,
   null
-  
+
 )
 
 /* hot reload */
@@ -31000,7 +31000,7 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
   null,
   "bb806982",
   null
-  
+
 )
 
 /* hot reload */
@@ -31020,7 +31020,7 @@ component.options.__file = "src/resources/js/components/global/Avatar.vue"
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Avatar_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./Avatar.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/global/Avatar.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Avatar_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Avatar_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /***/ }),
 
@@ -31085,7 +31085,7 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
   null,
   null,
   null
-  
+
 )
 
 /* hot reload */
@@ -31105,7 +31105,7 @@ component.options.__file = "src/resources/js/components/global/SideBar.vue"
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_SideBar_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./SideBar.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/global/SideBar.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_SideBar_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_SideBar_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /***/ }),
 
@@ -31156,7 +31156,7 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
   null,
   "4f1aabee",
   null
-  
+
 )
 
 /* hot reload */
@@ -31176,7 +31176,7 @@ component.options.__file = "src/resources/js/components/kanban/Kanban.vue"
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Kanban_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./Kanban.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/Kanban.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Kanban_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Kanban_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /***/ }),
 
@@ -31216,15 +31216,15 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ "./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue":
 /*!********************************************************************************!*\
-  !*** ./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue ***!
+  !*** ./src/resources/js/components/kanban/kanbanComponents/AddRowAndColumnsModal.vue ***!
   \********************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _AddColumnModal_vue_vue_type_template_id_2762be96___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AddColumnModal.vue?vue&type=template&id=2762be96& */ "./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=template&id=2762be96&");
-/* harmony import */ var _AddColumnModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AddColumnModal.vue?vue&type=script&lang=js& */ "./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=script&lang=js&");
+/* harmony import */ var _AddColumnModal_vue_vue_type_template_id_2762be96___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AddRowAndColumnsModal.vue?vue&type=template&id=2762be96& */ "./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=template&id=2762be96&");
+/* harmony import */ var _AddColumnModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AddRowAndColumnsModal.vue?vue&type=script&lang=js& */ "./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -31241,40 +31241,40 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
   null,
   null,
   null
-  
+
 )
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue"
+component.options.__file = "src/resources/js/components/kanban/kanbanComponents/AddRowAndColumnsModal.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 
 /***/ "./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=script&lang=js&":
 /*!*********************************************************************************************************!*\
-  !*** ./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=script&lang=js& ***!
+  !*** ./src/resources/js/components/kanban/kanbanComponents/AddRowAndColumnsModal.vue?vue&type=script&lang=js& ***!
   \*********************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AddColumnModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddColumnModal.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AddColumnModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AddColumnModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddRowAndColumnsModal.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AddColumnModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /***/ }),
 
 /***/ "./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=template&id=2762be96&":
 /*!***************************************************************************************************************!*\
-  !*** ./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=template&id=2762be96& ***!
+  !*** ./src/resources/js/components/kanban/kanbanComponents/AddRowAndColumnsModal.vue?vue&type=template&id=2762be96& ***!
   \***************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddColumnModal_vue_vue_type_template_id_2762be96___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddColumnModal.vue?vue&type=template&id=2762be96& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=template&id=2762be96&");
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddColumnModal_vue_vue_type_template_id_2762be96___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddRowAndColumnsModal.vue?vue&type=template&id=2762be96& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue?vue&type=template&id=2762be96&");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddColumnModal_vue_vue_type_template_id_2762be96___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddColumnModal_vue_vue_type_template_id_2762be96___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
@@ -31283,17 +31283,17 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./src/resources/js/components/kanban/kanbanComponents/AddEmployeeCardModal.vue":
+/***/ "./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue":
 /*!**************************************************************************************!*\
-  !*** ./src/resources/js/components/kanban/kanbanComponents/AddEmployeeCardModal.vue ***!
+  !*** ./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue ***!
   \**************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _AddEmployeeCardModal_vue_vue_type_template_id_f1c80a64___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AddEmployeeCardModal.vue?vue&type=template&id=f1c80a64& */ "./src/resources/js/components/kanban/kanbanComponents/AddEmployeeCardModal.vue?vue&type=template&id=f1c80a64&");
-/* harmony import */ var _AddEmployeeCardModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AddEmployeeCardModal.vue?vue&type=script&lang=js& */ "./src/resources/js/components/kanban/kanbanComponents/AddEmployeeCardModal.vue?vue&type=script&lang=js&");
+/* harmony import */ var _AddTaskCardModal_vue_vue_type_template_id_f1c80a64___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AddTaskCardModal.vue?vue&type=template&id=f1c80a64& */ "./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=template&id=f1c80a64&");
+/* harmony import */ var _AddTaskCardModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AddTaskCardModal.vue?vue&type=script&lang=js& */ "./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -31303,50 +31303,50 @@ __webpack_require__.r(__webpack_exports__);
 /* normalize component */
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _AddEmployeeCardModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _AddEmployeeCardModal_vue_vue_type_template_id_f1c80a64___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _AddEmployeeCardModal_vue_vue_type_template_id_f1c80a64___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _AddTaskCardModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _AddTaskCardModal_vue_vue_type_template_id_f1c80a64___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _AddTaskCardModal_vue_vue_type_template_id_f1c80a64___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
   null,
   null
-  
+
 )
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "src/resources/js/components/kanban/kanbanComponents/AddEmployeeCardModal.vue"
+component.options.__file = "src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 
-/***/ "./src/resources/js/components/kanban/kanbanComponents/AddEmployeeCardModal.vue?vue&type=script&lang=js&":
+/***/ "./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=script&lang=js&":
 /*!***************************************************************************************************************!*\
-  !*** ./src/resources/js/components/kanban/kanbanComponents/AddEmployeeCardModal.vue?vue&type=script&lang=js& ***!
+  !*** ./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=script&lang=js& ***!
   \***************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AddEmployeeCardModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddEmployeeCardModal.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddEmployeeCardModal.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AddEmployeeCardModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AddTaskCardModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddTaskCardModal.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AddTaskCardModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /***/ }),
 
-/***/ "./src/resources/js/components/kanban/kanbanComponents/AddEmployeeCardModal.vue?vue&type=template&id=f1c80a64&":
+/***/ "./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=template&id=f1c80a64&":
 /*!*********************************************************************************************************************!*\
-  !*** ./src/resources/js/components/kanban/kanbanComponents/AddEmployeeCardModal.vue?vue&type=template&id=f1c80a64& ***!
+  !*** ./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=template&id=f1c80a64& ***!
   \*********************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddEmployeeCardModal_vue_vue_type_template_id_f1c80a64___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddEmployeeCardModal.vue?vue&type=template&id=f1c80a64& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddEmployeeCardModal.vue?vue&type=template&id=f1c80a64&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddEmployeeCardModal_vue_vue_type_template_id_f1c80a64___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddTaskCardModal_vue_vue_type_template_id_f1c80a64___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddTaskCardModal.vue?vue&type=template&id=f1c80a64& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=template&id=f1c80a64&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddTaskCardModal_vue_vue_type_template_id_f1c80a64___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddEmployeeCardModal_vue_vue_type_template_id_f1c80a64___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddTaskCardModal_vue_vue_type_template_id_f1c80a64___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
@@ -31379,7 +31379,7 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
   null,
   null,
   null
-  
+
 )
 
 /* hot reload */
@@ -31399,7 +31399,7 @@ component.options.__file = "src/resources/js/components/kanban/kanbanComponents/
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AddMemberModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddMemberModal.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddMemberModal.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AddMemberModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AddMemberModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /***/ }),
 
@@ -31421,17 +31421,17 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./src/resources/js/components/kanban/kanbanComponents/EmployeeCard.vue":
+/***/ "./src/resources/js/components/kanban/kanbanComponents/TaskCard.vue":
 /*!******************************************************************************!*\
-  !*** ./src/resources/js/components/kanban/kanbanComponents/EmployeeCard.vue ***!
+  !*** ./src/resources/js/components/kanban/kanbanComponents/Task.vue ***!
   \******************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _EmployeeCard_vue_vue_type_template_id_c0a25444___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./EmployeeCard.vue?vue&type=template&id=c0a25444& */ "./src/resources/js/components/kanban/kanbanComponents/EmployeeCard.vue?vue&type=template&id=c0a25444&");
-/* harmony import */ var _EmployeeCard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./EmployeeCard.vue?vue&type=script&lang=js& */ "./src/resources/js/components/kanban/kanbanComponents/EmployeeCard.vue?vue&type=script&lang=js&");
+/* harmony import */ var _TaskCard_vue_vue_type_template_id_c0a25444___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Task.vue?vue&type=template&id=c0a25444& */ "./src/resources/js/components/kanban/kanbanComponents/TaskCard.vue?vue&type=template&id=c0a25444&");
+/* harmony import */ var _TaskCard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Task.vue?vue&type=script&lang=js& */ "./src/resources/js/components/kanban/kanbanComponents/TaskCard.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -31441,50 +31441,50 @@ __webpack_require__.r(__webpack_exports__);
 /* normalize component */
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _EmployeeCard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _EmployeeCard_vue_vue_type_template_id_c0a25444___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _EmployeeCard_vue_vue_type_template_id_c0a25444___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _TaskCard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _TaskCard_vue_vue_type_template_id_c0a25444___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _TaskCard_vue_vue_type_template_id_c0a25444___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
   null,
   null
-  
+
 )
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "src/resources/js/components/kanban/kanbanComponents/EmployeeCard.vue"
+component.options.__file = "src/resources/js/components/kanban/kanbanComponents/Task.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 
-/***/ "./src/resources/js/components/kanban/kanbanComponents/EmployeeCard.vue?vue&type=script&lang=js&":
+/***/ "./src/resources/js/components/kanban/kanbanComponents/TaskCard.vue?vue&type=script&lang=js&":
 /*!*******************************************************************************************************!*\
-  !*** ./src/resources/js/components/kanban/kanbanComponents/EmployeeCard.vue?vue&type=script&lang=js& ***!
+  !*** ./src/resources/js/components/kanban/kanbanComponents/Task.vue?vue&type=script&lang=js& ***!
   \*******************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_EmployeeCard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./EmployeeCard.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/EmployeeCard.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_EmployeeCard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TaskCard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./Task.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/TaskCard.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TaskCard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /***/ }),
 
-/***/ "./src/resources/js/components/kanban/kanbanComponents/EmployeeCard.vue?vue&type=template&id=c0a25444&":
+/***/ "./src/resources/js/components/kanban/kanbanComponents/TaskCard.vue?vue&type=template&id=c0a25444&":
 /*!*************************************************************************************************************!*\
-  !*** ./src/resources/js/components/kanban/kanbanComponents/EmployeeCard.vue?vue&type=template&id=c0a25444& ***!
+  !*** ./src/resources/js/components/kanban/kanbanComponents/Task.vue?vue&type=template&id=c0a25444& ***!
   \*************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_EmployeeCard_vue_vue_type_template_id_c0a25444___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./EmployeeCard.vue?vue&type=template&id=c0a25444& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/EmployeeCard.vue?vue&type=template&id=c0a25444&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_EmployeeCard_vue_vue_type_template_id_c0a25444___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TaskCard_vue_vue_type_template_id_c0a25444___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./Task.vue?vue&type=template&id=c0a25444& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/TaskCard.vue?vue&type=template&id=c0a25444&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TaskCard_vue_vue_type_template_id_c0a25444___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_EmployeeCard_vue_vue_type_template_id_c0a25444___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TaskCard_vue_vue_type_template_id_c0a25444___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
@@ -31519,7 +31519,7 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
   null,
   "8c2940e8",
   null
-  
+
 )
 
 /* hot reload */
@@ -31539,7 +31539,7 @@ component.options.__file = "src/resources/js/components/kanban/kanbanComponents/
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_KanbanBar_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./KanbanBar.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/KanbanBar.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_KanbanBar_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_KanbanBar_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /***/ }),
 
@@ -31606,7 +31606,7 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
   null,
   "126ac8b0",
   null
-  
+
 )
 
 /* hot reload */
@@ -31626,7 +31626,7 @@ component.options.__file = "src/resources/js/components/kanban/kanbanComponents/
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_LoadingAnimation_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./LoadingAnimation.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/LoadingAnimation.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_LoadingAnimation_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_LoadingAnimation_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /***/ }),
 

@@ -10,7 +10,7 @@
                         <avatar :borderSize="2"
                                 :class="{ '-ml-3': memberIndex > 0 }"
                                 :key="memberIndex"
-                                :name="member.employee.name"
+                                :name="member.employee.user.full_name"
                                 :size="10"
                                 :tooltip="true"
                                 class="cursor-pointer transform hover:-translate-y-1 transition duration-300"></avatar>
@@ -24,10 +24,6 @@
                     <i class="fas fa-plus"></i>
                 </button>
             </div>
-<!--            <button class="my-2 px-4 bg-red-600 text-white font-semibold rounded-lg shadow-md transition-colors hover:bg-red-700 duration-150 focus:outline-none float-right"-->
-<!--                    type="button">-->
-<!--                Publish-->
-<!--            </button>-->
         </div>
     </div>
 </template>

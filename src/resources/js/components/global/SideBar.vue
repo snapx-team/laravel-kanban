@@ -49,10 +49,11 @@
 
 </template>
 <script>
-    import {getBoards} from "../../api";
+    import {ajaxCalls} from "../../mixins/ajaxCallsMixin";
 
     export default {
         inject: ["eventHub"],
+        mixins: [ajaxCalls],
 
         data() {
             return {
@@ -72,7 +73,7 @@
         methods: {
             getBoards() {
                 this.loadingBoard = true;
-                getBoards().then((data) => {
+                this.asyncGetBoards().then((data) => {
                     this.boards = data.data;
                     this.loadingBoard = false;
                 }).catch(res => {console.log(res)});

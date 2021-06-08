@@ -11,7 +11,7 @@ export const ajaxCalls = {
         // Kanban App Data
 
         asyncGetkanbanData(id) {
-            return axios.get('get-phone-line-data/' + id);
+            return axios.get('get-board-data/' + id);
         },
 
         asyncGetDashboardData() {
@@ -21,7 +21,7 @@ export const ajaxCalls = {
         // Board
 
         asyncGetBoards() {
-            return axios.get('get-phone-lines');
+            return axios.get('get-boards');
         },
 
         asyncCreateBoard(kanbanData) {
@@ -38,38 +38,57 @@ export const ajaxCalls = {
 
         // Columns
 
-        asyncCreateColumns(columnData) {
-            return axios.post('create-columns', columnData).catch((error) => {
+        asyncCreateRowAndColumns(rowData) {
+            return axios.post('save-row-and-columns', rowData).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
 
-        // Employee Cards
+        // Task Cards
 
-        asyncCreateKanbanEmployeeCards(employeeCardData) {
-            return axios.post('create-kanban-employee-cards', employeeCardData).catch((error) => {
+        asyncCreateTask(taskCardData) {
+            return axios.post('create-task', taskCardData).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
 
-        asyncGetEmployeeCardsByColumn(columnId) {
-            return axios.post('get-employee-cards-by-column/' + columnId);
-        },
-
-        asyncDeleteKanbanEmployeeCard(employeeCardId) {
-            return axios.post('delete-kanban-employee-card/' + employeeCardId).catch((error) => {
+        asyncCreateBacklogTasks(backlogTasksData){
+            return axios.post('create-backlog-tasks', backlogTasksData).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
 
-        asyncUpdateEmployeeCardIndexes(employeeCards) {
-            return axios.post('update-employee-card-indexes', employeeCards).catch((error) => {
+        asyncGetTaskCardsByColumn(columnId) {
+            return axios.post('get-task-cards-by-column/' + columnId);
+        },
+
+        asyncDeleteKanbanTaskCard(taskCardId) {
+            return axios.post('delete-kanban-task-card/' + taskCardId).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
 
-        asyncUpdateEmployeeCardColumnId(columnId, employeeCardId) {
-            return axios.post('update-employee-card-column/' + columnId + '/' + employeeCardId).catch((error) => {
+        asyncUpdateTaskCardIndexes(taskCards) {
+            return axios.post('update-task-card-indexes', taskCards).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
+        },
+
+        asyncUpdateColumnIndexes(columns) {
+            return axios.post('update-column-indexes', columns).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
+        },
+
+        asyncUpdateRowIndexes(rows) {
+            console.log(rows)
+            return axios.post('update-row-indexes', rows).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
+        },
+
+        asyncUpdateTaskCardColumnId(columnId, taskCardId) {
+            return axios.post('update-task-card-column/' + columnId + '/' + taskCardId).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
@@ -85,7 +104,7 @@ export const ajaxCalls = {
         },
 
         asyncCreateKanbanEmployee(employeeData) {
-            return axios.post('create-kanban-employee', employeeData).catch((error) => {
+            return axios.post('create-kanban-employees', employeeData).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
@@ -94,6 +113,19 @@ export const ajaxCalls = {
             return axios.post('delete-kanban-employee/' + employeeId).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
+        },
+
+        // Job Sites
+
+        asyncGetAllJobSites() {
+            return axios.get('get-all-job-sites');
+        },
+
+
+        // Badges
+
+        asyncGetBadges() {
+            return axios.get('get-all-badges');
         },
 
         // Members

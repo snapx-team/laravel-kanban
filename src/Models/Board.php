@@ -18,6 +18,6 @@ class Board extends Model
 
     public function rows(): HasMany
     {
-        return $this->hasMany(Row::class);
+        return $this->hasMany(Row::class)->orderBy('index');
     }
 }

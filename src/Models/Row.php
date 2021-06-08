@@ -14,12 +14,12 @@ class Row extends Model
 
     public function board(): BelongsTo
     {
-        return $this->belongsTo(Board::class);
+        return $this->belongsTo(Board::class)->orderBy('index', 'asc');;
     }
 
     public function columns(): HasMany
     {
-        return $this->HasMany(Column::class);
+        return $this->HasMany(Column::class)->orderBy('index');
     }
 
 }

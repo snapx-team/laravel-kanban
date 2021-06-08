@@ -13,7 +13,11 @@
     </div>
 </template>
 <script>
+    import {helperFunctions} from "../../mixins/helperFunctionsMixin";
+
     export default {
+        mixins: [helperFunctions],
+
         props: {
             name: {
                 type: String, default: "john Doe",
@@ -31,12 +35,7 @@
             },
         }, methods: {
             avatarUrl(name) {
-                var hash = 0;
-                for (var i = 0; i < name.length; i++) {
-                    hash = name.charCodeAt(i) + ((hash << 5) - hash);
-                }
-                var c = (hash & 0x00ffffff).toString(16).toUpperCase();
-                var color = "00000".substring(0, 6 - c.length) + c;
+                var color = this.generateHexColorWithText(name);
                 return ("https://ui-avatars.com/api/?name=" + name + "&background=" + color + "&color=fff");
             },
         },

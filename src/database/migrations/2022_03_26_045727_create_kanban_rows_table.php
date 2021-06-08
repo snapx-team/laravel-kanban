@@ -17,6 +17,7 @@ class CreateKanbanRowsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('board_id');
             $table->string('name');
+            $table->integer('index');
             $table->timestamps();
             $table->foreign('board_id')->references('id')->on('kanban_boards')->onDelete('cascade');
         });

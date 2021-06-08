@@ -17,8 +17,7 @@ class CreateKanbanColumnsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('row_id');
             $table->string('name');
-            $table->string('shift_start')->index();
-            $table->string('shift_end')->index();
+            $table->integer('index');
             $table->timestamps();
             $table->foreign('row_id')->references('id')->on('kanban_rows')->onDelete('cascade');
         });

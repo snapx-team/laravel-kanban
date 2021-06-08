@@ -49,24 +49,33 @@
                     <form class="space-y-6 overflow-auto px-8 py-6">
                         <div class="flex space-x-3">
                             <div class="space-y-2 flex-1">
-                                <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">
-                                    Employees
-                                </span>
-                                <vSelect :options="allUsers"
-                                         class="text-gray-400"
-                                         label="full_name"
-                                         multiple
-                                         placeholder="Select Members"
-                                         style="margin-top: 7px"
-                                         v-model="selectedUsers">
-                                    <template slot="option" slot-scope="option">
-                                        <avatar :name="option.full_name" :size="4" class="mr-3 m-1 float-left"></avatar>
-                                        <p class="inline">{{ option.full_name }}</p>
-                                    </template>
-                                    <template #no-options="{ search, searching, loading }">
-                                        No result .
-                                    </template>
-                                </vSelect>
+
+                                <div v-if="isEdit">
+                                    <p class="block text-lg font-bold leading-4 tracking-wide uppercase text-gray-600">
+                                        {{ employeeData.user.full_name }}
+                                    </p>
+                                </div>
+
+                                <div v-else>
+                                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">
+                                        Employees
+                                    </span>
+                                    <vSelect :options="allUsers"
+                                             class="text-gray-400"
+                                             label="full_name"
+                                             multiple
+                                             placeholder="Select Members"
+                                             style="margin-top: 7px"
+                                             v-model="employeeData.selectedUsers">
+                                        <template slot="option" slot-scope="option">
+                                            <avatar :name="option.full_name" :size="4" class="mr-3 m-1 float-left"></avatar>
+                                            <p class="inline">{{ option.full_name }}</p>
+                                        </template>
+                                        <template #no-options="{ search, searching, loading }">
+                                            No result .
+                                        </template>
+                                    </vSelect>
+                                </div>
                             </div>
                         </div>
                         <div class="flex space-x-3">
@@ -150,17 +159,22 @@
                 employeeData: {
                     id: null,
                     role: "employee",
+                    selectedUsers: [],
+                    user: null,
                 },
                 modalOpen: false,
                 allUsers: [],
-                selectedUsers: [],
+
             };
         },
 
         created() {
             this.eventHub.$on("create-kanban-employees", (employee) => {
                 if (employee !== undefined) {
-                    this.employeeData = {...employee}
+                    this.employeeData.role = employee.role;
+                    this.employeeData.id =  employee.id;
+                    this.employeeData.selectedUsers = [{id : employee.user.id}];
+                    this.employeeData.user = employee.user;
                     this.isEdit = true;
                 }
                 else {
