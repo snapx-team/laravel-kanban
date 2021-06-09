@@ -99,6 +99,14 @@ export const ajaxCalls = {
             return axios.get('get-all-users');
         },
 
+        asyncGetSomeUsers(searchTerm) {
+            if (searchTerm == '') {
+                return axios.get('get-all-users');
+            } else {
+                return axios.get('get-some-users/' + searchTerm);
+            }
+        },
+
         asyncGetKanbanEmployees() {
             return axios.get('get-kanban-employees');
         },

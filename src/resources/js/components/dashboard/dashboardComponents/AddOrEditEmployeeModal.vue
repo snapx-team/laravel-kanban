@@ -66,7 +66,8 @@
                                              multiple
                                              placeholder="Select Members"
                                              style="margin-top: 7px"
-                                             v-model="employeeData.selectedUsers">
+                                             v-model="employeeData.selectedUsers"
+                                             @search="onType">
                                         <template slot="option" slot-scope="option">
                                             <avatar :name="option.full_name" :size="4" class="mr-3 m-1 float-left"></avatar>
                                             <p class="inline">{{ option.full_name }}</p>
@@ -143,6 +144,7 @@
     import vSelect from "vue-select";
     import Avatar from "../../global/Avatar";
     import {ajaxCalls} from "../../../mixins/ajaxCallsMixin";
+    import _ from 'lodash';
 
     export default {
         inject: ["eventHub"],
@@ -210,6 +212,11 @@
                 this.eventHub.$emit("delete-kanban-employee", this.employeeData.id);
                 this.modalOpen = false;
             },
+            onType : _.debounce(function (search) {
+                this.asyncGetSomeUsers(search).then((data) => {
+                    this.allUsers = data.data;
+                }).catch(res => {console.log(res)});
+            }, 500)
         },
     };
 </script>

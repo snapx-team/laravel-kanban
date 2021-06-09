@@ -14,7 +14,18 @@ class ErpController extends Controller
 
     public function getAllUsers()
     {
-        return User::orderBy('first_name')->get();
+        return User::orderBy('first_name')->take(10)->get();
+    }
+
+    public function getSomeUsers($search)
+    {
+        return User::
+                where(function ($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                ->orWhere('last_name', 'like', "%{$search}%")
+                ->orWhere(User::raw('CONCAT(first_name, " ", last_name)'), 'like', "%{$search}%");
+            })
+            ->orderBy('first_name')->take(10)->get();
     }
 
     public function getAllJobSites()
