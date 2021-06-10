@@ -44,7 +44,11 @@ export const ajaxCalls = {
             });
         },
 
-        // Task Cards
+        // Tasks
+
+        asyncGetAllTasks() {
+            return axios.get('get-all-tasks');
+        },
 
         asyncCreateTask(taskCardData) {
             return axios.post('create-task', taskCardData).catch((error) => {
@@ -120,7 +124,6 @@ export const ajaxCalls = {
         asyncGetAllJobSites() {
             return axios.get('get-all-job-sites');
         },
-
 
         // Badges
 

@@ -19,11 +19,12 @@ class CreateKanbanTasksTable extends Migration
             $table->string('name');
             $table->text('description');
             $table->dateTime('deadline')->nullable();
-            $table->unsignedBigInteger('employee_id')->nullable();
+            $table->unsignedBigInteger('reporter_id')->nullable();
             $table->unsignedBigInteger('column_id')->nullable();
+            $table->unsignedBigInteger('board_id')->nullable();
             $table->unsignedBigInteger('badge_id')->nullable();
             $table->unsignedBigInteger('erp_employee_id')->nullable();
-
+            $table->string('group');
             $table->timestamps();
             $table->foreign('column_id')->references('id')->on('kanban_columns')->onDelete('cascade');
 

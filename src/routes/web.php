@@ -26,7 +26,9 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             // Columns
             Route::post('/save-row-and-columns', 'RowAndColumnsController@createOrUpdateRowAndColumns');
 
-            // Task Cards
+            // Task
+            Route::get('/get-all-tasks', 'TaskController@getAllTasks');
+
             Route::post('/create-task', 'TaskController@createTaskCards');
             Route::post('/create-backlog-tasks', 'TaskController@createBacklogTaskCards');
 
@@ -47,6 +49,10 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             Route::post('/create-members/{id}', 'MemberController@createMembers');
             Route::post('/delete-member/{id}', 'MemberController@deleteMember');
             Route::get('/get-members/{id}', 'MemberController@getMembers');
+
+            // Badges
+            Route::get('/get-all-badges', 'badgeController@getAllBadges');
+
 
             //ERP Data
             Route::get('/get-all-users', 'ErpController@getAllUsers');

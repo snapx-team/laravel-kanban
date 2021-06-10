@@ -7004,6 +7004,36 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -7029,6 +7059,8 @@ __webpack_require__.r(__webpack_exports__);
         name: 'ERP employee'
       }, {
         name: 'ERP Job Site'
+      }, {
+        name: 'Group'
       }],
       checkedOptions: [],
       config: {
@@ -7061,17 +7093,13 @@ __webpack_require__.r(__webpack_exports__);
         erpEmployee: null,
         erpJobSite: null,
         deadline: null,
-        columnId: null
+        columnId: null,
+        associatedTask: null
       },
-      badges: [{
-        name: 'red',
-        id: 1
-      }, {
-        name: 'blue',
-        id: 2
-      }],
+      badges: [],
       erpEmployees: [],
       erpJobSites: [],
+      tasks: [],
       modalOpen: false
     };
   },
@@ -7084,6 +7112,7 @@ __webpack_require__.r(__webpack_exports__);
     this.getBadges();
     this.getErpEmployees();
     this.getJobSites();
+    this.getTasks();
   },
   beforeDestroy: function beforeDestroy() {
     this.eventHub.$off('create-backlog-task');
@@ -7095,25 +7124,37 @@ __webpack_require__.r(__webpack_exports__);
       this.modalOpen = false;
     },
     getBadges: function getBadges() {
-      this.asyncGetBadges().then(function (data) {// this.badges = data.data;
+      var _this2 = this;
+
+      this.asyncGetBadges().then(function (data) {
+        _this2.badges = data.data;
       })["catch"](function (res) {
         console.log(res);
       });
     },
     getErpEmployees: function getErpEmployees() {
-      var _this2 = this;
+      var _this3 = this;
 
       this.asyncGetAllUsers().then(function (data) {
-        _this2.erpEmployees = data.data;
+        _this3.erpEmployees = data.data;
       })["catch"](function (res) {
         console.log(res);
       });
     },
     getJobSites: function getJobSites() {
-      var _this3 = this;
+      var _this4 = this;
 
       this.asyncGetAllJobSites().then(function (data) {
-        _this3.erpJobSites = data.data;
+        _this4.erpJobSites = data.data;
+      })["catch"](function (res) {
+        console.log(res);
+      });
+    },
+    getTasks: function getTasks() {
+      var _this5 = this;
+
+      this.asyncGetAllTasks().then(function (data) {
+        _this5.tasks = data.data;
       })["catch"](function (res) {
         console.log(res);
       });
@@ -7121,12 +7162,12 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     computedBadges: function computedBadges() {
-      var _this4 = this;
+      var _this6 = this;
 
       return this.badges.map(function (badge) {
         var computedBadges = {};
         computedBadges.name = badge.name;
-        computedBadges.color = _this4.generateHexColorWithText(badge.name);
+        computedBadges.color = _this6.generateHexColorWithText(badge.name);
         return computedBadges;
       });
     }
@@ -56138,214 +56179,358 @@ var render = function() {
                               )
                             ]),
                             _vm._v(" "),
-                            _c("div", { staticClass: "flex space-x-3" }, [
-                              _vm.checkedOptions.includes("Deadline")
-                                ? _c("div", { staticClass: "flex-1" }, [
-                                    _c(
-                                      "div",
-                                      { staticClass: "flex-1 space-y-2" },
-                                      [
+                            _vm.checkedOptions.includes("Deadline") ||
+                            _vm.checkedOptions.includes("ERP employee") ||
+                            _vm.checkedOptions.includes("ERP Job Site")
+                              ? _c("div", { staticClass: "flex space-x-3" }, [
+                                  _vm.checkedOptions.includes("Deadline")
+                                    ? _c("div", { staticClass: "flex-1" }, [
                                         _c(
-                                          "span",
-                                          {
-                                            staticClass:
-                                              "block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"
-                                          },
-                                          [_vm._v("Deadline")]
-                                        ),
-                                        _vm._v(" "),
-                                        _c("date-picker", {
-                                          attrs: {
-                                            type: "datetime",
-                                            placeholder: "YYYY-MM-DD HH:mm",
-                                            "popup-style": {
-                                              position: "fixed"
-                                            },
-                                            format: "YYYY-MM-DD HH:mm"
-                                          },
-                                          model: {
-                                            value: _vm.task.deadline,
-                                            callback: function($$v) {
-                                              _vm.$set(
-                                                _vm.task,
-                                                "deadline",
-                                                $$v
-                                              )
-                                            },
-                                            expression: "task.deadline"
-                                          }
-                                        })
-                                      ],
-                                      1
-                                    )
-                                  ])
-                                : _vm._e(),
-                              _vm._v(" "),
-                              _vm.checkedOptions.includes("ERP employee")
-                                ? _c("div", { staticClass: "flex-1" }, [
-                                    _c(
-                                      "div",
-                                      { staticClass: "flex-1 space-y-2" },
-                                      [
-                                        _c(
-                                          "span",
-                                          {
-                                            staticClass:
-                                              "block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"
-                                          },
-                                          [_vm._v("ERP Employee")]
-                                        ),
-                                        _vm._v(" "),
-                                        _c("vSelect", {
-                                          staticClass: "text-gray-400",
-                                          staticStyle: { "margin-top": "7px" },
-                                          attrs: {
-                                            options: _vm.erpEmployees,
-                                            label: "full_name",
-                                            placeholder: "Select Employee"
-                                          },
-                                          scopedSlots: _vm._u(
-                                            [
+                                          "div",
+                                          { staticClass: "flex-1 space-y-2" },
+                                          [
+                                            _c(
+                                              "span",
                                               {
-                                                key: "option",
-                                                fn: function(option) {
-                                                  return [
-                                                    _c("avatar", {
-                                                      staticClass:
-                                                        "mr-3 m-1 float-left",
-                                                      attrs: {
-                                                        name: option.full_name,
-                                                        size: 4
-                                                      }
-                                                    }),
-                                                    _vm._v(" "),
-                                                    _c(
-                                                      "p",
-                                                      { staticClass: "inline" },
-                                                      [
-                                                        _vm._v(
-                                                          _vm._s(
-                                                            option.full_name
-                                                          )
+                                                staticClass:
+                                                  "block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"
+                                              },
+                                              [_vm._v("Deadline")]
+                                            ),
+                                            _vm._v(" "),
+                                            _c("date-picker", {
+                                              attrs: {
+                                                type: "datetime",
+                                                placeholder: "YYYY-MM-DD HH:mm",
+                                                "popup-style": {
+                                                  position: "fixed"
+                                                },
+                                                format: "YYYY-MM-DD HH:mm"
+                                              },
+                                              model: {
+                                                value: _vm.task.deadline,
+                                                callback: function($$v) {
+                                                  _vm.$set(
+                                                    _vm.task,
+                                                    "deadline",
+                                                    $$v
+                                                  )
+                                                },
+                                                expression: "task.deadline"
+                                              }
+                                            })
+                                          ],
+                                          1
+                                        )
+                                      ])
+                                    : _vm._e(),
+                                  _vm._v(" "),
+                                  _vm.checkedOptions.includes("ERP employee")
+                                    ? _c("div", { staticClass: "flex-1" }, [
+                                        _c(
+                                          "div",
+                                          { staticClass: "flex-1 space-y-2" },
+                                          [
+                                            _c(
+                                              "span",
+                                              {
+                                                staticClass:
+                                                  "block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"
+                                              },
+                                              [_vm._v("ERP Employee")]
+                                            ),
+                                            _vm._v(" "),
+                                            _c("vSelect", {
+                                              staticClass: "text-gray-400",
+                                              staticStyle: {
+                                                "margin-top": "7px"
+                                              },
+                                              attrs: {
+                                                options: _vm.erpEmployees,
+                                                label: "full_name",
+                                                placeholder: "Select Employee"
+                                              },
+                                              scopedSlots: _vm._u(
+                                                [
+                                                  {
+                                                    key: "option",
+                                                    fn: function(option) {
+                                                      return [
+                                                        _c("avatar", {
+                                                          staticClass:
+                                                            "mr-3 m-1 float-left",
+                                                          attrs: {
+                                                            name:
+                                                              option.full_name,
+                                                            size: 4
+                                                          }
+                                                        }),
+                                                        _vm._v(" "),
+                                                        _c(
+                                                          "p",
+                                                          {
+                                                            staticClass:
+                                                              "inline"
+                                                          },
+                                                          [
+                                                            _vm._v(
+                                                              _vm._s(
+                                                                option.full_name
+                                                              )
+                                                            )
+                                                          ]
                                                         )
                                                       ]
-                                                    )
-                                                  ]
-                                                }
-                                              },
-                                              {
-                                                key: "no-options",
-                                                fn: function(ref) {
-                                                  var search = ref.search
-                                                  var searching = ref.searching
-                                                  var loading = ref.loading
-                                                  return [
-                                                    _vm._v(
-                                                      "\n                                            No result .\n                                        "
-                                                    )
-                                                  ]
-                                                }
+                                                    }
+                                                  },
+                                                  {
+                                                    key: "no-options",
+                                                    fn: function(ref) {
+                                                      var search = ref.search
+                                                      var searching =
+                                                        ref.searching
+                                                      var loading = ref.loading
+                                                      return [
+                                                        _vm._v(
+                                                          "\n                                            No result .\n                                        "
+                                                        )
+                                                      ]
+                                                    }
+                                                  }
+                                                ],
+                                                null,
+                                                false,
+                                                3990693256
+                                              ),
+                                              model: {
+                                                value: _vm.task.erpEmployee,
+                                                callback: function($$v) {
+                                                  _vm.$set(
+                                                    _vm.task,
+                                                    "erpEmployee",
+                                                    $$v
+                                                  )
+                                                },
+                                                expression: "task.erpEmployee"
                                               }
-                                            ],
-                                            null,
-                                            false,
-                                            3990693256
-                                          ),
-                                          model: {
-                                            value: _vm.task.erpEmployee,
-                                            callback: function($$v) {
-                                              _vm.$set(
-                                                _vm.task,
-                                                "erpEmployee",
-                                                $$v
-                                              )
-                                            },
-                                            expression: "task.erpEmployee"
-                                          }
-                                        })
-                                      ],
-                                      1
-                                    )
-                                  ])
-                                : _vm._e(),
-                              _vm._v(" "),
-                              _vm.checkedOptions.includes("ERP Job Site")
-                                ? _c("div", { staticClass: "flex-1" }, [
-                                    _c(
-                                      "div",
-                                      { staticClass: "flex-1 space-y-2" },
-                                      [
+                                            })
+                                          ],
+                                          1
+                                        )
+                                      ])
+                                    : _vm._e(),
+                                  _vm._v(" "),
+                                  _vm.checkedOptions.includes("ERP Job Site")
+                                    ? _c("div", { staticClass: "flex-1" }, [
                                         _c(
-                                          "span",
-                                          {
-                                            staticClass:
-                                              "block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"
-                                          },
-                                          [_vm._v("ERP Job Site")]
-                                        ),
-                                        _vm._v(" "),
-                                        _c("vSelect", {
-                                          staticClass: "text-gray-400",
-                                          staticStyle: { "margin-top": "7px" },
-                                          attrs: {
-                                            options: _vm.erpJobSites,
-                                            label: "name",
-                                            placeholder: "Select Job Site"
-                                          },
-                                          scopedSlots: _vm._u(
-                                            [
+                                          "div",
+                                          { staticClass: "flex-1 space-y-2" },
+                                          [
+                                            _c(
+                                              "span",
                                               {
-                                                key: "option",
-                                                fn: function(option) {
-                                                  return [
+                                                staticClass:
+                                                  "block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"
+                                              },
+                                              [_vm._v("ERP Job Site")]
+                                            ),
+                                            _vm._v(" "),
+                                            _c("vSelect", {
+                                              staticClass: "text-gray-400",
+                                              staticStyle: {
+                                                "margin-top": "7px"
+                                              },
+                                              attrs: {
+                                                options: _vm.erpJobSites,
+                                                label: "name",
+                                                placeholder: "Select Job Site"
+                                              },
+                                              scopedSlots: _vm._u(
+                                                [
+                                                  {
+                                                    key: "option",
+                                                    fn: function(option) {
+                                                      return [
+                                                        _c(
+                                                          "p",
+                                                          {
+                                                            staticClass:
+                                                              "inline"
+                                                          },
+                                                          [
+                                                            _vm._v(
+                                                              _vm._s(
+                                                                option.name
+                                                              )
+                                                            )
+                                                          ]
+                                                        )
+                                                      ]
+                                                    }
+                                                  },
+                                                  {
+                                                    key: "no-options",
+                                                    fn: function(ref) {
+                                                      var search = ref.search
+                                                      var searching =
+                                                        ref.searching
+                                                      var loading = ref.loading
+                                                      return [
+                                                        _vm._v(
+                                                          "\n                                            No result .\n                                        "
+                                                        )
+                                                      ]
+                                                    }
+                                                  }
+                                                ],
+                                                null,
+                                                false,
+                                                1756385052
+                                              ),
+                                              model: {
+                                                value: _vm.task.erpJobSite,
+                                                callback: function($$v) {
+                                                  _vm.$set(
+                                                    _vm.task,
+                                                    "erpJobSite",
+                                                    $$v
+                                                  )
+                                                },
+                                                expression: "task.erpJobSite"
+                                              }
+                                            })
+                                          ],
+                                          1
+                                        )
+                                      ])
+                                    : _vm._e()
+                                ])
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _vm.checkedOptions.includes("Group")
+                              ? _c("div", { staticClass: "flex-1" }, [
+                                  _c(
+                                    "div",
+                                    { staticClass: "flex-1 space-y-2" },
+                                    [
+                                      _c(
+                                        "span",
+                                        {
+                                          staticClass:
+                                            "block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"
+                                        },
+                                        [_vm._v("Group with task")]
+                                      ),
+                                      _vm._v(" "),
+                                      _c("vSelect", {
+                                        staticClass: "text-gray-400",
+                                        staticStyle: { "margin-top": "7px" },
+                                        attrs: {
+                                          options: _vm.tasks,
+                                          label: "name",
+                                          placeholder: "Select task"
+                                        },
+                                        scopedSlots: _vm._u(
+                                          [
+                                            {
+                                              key: "selected-option",
+                                              fn: function(option) {
+                                                return [
+                                                  _c("p", [
                                                     _c(
-                                                      "p",
-                                                      { staticClass: "inline" },
+                                                      "span",
+                                                      {
+                                                        staticClass: "font-bold"
+                                                      },
+                                                      [
+                                                        _vm._v(
+                                                          "task-" +
+                                                            _vm._s(option.id) +
+                                                            ": "
+                                                        )
+                                                      ]
+                                                    ),
+                                                    _vm._v(" "),
+                                                    _c(
+                                                      "span",
+                                                      { staticClass: "italic" },
                                                       [
                                                         _vm._v(
                                                           _vm._s(option.name)
                                                         )
                                                       ]
                                                     )
-                                                  ]
-                                                }
-                                              },
-                                              {
-                                                key: "no-options",
-                                                fn: function(ref) {
-                                                  var search = ref.search
-                                                  var searching = ref.searching
-                                                  var loading = ref.loading
-                                                  return [
-                                                    _vm._v(
-                                                      "\n                                            No result .\n                                        "
-                                                    )
-                                                  ]
-                                                }
+                                                  ])
+                                                ]
                                               }
-                                            ],
-                                            null,
-                                            false,
-                                            1756385052
-                                          ),
-                                          model: {
-                                            value: _vm.task.erpJobSite,
-                                            callback: function($$v) {
-                                              _vm.$set(
-                                                _vm.task,
-                                                "erpJobSite",
-                                                $$v
-                                              )
                                             },
-                                            expression: "task.erpJobSite"
-                                          }
-                                        })
-                                      ],
-                                      1
-                                    )
-                                  ])
-                                : _vm._e()
-                            ]),
+                                            {
+                                              key: "option",
+                                              fn: function(option) {
+                                                return [
+                                                  _c("p", [
+                                                    _c(
+                                                      "span",
+                                                      {
+                                                        staticClass: "font-bold"
+                                                      },
+                                                      [
+                                                        _vm._v(
+                                                          "task-" +
+                                                            _vm._s(option.id) +
+                                                            ": "
+                                                        )
+                                                      ]
+                                                    ),
+                                                    _vm._v(" "),
+                                                    _c(
+                                                      "span",
+                                                      { staticClass: "italic" },
+                                                      [
+                                                        _vm._v(
+                                                          _vm._s(option.name)
+                                                        )
+                                                      ]
+                                                    )
+                                                  ])
+                                                ]
+                                              }
+                                            },
+                                            {
+                                              key: "no-options",
+                                              fn: function(ref) {
+                                                var search = ref.search
+                                                var searching = ref.searching
+                                                var loading = ref.loading
+                                                return [
+                                                  _vm._v(
+                                                    "\n                                        No result .\n                                    "
+                                                  )
+                                                ]
+                                              }
+                                            }
+                                          ],
+                                          null,
+                                          false,
+                                          3707146479
+                                        ),
+                                        model: {
+                                          value: _vm.task.associatedTask,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.task,
+                                              "associatedTask",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "task.associatedTask"
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  )
+                                ])
+                              : _vm._e(),
                             _vm._v(" "),
                             _c(
                               "div",
@@ -84880,7 +85065,10 @@ var ajaxCalls = {
         _this3.triggerErrorToast(error.response.data.message);
       });
     },
-    // Task Cards
+    // Tasks
+    asyncGetAllTasks: function asyncGetAllTasks() {
+      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('get-all-tasks');
+    },
     asyncCreateTask: function asyncCreateTask(taskCardData) {
       var _this4 = this;
 

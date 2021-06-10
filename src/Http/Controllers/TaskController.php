@@ -4,10 +4,59 @@ namespace Xguard\LaravelKanban\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Xguard\LaravelKanban\Models\Badge;
 use Xguard\LaravelKanban\Models\Task;
+use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
+
+
+    public function getAllTasks()
+    {
+        return Task::all();
+    }
+
+    public function createBacklogTaskCards(Request $request)
+    {
+        $backlogTaskData = $request->all();
+
+        $badge = Badge::firstOrCreate([
+            'name' => $backlogTaskData['badge']['name'],
+        ]);
+
+        if ($backlogTaskData['associatedTask'] !== null){
+            $group = $backlogTaskData['associatedTask']['group'];
+        }
+        else
+            $group = 'g-' . (Task::max('id') + 1);
+
+        $parsedDateTime = strtotime($backlogTaskData['deadline']);
+        try {
+            foreach ($backlogTaskData['selectedKanbans'] as $kanban) {
+                Task::create([
+                    'index' => null,
+                    'reporter_id' => Auth::user()->id,
+                    'name' => $backlogTaskData['name'],
+                    'description' => $backlogTaskData['description'],
+                    'deadline' => date('y-m-d h:m', strtotime($backlogTaskData['deadline'])),
+                    'erp_employee_id' => $backlogTaskData['erpEmployee']['id'],
+                    'badge_id' => $badge->id,
+                    'column_id' => null,
+                    'board_id' => $kanban['id'],
+                    'group' => $group
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response([
+                'success' => 'false',
+                'message' => $e->getMessage(),
+            ], 400);
+        }
+        return response(['success' => 'true'], 200);
+    }
+
+
     public function createTaskCard(Request $request)
     {
         $taskCard = $request->all();
@@ -31,31 +80,6 @@ class TaskController extends Controller
         return response(['success' => 'true'], 200);
     }
 
-
-    public function createBacklogTaskCards(Request $request)
-    {
-        $backlogTaskData = $request->all();
-
-
-        try {
-            foreach ($backlogTaskData['selectedKanbans'] as $taskCard) {
-                Task::create([
-                    'index' => null,
-                    'name' => $backlogTaskData['name'],
-
-                    'description' => $backlogTaskData['description'],
-
-                    'column_id' => null,
-                ]);
-            }
-        } catch (\Exception $e) {
-            return response([
-                'success' => 'false',
-                'message' => $e->getMessage(),
-            ], 400);
-        }
-        return response(['success' => 'true'], 200);
-    }
 
     public function getTaskCardsByColumn($id)
     {

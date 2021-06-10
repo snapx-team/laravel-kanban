@@ -128,7 +128,8 @@
                                 </div>
                             </div>
 
-                            <div class="flex space-x-3">
+                            <div class="flex space-x-3"
+                                 v-if="checkedOptions.includes('Deadline') || checkedOptions.includes('ERP employee') ||checkedOptions.includes('ERP Job Site')">
                                 <div class="flex-1" v-if="checkedOptions.includes('Deadline')">
                                     <div class="flex-1 space-y-2">
                                         <span
@@ -152,7 +153,8 @@
                                                  style="margin-top: 7px"
                                                  v-model="task.erpEmployee">
                                             <template slot="option" slot-scope="option">
-                                                <avatar :name="option.full_name" :size="4" class="mr-3 m-1 float-left"></avatar>
+                                                <avatar :name="option.full_name" :size="4"
+                                                        class="mr-3 m-1 float-left"></avatar>
                                                 <p class="inline">{{ option.full_name }}</p>
                                             </template>
                                             <template #no-options="{ search, searching, loading }">
@@ -184,6 +186,34 @@
 
                             </div>
 
+                            <div class="flex-1" v-if="checkedOptions.includes('Group')">
+                                <div class="flex-1 space-y-2">
+                                    <span
+                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with task</span>
+                                    <vSelect :options="tasks"
+                                             class="text-gray-400"
+                                             label="name"
+                                             placeholder="Select task"
+                                             style="margin-top: 7px"
+                                             v-model="task.associatedTask">
+                                        <template slot="selected-option" slot-scope="option">
+                                            <p>
+                                                <span class="font-bold">task-{{ option.id }}: </span>
+                                                <span class="italic">{{ option.name }}</span>
+                                            </p>
+                                        </template>
+                                        <template slot="option" slot-scope="option">
+                                            <p>
+                                                <span class="font-bold">task-{{ option.id }}: </span>
+                                                <span class="italic">{{ option.name }}</span>
+                                            </p>
+                                        </template>
+                                        <template #no-options="{ search, searching, loading }">
+                                            No result .
+                                        </template>
+                                    </vSelect>
+                                </div>
+                            </div>
 
                             <div class="w-full grid sm:grid-cols-2 gap-3 sm:gap-3">
                                 <button @click="modalOpen = false"
@@ -233,15 +263,10 @@
         data() {
             return {
                 taskOptions: [
-                    {
-                        name: 'Deadline',
-                    },
-                    {
-                        name: 'ERP employee',
-                    },
-                    {
-                        name: 'ERP Job Site',
-                    },
+                    {name: 'Deadline',},
+                    {name: 'ERP employee',},
+                    {name: 'ERP Job Site',},
+                    {name: 'Group',},
                 ],
                 checkedOptions: [],
                 config: {
@@ -268,12 +293,13 @@
                     erpEmployee: null,
                     erpJobSite: null,
                     deadline: null,
-                    columnId:null,
-
+                    columnId: null,
+                    associatedTask: null,
                 },
-                badges: [{name:'red', id:1}, {name:'blue', id:2},],
+                badges: [],
                 erpEmployees: [],
                 erpJobSites: [],
+                tasks: [],
                 modalOpen: false,
             };
         },
@@ -286,6 +312,8 @@
             this.getBadges();
             this.getErpEmployees();
             this.getJobSites();
+            this.getTasks();
+
         },
 
         beforeDestroy() {
@@ -301,7 +329,7 @@
 
             getBadges() {
                 this.asyncGetBadges().then((data) => {
-                    // this.badges = data.data;
+                    this.badges = data.data;
                 }).catch(res => {
                     console.log(res)
                 });
@@ -310,7 +338,9 @@
             getErpEmployees() {
                 this.asyncGetAllUsers().then((data) => {
                     this.erpEmployees = data.data;
-                }).catch(res => {console.log(res)});
+                }).catch(res => {
+                    console.log(res)
+                });
             },
 
             getJobSites() {
@@ -321,9 +351,17 @@
                 });
             },
 
+            getTasks() {
+                this.asyncGetAllTasks().then((data) => {
+                    this.tasks = data.data;
+                }).catch(res => {
+                    console.log(res)
+                });
+            },
+
         },
 
-        computed:{
+        computed: {
             computedBadges() {
                 return this.badges.map(badge => {
                     let computedBadges = {};
