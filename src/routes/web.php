@@ -56,6 +56,7 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
 
             //ERP Data
             Route::get('/get-all-users', 'ErpController@getAllUsers');
+            Route::get('/get-some-users/{searchTerm}', 'ErpController@getSomeUsers');
             Route::get('/get-all-job-sites', 'ErpController@getAllJobSites');
 
         });
