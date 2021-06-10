@@ -25,6 +25,7 @@ class CreateKanbanTasksTable extends Migration
             $table->unsignedBigInteger('badge_id')->nullable();
             $table->unsignedBigInteger('erp_employee_id')->nullable();
             $table->string('group');
+            $table->string('status')->default('active');
             $table->timestamps();
             $table->foreign('column_id')->references('id')->on('kanban_columns')->onDelete('cascade');
 

@@ -71,7 +71,8 @@
                                         placeholder="Choose or Create"
                                         style="margin-top: 7px"
                                         taggable
-                                        class="text-gray-700">
+                                        :create-option="option => ({name: option.toLowerCase()})">
+                                    class="text-gray-700">
                                         <template slot="option" slot-scope="option">
                                             <span class="fa fa-circle mr-4" :style="`color:#${option.color};`"></span>
                                             {{ option.name }}
@@ -287,7 +288,7 @@
 
                 task: {
                     name: null,
-                    badge: null,
+                    badge: {},
                     description: null,
                     selectedKanbans: [],
                     erpEmployee: null,
