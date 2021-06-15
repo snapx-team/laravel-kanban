@@ -18,6 +18,20 @@ export const ajaxCalls = {
             return axios.get('get-dashboard-data');
         },
 
+        // Metrics
+
+        asyncGetBadgeData() {
+            return axios.get('get-badge-data');
+        },
+
+        asyncGetTicketsByEmployee() {
+            return axios.get('get-tickets-by-employee');
+        },
+
+        asyncGetCreationByHour() {
+            return axios.get('get-creation-by-hour');
+        },
+
         // Board
 
         asyncGetBoards() {

@@ -16,6 +16,13 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             // Phone Schedule App Data
             Route::get('/get-board-data/{id}', 'LaravelKanbanController@getkanbanData');
             Route::get('/get-dashboard-data', 'LaravelKanbanController@getDashboardData');
+            
+            // Metrics
+
+            Route::get('/get-badge-data', 'MetricsController@getBadgeData');
+            Route::get('/get-tickets-by-employee', 'MetricsController@getTicketsByEmployee');
+            Route::get('/get-creation-by-hour', 'MetricsController@getCreationByHour');
+
 
             // Board
             Route::post('/create-board', 'BoardsController@createBoard');
