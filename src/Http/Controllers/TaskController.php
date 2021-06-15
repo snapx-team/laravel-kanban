@@ -45,6 +45,8 @@ class TaskController extends Controller
                     'column_id' => null,
                     'board_id' => $kanban['id'],
                     'group' => $group
+
+                    
                 ]);
             }
         } catch (\Exception $e) {

@@ -64,7 +64,7 @@
                                              class="text-gray-400"
                                              label="full_name"
                                              multiple
-                                             placeholder="Select Members"
+                                             placeholder="Select Employees"
                                              style="margin-top: 7px"
                                              v-model="employeeData.selectedUsers"
                                              @search="onType">
