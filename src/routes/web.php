@@ -22,6 +22,7 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             Route::get('/get-badge-data', 'MetricsController@getBadgeData');
             Route::get('/get-tickets-by-employee', 'MetricsController@getTicketsByEmployee');
             Route::get('/get-creation-by-hour', 'MetricsController@getCreationByHour');
+            Route::get('/get-jobsite-data', 'MetricsController@getJobSiteData');
 
 
             // Board

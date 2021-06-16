@@ -32,6 +32,10 @@ export const ajaxCalls = {
             return axios.get('get-creation-by-hour');
         },
 
+        asyncGetJobSiteData() {
+            return axios.get('get-jobsite-data');
+        },
+
         // Board
 
         asyncGetBoards() {

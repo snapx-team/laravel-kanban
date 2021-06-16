@@ -3,6 +3,7 @@
         
         <pie-chart v-if="badgeData != null" :series="badgeData.hits" :labels="badgeData.names" :title="'Tickets by Category'"></pie-chart>
         <pie-chart v-if="ticketByEmployeeData != null" :series="ticketByEmployeeData.hits" :labels="ticketByEmployeeData.names" :title="'Tickets Created by Employee'"></pie-chart>
+        <pie-chart v-if="jobsiteData != null" :series="jobsiteData.hits" :labels="jobsiteData.names" :title="'Tickets by JobSite'"></pie-chart>
         <bar-chart  v-if="creationByHour != null" :data="creationByHour.hits" :categories="creationByHour.names" :xname="'Tickets'" :yname="'Hour'" :title="'Tickets by Hour Created'"></bar-chart>
     </div>
 </template>
@@ -22,7 +23,8 @@ export default {
         return {
             badgeData: null,
             ticketByEmployeeData: null,
-            creationByHour: null,            
+            creationByHour: null,    
+            jobsiteData: null,        
         }
     },
 
@@ -32,6 +34,7 @@ export default {
         this.getBadgeData();
         this.getTicketsByEmployee();
         this.getCreationByHour();
+        this.getJobSiteData();
     },
     methods: {
         getBadgeData() {
@@ -41,14 +44,20 @@ export default {
         },
         getTicketsByEmployee() {
             this.asyncGetTicketsByEmployee().then((data) => {
-                console.log(data.data);
+                // console.log(data.data);
                 this.ticketByEmployeeData = data.data
             })
         },
         getCreationByHour() {
             this.asyncGetCreationByHour().then((data) => {
-                console.log(data.data);
+                // console.log(data.data);
                 this.creationByHour = data.data
+            })
+        },
+        getJobSiteData() {
+            this.asyncGetJobSiteData().then((data) => {
+                console.log(data.data);
+                this.jobsiteData = data.data
             })
         }
     }

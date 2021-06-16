@@ -34,8 +34,23 @@ class MetricsController extends Controller
     }
 
     public function getJobSiteData() {
-        $tasks = Task::orderBy('badge_id')->get();
+        $tasks = Task::with('jobSite')->orderBy('erp_job_site_id')->get();
 
+        $jobsiteNames = [];
+        $jobsiteCounts = [];
+        foreach($tasks as $task) {
+            if(array_key_exists($task->erp_job_site_id, $jobsiteCounts)){
+                $jobsiteCounts[$task->erp_job_site_id] += 1;
+            } else {
+                $jobsiteCounts[$task->erp_job_site_id] = 1;
+                array_push($jobsiteNames, $task->jobsite->name);
+            }
+        }
+
+        return [
+            'hits' => array_values($jobsiteCounts),
+            'names' => $jobsiteNames
+        ];
     }
 
     public function getTicketsByEmployee() {
@@ -44,7 +59,7 @@ class MetricsController extends Controller
 
         $reporters = [];
         $assArray = array();
-        $assArray[1] = 0;
+        $assArray[$tasks[0]->reporter_id] = 0;
         foreach($employees as $employee) {
             array_push($reporters, $employee->user->full_name);
             if(!array_key_exists($employee->id, $assArray)) {
@@ -69,7 +84,7 @@ class MetricsController extends Controller
 
         $arr = [];
         foreach($tasks as $task) {
-            $date = new DateTime(($task->created_at));
+            $date = (new DateTime(($task->created_at)))->modify('-4 hours');;
             $dateString = $date->format('G');
             if(array_key_exists($dateString, $arr)) {
                 $arr[$dateString] += 1;
