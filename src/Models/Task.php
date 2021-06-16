@@ -29,14 +29,28 @@ class Task extends Model
         return $this->belongsTo(Column::class);
     }
 
-    public function badge(): HasOne
+    public function badge(): BelongsTo
     {
-        return $this->hasOne(Badge::class);
+        return $this->belongsTo(Badge::class);
+    }
+
+    public function jobSite(): BelongsTo
+    {
+        return $this->belongsTo(JobSite::class);
     }
 
     public function assignedTo(): BelongsToMany
     {
-        return $this->belongsToMany(Employee::class, 'kanban_employee-task', 'task_id', 'employee_id');
+        return $this->belongsToMany(Employee::class, 'kanban_employee_task', 'task_id', 'employee_id');
     }
 
+    public function comments(): HasMany
+    {
+        return $this->HasMany(Comment::class);
+    }
+
+    public function logs(): HasMany
+    {
+        return $this->HasMany(Log::class);
+    }
 }

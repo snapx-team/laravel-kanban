@@ -138,7 +138,7 @@
                 const regex = new RegExp(this.filter, "i");
                 return this.employees.filter((e) => {
                     this.paginationIndex = 0;
-                    return !this.filter || e.name.match(regex) || e.phone.match(regex);
+                    return !this.filter || e.user.full_name.match(regex) || e.user.email.match(regex);
                 });
             },
         },

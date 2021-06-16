@@ -44,9 +44,9 @@
                                 <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">
                                     Employees
                                 </span>
-                                <vSelect :options="allUsers"
+                                <vSelect :options="allKanbanUsers"
                                          class="text-gray-400"
-                                         label="user.full_name"
+                                         :getOptionLabel="opt => opt.user.full_name"
                                          multiple
                                          placeholder="Select Members"
                                          style="margin-top: 7px"
@@ -93,8 +93,8 @@
                                         <div :key="memberIndex"
                                              class="flex justify-between items-center border-b p-1">
                                             <div class="flex items-center">
-                                                <avatar :name="member.employee.name" :size="6" class="mr-3"></avatar>
-                                                <span class="py-2 mr-3 text-gray-600">{{member.employee.name}}</span>
+                                                <avatar :name="member.employee.user.full_name" :size="6" class="mr-3"></avatar>
+                                                <span class="py-2 mr-3 text-gray-600">{{member.employee.user.full_name}}</span>
                                             </div>
                                             <a @click="removeMember(member)" class="cursor-pointer text-gray-400 text-sm hover:text-gray-600 transition duration-300 ease-in-out">remove</a>
                                         </div>
@@ -131,7 +131,7 @@
                 isSavingMember: false,
                 kanbanID: null,
                 selectedMembers: null,
-                allUsers: [],
+                allKanbanUsers: [],
             };
         },
         created() {
@@ -146,7 +146,7 @@
 
         mounted(){
             this.asyncGetKanbanEmployees().then((data) => {
-                this.allUsers = data.data;
+                this.allKanbanUsers = data.data;
             }).catch(res => {console.log(res)});
         },
 

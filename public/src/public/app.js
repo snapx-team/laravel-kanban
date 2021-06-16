@@ -1230,7 +1230,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuedraggable__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuedraggable */ "./node_modules/vuedraggable/dist/vuedraggable.umd.js");
 /* harmony import */ var vuedraggable__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vuedraggable__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _kanbanComponents_TaskCard_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./kanbanComponents/Task.vue */ "./src/resources/js/components/kanban/kanbanComponents/TaskCard.vue");
-/* harmony import */ var _kanbanComponents_AddTaskCardModal_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./kanbanComponents/AddTaskCardModal.vue */ "./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue");
+/* harmony import */ var _kanbanComponents_AddTaskCardModal_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./kanbanComponents/AddTaskData.vue */ "./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue");
 /* harmony import */ var _kanbanComponents_AddMemberModal_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./kanbanComponents/AddMemberModal.vue */ "./src/resources/js/components/kanban/kanbanComponents/AddMemberModal.vue");
 /* harmony import */ var _kanbanComponents_AddColumnModal_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./kanbanComponents/AddRowAndColumnsModal.vue */ "./src/resources/js/components/kanban/kanbanComponents/AddColumnModal.vue");
 /* harmony import */ var _kanbanComponents_KanbanBar_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./kanbanComponents/KanbanBar.vue */ "./src/resources/js/components/kanban/kanbanComponents/KanbanBar.vue");
@@ -1890,7 +1890,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=script&lang=js&":
 /*!***********************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=script&lang=js& ***!
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/kanban/kanbanComponents/AddTaskData.vue?vue&type=script&lang=js& ***!
   \***********************************************************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -10428,7 +10428,7 @@ render._withStripped = true
 
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=template&id=f1c80a64&":
 /*!***************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=template&id=f1c80a64& ***!
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./src/resources/js/components/kanban/kanbanComponents/AddTaskData.vue?vue&type=template&id=f1c80a64& ***!
   \***************************************************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -31285,15 +31285,15 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ "./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue":
 /*!**************************************************************************************!*\
-  !*** ./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue ***!
+  !*** ./src/resources/js/components/kanban/kanbanComponents/AddTaskData.vue ***!
   \**************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _AddTaskCardModal_vue_vue_type_template_id_f1c80a64___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AddTaskCardModal.vue?vue&type=template&id=f1c80a64& */ "./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=template&id=f1c80a64&");
-/* harmony import */ var _AddTaskCardModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AddTaskCardModal.vue?vue&type=script&lang=js& */ "./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=script&lang=js&");
+/* harmony import */ var _AddTaskCardModal_vue_vue_type_template_id_f1c80a64___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AddTaskData.vue?vue&type=template&id=f1c80a64& */ "./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=template&id=f1c80a64&");
+/* harmony import */ var _AddTaskCardModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AddTaskData.vue?vue&type=script&lang=js& */ "./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -31315,35 +31315,35 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue"
+component.options.__file = "src/resources/js/components/kanban/kanbanComponents/AddTaskData.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 
 /***/ "./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=script&lang=js&":
 /*!***************************************************************************************************************!*\
-  !*** ./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=script&lang=js& ***!
+  !*** ./src/resources/js/components/kanban/kanbanComponents/AddTaskData.vue?vue&type=script&lang=js& ***!
   \***************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AddTaskCardModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddTaskCardModal.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AddTaskCardModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddTaskData.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AddTaskCardModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /***/ }),
 
 /***/ "./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=template&id=f1c80a64&":
 /*!*********************************************************************************************************************!*\
-  !*** ./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=template&id=f1c80a64& ***!
+  !*** ./src/resources/js/components/kanban/kanbanComponents/AddTaskData.vue?vue&type=template&id=f1c80a64& ***!
   \*********************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddTaskCardModal_vue_vue_type_template_id_f1c80a64___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddTaskCardModal.vue?vue&type=template&id=f1c80a64& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=template&id=f1c80a64&");
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddTaskCardModal_vue_vue_type_template_id_f1c80a64___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./AddTaskData.vue?vue&type=template&id=f1c80a64& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./src/resources/js/components/kanban/kanbanComponents/AddTaskCardModal.vue?vue&type=template&id=f1c80a64&");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddTaskCardModal_vue_vue_type_template_id_f1c80a64___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AddTaskCardModal_vue_vue_type_template_id_f1c80a64___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });

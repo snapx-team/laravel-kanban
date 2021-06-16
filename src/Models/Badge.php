@@ -3,7 +3,7 @@
 namespace Xguard\LaravelKanban\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Badge extends Model
 {
@@ -11,8 +11,8 @@ class Badge extends Model
 
     protected $guarded = [];
 
-    public function taskCard(): BelongsTo
+    public function taskCard(): HasOne
     {
-        return $this->belongsTo(Task::class);
+        return $this->hasOne(Task::class);
     }
 }

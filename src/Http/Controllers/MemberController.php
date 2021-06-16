@@ -43,6 +43,6 @@ class MemberController extends Controller
 
     public function getMembers($id)
     {
-        return Member::where('board_id', $id)->with('employee')->get();
+        return Member::where('board_id', $id)->with('employee.user')->get();
     }
 }

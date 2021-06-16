@@ -150,7 +150,6 @@ export const ajaxCalls = {
             return axios.post('create-members/' + boardId, memberData).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
-
         },
 
         asyncDeleteMember(memberId) {
@@ -158,6 +157,27 @@ export const ajaxCalls = {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
+
+        // Comments
+
+        asyncGetComments(taskId) {
+            return axios.get('get-task-comments/'+ taskId);
+        },
+
+        asyncCreateComment(commentData) {
+            return axios.post('create-task-comment', commentData).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
+        },
+
+        asyncDeleteComment(commentId) {
+            return axios.post('delete-task-comment/' + commentId).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
+        },
+
+
+        // Triggers
 
         triggerSuccessToast(message) {
             this.$toast(message, {
