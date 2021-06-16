@@ -36,7 +36,7 @@ class Task extends Model
 
     public function jobSite(): BelongsTo
     {
-        return $this->belongsTo(JobSite::class);
+        return $this->belongsTo(JobSite::class, 'erp_job_site_id');
     }
 
     public function assignedTo(): BelongsToMany

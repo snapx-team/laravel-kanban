@@ -41,12 +41,13 @@ class TaskController extends Controller
                     'description' => $backlogTaskData['description'],
                     'deadline' => date('y-m-d h:m', strtotime($backlogTaskData['deadline'])),
                     'erp_employee_id' => $backlogTaskData['erpEmployee']['id'],
+                    'erp_job_site_id' => $backlogTaskData['erpJobSite']['id'],
                     'badge_id' => $badge->id,
                     'column_id' => null,
                     'board_id' => $kanban['id'],
                     'group' => $group
 
-                    
+
                 ]);
             }
         } catch (\Exception $e) {
