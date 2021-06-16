@@ -33,15 +33,23 @@ class MetricsController extends Controller
         ];
     }
 
+    public function getJobSiteData() {
+        $tasks = Task::orderBy('badge_id')->get();
+
+    }
+
     public function getTicketsByEmployee() {
         $tasks = Task::select('reporter_id')->orderBy('reporter_id')->get();
-        $employees = Employee::orderBy('id')->get();
+        $employees = Employee::with('user')->orderBy('id')->get();
 
         $reporters = [];
-        // uses the kanban_employees table ONLY. what is kanban members?
+        $assArray = array();
+        $assArray[1] = 0;
         foreach($employees as $employee) {
-            array_push($reporters, $employee->role);
-            $assArray[$employee->id] = 0;
+            array_push($reporters, $employee->user->full_name);
+            if(!array_key_exists($employee->id, $assArray)) {
+                $assArray[$employee->id] = 0;
+            }
         }
 
         foreach($tasks as $task) {
@@ -50,7 +58,9 @@ class MetricsController extends Controller
         
         return [
             'hits' => array_values($assArray),
-            'names' => $reporters
+            'names' => $reporters,
+            'employees' => $employees,
+            'test' => $assArray
         ];
     }
 
@@ -61,15 +71,16 @@ class MetricsController extends Controller
         foreach($tasks as $task) {
             $date = new DateTime(($task->created_at));
             $dateString = $date->format('G');
-            array_push($arr, $dateString);
-            // if(array_key_exists($dateString, $arr)) {
-            //     $arr[$dateString] += 1;
-            // } else {
-            //     $arr[$dateString] = 1;
-            // }
+            if(array_key_exists($dateString, $arr)) {
+                $arr[$dateString] += 1;
+            } else {
+                $arr[$dateString] = 1;
+            }
         }
+        ksort($arr);
         return [
-            'dates' =>$arr,
+            'hits' => array_values($arr),
+            'names' => array_keys($arr),
         ];
     }
 
