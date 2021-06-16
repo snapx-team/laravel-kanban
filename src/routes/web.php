@@ -40,6 +40,12 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             Route::post('/update-task-card-column/{columnId}/{taskCardId}', 'TaskController@updateTaskCardColumnId');
             Route::post('/delete-kanban-task-card/{id}', 'TaskController@deleteTaskCard');
 
+            // Comments
+
+            Route::get('/get-task-comments/{taskId}', 'CommentController@getAllTaskComments');
+            Route::post('/create-task-comment', 'CommentController@createOrUpdateTaskComment');
+            Route::post('/delete-task-comment/{taskCommentId}', 'CommentController@deleteTaskComment');
+
             // Employees
             Route::post('/create-kanban-employees', 'EmployeeController@createEmployees');
             Route::post('/delete-kanban-employee/{id}', 'EmployeeController@deleteEmployee');
@@ -51,7 +57,7 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             Route::get('/get-members/{id}', 'MemberController@getMembers');
 
             // Badges
-            Route::get('/get-all-badges', 'badgeController@getAllBadges');
+            Route::get('/get-all-badges', 'BadgeController@getAllBadges');
 
 
             //ERP Data

@@ -88,7 +88,7 @@
 
         <p>{{kanban}}</p>
 
-        <add-task-card-modal :kanbanData="kanban"></add-task-card-modal>
+        <kanban-task-modal :kanbanData="kanban"></kanban-task-modal>
         <add-member-modal :kanbanData="kanban"></add-member-modal>
         <add-row-and-columns-modal :kanbanData="kanban"></add-row-and-columns-modal>
     </div>
@@ -97,7 +97,7 @@
 <script>
     import draggable from "vuedraggable";
     import TaskCard from "./kanbanComponents/TaskCard.vue";
-    import AddTaskCardModal from "./kanbanComponents/AddTaskCardModal.vue";
+    import kanbanTaskModal from "./kanbanComponents/KanbanTaskModal";
     import AddMemberModal from "./kanbanComponents/AddMemberModal.vue";
     import KanbanBar from "./kanbanComponents/KanbanBar.vue";
     import {ajaxCalls} from "../../mixins/ajaxCallsMixin";
@@ -109,9 +109,9 @@
             AddRowAndColumnsModal,
             TaskCard,
             draggable,
-            AddTaskCardModal,
             AddMemberModal,
             KanbanBar,
+            kanbanTaskModal,
         },
 
         mixins: [ajaxCalls],
@@ -166,9 +166,9 @@
 
         methods: {
             createTaskCard(rowIndex, columnIndex) {
-                var rowName = this.kanban.rows[rowIndex].name;
-                var columnName = this.kanban.rows[rowIndex].columns[columnIndex].name;
-                var columnId = this.kanban.rows[rowIndex].columns[columnIndex].id;
+                let rowName = this.kanban.rows[rowIndex].name;
+                let columnName = this.kanban.rows[rowIndex].columns[columnIndex].name;
+                let columnId = this.kanban.rows[rowIndex].columns[columnIndex].id;
 
                 this.eventHub.$emit("create-kanban-task-cards", {
                     rowIndex,

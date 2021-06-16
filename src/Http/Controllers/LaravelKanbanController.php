@@ -17,7 +17,7 @@ class LaravelKanbanController extends Controller
 
     public function getkanbanData($id)
     {
-        $board = Board::with('members.employee.user', 'rows.columns.taskCards.employee.user')->find($id);
+        $board = Board::with('members.employee.user', 'rows.columns.taskCards.reporter', 'rows.columns.taskCards.erpEmployee', 'rows.columns.taskCards.assignedTo.user', 'rows.columns.taskCards.badge')->find($id);
         return $board;
     }
 

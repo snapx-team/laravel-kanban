@@ -1,18 +1,18 @@
 <template>
     <div class="bg-white hover:shadow-md shadow rounded px-3 pt-3 pb-5 border-l-4"
-         v-bind:class="`border-${task_card.employee.is_active}-400`">
+         v-bind:class="`border-indigo-400`">
         <div class="flex justify-between">
             <p class="text-gray-700 font-semibold font-sans tracking-wide text-sm mr-3">
                 TASK TITLE </p>
 
             <div class="flex justify-end">
-                <template v-for="(user, userIndex) in task_card.assignedTo">
-                    <template v-if="userIndex < 3">
+                <template v-for="(employee, employeeIndex) in task_card.assignedTo">
+                    <template v-if="employeeIndex < 3">
                         <avatar :borderColor="'white'"
                                 :borderSize="0"
-                                :class="{ '-ml-2': userIndex > 0 }"
-                                :key="userIndex"
-                                :name="user.name"
+                                :class="{ '-ml-2': employeeIndex > 0 }"
+                                :key="employeeIndex"
+                                :name="employee.user.full_name"
                                 :size="6"
                                 :tooltip="true"></avatar>
                     </template>
@@ -27,8 +27,8 @@
         </div>
         <div class="flex mt-4 justify-between items-center">
             <div class="flex flex-wrap items-center">
-                <avatar :name="task_card.creator" :size="6" :tooltip="true" class="border border-white"></avatar>
-                <span class="text-sm text-gray-600 px-1"> • {{ task_card.date }} </span>
+                <avatar :name="task_card.reporter.full_name" :size="6" :tooltip="true" class="border border-white"></avatar>
+                <span class="text-sm text-gray-600 px-1"> • {{ task_card.created_at }} </span>
             </div>
             <badge :color="task_card.badge.color" v-if="task_card.badge">{{ task_card.badge.title }}</badge>
         </div>
