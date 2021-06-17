@@ -1,6 +1,6 @@
 <template>
     <div id="chart">
-        <vue-apex-charts type="pie" width="380" :options="computedChartOptions" :series="this.series"></vue-apex-charts>
+        <vue-apex-charts type="pie" width="400" height="400" :options="computedChartOptions" :series="this.series"></vue-apex-charts>
     </div>
 </template>
 
@@ -19,7 +19,16 @@ export default {
                     width: 380,
                     type: 'pie',
                 },
-                labels: ['1', '2', '3'],
+                labels: [],
+                legend: {
+                    formatter: function(val) {
+                        const n = 12
+                        if(val) {
+                            return val.length > n ? val.substr(0, n - 1) + '...' : val
+                        }
+                        return val;
+                    }
+                },
                 responsive: [{
                     breakpoint: 480,
                     options: {
@@ -27,7 +36,7 @@ export default {
                             width: 200
                         },
                         legend: {
-                            position: 'bottom'
+                            position: 'bottom',
                         }
                     }
                 }]

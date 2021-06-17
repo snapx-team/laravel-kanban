@@ -89,7 +89,7 @@ export default {
                     title: {
                         text: this.title,
                         align: 'center',
-                        margin: 10,
+                        margin: 50,
                         offsetX: 0,
                         offsetY: 0,
                         floating: false,

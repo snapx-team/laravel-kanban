@@ -5,6 +5,7 @@ namespace Xguard\LaravelKanban\Http\Controllers;
 use App\Http\Controllers\Controller;
 use DateTime;
 use Xguard\LaravelKanban\Models\Employee;
+use Xguard\LaravelKanban\Models\Log;
 use Xguard\LaravelKanban\Models\Badge;
 use Xguard\LaravelKanban\Models\Task;
 
@@ -39,17 +40,19 @@ class MetricsController extends Controller
         $jobsiteNames = [];
         $jobsiteCounts = [];
         foreach($tasks as $task) {
-            if(array_key_exists($task->erp_job_site_id, $jobsiteCounts)){
-                $jobsiteCounts[$task->erp_job_site_id] += 1;
-            } else {
-                $jobsiteCounts[$task->erp_job_site_id] = 1;
-                array_push($jobsiteNames, $task->jobsite->name);
+            if($task->erp_job_site_id !== null) {
+                if(array_key_exists($task->erp_job_site_id, $jobsiteCounts)){
+                    $jobsiteCounts[$task->erp_job_site_id] += 1;
+                } else {
+                    $jobsiteCounts[$task->erp_job_site_id] = 1;
+                    array_push($jobsiteNames, $task->jobsite->name);
+                }
             }
         }
 
         return [
             'hits' => array_values($jobsiteCounts),
-            'names' => $jobsiteNames
+            'names' => $jobsiteNames,
         ];
     }
 
@@ -99,5 +102,86 @@ class MetricsController extends Controller
         ];
     }
 
+    public function getClosedTasksByEmployee() {
+        $logs = Log::with('user')->where('log_type', '22')->orderBy('user_id')->get();
+
+        $names = [];
+        $hits = [];
+        foreach($logs as $log) {
+            if(array_key_exists($log->user_id, $hits)){
+                $hits[$log->user_id] += 1;
+            } else {
+                $hits[$log->user_id] = 1;
+                array_push($names, $log->user->full_name);
+            }
+        }
+
+        return [
+            'hits' => array_values($hits),
+            'names' => $names,
+        ];
+    }
+
+    public function getDelayByBadge() {
+        $logs = Log::with('badge', 'task')->where('log_type', '22')->orderBy('badge_id')->get();
+
+        $names = [];
+        $hits = [];
+        foreach($logs as $log){
+            $beginning = new DateTime($log->task->created_at);
+            $end = new DateTime($log->created_at);
+            $hours = ($end->diff($beginning))->h;
+            if(array_key_exists($log->badge_id, $hits)){
+                array_push($hits[$log->badge_id], $hours);
+            } else {
+                $hits[$log->badge_id] = [$hours];
+                array_push($names, $log->badge->name);
+            }
+        }
+
+        $averages = [];
+        foreach($hits as $value) {
+            array_push($averages, array_sum($value)/count($value));
+        }
+
+        return [
+            'names' => $names,
+            'hits' => $averages
+        ];
+    }
+
+    public function getDelayByEmployee() {
+        $closedLogs = Log::where('log_type', '22')->orderBy('task_id')->get();
+        $assignedLogs = Log::with('user')->where('log_type', '23')->orderBy('task_id')->get();
+
+        $names = [];
+        $hits = [];
+        foreach($assignedLogs as $assignedLog) {
+            foreach ($closedLogs as $key => $closedLog) {
+                if ($assignedLog->task_id == $closedLog->task_id){
+                    $beginning = new DateTime($assignedLog->created_at);
+                    $end = new DateTime($closedLog->created_at);
+                    $hours = ($end->diff($beginning))->h;
+                    if(array_key_exists($assignedLog->user_id, $hits)){
+                        array_push($hits[$assignedLog->user_id], $hours);
+                        unset($closedLogs[$key]);
+                    } else {
+                        $hits[$assignedLog->user_id] = [$hours];
+                        array_push($names, $assignedLog->user->full_name);
+                    }
+                }
+            }
+        }
+
+        $averages = [];
+        foreach($hits as $value) {
+            array_push($averages, array_sum($value)/count($value));
+        }
+
+        return [
+            'names' => $names,
+            'hits' => $averages,
+        ];
+    }
     
 }

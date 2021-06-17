@@ -36,6 +36,18 @@ export const ajaxCalls = {
             return axios.get('get-jobsite-data');
         },
 
+        asyncGetClosedTasksByEmployee() {
+            return axios.get('get-closed-by-employee');
+        },
+        
+        asyncGetDelayByBadge() {
+            return axios.get('get-delay-by-badge');
+        },
+
+        asyncGetDelayByEmployee() {
+            return axios.get('get-delay-by-employee');
+        },
+
         // Board
 
         asyncGetBoards() {

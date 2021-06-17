@@ -2,6 +2,7 @@
 
 namespace Xguard\LaravelKanban\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -21,6 +22,8 @@ class Log extends Model
 
     const TYPE_EMPLOYEE_CARD_CREATED = 7;
     const TYPE_EMPLOYEE_CARD_DELETED = 8;
+    const TYPE_EMPLOYEE_CARD_CLOSED = 22;
+    const TYPE_EMPLOYEE_CARD_ASSIGNED = 23;
 
     const TYPE_KANBAN_COLUMNS_CREATED_OR_UPDATED = 9;
 
@@ -41,5 +44,20 @@ class Log extends Model
     public function employee(): BelongsTo
     {
         return $this->belongsTo(Employee::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function badge(): BelongsTo
+    {
+        return $this->belongsTo(Badge::class);
+    }
+
+    public function task(): BelongsTo
+    {
+        return $this->belongsTo(Task::class);
     }
 }
