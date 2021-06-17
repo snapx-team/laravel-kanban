@@ -12,35 +12,47 @@ use Xguard\LaravelKanban\Models\Task;
 class MetricsController extends Controller
 {
     
-    public function getBadgeData()
+    public function getBadgeData($start, $end)
     {
-        $tasks = Task::orderBy('badge_id')->get();
+        $tasks = Task::with('badge')
+            ->whereDate('created_at', '>=', new DateTime($start))
+            ->whereDate('created_at', '<=', new DateTime($end))
+            ->orderBy('badge_id')
+            ->get();
 
-        $badges = Badge::orderBy('id')->get();
 
-        $badgeNames = [];
-        foreach ($badges as $badge) {
-            $badgeHits[$badge->id] = 0;
-            array_push($badgeNames, $badge->name);
-        }
-
+        $names = [];
+        $hits = [];
         foreach ($tasks as $task) {
-            $badgeHits[$task->badge_id] += 1;
+            if(array_key_exists($task->badge_id, $hits)){
+                $hits[$task->badge_id] += 1;
+            } else {
+                $hits[$task->badge_id] = 1;
+                array_push($names, $task->badge->name);
+            }
         }
 
         return [
-            'names' => $badgeNames,
-            'hits' => array_values($badgeHits)
+            'names' => $names,
+            'hits' => array_values($hits),
+            'tasks' => $tasks,
+            'start' => $start,
+            'end' => $end
         ];
     }
 
-    public function getJobSiteData() {
-        $tasks = Task::with('jobSite')->orderBy('erp_job_site_id')->get();
+    public function getJobSiteData($start, $end)
+    {
+        $tasks = Task::with('jobSite')
+            ->whereDate('created_at', '>=', new DateTime($start))
+            ->whereDate('created_at', '<=', new DateTime($end))
+            ->orderBy('erp_job_site_id')
+            ->get();
 
         $jobsiteNames = [];
         $jobsiteCounts = [];
         foreach($tasks as $task) {
-            if($task->erp_job_site_id !== null) {
+            if($task->erp_job_site_id !== null && $task->jobsite !== null) {
                 if(array_key_exists($task->erp_job_site_id, $jobsiteCounts)){
                     $jobsiteCounts[$task->erp_job_site_id] += 1;
                 } else {
@@ -56,8 +68,14 @@ class MetricsController extends Controller
         ];
     }
 
-    public function getTicketsByEmployee() {
-        $tasks = Task::select('reporter_id')->orderBy('reporter_id')->get();
+    public function getTicketsByEmployee($start, $end)
+    {
+        $tasks = Task::select('reporter_id')
+            ->whereDate('created_at', '>=', new DateTime($start))
+            ->whereDate('created_at', '<=', new DateTime($end))
+            ->orderBy('reporter_id')
+            ->get();
+
         $employees = Employee::with('user')->orderBy('id')->get();
 
         $reporters = [];
@@ -82,8 +100,11 @@ class MetricsController extends Controller
         ];
     }
 
-    public function getCreationByHour() {
-        $tasks = Task::get();
+    public function getCreationByHour($start, $end)
+    {
+        $tasks = Task::whereDate('created_at', '>=', new DateTime($start))
+            ->whereDate('created_at', '<=', new DateTime($end))
+            ->get();
 
         $arr = [];
         foreach($tasks as $task) {
@@ -102,8 +123,13 @@ class MetricsController extends Controller
         ];
     }
 
-    public function getClosedTasksByEmployee() {
-        $logs = Log::with('user')->where('log_type', '22')->orderBy('user_id')->get();
+    public function getClosedTasksByEmployee($start, $end)
+    {
+        $logs = Log::with('user')->where('log_type', '22')
+            ->whereDate('created_at', '>=', new DateTime($start))
+            ->whereDate('created_at', '<=', new DateTime($end))
+            ->orderBy('user_id')
+            ->get();
 
         $names = [];
         $hits = [];
@@ -122,8 +148,15 @@ class MetricsController extends Controller
         ];
     }
 
-    public function getDelayByBadge() {
-        $logs = Log::with('badge', 'task')->where('log_type', '22')->orderBy('badge_id')->get();
+
+    public function getDelayByBadge($start, $end)
+    {
+        $logs = Log::with('badge', 'task')
+            ->whereDate('created_at', '>=', new DateTime($start))
+            ->whereDate('created_at', '<=', new DateTime($end))
+            ->where('log_type', '22')
+            ->orderBy('badge_id')
+            ->get();
 
         $names = [];
         $hits = [];
@@ -146,13 +179,22 @@ class MetricsController extends Controller
 
         return [
             'names' => $names,
-            'hits' => $averages
+            'hits' => $averages,
         ];
     }
 
-    public function getDelayByEmployee() {
-        $closedLogs = Log::where('log_type', '22')->orderBy('task_id')->get();
-        $assignedLogs = Log::with('user')->where('log_type', '23')->orderBy('task_id')->get();
+    public function getDelayByEmployee($start, $end)
+    {
+        $closedLogs = Log::where('log_type', '22')
+            ->whereDate('created_at', '>=', new DateTime($start))
+            ->whereDate('created_at', '<=', new DateTime($end))
+            ->orderBy('task_id')->get();
+        $assignedLogs = Log::with('user')
+            ->whereDate('created_at', '>=', new DateTime($start))
+            ->whereDate('created_at', '<=', new DateTime($end))
+            ->where('log_type', '23')
+            ->orderBy('task_id')
+            ->get();
 
         $names = [];
         $hits = [];

@@ -1,8 +1,31 @@
 <template>
     <div>
         <div class="bg-gray-100 w-full h-64 absolute top-0 rounded-b-lg" style="z-index: -1"></div>
-
         <div class="mx-10 my-3 space-y-5 shadow-xl p-5 bg-white">
+             <div class="flex-1 space-y-2">
+                <span
+                    class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Start</span>
+                <date-picker type="datetime" v-model="start"
+                                placeholder="YYYY-MM-DD"
+                                :popup-style="{ position: 'fixed' }" format="YYYY-MM-DD"
+                ></date-picker>
+                <div class="flex-1 space-y-2">
+                    <span
+                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">End</span>
+                    <date-picker type="datetime" v-model="end"
+                                    placeholder="YYYY-MM-DD"
+                                    :popup-style="{ position: 'fixed' }" format="YYYY-MM-DD"
+                    ></date-picker>
+                </div>
+            </div>
+
+            <button @click="filter()"
+                    class="px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
+                    type="button">
+
+                <span>Filter</span>
+            </button>
+
             <div class="bg-gray-100 py-3">
 
                 <div class="p-2 flex flex-wrap">
@@ -52,60 +75,82 @@ export default {
             jobsiteData: null,
             closedTasksByEmployee: null,
             delayByBadge: null,
-            delayByEmployee: null
+            delayByEmployee: null,
+            start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+            end: new Date(),
         }
     },
 
     mixins: [ajaxCalls],
 
     mounted() {
-        this.getBadgeData();
-        this.getTicketsByEmployee();
-        this.getCreationByHour();
-        this.getJobSiteData();
-        this.getClosedTasksByEmployee();
-        this.getDelayByBadge();
-        this.getDelayByEmployee();
+        this.reload();
+    },
+    computed: {
+        startTime() {
+            return this.start.toISOString().slice(0, 10);
+        },
+        endTime() {
+            return this.end.toISOString().slice(0, 10);
+        }
     },
     methods: {
+        reload() {
+            this.getBadgeData();
+            this.getTicketsByEmployee();
+            this.getCreationByHour();
+            this.getJobSiteData();
+            this.getClosedTasksByEmployee();
+            this.getDelayByBadge();
+            this.getDelayByEmployee();
+        },
+        filter() {
+            if (this.start === null || this.start === '' || this.end === null || this.end === '') {
+                alert("fill date fields");
+                console.log("no")
+            } else {
+                this.reload();
+            }
+        },
         getBadgeData() {
-            this.asyncGetBadgeData().then((data) => {
+            this.asyncGetBadgeData(this.startTime, this.endTime).then((data) => {
+                console.log(data.data);
                 this.badgeData = data.data;
             }).catch(res => {console.log(res)});
         },
         getTicketsByEmployee() {
-            this.asyncGetTicketsByEmployee().then((data) => {
+            this.asyncGetTicketsByEmployee(this.startTime, this.endTime).then((data) => {
                 // console.log(data.data);
                 this.ticketByEmployeeData = data.data
             })
         },
         getCreationByHour() {
-            this.asyncGetCreationByHour().then((data) => {
+            this.asyncGetCreationByHour(this.startTime, this.endTime).then((data) => {
                 // console.log(data.data);
                 this.creationByHour = data.data
             })
         },
         getJobSiteData() {
-            this.asyncGetJobSiteData().then((data) => {
+            this.asyncGetJobSiteData(this.startTime, this.endTime).then((data) => {
                 // console.log(data.data);
                 this.jobsiteData = data.data
             })
         },
         getClosedTasksByEmployee() {
-            this.asyncGetClosedTasksByEmployee().then((data) => {
+            this.asyncGetClosedTasksByEmployee(this.startTime, this.endTime).then((data) => {
                 // console.log(data.data);
                 this.closedTasksByEmployee = data.data
             })
         },
         getDelayByBadge() {
-            this.asyncGetDelayByBadge().then((data) => {
+            this.asyncGetDelayByBadge(this.startTime, this.endTime).then((data) => {
                 // console.log(data.data);
                 this.delayByBadge = data.data
             })
         },
         getDelayByEmployee() {
-            this.asyncGetDelayByEmployee().then((data) => {
-                console.log(data.data);
+            this.asyncGetDelayByEmployee(this.startTime, this.endTime).then((data) => {
+                // console.log(data.data);
                 this.delayByEmployee = data.data
             })
         },

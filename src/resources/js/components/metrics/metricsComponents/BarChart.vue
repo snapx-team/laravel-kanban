@@ -57,7 +57,7 @@ export default {
     },
     props: {
         data: {
-            default: [],
+            default: Array,
         },
         xname: {
             default: '',
@@ -69,7 +69,7 @@ export default {
             default: ''
         },
         categories: {
-            default: [],
+            default: Array,
         }
     },
     computed: {

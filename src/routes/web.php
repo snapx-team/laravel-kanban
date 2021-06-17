@@ -19,13 +19,13 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             
             // Metrics
 
-            Route::get('/get-badge-data', 'MetricsController@getBadgeData');
-            Route::get('/get-tickets-by-employee', 'MetricsController@getTicketsByEmployee');
-            Route::get('/get-creation-by-hour', 'MetricsController@getCreationByHour');
-            Route::get('/get-jobsite-data', 'MetricsController@getJobSiteData');
-            Route::get('/get-closed-by-employee', 'MetricsController@getClosedTasksByEmployee');
-            Route::get('/get-delay-by-badge', 'MetricsController@getDelayByBadge');
-            Route::get('/get-delay-by-employee', 'MetricsController@getDelayByEmployee');
+            Route::get('/get-badge-data/{start}/{end}', 'MetricsController@getBadgeData');
+            Route::get('/get-tickets-by-employee/{start}/{end}', 'MetricsController@getTicketsByEmployee');
+            Route::get('/get-creation-by-hour/{start}/{end}', 'MetricsController@getCreationByHour');
+            Route::get('/get-jobsite-data/{start}/{end}', 'MetricsController@getJobSiteData');
+            Route::get('/get-closed-by-employee/{start}/{end}', 'MetricsController@getClosedTasksByEmployee');
+            Route::get('/get-delay-by-badge/{start}/{end}', 'MetricsController@getDelayByBadge');
+            Route::get('/get-delay-by-employee/{start}/{end}', 'MetricsController@getDelayByEmployee');
 
 
             // Board

@@ -20,32 +20,32 @@ export const ajaxCalls = {
 
         // Metrics
 
-        asyncGetBadgeData() {
-            return axios.get('get-badge-data');
+        asyncGetBadgeData(start, end) {
+            return axios.get('get-badge-data/' + start + '/' + end);
         },
 
-        asyncGetTicketsByEmployee() {
-            return axios.get('get-tickets-by-employee');
+        asyncGetTicketsByEmployee(start, end) {
+            return axios.get('get-tickets-by-employee/' + start + '/' + end);
         },
 
-        asyncGetCreationByHour() {
-            return axios.get('get-creation-by-hour');
+        asyncGetCreationByHour(start, end) {
+            return axios.get('get-creation-by-hour/' + start + '/' + end);
         },
 
-        asyncGetJobSiteData() {
-            return axios.get('get-jobsite-data');
+        asyncGetJobSiteData(start, end) {
+            return axios.get('get-jobsite-data/' + start + '/' + end);
         },
 
-        asyncGetClosedTasksByEmployee() {
-            return axios.get('get-closed-by-employee');
+        asyncGetClosedTasksByEmployee(start, end) {
+            return axios.get('get-closed-by-employee/' + start + '/' + end);
         },
         
-        asyncGetDelayByBadge() {
-            return axios.get('get-delay-by-badge');
+        asyncGetDelayByBadge(start, end) {
+            return axios.get('get-delay-by-badge/' + start + '/' + end);
         },
 
-        asyncGetDelayByEmployee() {
-            return axios.get('get-delay-by-employee');
+        asyncGetDelayByEmployee(start, end) {
+            return axios.get('get-delay-by-employee/' + start + '/' + end);
         },
 
         // Board

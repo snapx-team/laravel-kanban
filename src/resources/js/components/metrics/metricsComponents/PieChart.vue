@@ -45,10 +45,10 @@ export default {
     },
     props: {
         series: {
-            default: [],
+            default: Array,
         },
         labels: {
-            default: [],
+            default: Array,
         },
         title: {
             default: '',
