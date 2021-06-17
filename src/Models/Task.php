@@ -6,14 +6,23 @@ use App\Models\User;
 use App\Models\JobSite;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Carbon\Carbon;
 
+/**
+ * App\Models\User
+ * @property \Illuminate\Support\Carbon|null $deadline
+ */
 class Task extends Model
 {
     protected $table = 'kanban_tasks';
 
     protected $guarded = [];
+
+    protected $appends = [
+        'hours_to_deadline',
+    ];
 
     public function reporter(): BelongsTo
     {
@@ -58,5 +67,16 @@ class Task extends Model
     public function logs(): HasMany
     {
         return $this->HasMany(Log::class);
+    }
+
+    public function getHoursToDeadlineAttribute()
+    {
+        if ($this->deadline === null) {
+            return null;
+        } else {
+            $now = Carbon::now();
+            $deadline = new Carbon($this->deadline);
+            return $now->diffInHours($deadline, false);
+        }
     }
 }

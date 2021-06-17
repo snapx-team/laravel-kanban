@@ -323,7 +323,7 @@
 
 <style scoped>
     .column-width {
-        min-width: 230px;
+        min-width: 300px;
     }
 
     .ghost-card {

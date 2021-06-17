@@ -32,6 +32,7 @@
     "dependencies": {
         "@fortawesome/fontawesome-free": "^5.15.3",
         "tailwindcss": "^2.0.2",
+        "vue-moment": "^4.1.0",
         "vue-quill": "^1.5.1",
         "vue-select": "^3.11.2",
         "vue-time-ranges-picker-edit": "^0.9.91",

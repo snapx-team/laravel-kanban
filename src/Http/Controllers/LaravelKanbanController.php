@@ -19,7 +19,23 @@ class LaravelKanbanController extends Controller
 
     public function getkanbanData($id)
     {
-        $board = Board::with('members.employee.user', 'rows.columns.taskCards.reporter', 'rows.columns.taskCards.erpEmployee', 'rows.columns.taskCards.assignedTo.user', 'rows.columns.taskCards.badge')->find($id);
+        $board = Board::with('rows.columns.taskCards.badge')
+            ->with(['rows.columns.taskCards.assignedTo.user' => function($q){
+                $q->select(['id','first_name','last_name']);
+            }])
+            ->with(['rows.columns.taskCards.erpEmployee' => function($q){
+                $q->select(['id','first_name','last_name']);
+            }])
+            ->with(['rows.columns.taskCards.reporter' => function($q){
+                $q->select(['id','first_name','last_name']);
+            }])
+            ->with(['members.employee.user' => function($q){
+                $q->select(['id','first_name','last_name']);
+            }])
+            ->with(['rows.columns.taskCards.jobSite' => function($q){
+                $q->select(['id','name']);
+            }])
+            ->find($id);
         return $board;
     }
 

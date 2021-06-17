@@ -74,7 +74,7 @@
                                         :create-option="option => ({name: option.toLowerCase()})">
                                     class="text-gray-700">
                                         <template slot="option" slot-scope="option">
-                                            <span class="fa fa-circle mr-4" :style="`color:#${option.color};`"></span>
+                                            <span class="fa fa-circle mr-4" :style="`color: hsl( ${option.hue} , 45%, 90%);`"></span>
                                             {{ option.name }}
                                         </template>
                                         <template #no-options="{ search, searching, loading }">
@@ -400,7 +400,7 @@
                 return this.badges.map(badge => {
                     let computedBadges = {};
                     computedBadges.name = badge.name;
-                    computedBadges.color = this.generateHexColorWithText(badge.name);
+                    computedBadges.hue = this.generateHslColorWithText(badge.name);
                     return computedBadges;
                 })
             }

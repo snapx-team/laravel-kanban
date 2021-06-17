@@ -7,6 +7,7 @@ import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import VueQuill from "vue-quill";
 import DatePicker from 'vue2-datepicker';
+import VueMoment from 'vue-moment';
 
 
 
@@ -20,6 +21,8 @@ Vue.use(Toast, {
 
 Vue.use(VueQuill);
 Vue.use(DatePicker);
+Vue.use(VueMoment);
+
 
 
 

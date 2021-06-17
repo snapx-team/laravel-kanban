@@ -10,7 +10,7 @@
 // vue select overrides
 
 .vs__dropdown-toggle{
-    height: 50px;
+    min-height: 50px;
     margin-top: 8px;
 }
 
@@ -30,5 +30,5 @@
 }
 
 .mx-input {
-    height:50px;
+    min-height:50px;
 }
