@@ -45,10 +45,10 @@
                         <bar-chart  v-if="creationByHour != null" :data="creationByHour.hits" :categories="creationByHour.names" :xname="'Tickets'" :yname="'Hour'" :title="'Tickets by Hour Created'"></bar-chart>
                     </div>
                     <div class="flex-auto rounded shadow-lg m-2 bg-white">
-                        <bar-chart  v-if="delayByBadge != null" :data="delayByBadge.hits" :categories="delayByBadge.names" :xname="'Hours'" :yname="'Categories'" :title="'Avg Hrs by Badge (open)'"></bar-chart>
+                        <bar-chart  v-if="delayByBadge != null" :data="delayByBadge.hits" :categories="delayByBadge.names" :xname="'Hours'" :yname="'Categories'" :title="'Average Hours by Badge'"></bar-chart>
                     </div>
                     <div class="flex-auto rounded shadow-lg m-2 bg-white">
-                        <bar-chart  v-if="delayByEmployee != null" :data="delayByEmployee.hits" :categories="delayByEmployee.names" :xname="'Hours'" :yname="'Employees'" :title="'Avg Hrs by Employee (assigned)'"></bar-chart>
+                        <bar-chart  v-if="delayByEmployee != null" :data="delayByEmployee.hits" :categories="delayByEmployee.names" :xname="'Hours'" :yname="'Employees'" :title="'Average Hours by Employee'"></bar-chart>
                     </div>
                 </div>
             </div>
@@ -76,14 +76,15 @@ export default {
             closedTasksByEmployee: null,
             delayByBadge: null,
             delayByEmployee: null,
-            start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-            end: new Date(),
+            start: this.getMonday(new Date()),
+            end: new Date()
         }
     },
 
     mixins: [ajaxCalls],
 
     mounted() {
+        this.start.setDate(this.start.getDate() - (this.start.getDay() + 6) % 7);
         this.reload();
     },
     computed: {
@@ -103,6 +104,12 @@ export default {
             this.getClosedTasksByEmployee();
             this.getDelayByBadge();
             this.getDelayByEmployee();
+        },
+        getMonday(d) {
+            d = new Date(d);
+            var day = d.getDay(),
+            diff = d.getDate() - day + (day == 0 ? -6:1); // adjust when day is sunday
+            return new Date(d.setDate(diff));
         },
         filter() {
             if (this.start === null || this.start === '' || this.end === null || this.end === '') {

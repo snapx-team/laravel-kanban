@@ -16,28 +16,37 @@ class Log extends Model
     const TYPE_EMPLOYEE_UPDATED = 2;
     const TYPE_EMPLOYEE_DELETED = 3;
 
-    const TYPE_PHONE_LINE_CREATED = 4;
-    const TYPE_PHONE_LINE_UPDATED = 5;
-    const TYPE_PHONE_LINE_DELETED = 6;
+    const TYPE_CARD_CREATED = 10;
+    const TYPE_CARD_DELETED = 11;
+    const TYPE_CARD_CLOSED = 12;
+    const TYPE_CARD_ASSIGNED = 13;
 
-    const TYPE_EMPLOYEE_CARD_CREATED = 7;
-    const TYPE_EMPLOYEE_CARD_DELETED = 8;
-    const TYPE_EMPLOYEE_CARD_CLOSED = 22;
-    const TYPE_EMPLOYEE_CARD_ASSIGNED = 23;
+    const TYPE_KANBAN_COLUMNS_CREATED_OR_UPDATED = 15;
 
-    const TYPE_KANBAN_COLUMNS_CREATED_OR_UPDATED = 9;
+    const TYPE_KANBAN_MEMBER_CREATED = 20;
+    const TYPE_KANBAN_MEMBER_DELETED = 21;
 
-    const TYPE_KANBAN_MEMBER_CREATED = 10;
-    const TYPE_KANBAN_MEMBER_DELETED = 11;
+    const TYPE_BOARD_CREATED = 60;
+    const TYPE_BOARD_DELETED = 61;
 
-//    public static function createLog(?int $userId, int $logId, string $description = '')
-//    {
-//        return Log::create([
-//            'user_id' => $userId,
-//            'log_type' => $logId,
-//            'description' => $description
-//        ]);
-//    }
+    const TYPE_COMMENT_CREATED = 70;
+    const TYPE_COMMENT_DELETED = 71;
+
+   public static function createLog(?int $userId, int $logId, string $description = '',
+        ?int $badgeId, ?int $boardId, ?int $taskId, ?int $erpEmployeeId, ?int $erpJobSiteId, ?string $role)
+   {
+       return Log::create([
+        'user_id' => $userId,
+        'log_type' => $logId,
+        'description' => $description,
+        'badge_id' => $badgeId,
+        'board_id' => $boardId,
+        'task_id' => $taskId,
+        'erp_employee_id' => $erpEmployeeId,
+        'erp_job_site_id' => $erpJobSiteId,
+        'role' => $role
+    ]);
+   }
 
 
 

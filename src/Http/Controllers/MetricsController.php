@@ -35,9 +35,6 @@ class MetricsController extends Controller
         return [
             'names' => $names,
             'hits' => array_values($hits),
-            'tasks' => $tasks,
-            'start' => $start,
-            'end' => $end
         ];
     }
 
@@ -80,16 +77,18 @@ class MetricsController extends Controller
 
         $reporters = [];
         $assArray = array();
-        $assArray[$tasks[0]->reporter_id] = 0;
-        foreach($employees as $employee) {
-            array_push($reporters, $employee->user->full_name);
-            if(!array_key_exists($employee->id, $assArray)) {
-                $assArray[$employee->id] = 0;
+        if(count($tasks) > 0) {
+            $assArray[$tasks[0]->reporter_id] = 0;
+            foreach($employees as $employee) {
+                array_push($reporters, $employee->user->full_name);
+                if(!array_key_exists($employee->id, $assArray)) {
+                    $assArray[$employee->id] = 0;
+                }
             }
-        }
 
-        foreach($tasks as $task) {
-            $assArray[$task->reporter_id] += 1;
+            foreach($tasks as $task) {
+                $assArray[$task->reporter_id] += 1;
+            }
         }
         
         return [
@@ -107,16 +106,17 @@ class MetricsController extends Controller
             ->get();
 
         $arr = [];
+        for ($i = 0; $i < 24; $i++) {
+            $arr[strval($i)] = 0;
+        }
+
         foreach($tasks as $task) {
             $date = (new DateTime(($task->created_at)))->modify('-4 hours');;
             $dateString = $date->format('G');
-            if(array_key_exists($dateString, $arr)) {
-                $arr[$dateString] += 1;
-            } else {
-                $arr[$dateString] = 1;
-            }
+            $arr[$dateString] += 1;
         }
         ksort($arr);
+
         return [
             'hits' => array_values($arr),
             'names' => array_keys($arr),
@@ -125,7 +125,7 @@ class MetricsController extends Controller
 
     public function getClosedTasksByEmployee($start, $end)
     {
-        $logs = Log::with('user')->where('log_type', '22')
+        $logs = Log::with('user')->where('log_type', Log::TYPE_CARD_CLOSED)
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
             ->orderBy('user_id')
@@ -151,24 +151,33 @@ class MetricsController extends Controller
 
     public function getDelayByBadge($start, $end)
     {
-        $logs = Log::with('badge', 'task')
+        $closedLogs = Log::where('log_type', Log::TYPE_CARD_CLOSED)
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
-            ->where('log_type', '22')
-            ->orderBy('badge_id')
+            ->orderBy('task_id')->get();
+        $assignedLogs = Log::with('badge')
+            ->where('log_type', Log::TYPE_CARD_ASSIGNED)
+            ->whereDate('created_at', '>=', new DateTime($start))
+            ->whereDate('created_at', '<=', new DateTime($end))
+            ->orderBy('task_id')
             ->get();
 
         $names = [];
         $hits = [];
-        foreach($logs as $log){
-            $beginning = new DateTime($log->task->created_at);
-            $end = new DateTime($log->created_at);
-            $hours = ($end->diff($beginning))->h;
-            if(array_key_exists($log->badge_id, $hits)){
-                array_push($hits[$log->badge_id], $hours);
-            } else {
-                $hits[$log->badge_id] = [$hours];
-                array_push($names, $log->badge->name);
+        foreach($assignedLogs as $assignedLog) {
+            foreach ($closedLogs as $key => $closedLog) {
+                if ($assignedLog->task_id == $closedLog->task_id){
+                    $beginning = new DateTime($assignedLog->created_at);
+                    $end = new DateTime($closedLog->created_at);
+                    $hours = ($end->diff($beginning))->h;
+                    if(array_key_exists($assignedLog->badge_id, $hits)){
+                        array_push($hits[$assignedLog->badge_id], $hours);
+                        unset($closedLogs[$key]);
+                    } else {
+                        $hits[$assignedLog->badge_id] = [$hours];
+                        array_push($names, $assignedLog->badge->name);
+                    }
+                }
             }
         }
 
@@ -185,14 +194,14 @@ class MetricsController extends Controller
 
     public function getDelayByEmployee($start, $end)
     {
-        $closedLogs = Log::where('log_type', '22')
+        $closedLogs = Log::where('log_type', Log::TYPE_CARD_CLOSED)
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
             ->orderBy('task_id')->get();
         $assignedLogs = Log::with('user')
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
-            ->where('log_type', '23')
+            ->where('log_type', Log::TYPE_CARD_ASSIGNED)
             ->orderBy('task_id')
             ->get();
 
