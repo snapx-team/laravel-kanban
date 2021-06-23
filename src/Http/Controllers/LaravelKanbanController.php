@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use DateTime;
 use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Board;
+use Xguard\LaravelKanban\Models\Task;
+use Xguard\LaravelKanban\Models\Badge;
 
 class LaravelKanbanController extends Controller
 {
@@ -29,6 +31,45 @@ class LaravelKanbanController extends Controller
         return [
             'employees' => $employees,
             'boards' => $board
+        ];
+    }
+
+    public function getBacklogData() {
+        $backlogTasks = Task::with('badge', 'reporter')->orderBy('deadline')->get();
+        $boards = Board::orderBy('name')->with('members')->get();
+
+        $boardArray = [];
+        foreach ($boards as $board) {
+            $boardArray[$board->id] = (object) [
+                'title' => $board->name, 
+                'percent' => 0,
+                'total' => 0,
+                'active' => 0,
+                'archived' => 0,
+                'assigned' => 0,
+                'unassigned' => 0,
+                'total' => 0,
+            ];
+        }
+
+        $badgeArray = [];
+        foreach ($backlogTasks as $task) {
+            if ($task->erp_employee_id != null) {
+                $boardArray[$task->board_id]->percent += 1;
+            }
+            if (array_key_exists($task->board_id, $boardArray)) {
+                $boardArray[$task->board_id]->total += 1;
+            }
+            if (!in_array($task->badge->name, $badgeArray)) {
+                array_push($badgeArray, $task->badge->name);
+            }
+            
+        }
+
+        return [
+            'boards' => $boardArray,
+            'backlogTasks' => $backlogTasks,
+            'badges' => $badgeArray
         ];
     }
 
