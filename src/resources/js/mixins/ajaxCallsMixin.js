@@ -18,6 +18,10 @@ export const ajaxCalls = {
             return axios.get('get-dashboard-data');
         },
 
+        asyncGetBacklogData() {
+            return axios.get('get-backlog-data');
+        },
+
         // Metrics
 
         asyncGetBadgeData(start, end) {

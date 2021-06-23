@@ -20,6 +20,16 @@ class Task extends Model
         return $this->belongsTo(User::class, 'reporter_id');
     }
 
+    public function badge(): BelongsTo
+    {
+        return $this->belongsTo(Badge::class, 'badge_id');
+    }
+
+    public function board(): BelongsTo
+    {
+        return $this->belongsTo(Board::class, 'board_id');
+    }
+
     public function erpEmployee(): BelongsTo
     {
         return $this->belongsTo(User::class, 'erp_employee_id');
@@ -28,12 +38,7 @@ class Task extends Model
     public function column(): BelongsTo
     {
         return $this->belongsTo(Column::class);
-    }
-
-    public function badge(): BelongsTo
-    {
-        return $this->belongsTo(Badge::class);
-    }
+    }  
 
     public function jobSite(): BelongsTo
     {

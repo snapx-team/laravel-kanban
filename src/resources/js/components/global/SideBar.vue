@@ -11,12 +11,19 @@
         <nav class="mt-8">
             <h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wide text-left">
                 General </h3>
-            <div class="my-2 -mx-3 pb-2">
+            <div class="mt-2 -mx-3 pb-2">
                 <router-link :to="{ path: '/kanban' }"
                              class="flex justify-between items-center px-3 py-2 hover:bg-gray-200 rounded-lg">
                     <span class="text-sm font-medium text-gray-900">Dashboard</span>
                 </router-link>
             </div>
+             <div class=" -mx-3 pb-2">
+                <router-link :to="{ path: '/kanban/backlog' }"
+                             class="flex justify-between items-center px-3 py-2 hover:bg-gray-200 rounded-lg">
+                    <span class="text-sm font-medium text-gray-900">Backlog</span>
+                </router-link>
+            </div>
+            
             <div class=" -mx-3 pb-2">
                 <router-link :to="{ path: '/kanban/metrics' }"
                              class="flex justify-between items-center px-3 py-2 hover:bg-gray-200 rounded-lg">

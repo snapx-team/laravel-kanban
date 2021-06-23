@@ -2,6 +2,7 @@ import Vue from "vue";
 import Router from "vue-router";
 import Kanban from "../components/kanban/Kanban";
 import Dashboard from "../components/dashboard/Dashboard";
+import Backlog from "../components/backlog/Backlog";
 import Metrics from "../components/metrics/Metrics";
 
 Vue.use(Router);
@@ -22,6 +23,10 @@ export default new Router({
             path: "/kanban/phoneline",
             component: Kanban,
             props: (route) => ({id: Number(route.query.id)})
+        },
+        {
+            path: "/kanban/backlog",
+            component: Backlog
         },
         {
             path: "/kanban/metrics",
