@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Xguard\LaravelKanban\Models\Board;
 use Xguard\LaravelKanban\Models\Row;
+use Illuminate\Support\Facades\Auth;
 
 class BoardsController extends Controller
 {
@@ -44,6 +45,8 @@ class BoardsController extends Controller
                 foreach ($daysOfWeek as $day) {
                     Row::create(['name' => $day, 'board_id' => $board->id]);
                 }
+
+                Log::createLog(Auth::user()->id, Log::TYPE_BOARD_CREATED, 'Added new board', null, $board->id, null, null, null, null);
             }
 
         } catch (\Exception $e) {
@@ -66,6 +69,8 @@ class BoardsController extends Controller
         try {
             $board = Board::find($id);
             $board->delete();
+
+            Log::createLog(Auth::user()->id, Log::TYPE_BOARD_DELETED, 'Deleted board', null, $board->id, null, null, null, null);
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',

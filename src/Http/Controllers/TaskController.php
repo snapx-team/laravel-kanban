@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Xguard\LaravelKanban\Models\Badge;
 use Xguard\LaravelKanban\Models\Task;
+use Xguard\LaravelKanban\Models\Log;
 use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
@@ -31,10 +32,9 @@ class TaskController extends Controller
         else
             $group = 'g-' . (Task::max('id') + 1);
 
-        $parsedDateTime = strtotime($backlogTaskData['deadline']);
         try {
             foreach ($backlogTaskData['selectedKanbans'] as $kanban) {
-                Task::create([
+                $task = Task::create([
                     'index' => null,
                     'reporter_id' => Auth::user()->id,
                     'name' => $backlogTaskData['name'],
@@ -46,9 +46,9 @@ class TaskController extends Controller
                     'column_id' => null,
                     'board_id' => $kanban['id'],
                     'group' => $group
-
-
                 ]);
+
+                Log::createLog($task->reporter_id, Log::TYPE_CARD_CREATED, 'Added new backlog task', $task->badge_id, $task->board_id, $task->id, $task->erp_employee_id, $task->erp_job_site_id, null);
             }
         } catch (\Exception $e) {
             return response([
@@ -68,12 +68,13 @@ class TaskController extends Controller
 
         try {
             $maxIndex++;
-            Task::create([
+            $task = Task::create([
                 'index' => $maxIndex,
                 'employee_id' => $taskCard['employee']['id'],
                 'column_id' => $taskCard['columnId'],
                 'member_id' => $taskCard['id'],
             ]);
+            Log::createLog($task->reporter_id, Log::TYPE_CARD_CREATED, 'Added new task task', $task->badge_id, $task->board_id, $task->id, $task->erp_employee_id, $task->erp_job_site_id, null);
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',

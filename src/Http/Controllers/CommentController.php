@@ -37,10 +37,11 @@ class CommentController extends Controller
                     'comment' => $request->input('comment'),
                 ]);
             } else {
-                Comment::create([
+                $comment = Comment::create([
                     'comment' => $request->input('comment'),
                     'employee_id' => $employee->id,
                 ]);
+                Log::createLog($comment->employee_id, Log::TYPE_COMMENT_CREATED, 'Added new comment', null, null, $comment->task_id, null, null, null);
             }
         } catch (\Exception $e) {
             return response([
@@ -57,6 +58,8 @@ class CommentController extends Controller
         try {
             $comment = Comment::find($id);
             $comment->delete();
+
+            Log::createLog($comment->employee_id, Log::TYPE_COMMENT_DELETED, 'Deleted comment', null, null, $comment->task_id, null, null, null);
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',

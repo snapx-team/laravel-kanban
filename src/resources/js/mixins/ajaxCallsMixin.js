@@ -18,6 +18,36 @@ export const ajaxCalls = {
             return axios.get('get-dashboard-data');
         },
 
+        // Metrics
+
+        asyncGetBadgeData(start, end) {
+            return axios.get('get-badge-data/' + start + '/' + end);
+        },
+
+        asyncGetTicketsByEmployee(start, end) {
+            return axios.get('get-tickets-by-employee/' + start + '/' + end);
+        },
+
+        asyncGetCreationByHour(start, end) {
+            return axios.get('get-creation-by-hour/' + start + '/' + end);
+        },
+
+        asyncGetJobSiteData(start, end) {
+            return axios.get('get-jobsite-data/' + start + '/' + end);
+        },
+
+        asyncGetClosedTasksByEmployee(start, end) {
+            return axios.get('get-closed-by-employee/' + start + '/' + end);
+        },
+        
+        asyncGetDelayByBadge(start, end) {
+            return axios.get('get-delay-by-badge/' + start + '/' + end);
+        },
+
+        asyncGetDelayByEmployee(start, end) {
+            return axios.get('get-delay-by-employee/' + start + '/' + end);
+        },
+
         // Board
 
         asyncGetBoards() {
