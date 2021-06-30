@@ -34,10 +34,15 @@
           type="button">
           <span>Active</span>
         </button>
-        <button @click="archive()"
+        <button @click="completed()"
           class="px-4 ml-4 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
           type="button">
-          <span>Archived</span>
+          <span>Completed</span>
+        </button>
+        <button @click="canceled()"
+          class="px-4 ml-4 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
+          type="button">
+          <span>Canceled</span>
         </button>
       </div>
     </div>
@@ -71,7 +76,7 @@
               @change="getChangeData($event, columnIndex, rowIndex)"
             >
               <backlog-card
-                v-for="task in filteredAlT"
+                v-for="task in filtered"
                 :key="task.id"
                 :task="task"
                 class="cursor-move"
@@ -120,6 +125,9 @@ export default {
       currentTask: null,
       hideBoardsPane: true,
       hideTaskPane: false,
+      activeBool: true,
+      canceledBool: true,
+      completedBool: true,
       taskPaneInfo: {
         title: "default",
         creator: "john smith",
@@ -152,13 +160,13 @@ export default {
     });
   },
   computed: {
-    filteredAlT() {
+    filtered() {
       const regex = new RegExp(this.filterText, "i");
       let newArray = [];
       this.filteredWithOptions.forEach(function (value) {
         if (
           value.name.match(regex) ||
-          value.badge_name.match(regex)
+          value.badge.name.match(regex)
         ) {
           newArray.push(value);
         }
@@ -169,29 +177,11 @@ export default {
       if(this.backlogData != null){
         let regex = new RegExp("", "i");
         return this.backlogData.backlogTasks.filter((t) => {
-          let badgeMatch = false;
-          let boardMatch = false;
-          if (this.filterBadge.length > 0) {
-            this.filterBadge.forEach(function (value1) {
-              regex = new RegExp(value1.name, "i");
-              if (t.badge.name.match(regex)) {
-                badgeMatch = true;
-              }
-            });
-          } else {
-            badgeMatch = true;
-          }
-          if (this.filterBoard.length > 0) {
-            this.filterBoard.forEach(function (value2) {
-              regex = new RegExp(value2, "i");
-              if (t.board.name.match(regex)) {
-                boardMatch = true;
-              }
-            });
-          } else {
-            boardMatch = true;
-          }
-          return badgeMatch && boardMatch;
+          let badgeMatch = this.isBadgeMatch(t, regex);
+          let boardMatch = this.isBoardMatch(t, regex);
+          let statusMatch = this.isStatusMatch(t);
+
+          return badgeMatch && boardMatch && statusMatch;
         });
       } else {
         return [];
@@ -199,6 +189,46 @@ export default {
     },
   },
   methods: {
+    isBadgeMatch(t, regex){
+      let badgeMatch = false;
+      if (this.filterBadge.length > 0) {
+        this.filterBadge.forEach(function (value1) {
+          regex = new RegExp(value1, "i");
+          if (t.badge.name.match(regex)) {
+            badgeMatch = true;
+          }
+        });
+      } else {
+        badgeMatch = true;
+      }
+      return badgeMatch;
+    },
+    isBoardMatch(t, regex) {
+      let boardMatch = false;
+      if (this.filterBoard.length > 0) {
+        this.filterBoard.forEach(function (value2) {
+          regex = new RegExp(value2, "i");
+          if (t.board.name.match(regex)) {
+            boardMatch = true;
+          }
+        });
+      } else {
+        boardMatch = true;
+      }
+      return boardMatch;
+    },
+    isStatusMatch(t) {
+      if(this.activeBool && !t.status === "active" || (!this.activeBool && t.status === "active")) {
+        return false;
+      }
+      if(this.canceledBool && !t.status === "canceled" || (!this.canceledBool && t.status === "canceled")) {
+        return false;
+      }
+      if(this.completedBool && !t.status === "completed" || (!this.completedBool && t.status === "completed")) {
+        return false;
+      }
+      return true;
+    },
     setSideInfo(currentTask) {
       this.hideTaskPane = true;
       this.taskPaneInfo = currentTask;
@@ -210,10 +240,13 @@ export default {
       this.hideBoardsPane = false;
     },
     active() {
-      console.log('active');
+      this.activeBool = !this.activeBool;
     },
-    archive() {
-      console.log('archived');
+    canceled() {
+      this.canceledBool = !this.canceledBool;
+    },
+    completed() {
+      this.completedBool = !this.completedBool;
     },
     filterByBoard(board) {
       if (this.filterBoard.includes(board)) {
