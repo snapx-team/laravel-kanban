@@ -45,8 +45,8 @@ class LaravelKanbanController extends Controller
                 'percent' => 0,
                 'total' => 0,
                 'active' => 0,
-                'archived' => 0,
-                'assigned' => 0,
+                'completed' => 0,
+                'canceled' => 0,
                 'unassigned' => 0,
                 'total' => 0,
             ];
@@ -54,14 +54,25 @@ class LaravelKanbanController extends Controller
 
         $badgeArray = [];
         foreach ($backlogTasks as $task) {
-            if ($task->erp_employee_id != null) {
+            if (count($task->assignedTo) > 0) {
                 $boardArray[$task->board_id]->percent += 1;
+            } else {
+                $boardArray[$task->board_id]->unassigned += 1;
             }
             if (array_key_exists($task->board_id, $boardArray)) {
                 $boardArray[$task->board_id]->total += 1;
             }
             if (!in_array($task->badge->name, $badgeArray)) {
                 array_push($badgeArray, $task->badge->name);
+            }
+            if($task->status === "active") {
+                $boardArray[$task->board_id]->active += 1;
+            }
+            if($task->status === "completed") {
+                $boardArray[$task->board_id]->completed += 1;
+            }
+            if($task->status === "canceled") {
+                $boardArray[$task->board_id]->canceled += 1;
             }
         }
 

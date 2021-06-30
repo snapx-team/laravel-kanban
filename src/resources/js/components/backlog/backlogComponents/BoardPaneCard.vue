@@ -33,19 +33,23 @@
         <tbody>
           <tr>
             <td class="w-40 pb-2">Active</td>
-            <td>33</td>
+            <td>{{ board.active }}</td>
           </tr>
           <tr>
-            <td class="pb-2">Archived</td>
-            <td>15</td>
+            <td class="pb-2">Completed</td>
+            <td>{{ board.completed }}</td>
+          </tr>
+          <tr>
+            <td class="pb-2">Canceled</td>
+            <td>{{ board.canceled }}</td>
           </tr>
           <tr>
             <td class="pb-2">Assigned</td>
-            <td>20</td>
+            <td>{{ board.percent }}</td>
           </tr>
           <tr>
             <td class="pb-2">Unassigned</td>
-            <td>19</td>
+            <td>{{ board.unassigned }}</td>
           </tr>
         </tbody>
       </table>

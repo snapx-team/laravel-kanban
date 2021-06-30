@@ -218,16 +218,16 @@ export default {
       return boardMatch;
     },
     isStatusMatch(t) {
-      if(this.activeBool && !t.status === "active" || (!this.activeBool && t.status === "active")) {
-        return false;
+      if (this.activeBool && t.status === "active") {
+        return true;
       }
-      if(this.canceledBool && !t.status === "canceled" || (!this.canceledBool && t.status === "canceled")) {
-        return false;
+      if (this.canceledBool && t.status === "canceled") {
+        return true;
       }
-      if(this.completedBool && !t.status === "completed" || (!this.completedBool && t.status === "completed")) {
-        return false;
+      if (this.completedBool && t.status === "completed") {
+        return true;
       }
-      return true;
+      return false;
     },
     setSideInfo(currentTask) {
       this.hideTaskPane = true;
