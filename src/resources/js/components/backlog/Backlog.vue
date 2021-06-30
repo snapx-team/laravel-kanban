@@ -71,7 +71,7 @@
               @change="getChangeData($event, columnIndex, rowIndex)"
             >
               <backlog-card
-                v-for="task in filteredAlT"
+                v-for="task in filtered"
                 :key="task.id"
                 :task="task"
                 class="cursor-move"
@@ -152,7 +152,7 @@ export default {
     });
   },
   computed: {
-    filteredAlT() {
+    filtered() {
       const regex = new RegExp(this.filterText, "i");
       let newArray = [];
       this.filteredWithOptions.forEach(function (value) {
@@ -231,6 +231,7 @@ export default {
       this.eventHub.$emit("set-loading-state", true);
       this.asyncGetBacklogData().then((data) => {
           this.backlogData = data.data;
+          console.log(data.data);
           this.eventHub.$emit("set-loading-state", false);
       }).catch(res => {console.log(res)});
     },

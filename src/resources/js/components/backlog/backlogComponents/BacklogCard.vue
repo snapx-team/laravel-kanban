@@ -42,12 +42,12 @@
             </div>
 
             <div class="flex w-20">
-              <template v-for="(user, userIndex) in task.assignedTo">
+              <template v-for="(user, userIndex) in task.assigned_to">
                 <template v-if="userIndex < 3">
                   <avatar
                     :key="userIndex"
                     :class="{ '-ml-2': userIndex > 0 }"
-                    :name="user.name"
+                    :name="user.user.full_name"
                     :size="6"
                     :borderSize="0"
                     :borderColor="'white'"
@@ -56,11 +56,11 @@
                 </template>
               </template>
 
-              <div v-if="task.assignedTo" class="flex">
+              <div v-if="task.assigned_to" class="flex">
                 <span
-                  v-if="task.assignedTo.length > 3"
+                  v-if="task.assigned_to.length > 3"
                   class="z-10 flex items-center justify-center font-semibold text-gray-800 text-xs w-6 h-6 rounded-full bg-gray-300 border-white border -ml-2 pr-1"
-                  >+{{ task.assignedTo.length - 3 }}
+                  >+{{ task.assigned_to.length - 3 }}
                 </span>
               </div>
             </div>
