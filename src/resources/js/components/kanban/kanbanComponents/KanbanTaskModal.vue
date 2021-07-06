@@ -19,7 +19,7 @@
                 <!-- Close when clicked outside -->
                 <div @click="modalOpen = false" class="overflow-auto fixed h-full w-full"></div>
                 <div class="flex flex-col overflow-auto z-50 w-100 bg-white rounded-md shadow-2xl m-10"
-                     style="width: 900px; min-height: 300px; max-height: 80%">
+                     style="width: 1000px; min-height: 300px; max-height: 80%">
 
 
                     <div class="flex justify-between p-5 bg-indigo-800 border-b">
@@ -45,32 +45,41 @@
                     <div class="flex flex-wrap">
                         <div class="w-full">
                             <ul class="flex mb-0 list-none flex-wrap pt-3 pb-4 flex-row">
-                                <li class="mx-1 flex-auto text-center">
+
+                                <li class="mx-1 flex-1 text-center">
                                     <a class="text-xs font-bold uppercase px-5 py-3 rounded block leading-normal"
                                        v-on:click="toggleTabs(1)"
                                        v-bind:class="{'text-gray-600 bg-gray-200 hover:bg-gray-300 cursor-pointer ': openTab !== 1, 'text-white bg-gray-500': openTab === 1}">
                                         <i class="fas fa-space-shuttle text-base mr-1"></i> Task Data
                                     </a>
                                 </li>
-                                <li class="mx-1 flex-auto text-center">
+                                <li class="mx-1 flex-1 text-center">
                                     <a class="text-xs font-bold uppercase px-5 py-3 rounded block leading-normal"
                                        v-on:click="toggleTabs(2)"
                                        v-bind:class="{'text-gray-600 bg-gray-200 hover:bg-gray-300 cursor-pointer ': openTab !== 2, 'text-white bg-gray-500': openTab === 2}">
-                                        <i class="fas fa-cog text-base mr-1"></i> Comments (0)
+                                        <i class="fas fa-cog text-base mr-1"></i> Edit Task
                                     </a>
                                 </li>
-                                <li class="mx-1 flex-auto text-center">
+                                <li class="mx-1 flex-1 text-center">
                                     <a class="text-xs font-bold uppercase px-5 py-3 rounded block leading-normal"
                                        v-on:click="toggleTabs(3)"
                                        v-bind:class="{'text-gray-600 bg-gray-200 hover:bg-gray-300 cursor-pointer ': openTab !== 3, 'text-white bg-gray-500': openTab === 3}">
-                                        <i class="fas fa-briefcase text-base mr-1"></i> Related Tasks
+                                        <i class="fas fa-briefcase text-base mr-1"></i> Comments (0)
                                     </a>
                                 </li>
-                                <li class="mx-1 flex-auto text-center">
+                                <li class="mx-1 flex-1 text-center">
                                     <a class="text-xs font-bold uppercase px-5 py-3 rounded block leading-normal"
                                        v-on:click="toggleTabs(4)"
                                        v-bind:class="{'text-gray-600 bg-gray-200 hover:bg-gray-300 cursor-pointer ': openTab !== 4, 'text-white bg-gray-500': openTab === 4}">
-                                        <i class="fas fa-briefcase text-base mr-1"></i> Logs
+                                        <i class="fas fa-briefcase text-base mr-1"></i> Related Tasks (0)
+                                    </a>
+                                    </a>
+                                </li>
+                                <li class="mx-1 flex-1 text-center">
+                                    <a class="text-xs font-bold uppercase px-5 py-3 rounded block leading-normal"
+                                       v-on:click="toggleTabs(1)"
+                                       v-bind:class="{'text-gray-600 bg-gray-200 hover:bg-gray-300 cursor-pointer ': openTab !== 5, 'text-white bg-gray-500': openTab === 5}">
+                                        <i class="fas fa-space-shuttle text-base mr-1"></i> Logs
                                     </a>
                                 </li>
                             </ul>
@@ -79,21 +88,26 @@
                                 <div class="px-4 py-5 flex-auto">
                                     <div class="tab-content tab-space">
                                         <div v-bind:class="{'hidden': openTab !== 1, 'block': openTab === 1}">
+                                            <p>
+                                                <view-task-data :cardData="cardData"></view-task-data>
+                                            </p>
+                                        </div>
+                                        <div v-bind:class="{'hidden': openTab !== 2, 'block': openTab === 2}">
                                             <add-task-data :kanbanData="kanbanData"
                                                            :cardData="cardData"></add-task-data>
                                         </div>
-                                        <div v-bind:class="{'hidden': openTab !== 2, 'block': openTab === 2}">
+                                        <div v-bind:class="{'hidden': openTab !== 3, 'block': openTab === 3}">
                                             <p>
                                                 <task-comments :cardData="cardData"></task-comments>
                                             </p>
                                         </div>
-                                        <div v-bind:class="{'hidden': openTab !== 3, 'block': openTab === 3}">
+                                        <div v-bind:class="{'hidden': openTab !== 4, 'block': openTab === 4}">
                                             <p>
                                                 <related-tasks></related-tasks>
                                             </p>
                                         </div>
 
-                                        <div v-bind:class="{'hidden': openTab !== 3, 'block': openTab === 3}">
+                                        <div v-bind:class="{'hidden': openTab !== 5, 'block': openTab === 5}">
                                             <p>
                                                 <task-logs></task-logs>
                                             </p>
@@ -117,6 +131,7 @@
     import taskComments from "./taskComponents/TaskComments";
     import relatedTasks from "./taskComponents/RelatedTasks";
     import taskLogs from "./taskComponents/TaskLogs"
+    import viewTaskData from "./taskComponents/viewTaskData";
 
     export default {
         inject: ["eventHub"],
@@ -127,6 +142,7 @@
             taskComments,
             relatedTasks,
             taskLogs,
+            viewTaskData
         },
         props: {
             kanbanData: Object,
@@ -148,14 +164,26 @@
         },
 
         created() {
-            this.eventHub.$on("create-kanban-task-cards", (cardData) => {
-                this.cardData = cardData;
-                this.modalOpen = true;
+            this.eventHub.$on("update-kanban-task-cards", (task) => {
+                if (this.modalOpen) {
+                    this.modalOpen = false;
+
+                    setTimeout(() => {
+                            this.cardData = task;
+                            this.modalOpen = true;
+                        },
+                        100
+                    )
+                    ;
+                } else {
+                    this.cardData = task;
+                    this.modalOpen = true;
+                }
             });
         },
 
         beforeDestroy() {
-            this.eventHub.$off('create-kanban-task-cards');
+            this.eventHub.$off('update-kanban-task-cards');
         },
     };
 </script>

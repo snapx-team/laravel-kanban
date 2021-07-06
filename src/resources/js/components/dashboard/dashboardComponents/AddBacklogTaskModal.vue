@@ -53,7 +53,6 @@
                                     <div class="ml-3 text-gray-700 font-medium">
                                         <p>{{ taskOption.name }}</p>
                                     </div>
-
                                 </label>
                             </div>
                         </div>
@@ -102,10 +101,17 @@
                                     <span
                                         class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Description
                                     </span>
-                                    <quill v-model="task.description" :config="config" output="html"/>
+                                    <<quill-editor v-model="task.description" :options="config" output="html" @change="log($event)"></quill-editor>
 
                                 </div>
                             </div>
+
+                            <div class="ql-editor h-auto" id="task-description" v-html="formatted" ></div>
+
+
+
+                            {{checklistStatus}}
+
 
                             <div class="flex space-x-3">
                                 <div class="flex-1 space-y-2">
@@ -130,7 +136,7 @@
                             </div>
 
                             <div class="flex space-x-3"
-                                 v-if="checkedOptions.includes('Deadline') || checkedOptions.includes('ERP employee') ||checkedOptions.includes('ERP Job Site')">
+                                 v-if="checkedOptions.includes('Deadline') || checkedOptions.includes('ERP Employee') ||checkedOptions.includes('ERP Job Site')">
                                 <div class="flex-1" v-if="checkedOptions.includes('Deadline')">
                                     <div class="flex-1 space-y-2">
                                         <span
@@ -143,7 +149,7 @@
                                     </div>
                                 </div>
 
-                                <div class="flex-1" v-if="checkedOptions.includes('ERP employee')">
+                                <div class="flex-1" v-if="checkedOptions.includes('ERP Employee')">
                                     <div class="flex-1 space-y-2">
                                     <span
                                         class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Employee</span>
@@ -267,7 +273,7 @@
             return {
                 taskOptions: [
                     {name: 'Deadline',},
-                    {name: 'ERP employee',},
+                    {name: 'ERP Employee',},
                     {name: 'ERP Job Site',},
                     {name: 'Group',},
                 ],
@@ -279,7 +285,7 @@
                     modules: {
                         toolbar: [['bold', 'italic', 'underline', 'strike'],
                             ['code-block'],
-                            [{'list': 'ordered'}, {'list': 'bullet'}],
+                            [{'list': 'ordered'}, {'list': 'bullet'}, {'list': 'check'},{'list':'unchecked'}],
                             [{'script': 'sub'}, {'script': 'super'}],
                             [{'color': []}, {'background': []}],
                             [{'align': []}],
@@ -291,7 +297,7 @@
                 task: {
                     name: null,
                     badge: {},
-                    description: null,
+                    description: "<ul data-checked=\"false\"><li>ewtqwteasdgsdga</li><li>sdgasdg</li><li>asdgasfhasdha</li><li>sdgasdgasdg</li><li>asdgasdgasdg</li></ul>",
                     selectedKanbans: [],
                     erpEmployee: null,
                     erpJobSite: null,
@@ -304,12 +310,16 @@
                 erpJobSites: [],
                 tasks: [],
                 modalOpen: false,
+                formatted: null,
+                checklistStatus: null,
             };
         },
 
         created() {
             this.eventHub.$on("create-backlog-task", () => {
                 this.modalOpen = true;
+                this.log();
+
             });
 
             this.getBadges();
@@ -392,7 +402,58 @@
                     console.log(res)
                 });
             },
+            log(){
 
+                let parser = new DOMParser();
+                let doc = parser.parseFromString(this.task.description, 'text/html');
+                let uls = doc.querySelectorAll('ul[data-checked]');
+
+                for (let i = 0; i < uls.length ; i++) {
+
+                    let div = document.createElement('div');
+
+                    for (let x = 0; x < uls[i].childNodes.length ; x++) {
+                        let ul = document.createElement('ul');
+                        let li = document.createElement('li');
+                        li.onclick = () =>{alert(x);};
+
+                        ul.setAttribute('data-checked',uls[i].attributes[0].value);
+                        li.innerHTML = (uls[i].childNodes[x].innerText);
+                        ul.appendChild(li);
+                        div.appendChild(ul);
+                    }
+
+                    uls[i].replaceWith(div);
+                    this.formatted =  new XMLSerializer().serializeToString(doc);
+
+                    this.$nextTick(() => {
+                        let ul = document.querySelectorAll('ul[data-checked]');
+                        for (let i = 0; i < ul.length ; i++) {
+                            ul[i].replaceWith(ul[i].cloneNode(true));
+                        }
+                    })
+
+                    this.$nextTick(() => {
+                        let ul = document.querySelectorAll('ul[data-checked]');
+                        for (let i = 0; i < ul.length ; i++) {
+                            ul[i].addEventListener("click", el =>{
+                                let toggle = el.currentTarget.getAttribute("data-checked") === 'true' ? "false" : "true";
+                                el.currentTarget.setAttribute('data-checked',toggle);
+                                this.task.description = (document.getElementById('task-description').innerHTML);
+                                this.asyncUpdateDescription({'description': this.cloneCardData.description, 'taskId': this.cloneCardData.id});
+
+                                const li = document.querySelectorAll('ul[data-checked] li');
+                                const done = document.querySelectorAll('ul[data-checked="true"] li');
+
+
+                               this.checklistStatus = li.length > 0 ? done.length +"/"+ li.length : null;
+
+
+                            }, true);
+                        }
+                    })
+                }
+            },
         },
 
         computed: {
@@ -403,6 +464,14 @@
                     computedBadges.hue = this.generateHslColorWithText(badge.name);
                     return computedBadges;
                 })
+            },
+
+            checklistData(){
+                let  parser = new DOMParser();
+                let  doc = parser.parseFromString(this.cloneCardData.description, 'text/html');
+                const li = doc.querySelectorAll('ul[data-checked] li');
+                const done = doc.querySelectorAll('ul[data-checked="true"] li');
+                return done.length +"/"+ li.length
             }
         }
     };

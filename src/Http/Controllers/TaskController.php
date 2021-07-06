@@ -18,6 +18,25 @@ class TaskController extends Controller
         return Task::all();
     }
 
+    public function getRelatedTasks($id)
+    {
+        $group = Task::where('id', $id)->first()->group;
+        return Task::where('id', '!=' , $id)->where('group', $group)->with('badge','row', 'column')
+        ->with(['assignedTo.user' => function($q){
+            $q->select(['id','first_name','last_name']);
+        }])
+        ->with(['erpEmployee' => function($q){
+            $q->select(['id','first_name','last_name']);
+        }])
+        ->with(['reporter' => function($q){
+            $q->select(['id','first_name','last_name']);
+        }])
+        ->with(['erpJobSite' => function($q){
+            $q->select(['id','name']);
+        }])->get();
+    }
+
+
     public function createBacklogTaskCards(Request $request)
     {
         $backlogTaskData = $request->all();
@@ -26,10 +45,9 @@ class TaskController extends Controller
             'name' => $backlogTaskData['badge']['name'],
         ]);
 
-        if ($backlogTaskData['associatedTask'] !== null){
+        if ($backlogTaskData['associatedTask'] !== null) {
             $group = $backlogTaskData['associatedTask']['group'];
-        }
-        else
+        } else
             $group = 'g-' . (Task::max('id') + 1);
 
         try {
@@ -84,10 +102,50 @@ class TaskController extends Controller
         return response(['success' => 'true'], 200);
     }
 
+    public function updateTaskCard(Request $request)
+    {
+        $taskCard = $request->all();
+
+        $badge = Badge::firstOrCreate([
+            'name' => $taskCard['badge']['name'],
+        ]);
+
+        try {
+            Task::where('id', $taskCard['id'])
+                ->update([
+                    'name' => $taskCard['name'],
+                    'description' => $taskCard['description'],
+                    'deadline' => date('y-m-d h:m', strtotime($taskCard['deadline'])),
+                    'erp_employee_id' => $taskCard['erp_employee']['id'],
+                    'erp_job_site_id' => $taskCard['erp_job_site']['id'],
+                    'badge_id' => $badge->id,
+                ]);
+
+        } catch (\Exception $e) {
+            return response([
+                'success' => 'false',
+                'message' => $e->getMessage(),
+            ], 400);
+        }
+        return response(['success' => 'true'], 200);
+    }
+
 
     public function getTaskCardsByColumn($id)
     {
-        return Task::where('column_id', $id)->with('employee.user')->get();
+        return Task::where('column_id', $id)->with('badge','row', 'column')
+            ->with(['assignedTo.user' => function($q){
+                $q->select(['id','first_name','last_name']);
+            }])
+            ->with(['erpEmployee' => function($q){
+                $q->select(['id','first_name','last_name']);
+            }])
+            ->with(['reporter' => function($q){
+                $q->select(['id','first_name','last_name']);
+            }])
+            ->with(['erpJobSite' => function($q){
+                $q->select(['id','name']);
+            }])->get();
     }
 
     public function updateTaskCardIndexes(Request $request)
@@ -108,10 +166,10 @@ class TaskController extends Controller
         return response(['success' => 'true'], 200);
     }
 
-    public function updateTaskCardColumnId($columnId, $taskCardId)
+    public function updateTaskCardColumnId($columnId, $rowId, $taskCardId)
     {
         try {
-            Task::find($taskCardId)->update(['column_id' => $columnId]);
+            Task::find($taskCardId)->update(['column_id' => $columnId, 'row_id' => $rowId]);
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
@@ -135,4 +193,23 @@ class TaskController extends Controller
         return response(['success' => 'true'], 200);
     }
 
+
+    public function updateDescription(Request $request)
+    {
+        $descriptionData = $request->all();
+
+        try {
+            $taskCard = Task::find($descriptionData['id']);
+            $taskCard->update([
+                'description' => $descriptionData['description'],
+            ]);
+        } catch (\Exception $e) {
+            return response([
+                'success' => 'false',
+                'message' => $e->getMessage(),
+                'data' => $descriptionData,
+            ], 400);
+        }
+        return response(['success' => 'true'], 200);
+    }
 }

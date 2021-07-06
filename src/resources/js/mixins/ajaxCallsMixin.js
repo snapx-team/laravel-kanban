@@ -88,6 +88,16 @@ export const ajaxCalls = {
             return axios.get('get-all-tasks');
         },
 
+        asyncGetRelatedTasks(taskId) {
+            return axios.get('get-related-tasks/'+ taskId);
+        },
+
+        asyncUpdateTask(taskCardData) {
+            return axios.post('update-task', taskCardData).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
+        },
+
         asyncCreateTask(taskCardData) {
             return axios.post('create-task', taskCardData).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
@@ -129,8 +139,14 @@ export const ajaxCalls = {
             });
         },
 
-        asyncUpdateTaskCardColumnId(columnId, taskCardId) {
-            return axios.post('update-task-card-column/' + columnId + '/' + taskCardId).catch((error) => {
+        asyncUpdateTaskCardColumnId(columnId, rowId, taskCardId) {
+            return axios.post('update-task-card-column/' + columnId + '/' +rowId +'/'+ taskCardId).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
+        },
+
+        asyncUpdateDescription(data) {
+            return axios.post('update-task-description', data).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },

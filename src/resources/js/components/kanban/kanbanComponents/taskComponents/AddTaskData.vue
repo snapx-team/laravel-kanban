@@ -12,7 +12,7 @@
                      class=" grid divide-y divide-gray-400 pt-2">
                     <label :key="taskOptionIndex" class="flex">
                         <input name="task-options" type="checkbox" :value="taskOption.name"
-                               class="mt-1 form-radio text-indigo-600" v-model="checkedOptions">
+                               class="mt-1 form-radio text-indigo-600" v-model="checkedOptions" @change="removeNotNeededData">
                         <div class="ml-3 text-gray-700 font-medium">
                             <p>{{ taskOption.name }}</p>
                         </div>
@@ -25,10 +25,10 @@
                 <div class="flex space-x-3">
 
                     <div class="flex-1 space-y-2">
-                                    <span
-                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Badge</span>
+                        <span
+                            class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Badge</span>
                         <vSelect
-                            v-model="task.badge"
+                            v-model="cloneCardData.badge"
                             :options="computedBadges"
                             label="name"
                             placeholder="Choose or Create"
@@ -54,7 +54,7 @@
                             class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
                             placeholder="Task Name"
                             type="text"
-                            v-model="task.name"/>
+                            v-model="cloneCardData.name"/>
                     </label>
 
 
@@ -63,27 +63,26 @@
                 <div>
                     <div class="flex-grow space-y-2">
                         <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Description</span>
-                        <quill v-model="task.description" :config="config" output="html"/>
+                        <<quill-editor v-model="cloneCardData.description" :options="config" output="html"></quill-editor>
                     </div>
                 </div>
 
                 <div class="flex space-x-3">
                     <div class="flex-1 space-y-2">
-                                    <span
-                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Assign employees</span>
+                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Assign employees</span>
                         <vSelect
-                            v-model="task.selectedKanbans"
+                            v-model="cloneCardData.assigned_to"
                             multiple
                             :options="kanbanData.members"
-                            :getOptionLabel="opt => opt.employee.user.full_name"
+                            :getOptionLabel="opt => opt.user.full_name"
 
                             style="margin-top: 7px"
-                            placeholder="Select one or more kanban boards"
+                            placeholder="Select one or more kanban members"
                             class="text-gray-400">
                             <template slot="option" slot-scope="option">
-                                <avatar :name="option.employee.user.full_name" :size="4"
+                                <avatar :name="option.user.full_name" :size="4"
                                         class="mr-3 m-1 float-left"></avatar>
-                                <p class="inline">{{ option.employee.user.full_name }}</p>
+                                <p class="inline">{{ option.user.full_name }}</p>
                             </template>
                             <template #no-options="{ search, searching, loading }">
                                 No result .
@@ -93,12 +92,12 @@
                 </div>
 
                 <div class="flex space-x-3"
-                     v-if="checkedOptions.includes('Deadline') || checkedOptions.includes('ERP employee') ||checkedOptions.includes('ERP Job Site')">
+                     v-if="checkedOptions.includes('Deadline') || checkedOptions.includes('ERP Employee') ||checkedOptions.includes('ERP Job Site')">
                     <div class="flex-1" v-if="checkedOptions.includes('Deadline')">
                         <div class="flex-1 space-y-2">
                                         <span
                                             class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline</span>
-                            <date-picker type="datetime" v-model="task.deadline"
+                            <date-picker type="datetime" v-model="cloneCardData.deadline"
                                          placeholder="YYYY-MM-DD HH:mm"
                                          :popup-style="{ position: 'fixed' }" format="YYYY-MM-DD HH:mm"
                             ></date-picker>
@@ -106,16 +105,15 @@
                         </div>
                     </div>
 
-                    <div class="flex-1" v-if="checkedOptions.includes('ERP employee')">
+                    <div class="flex-1" v-if="checkedOptions.includes('ERP Employee')">
                         <div class="flex-1 space-y-2">
-                                    <span
-                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Employee</span>
+                            <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Employee</span>
                             <vSelect :options="erpEmployees"
                                      class="text-gray-400"
                                      label="full_name"
                                      placeholder="Select Employee"
                                      style="margin-top: 7px"
-                                     v-model="task.erpEmployee">
+                                     v-model="cloneCardData.erp_employee">
                                 <template slot="option" slot-scope="option">
                                     <avatar :name="option.full_name" :size="4"
                                             class="mr-3 m-1 float-left"></avatar>
@@ -130,14 +128,13 @@
 
                     <div class="flex-1" v-if="checkedOptions.includes('ERP Job Site')">
                         <div class="flex-1 space-y-2">
-                                    <span
-                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Job Site</span>
+                            <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Job Site</span>
                             <vSelect :options="erpJobSites"
                                      class="text-gray-400"
                                      label="name"
                                      placeholder="Select Job Site"
                                      style="margin-top: 7px"
-                                     v-model="task.erpJobSite">
+                                     v-model="cloneCardData.erp_job_site">
                                 <template slot="option" slot-scope="option">
                                     <p class="inline">{{ option.name }}</p>
                                 </template>
@@ -147,19 +144,17 @@
                             </vSelect>
                         </div>
                     </div>
-
                 </div>
 
                 <div class="flex-1" v-if="checkedOptions.includes('Group')">
                     <div class="flex-1 space-y-2">
-                                    <span
-                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with task</span>
+                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with task</span>
                         <vSelect :options="tasks"
                                  class="text-gray-400"
                                  label="name"
                                  placeholder="Select task"
                                  style="margin-top: 7px"
-                                 v-model="task.associatedTask">
+                                 v-model="cloneCardData.group">
                             <template slot="selected-option" slot-scope="option">
                                 <p>
                                     <span class="font-bold">task-{{ option.id }}: </span>
@@ -185,11 +180,11 @@
                         type="button">
                         Cancel
                     </button>
-                    <button @click="saveBacklogTask($event)"
+                    <button @click="updateTaskData($event)"
                             class="px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
                             type="button">
 
-                        <span>Create Board</span>
+                        <span>Update Task</span>
                     </button>
                 </div>
             </div>
@@ -200,8 +195,12 @@
 <script>
     import vSelect from "vue-select";
     import Avatar from "../../../global/Avatar.vue";
+    import {ajaxCalls} from "../../../../mixins/ajaxCallsMixin";
+
 
     export default {
+        mixins: [ajaxCalls],
+
         inject: ["eventHub"],
         components: {
             vSelect,
@@ -213,11 +212,11 @@
         },
         data() {
             return {
+                cloneCardData: {},
                 taskOptions: [
                     {name: 'Deadline',},
-                    {name: 'ERP employee',},
+                    {name: 'ERP Employee',},
                     {name: 'ERP Job Site',},
-                    {name: 'Group',},
                 ],
                 checkedOptions: [],
                 config: {
@@ -227,7 +226,7 @@
                     modules: {
                         toolbar: [['bold', 'italic', 'underline', 'strike'],
                             ['code-block'],
-                            [{'list': 'ordered'}, {'list': 'bullet'}],
+                            [{'list': 'ordered'}, {'list': 'bullet'}, {'list': 'check'}],
                             [{'script': 'sub'}, {'script': 'super'}],
                             [{'color': []}, {'background': []}],
                             [{'align': []}],
@@ -236,17 +235,6 @@
                     }
                 },
 
-                task: {
-                    name: null,
-                    badge: {},
-                    description: null,
-                    selectedKanbans: [],
-                    erpEmployee: null,
-                    erpJobSite: null,
-                    deadline: null,
-                    columnId: null,
-                    associatedTask: null,
-                },
                 badges: [],
                 erpEmployees: [],
                 erpJobSites: [],
@@ -255,7 +243,17 @@
         },
 
         created() {
-            this.setTaskData();
+            this.cloneCardData = {...this.cardData};
+
+            if (this.cloneCardData.deadline) {
+                this.cloneCardData.deadline = new Date(this.cardData.deadline);
+                this.checkedOptions.push('Deadline');
+            }
+            if (this.cloneCardData.erp_job_site_id)
+                this.checkedOptions.push('ERP Job Site');
+            if (this.cloneCardData.erp_employee_id)
+                this.checkedOptions.push('ERP Employee');
+
         },
 
 
@@ -267,29 +265,14 @@
                     computedBadges.color = this.generateHexColorWithText(badge.name);
                     return computedBadges;
                 })
-            }
+            },
         },
         methods: {
-            saveCards(event) {
+            updateTaskData(event) {
                 event.target.disabled = true;
-                this.eventHub.$emit("save-task-cards", this.cardData);
+                this.eventHub.$emit("update-task-card-data", this.cloneCardData);
                 this.modalOpen = false;
-                this.cardData.employeesSelected = null;
             },
-
-            deleteCard(selectedCardData) {
-                this.eventHub.$emit("delete-kanban-task-cards", {
-                    selectedCardData,
-                    selectedRowIndex: this.cardData.selectedRowIndex,
-                    selectedColumnIndex: this.cardData.selectedColumnIndex
-                });
-            },
-
-            setTaskData() {
-
-
-            },
-
 
             getBadges() {
                 this.asyncGetBadges().then((data) => {
@@ -322,6 +305,20 @@
                     console.log(res)
                 });
             },
+
+            removeNotNeededData(){
+
+                if(!this.checkedOptions.includes('Deadline')){
+                    this.cloneCardData.deadline = null
+                }
+                if(!this.checkedOptions.includes('ERP Employee')){
+                    this.cloneCardData.erp_employee = null
+                }
+                if(!this.checkedOptions.includes('ERP Job Site')){
+                    this.cloneCardData.erp_job_site = null
+                }
+            },
+
         },
     };
 </script>

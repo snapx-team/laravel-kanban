@@ -36,7 +36,7 @@
             </p>
             <p v-if="task_card.erp_job_site_id !== null" class="text-xs text-gray-600">
                 <span class="font-bold leading-4 tracking-wide text-gray-600">Job Site: </span>
-                {{ task_card.job_site.name }}
+                {{ task_card.erp_job_site.name }}
             </p>
             <p v-if="task_card.deadline !== null" class="text-xs text-gray-600">
                 <span class="font-bold leading-4 tracking-wide text-gray-600">Deadline: </span>
@@ -79,7 +79,6 @@
                 } else {
 
                     return 'border-color: hsl( ' + this.task_card.hours_to_deadline / 2 + ' , 100%, 50%)'
-
                 }
             },
         },

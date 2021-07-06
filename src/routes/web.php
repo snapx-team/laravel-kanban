@@ -41,8 +41,12 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
 
             // Task
             Route::get('/get-all-tasks', 'TaskController@getAllTasks');
+            Route::get('/get-related-tasks/{id}', 'TaskController@getRelatedTasks');
 
-            Route::post('/create-task', 'TaskController@createTaskCards');
+
+            Route::post('/create-task', 'TaskController@createTaskCard');
+            Route::post('/update-task', 'TaskController@updateTaskCard');
+
             Route::post('/create-backlog-tasks', 'TaskController@createBacklogTaskCards');
 
             Route::post('/get-task-cards-by-column/{id}', 'TaskController@getTaskCardsByColumn');
@@ -50,8 +54,10 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             Route::post('/update-column-indexes', 'RowAndColumnsController@updateColumnIndexes');
             Route::post('/update-row-indexes', 'RowAndColumnsController@updateRowIndexes');
 
-            Route::post('/update-task-card-column/{columnId}/{taskCardId}', 'TaskController@updateTaskCardColumnId');
+            Route::post('/update-task-card-column/{columnId}/{rowId}/{taskCardId}', 'TaskController@updateTaskCardColumnId');
+
             Route::post('/delete-kanban-task-card/{id}', 'TaskController@deleteTaskCard');
+            Route::post('/update-task-description', 'TaskController@updateDescription');
 
             // Comments
 

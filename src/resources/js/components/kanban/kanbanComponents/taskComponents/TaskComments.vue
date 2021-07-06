@@ -1,21 +1,32 @@
 <template>
 
-    <div class="space-y-6 overflow-auto px-8 py-6 flex-1">
-
+    <div class="space-y-3" :class="{'animate-pulse': loadingComments}">
         <div>
             <div class="flex-grow space-y-2">
-                <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Comments</span>
+
+                <div v-if="!isCommentFocus">
+                    <input ref="myQuillEditortest" @click="displayQuill" placeholder="Write Comment" type="text"
+                           class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full outline-none text-md leading-4">
+                </div>
 
 
-                <quill v-model="commentData.comment" :config="config" output="html"/>
+                <div :class="{'absolute h-0 opacity-0 overflow-hidden': !isCommentFocus}">
+                    <quill-editor
+                        ref="myQuillEditor"
+                        v-model="commentData.comment"
+                        :options="config"
+                        output="html"
+                        @blur="isCommentFocus = false"
+                    ></quill-editor>
 
-                <button
-                    @click="saveComment()"
-                    class="w-full bg-indigo-500 text-white active:bg-indigo-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                    type="button"
-                >
-                    submit comment <i class="fa fa-paper-plane ml-1"></i>
-                </button>
+                    <button
+                        @click="saveComment()"
+                        class="w-full bg-indigo-500 text-white active:bg-indigo-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                        type="button"
+                    ><span v-if="loadingComments">submitting</span><span v-else>submit</span> comment <i
+                        class="fa fa-paper-plane ml-1"></i>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -44,66 +55,37 @@
         </div>
 
 
-        <div class="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
-            <table class="min-w-full leading-normal">
-                <thead>
-                <tr>
-                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        User
-                    </th>
-                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Comment
-                    </th>
-                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Date
-                    </th>
-                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Edit
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                <div v-if="!comments">
-                    No comments.
-                </div>
-                <template v-for="(comment, commentIndex) in filtered">
-                    <template v-if="commentIndex >= paginationIndex &&commentIndex < paginationIndex + paginationStep">
-                        <tr :key="commentIndex">
-                            <td class="px-5 py-5 bg-white text-sm">
-                                <div class="flex items-center">
-                                    <avatar :name="comment.employee.user.full_name" :size="6" class="mr-3"></avatar>
-                                    <div class="ml-3">
-                                        <p class="text-gray-900 whitespace-no-wrap">
-                                            {{ comment.employee.user.full_name }} </p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-5 py-5 bg-white text-sm">
-                                <p class="text-gray-900 whitespace-no-wrap">
-                                    eyooo </p>
-                            </td>
-                            <td class="px-5 py-5 bg-white text-sm">
-                                <p class="text-gray-900 whitespace-no-wrap">
-                                    eyooo2</p>
-                            </td>
+        <div class="inline-block min-w-full bg-gray-50 rounded-lg overflow-hidden">
 
-                            <td class="px-5 py-5 bg-white text-sm">
-                                <a @click="editComment(commentIndex)"
-                                   class="cursor-pointer px-2 text-gray-400 hover:text-gray-600 transition duration-300 ease-in-out focus:outline-none">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    </template>
+            <template v-for="(comment, commentIndex) in filtered">
+                <template v-if="commentIndex >= paginationIndex &&commentIndex < paginationIndex + paginationStep">
+                    <div class="flex border-b" :key="commentIndex">
+                        <div class="p-3 text-sm">
+                            <div class="flex items-center w-38">
+                                <div>
+                                    <avatar :name="comment.employee.user.full_name" :size="6"></avatar>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-gray-800 font-semibold whitespace-no-wrap">
+                                        {{ comment.employee.user.full_name }} </p>
+                                    <small>{{ comment.created_at | moment("DD MMM, YYYY") }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3 text-sm">
+                            <p class="text-gray-800 whitespace-no-wrap" v-html="comment.comment"></p>
+                        </div>
+
+                    </div>
                 </template>
-                </tbody>
-            </table>
+            </template>
+
             <div
-                class="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
+                class="p-3 border-t flex flex-col xs:flex-row items-center xs:justify-between">
                 <div class="text-xs xs:text-sm text-gray-900">
                     Showing {{ Number(paginationIndex) + 1 }} to
-                    <span v-if="paginationIndex + paginationStep <= filtered.length">{{ Number(paginationIndex) + Number(paginationStep) }}</span>
-                    <span v-else>{{ filtered.length }}</span>of {{ filtered.length }} Entries
+                    <span v-if="paginationIndex + paginationStep <= filtered.length"> {{ Number(paginationIndex) + Number(paginationStep) }} </span>
+                    <span v-else>{{ filtered.length }} </span> of {{ filtered.length }} Entries
                 </div>
                 <div class="inline-flex mt-2 xs:mt-0">
                     <button @click="updatePaginationIndex(paginationIndex - paginationStep)"
@@ -142,31 +124,12 @@
         data() {
             return {
                 loadingComments: false,
-                comments:
-                    [
-                        {
-                            id: 1,
-                            comment: 'hello world',
-                            employee: {user: {full_name: 'siamak samie'}},
-                            create_at: 'sat 4pm'
-                        },
-                        {
-                            id: 2,
-                            comment: 'hello world',
-                            employee: {user: {full_name: 'siamak samie'}},
-                            create_at: 'sat 4pm'
-                        },
-                        {
-                            id: 3,
-                            comment: 'hello world',
-                            employee: {user: {full_name: 'siamak samie'}},
-                            create_at: 'sat 4pm'
-                        },
-                    ],
+                isCommentFocus: false,
+                comments: [],
                 filter: "",
                 paginationIndex: 0,
                 paginationStep: 5,
-                commentData: {id: null, comment: null},
+                commentData: {id: null, comment: null, taskId: null},
                 config: {
                     readOnly: false,
                     placeholder: 'Describe your task in greater detail',
@@ -186,17 +149,18 @@
             };
         },
 
+
         computed: {
             filtered() {
                 const regex = new RegExp(this.filter, "i");
                 return this.comments.filter((e) => {
                     this.paginationIndex = 0;
-                    return !this.filter || e.employee.user.full_name.match(regex);
+                    return !this.filter || e.employee.user.full_name.match(regex) || e.comment.match(regex);
                 });
             },
         },
         mounted() {
-            console.log(this.cardData);
+            this.commentData.taskId = this.cardData.id;
             this.getComments();
         },
         methods: {
@@ -204,7 +168,7 @@
             getComments() {
                 this.loadingComments = true;
 
-                this.asyncGetComments(1).then((data) => {
+                this.asyncGetComments(this.commentData.taskId).then((data) => {
                     this.comments = data.data;
                     this.loadingComments = false;
                 }).catch(res => {
@@ -213,15 +177,21 @@
             },
 
             saveComment() {
-                this.loadingComments = true
+                this.loadingComments = true;
                 this.asyncCreateComment(this.commentData).then(res => {
-                    this.getComments()
+                    this.commentData.comment= null;
+                    this.getComments();
                 });
             },
 
             updatePaginationIndex(newIndex) {
                 if (newIndex < 0) newIndex = 0;
                 else if (newIndex < this.filtered.length) this.paginationIndex = newIndex;
+            },
+            displayQuill() {
+                this.isCommentFocus = true;
+                this.$refs.myQuillEditor.quill.focus();
+                console.log(this.$refs.myQuillEditor);
             },
         },
     };

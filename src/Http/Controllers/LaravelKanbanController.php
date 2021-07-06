@@ -32,9 +32,10 @@ class LaravelKanbanController extends Controller
             ->with(['members.employee.user' => function($q){
                 $q->select(['id','first_name','last_name']);
             }])
-            ->with(['rows.columns.taskCards.jobSite' => function($q){
+            ->with(['rows.columns.taskCards.erpJobSite' => function($q){
                 $q->select(['id','name']);
             }])
+            ->with(['rows.columns.taskCards.row', 'rows.columns.taskCards.column',])
             ->find($id);
         return $board;
     }
