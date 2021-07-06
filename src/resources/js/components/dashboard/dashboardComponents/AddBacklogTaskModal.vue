@@ -40,16 +40,44 @@
                         </div>
                     </div>
                     <!-- Task container -->
+
+                    <button @click="selectTemplateIsVisible = true"
+                            class="py-6 px-8 text-sm text-indigo-600 hover:text-indigo-800 transition duration-300 ease-in-out focus:outline-none"
+                            v-if="!selectTemplateIsVisible">
+                        <i class="fas fa-th-list mr-2"></i>
+                        Click To Select A Template
+                    </button>
+
+                    <div class="py-6 px-8" v-if="selectTemplateIsVisible">
+                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Select Template</span>
+                        <vSelect :options="templates"
+                                 class="text-gray-400"
+                                 label="name"
+                                 placeholder="Select a template to populate the other fields"
+                                 style="margin-top: 7px"
+                                 v-model="selectedTemplate"
+                                 @input="setTemplate()">
+                            <template slot="option" slot-scope="option">
+                                {{ option.name }}
+                            </template>
+                            <template #no-options="{ search, searching, loading }">
+                                No result .
+                            </template>
+                        </vSelect>
+                    </div>
+
                     <div class="flex">
                         <div class="px-8 py-6 space-y-2 border-r">
                             <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600 pb-2">Task Options</span>
 
-
-                            <div v-for="(taskOption, taskOptionIndex) in taskOptions"
-                                 class=" grid divide-y divide-gray-400 pt-2">
+                            <div class=" grid divide-y divide-gray-400 pt-2"
+                                 v-for="(taskOption, taskOptionIndex) in taskOptions">
                                 <label :key="taskOptionIndex" class="flex">
-                                    <input name="task-options" type="checkbox" :value="taskOption.name"
-                                           class="mt-1 form-radio text-indigo-600" v-model="checkedOptions">
+                                    <input :value="taskOption.name"
+                                           class="mt-1 form-radio text-indigo-600"
+                                           name="task-options"
+                                           type="checkbox"
+                                           v-model="checkedOptions">
                                     <div class="ml-3 text-gray-700 font-medium">
                                         <p>{{ taskOption.name }}</p>
                                     </div>
@@ -61,19 +89,18 @@
                             <div class="flex space-x-3">
 
                                 <div class="flex-1 space-y-2">
-                                    <span
-                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Badge</span>
-                                    <vSelect
-                                        v-model="task.badge"
-                                        :options="computedBadges"
-                                        label="name"
-                                        placeholder="Choose or Create"
-                                        style="margin-top: 7px"
-                                        taggable
-                                        :create-option="option => ({name: option.toLowerCase()})">
-                                    class="text-gray-700">
+                                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Badge</span>
+                                    <vSelect :create-option="option => ({name: option.toLowerCase()})"
+                                             :options="computedBadges"
+                                             class="text-gray-700"
+                                             label="name"
+                                             placeholder="Choose or Create"
+                                             style="margin-top: 7px"
+                                             taggable
+                                             v-model="task.badge">
                                         <template slot="option" slot-scope="option">
-                                            <span class="fa fa-circle mr-4" :style="`color: hsl( ${option.hue} , 45%, 90%);`"></span>
+                                            <span :style="`color: hsl( ${option.hue} , 45%, 90%);`"
+                                                  class="fa fa-circle mr-4"></span>
                                             {{ option.name }}
                                         </template>
                                         <template #no-options="{ search, searching, loading }">
@@ -82,49 +109,39 @@
                                     </vSelect>
                                 </div>
 
-
                                 <label class="flex-grow space-y-2">
-                                    <span
-                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Task Name </span>
-                                    <input
-                                        class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
-                                        placeholder="Task Name"
-                                        type="text"
-                                        v-model="task.name"/>
+                                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Task Name </span>
+                                    <input class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
+                                           placeholder="Task Name"
+                                           type="text"
+                                           v-model="task.name"/>
                                 </label>
-
 
                             </div>
 
                             <div>
                                 <div class="flex-grow space-y-2">
-                                    <span
-                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Description
-                                    </span>
-                                    <<quill-editor v-model="task.description" :options="config" output="html" @change="log($event)"></quill-editor>
+                                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"> Description</span>
+                                    <quill-editor :options="config"
+                                                  @change="log($event)"
+                                                  output="html"
+                                                  v-model="task.description"></quill-editor>
 
                                 </div>
                             </div>
 
-                            <div class="ql-editor h-auto" id="task-description" v-html="formatted" ></div>
-
-
-
                             {{checklistStatus}}
-
 
                             <div class="flex space-x-3">
                                 <div class="flex-1 space-y-2">
-                                    <span
-                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Assign to Kanban</span>
-                                    <vSelect
-                                        v-model="task.selectedKanbans"
-                                        multiple
-                                        :options="boards"
-                                        label="name"
-                                        style="margin-top: 7px"
-                                        placeholder="Select one or more kanban boards"
-                                        class="text-gray-400">
+                                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Assign to Kanban</span>
+                                    <vSelect :options="boards"
+                                             class="text-gray-400"
+                                             label="name"
+                                             multiple
+                                             placeholder="Select one or more kanban boards"
+                                             style="margin-top: 7px"
+                                             v-model="task.selectedKanbans">
                                         <template slot="option" slot-scope="option">
                                             {{ option.name }}
                                         </template>
@@ -139,20 +156,18 @@
                                  v-if="checkedOptions.includes('Deadline') || checkedOptions.includes('ERP Employee') ||checkedOptions.includes('ERP Job Site')">
                                 <div class="flex-1" v-if="checkedOptions.includes('Deadline')">
                                     <div class="flex-1 space-y-2">
-                                        <span
-                                            class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline</span>
-                                        <date-picker type="datetime" v-model="task.deadline"
+                                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline</span>
+                                        <date-picker :popup-style="{ position: 'fixed' }"
+                                                     format="YYYY-MM-DD HH:mm"
                                                      placeholder="YYYY-MM-DD HH:mm"
-                                                     :popup-style="{ position: 'fixed' }" format="YYYY-MM-DD HH:mm"
-                                        ></date-picker>
-
+                                                     type="datetime"
+                                                     v-model="task.deadline"></date-picker>
                                     </div>
                                 </div>
 
                                 <div class="flex-1" v-if="checkedOptions.includes('ERP Employee')">
                                     <div class="flex-1 space-y-2">
-                                    <span
-                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Employee</span>
+                                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Employee</span>
                                         <vSelect :options="erpEmployees"
                                                 class="text-gray-400"
                                                 label="full_name"
@@ -161,7 +176,8 @@
                                                 @search="onTypeEmployee"
                                                 v-model="task.erpEmployee">
                                             <template slot="option" slot-scope="option">
-                                                <avatar :name="option.full_name" :size="4"
+                                                <avatar :name="option.full_name"
+                                                        :size="4"
                                                         class="mr-3 m-1 float-left"></avatar>
                                                 <p class="inline">{{ option.full_name }}</p>
                                             </template>
@@ -174,8 +190,7 @@
 
                                 <div class="flex-1" v-if="checkedOptions.includes('ERP Job Site')">
                                     <div class="flex-1 space-y-2">
-                                    <span
-                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Job Site</span>
+                                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Job Site</span>
                                         <vSelect :options="erpJobSites"
                                                 class="text-gray-400"
                                                 label="name"
@@ -197,8 +212,7 @@
 
                             <div class="flex-1" v-if="checkedOptions.includes('Group')">
                                 <div class="flex-1 space-y-2">
-                                    <span
-                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with task</span>
+                                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with task</span>
                                     <vSelect :options="tasks"
                                              class="text-gray-400"
                                              label="name"
@@ -285,7 +299,7 @@
                     modules: {
                         toolbar: [['bold', 'italic', 'underline', 'strike'],
                             ['code-block'],
-                            [{'list': 'ordered'}, {'list': 'bullet'}, {'list': 'check'},{'list':'unchecked'}],
+                            [{'list': 'ordered'}, {'list': 'bullet'}, {'list': 'check'}, {'list': 'unchecked'}],
                             [{'script': 'sub'}, {'script': 'super'}],
                             [{'color': []}, {'background': []}],
                             [{'align': []}],
@@ -297,7 +311,7 @@
                 task: {
                     name: null,
                     badge: {},
-                    description: "<ul data-checked=\"false\"><li>ewtqwteasdgsdga</li><li>sdgasdg</li><li>asdgasfhasdha</li><li>sdgasdgasdg</li><li>asdgasdgasdg</li></ul>",
+                    description: null,
                     selectedKanbans: [],
                     erpEmployee: null,
                     erpJobSite: null,
@@ -309,6 +323,9 @@
                 erpEmployees: [],
                 erpJobSites: [],
                 tasks: [],
+                templates: [],
+                selectTemplateIsVisible: false,
+                selectedTemplate: {},
                 modalOpen: false,
                 formatted: null,
                 checklistStatus: null,
@@ -319,13 +336,13 @@
             this.eventHub.$on("create-backlog-task", () => {
                 this.modalOpen = true;
                 this.log();
-
             });
 
             this.getBadges();
             this.getErpEmployees();
             this.getJobSites();
             this.getTasks();
+            this.getTemplates();
 
         },
 
@@ -402,52 +419,73 @@
                     console.log(res)
                 });
             },
-            log(){
+
+            getTemplates() {
+                this.asyncGetTemplates().then((data) => {
+                    this.templates = data.data;
+                }).catch(res => {
+                    console.log(res)
+                });
+            },
+
+            setTemplate(){
+
+                console.log(this.selectedTemplate);
+
+                this.task.badge = this.selectedTemplate.badge;
+                this.task.description = this.selectedTemplate.description;
+                this.checkedOptions = this.selectedTemplate.unserialized_options;
+
+
+            },
+
+            log() {
 
                 let parser = new DOMParser();
                 let doc = parser.parseFromString(this.task.description, 'text/html');
                 let uls = doc.querySelectorAll('ul[data-checked]');
 
-                for (let i = 0; i < uls.length ; i++) {
+                for (let i = 0; i < uls.length; i++) {
 
                     let div = document.createElement('div');
 
-                    for (let x = 0; x < uls[i].childNodes.length ; x++) {
+                    for (let x = 0; x < uls[i].childNodes.length; x++) {
                         let ul = document.createElement('ul');
                         let li = document.createElement('li');
-                        li.onclick = () =>{alert(x);};
+                        li.onclick = () => {alert(x);};
 
-                        ul.setAttribute('data-checked',uls[i].attributes[0].value);
+                        ul.setAttribute('data-checked', uls[i].attributes[0].value);
                         li.innerHTML = (uls[i].childNodes[x].innerText);
                         ul.appendChild(li);
                         div.appendChild(ul);
                     }
 
                     uls[i].replaceWith(div);
-                    this.formatted =  new XMLSerializer().serializeToString(doc);
+                    this.formatted = new XMLSerializer().serializeToString(doc);
 
                     this.$nextTick(() => {
                         let ul = document.querySelectorAll('ul[data-checked]');
-                        for (let i = 0; i < ul.length ; i++) {
+                        for (let i = 0; i < ul.length; i++) {
                             ul[i].replaceWith(ul[i].cloneNode(true));
                         }
                     })
 
                     this.$nextTick(() => {
                         let ul = document.querySelectorAll('ul[data-checked]');
-                        for (let i = 0; i < ul.length ; i++) {
-                            ul[i].addEventListener("click", el =>{
+                        for (let i = 0; i < ul.length; i++) {
+                            ul[i].addEventListener("click", el => {
                                 let toggle = el.currentTarget.getAttribute("data-checked") === 'true' ? "false" : "true";
-                                el.currentTarget.setAttribute('data-checked',toggle);
+                                el.currentTarget.setAttribute('data-checked', toggle);
                                 this.task.description = (document.getElementById('task-description').innerHTML);
-                                this.asyncUpdateDescription({'description': this.cloneCardData.description, 'taskId': this.cloneCardData.id});
+                                this.asyncUpdateDescription({
+                                    'description': this.cloneCardData.description,
+                                    'taskId': this.cloneCardData.id
+                                });
 
                                 const li = document.querySelectorAll('ul[data-checked] li');
                                 const done = document.querySelectorAll('ul[data-checked="true"] li');
 
-
-                               this.checklistStatus = li.length > 0 ? done.length +"/"+ li.length : null;
-
+                                this.checklistStatus = li.length > 0 ? done.length + "/" + li.length : null;
 
                             }, true);
                         }
@@ -466,12 +504,12 @@
                 })
             },
 
-            checklistData(){
-                let  parser = new DOMParser();
-                let  doc = parser.parseFromString(this.cloneCardData.description, 'text/html');
+            checklistData() {
+                let parser = new DOMParser();
+                let doc = parser.parseFromString(this.cloneCardData.description, 'text/html');
                 const li = doc.querySelectorAll('ul[data-checked] li');
                 const done = doc.querySelectorAll('ul[data-checked="true"] li');
-                return done.length +"/"+ li.length
+                return done.length + "/" + li.length
             }
         }
     };

@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => 'a97c0256e98cc5702ec6a5c230748c75a8998fbd',
+    'reference' => '5a837b3fa53f7cbc4d24791811e83c8a55d28038',
     'name' => 'xguard/laravel-kanban',
   ),
   'versions' => 
@@ -18,7 +18,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => 'a97c0256e98cc5702ec6a5c230748c75a8998fbd',
+      'reference' => '5a837b3fa53f7cbc4d24791811e83c8a55d28038',
     ),
   ),
 );

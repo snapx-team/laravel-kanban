@@ -44,7 +44,7 @@
                         </div>
                     </div>
                     <!-- Task container -->
-                    <form class="space-y-6 overflow-auto px-8 py-6">
+                    <div class="space-y-6 overflow-auto px-8 py-6">
                         <div class="flex space-x-3">
                             <label class="flex-1 space-y-2">
                                 <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Name </span>
@@ -78,7 +78,7 @@
                             <i class="fas fa-trash mr-2"></i>
                             Delete Kanaban Board
                         </button>
-                    </form>
+                    </div>
                 </div>
             </div>
         </transition>

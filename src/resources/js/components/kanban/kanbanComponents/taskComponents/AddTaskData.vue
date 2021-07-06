@@ -63,7 +63,7 @@
                 <div>
                     <div class="flex-grow space-y-2">
                         <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Description</span>
-                        <<quill-editor v-model="cloneCardData.description" :options="config" output="html"></quill-editor>
+                        <quill-editor v-model="cloneCardData.description" :options="config" output="html"></quill-editor>
                     </div>
                 </div>
 

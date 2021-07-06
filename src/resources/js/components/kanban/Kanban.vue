@@ -86,8 +86,6 @@
             <i class="pl-2 fas fa-plus"></i>
         </button>
 
-        <p>{{kanban}}</p>
-
         <kanban-task-modal :kanbanData="kanban"></kanban-task-modal>
         <add-member-modal :kanbanData="kanban"></add-member-modal>
         <add-row-and-columns-modal :kanbanData="kanban"></add-row-and-columns-modal>

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 
 export const ajaxCalls = {
     data() {
@@ -133,7 +133,7 @@ export const ajaxCalls = {
         },
 
         asyncUpdateRowIndexes(rows) {
-            console.log(rows)
+            console.log(rows);
             return axios.post('update-row-indexes', rows).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
@@ -176,6 +176,24 @@ export const ajaxCalls = {
 
         asyncDeleteKanbanEmployee(employeeId) {
             return axios.post('delete-kanban-employee/' + employeeId).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
+        },
+
+        // Templates
+
+        asyncGetTemplates() {
+            return axios.get('get-templates');
+        },
+
+        asyncCreateTemplate(templateData) {
+            return axios.post('create-template', templateData).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
+        },
+
+        asyncDeleteTemplate(employeeId) {
+            return axios.post('delete-template/' + templateId).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
@@ -241,7 +259,7 @@ export const ajaxCalls = {
 
         triggerSuccessToast(message) {
             this.$toast(message, {
-                position: "bottom-right",
+                position: 'bottom-right',
                 timeout: 4000,
                 closeOnClick: true,
                 pauseOnFocusLoss: true,
@@ -250,7 +268,7 @@ export const ajaxCalls = {
                 draggablePercent: 0.6,
                 showCloseButtonOnHover: false,
                 hideProgressBar: false,
-                closeButton: "button",
+                closeButton: 'button',
                 icon: true,
                 rtl: false
             });
@@ -258,7 +276,7 @@ export const ajaxCalls = {
 
         triggerErrorToast(message) {
             this.$toast.error(message, {
-                position: "bottom-right",
+                position: 'bottom-right',
                 timeout: 4000,
                 closeOnClick: true,
                 pauseOnFocusLoss: true,
@@ -267,7 +285,7 @@ export const ajaxCalls = {
                 draggablePercent: 0.6,
                 showCloseButtonOnHover: false,
                 hideProgressBar: false,
-                closeButton: "button",
+                closeButton: 'button',
                 icon: true,
                 rtl: false
             });
@@ -275,7 +293,7 @@ export const ajaxCalls = {
 
         triggerInfoToast(message) {
             this.$toast.error(message, {
-                position: "bottom-right",
+                position: 'bottom-right',
                 timeout: 4000,
                 closeOnClick: true,
                 pauseOnFocusLoss: true,
@@ -284,7 +302,7 @@ export const ajaxCalls = {
                 draggablePercent: 0.6,
                 showCloseButtonOnHover: false,
                 hideProgressBar: false,
-                closeButton: "button",
+                closeButton: 'button',
                 icon: true,
                 rtl: false
             });

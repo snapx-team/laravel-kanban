@@ -11,8 +11,6 @@ use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
-
-
     public function getAllTasks()
     {
         return Task::all();
@@ -76,7 +74,6 @@ class TaskController extends Controller
         }
         return response(['success' => 'true'], 200);
     }
-
 
     public function createTaskCard(Request $request)
     {

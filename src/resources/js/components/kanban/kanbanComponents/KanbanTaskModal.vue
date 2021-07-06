@@ -26,9 +26,9 @@
                         <div class="space-y-1">
 
                             <div>
-                                <h1 class="text-2xl text-white pb-2">Create Backlog Task</h1>
+                                <h1 class="text-2xl text-white pb-2">Task ID: [{{ kanbanData.name.substring(0,3).toUpperCase() }}-{{ cardData.id}}]</h1>
                                 <p class="text-sm font-medium leading-5 text-gray-500">
-                                    Create tasks and assign it to a single or several Kanban boards </p>
+                                    View and/or update task information </p>
                             </div>
                         </div>
                         <div>
@@ -63,22 +63,14 @@
                                 <li class="mx-1 flex-1 text-center">
                                     <a class="text-xs font-bold uppercase px-5 py-3 rounded block leading-normal"
                                        v-on:click="toggleTabs(3)"
-                                       v-bind:class="{'text-gray-600 bg-gray-200 hover:bg-gray-300 cursor-pointer ': openTab !== 3, 'text-white bg-gray-500': openTab === 3}">
-                                        <i class="fas fa-briefcase text-base mr-1"></i> Comments (0)
+                                       v-bind:class="{'text-gray-600 bg-gray-200 hover:bg-gray-300 cursor-pointer ': openTab !== 3, 'text-white bg-gray-500': openTab === 4}">
+                                        <i class="fas fa-briefcase text-base mr-1"></i> Related Tasks (0)
                                     </a>
                                 </li>
                                 <li class="mx-1 flex-1 text-center">
                                     <a class="text-xs font-bold uppercase px-5 py-3 rounded block leading-normal"
                                        v-on:click="toggleTabs(4)"
-                                       v-bind:class="{'text-gray-600 bg-gray-200 hover:bg-gray-300 cursor-pointer ': openTab !== 4, 'text-white bg-gray-500': openTab === 4}">
-                                        <i class="fas fa-briefcase text-base mr-1"></i> Related Tasks (0)
-                                    </a>
-                                    </a>
-                                </li>
-                                <li class="mx-1 flex-1 text-center">
-                                    <a class="text-xs font-bold uppercase px-5 py-3 rounded block leading-normal"
-                                       v-on:click="toggleTabs(1)"
-                                       v-bind:class="{'text-gray-600 bg-gray-200 hover:bg-gray-300 cursor-pointer ': openTab !== 5, 'text-white bg-gray-500': openTab === 5}">
+                                       v-bind:class="{'text-gray-600 bg-gray-200 hover:bg-gray-300 cursor-pointer ': openTab !== 4, 'text-white bg-gray-500': openTab === 5}">
                                         <i class="fas fa-space-shuttle text-base mr-1"></i> Logs
                                     </a>
                                 </li>
@@ -98,16 +90,10 @@
                                         </div>
                                         <div v-bind:class="{'hidden': openTab !== 3, 'block': openTab === 3}">
                                             <p>
-                                                <task-comments :cardData="cardData"></task-comments>
-                                            </p>
-                                        </div>
-                                        <div v-bind:class="{'hidden': openTab !== 4, 'block': openTab === 4}">
-                                            <p>
                                                 <related-tasks></related-tasks>
                                             </p>
                                         </div>
-
-                                        <div v-bind:class="{'hidden': openTab !== 5, 'block': openTab === 5}">
+                                        <div v-bind:class="{'hidden': openTab !== 4, 'block': openTab === 4}">
                                             <p>
                                                 <task-logs></task-logs>
                                             </p>

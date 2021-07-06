@@ -11,9 +11,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Carbon\Carbon;
 
 /**
- * App\Models\User
  * @property \Illuminate\Support\Carbon|null $deadline
  */
+
 class Task extends Model
 {
     protected $table = 'kanban_tasks';

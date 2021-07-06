@@ -63,7 +63,13 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
 
             Route::get('/get-task-comments/{taskId}', 'CommentController@getAllTaskComments');
             Route::post('/create-task-comment', 'CommentController@createOrUpdateTaskComment');
-            Route::post('/delete-task-comment/{taskCommentId}', 'CommentController@deleteTaskComment');
+            Route::post('/delete-task-comment/{taskCommentId}', 'Templ@deleteTaskComment');
+
+            // Templates
+
+            Route::get('/get-templates', 'TemplateController@getAllTemplates');
+            Route::post('/create-template', 'TemplateController@createOrUpdateTemplate');
+            Route::post('/delete-template/{templateId}', 'TemplateController@deleteTemplate');
 
             // Employees
             Route::post('/create-kanban-employees', 'EmployeeController@createEmployees');

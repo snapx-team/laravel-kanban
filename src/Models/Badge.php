@@ -15,4 +15,9 @@ class Badge extends Model
     {
         return $this->hasOne(Task::class);
     }
+
+    public function template(): HasOne
+    {
+        return $this->hasOne(Template::class);
+    }
 }
