@@ -26,29 +26,62 @@
                 <span>Filter</span>
             </button>
 
-            <div class="bg-gray-100 py-3">
-
-                <div class="p-2 flex flex-wrap">
-                    <div class="flex-auto rounded shadow-lg m-2 bg-white">
-                        <pie-chart v-if="badgeData != null" :series="badgeData.hits" :labels="badgeData.names" :title="'Tickets by Badge'"></pie-chart>
+            <div class="flex">
+                <div class="flex-1 mr-2">
+                    <div class="table border w-80">
+                        <div class="table-row">
+                            <div class="table-cell border cursor-pointer text-lg" @click="showTicketBreakdown()">
+                                <div class="m-2">
+                                    Ticket Breakdown
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-row">
+                            <div class="table-cell border cursor-pointer text-lg" @click="showTicketEmployee()">
+                                <div class="m-2">
+                                    Ticket Employee Breakdown
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-row">
+                            <div class="table-cell border cursor-pointer text-lg" @click="showTicketStats()">
+                                <div class="m-2">
+                                    Ticket Statistics
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-row">
+                            <div class="table-cell border cursor-pointer text-lg" @click="showHourlyStats()">
+                                <div class="m-2">
+                                    Hourly Statistics
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex-auto rounded shadow-lg m-2 bg-white">
-                        <pie-chart v-if="ticketByEmployeeData != null" :series="ticketByEmployeeData.hits" :labels="ticketByEmployeeData.names" :title="'Tickets Created by Employee'"></pie-chart>
-                    </div>
-                    <div class="flex-auto rounded shadow-lg m-2 bg-white">
-                        <pie-chart v-if="jobsiteData != null" :series="jobsiteData.hits" :labels="jobsiteData.names" :title="'Tickets by JobSite'"></pie-chart>
-                    </div>
-                    <div class="flex-auto rounded shadow-lg m-2 bg-white">
-                        <pie-chart v-if="closedTasksByEmployee != null" :series="closedTasksByEmployee.hits" :labels="closedTasksByEmployee.names" :title="'Tickets Closed by Employee'"></pie-chart>
-                    </div>
-                    <div class="flex-auto rounded shadow-lg m-2 bg-white">
-                        <bar-chart  v-if="creationByHour != null" :data="creationByHour.hits" :categories="creationByHour.names" :xname="'Tickets'" :yname="'Hour'" :title="'Tickets by Hour Created'"></bar-chart>
-                    </div>
-                    <div class="flex-auto rounded shadow-lg m-2 bg-white">
-                        <bar-chart  v-if="delayByBadge != null" :data="delayByBadge.hits" :categories="delayByBadge.names" :xname="'Hours'" :yname="'Categories'" :title="'Average Hours by Badge'"></bar-chart>
-                    </div>
-                    <div class="flex-auto rounded shadow-lg m-2 bg-white">
-                        <bar-chart  v-if="delayByEmployee != null" :data="delayByEmployee.hits" :categories="delayByEmployee.names" :xname="'Hours'" :yname="'Employees'" :title="'Average Hours by Employee'"></bar-chart>
+                </div>
+                <div class="flex bg-gray-100 py-3">
+                    <div class="p-2 flex flex-wrap flex-grow">
+                        <div v-if="showTB" class="flex-auto rounded shadow-lg m-2 bg-white">
+                            <pie-chart v-if="badgeData != null" :series="badgeData.hits" :labels="badgeData.names" :title="'Tickets by Badge'"></pie-chart>
+                        </div>
+                        <div v-if="showTE" class="flex-auto rounded shadow-lg m-2 bg-white">
+                            <pie-chart v-if="ticketByEmployeeData != null" :series="ticketByEmployeeData.hits" :labels="ticketByEmployeeData.names" :title="'Tickets Created by Employee'"></pie-chart>
+                        </div>
+                        <div v-if="showTB" class="flex-auto rounded shadow-lg m-2 bg-white">
+                            <pie-chart v-if="jobsiteData != null" :series="jobsiteData.hits" :labels="jobsiteData.names" :title="'Tickets by JobSite'"></pie-chart>
+                        </div>
+                        <div v-if="showTE" class="flex-auto rounded shadow-lg m-2 bg-white">
+                            <pie-chart v-if="closedTasksByEmployee != null" :series="closedTasksByEmployee.hits" :labels="closedTasksByEmployee.names" :title="'Tickets Closed by Employee'"></pie-chart>
+                        </div>
+                        <div v-if="showTS" class="flex-auto rounded shadow-lg m-2 bg-white">
+                            <bar-chart  v-if="creationByHour != null" :data="creationByHour.hits" :categories="creationByHour.names" :xname="'Tickets'" :yname="'Hour'" :title="'Tickets by Hour Created'"></bar-chart>
+                        </div>
+                        <div v-if="showHS" class="flex-auto rounded shadow-lg m-2 bg-white">
+                            <bar-chart  v-if="delayByBadge != null" :data="delayByBadge.hits" :categories="delayByBadge.names" :xname="'Hours'" :yname="'Categories'" :title="'Average Hours by Badge'"></bar-chart>
+                        </div>
+                        <div v-if="showHS" class="flex-auto rounded shadow-lg m-2 bg-white">
+                            <bar-chart  v-if="delayByEmployee != null" :data="delayByEmployee.hits" :categories="delayByEmployee.names" :xname="'Hours'" :yname="'Employees'" :title="'Average Hours by Employee'"></bar-chart>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -77,7 +110,11 @@ export default {
             delayByBadge: null,
             delayByEmployee: null,
             start: this.getMonday(new Date()),
-            end: new Date()
+            end: new Date(),
+            showTB: true,
+            showTE: false,
+            showTS: false,
+            showHS: false,
         }
     },
 
@@ -97,11 +134,50 @@ export default {
     },
     methods: {
         reload() {
+            if (this.showTB) {
+                this.getBadgeData();
+                this.getJobSiteData();
+            }
+            if (this.showTE) {
+                this.getTicketsByEmployee();
+                this.getClosedTasksByEmployee();
+            }
+            if (this.showTS) {
+                this.getCreationByHour();
+            }
+            if (this.showHS) {
+                this.getDelayByBadge();
+                this.getDelayByEmployee();
+            }
+        },
+        showTicketBreakdown() {
+            this.showTB = true;
+            this.showTE = false;
+            this.showTS = false;
+            this.showHS = false;
             this.getBadgeData();
-            this.getTicketsByEmployee();
-            this.getCreationByHour();
             this.getJobSiteData();
+        },
+        showTicketEmployee() {
+            this.showTB = false;
+            this.showTE = true;
+            this.showTS = false;
+            this.showHS = false;
+            this.getTicketsByEmployee();
             this.getClosedTasksByEmployee();
+        },
+        showTicketStats() {
+            this.showTB = false;
+            this.showTE = false;
+            this.showTS = true;
+            this.showHS = false;
+            this.getCreationByHour();
+        },
+        showHourlyStats() {
+            this.showTB = false;
+            this.showTE = false;
+            this.showTS = false;
+            this.showHS = true;
             this.getDelayByBadge();
             this.getDelayByEmployee();
         },
