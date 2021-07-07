@@ -1,6 +1,11 @@
 <template>
-    <div id="chart">
-        <vue-apex-charts type="pie" width="400" height="400" :options="computedChartOptions" :series="this.series"></vue-apex-charts>
+    <div>
+        <div v-if="this.series.length > 0" id="chart">
+            <vue-apex-charts type="pie" width="400" height="400" :options="computedChartOptions" :series="this.series"></vue-apex-charts>
+        </div>
+        <div v-if="this.series.length == 0">
+            No Data for {{ this.title }}
+        </div>
     </div>
 </template>
 

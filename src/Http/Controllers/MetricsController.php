@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use DateTime;
 use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Log;
-use Xguard\LaravelKanban\Models\Badge;
 use Xguard\LaravelKanban\Models\Task;
 
 class MetricsController extends Controller
@@ -17,24 +16,21 @@ class MetricsController extends Controller
         $tasks = Task::with('badge')
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
-            ->orderBy('badge_id')
             ->get();
 
 
-        $names = [];
-        $hits = [];
+        $full = [];
         foreach ($tasks as $task) {
-            if(array_key_exists($task->badge_id, $hits)){
-                $hits[$task->badge_id] += 1;
+            if(array_key_exists($task->badge->name, $full)){
+                $full[$task->badge->name] += 1;
             } else {
-                $hits[$task->badge_id] = 1;
-                array_push($names, $task->badge->name);
+                $full[$task->badge->name] = 1;
             }
         }
 
         return [
-            'names' => $names,
-            'hits' => array_values($hits),
+            'names' => array_keys($full),
+            'hits' => array_values($full),
         ];
     }
 
@@ -46,28 +42,27 @@ class MetricsController extends Controller
             ->orderBy('erp_job_site_id')
             ->get();
 
-        $jobsiteNames = [];
         $jobsiteCounts = [];
         foreach($tasks as $task) {
-            if($task->erp_job_site_id !== null && $task->jobsite !== null) {
-                if(array_key_exists($task->erp_job_site_id, $jobsiteCounts)){
-                    $jobsiteCounts[$task->erp_job_site_id] += 1;
+            if($task->jobsite !== null) {
+                if(array_key_exists($task->jobsite->name, $jobsiteCounts)){
+                    $jobsiteCounts[$task->jobsite->name] += 1;
                 } else {
-                    $jobsiteCounts[$task->erp_job_site_id] = 1;
-                    array_push($jobsiteNames, $task->jobsite->name);
+                    $jobsiteCounts[$task->jobsite->name] = 1;
                 }
             }
         }
 
         return [
             'hits' => array_values($jobsiteCounts),
-            'names' => $jobsiteNames,
+            'names' => array_keys($jobsiteCounts),
+            'test' => $tasks
         ];
     }
 
     public function getTicketsByEmployee($start, $end)
     {
-        $tasks = Task::select('reporter_id')
+        $tasks = Task::with('reporter')
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
             ->orderBy('reporter_id')
@@ -78,24 +73,20 @@ class MetricsController extends Controller
         $reporters = [];
         $assArray = array();
         if(count($tasks) > 0) {
-            $assArray[$tasks[0]->reporter_id] = 0;
             foreach($employees as $employee) {
                 array_push($reporters, $employee->user->full_name);
-                if(!array_key_exists($employee->id, $assArray)) {
-                    $assArray[$employee->id] = 0;
+                if(!array_key_exists($employee->user->email, $assArray)) {
+                    $assArray[$employee->user->email] = 0;
                 }
             }
-
             foreach($tasks as $task) {
-                $assArray[$task->reporter_id] += 1;
+                $assArray[$task->reporter->email] += 1;
             }
         }
         
         return [
             'hits' => array_values($assArray),
             'names' => $reporters,
-            'employees' => $employees,
-            'test' => $assArray
         ];
     }
 
@@ -134,10 +125,10 @@ class MetricsController extends Controller
         $names = [];
         $hits = [];
         foreach($logs as $log) {
-            if(array_key_exists($log->user_id, $hits)){
-                $hits[$log->user_id] += 1;
+            if(array_key_exists($log->user->email, $hits)){
+                $hits[$log->user->email] += 1;
             } else {
-                $hits[$log->user_id] = 1;
+                $hits[$log->user->user] = 1;
                 array_push($names, $log->user->full_name);
             }
         }
