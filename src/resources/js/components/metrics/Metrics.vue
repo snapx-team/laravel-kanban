@@ -114,14 +114,13 @@ export default {
         filter() {
             if (this.start === null || this.start === '' || this.end === null || this.end === '') {
                 alert("fill date fields");
-                console.log("no")
             } else {
                 this.reload();
             }
         },
         getBadgeData() {
             this.asyncGetBadgeData(this.startTime, this.endTime).then((data) => {
-                console.log(data.data);
+                // console.log(data.data);
                 this.badgeData = data.data;
             }).catch(res => {console.log(res)});
         },
@@ -134,31 +133,31 @@ export default {
         getCreationByHour() {
             this.asyncGetCreationByHour(this.startTime, this.endTime).then((data) => {
                 // console.log(data.data);
-                this.creationByHour = data.data
+                this.creationByHour = data.data;
             })
         },
         getJobSiteData() {
             this.asyncGetJobSiteData(this.startTime, this.endTime).then((data) => {
                 // console.log(data.data);
-                this.jobsiteData = data.data
+                this.jobsiteData = data.data;
             })
         },
         getClosedTasksByEmployee() {
             this.asyncGetClosedTasksByEmployee(this.startTime, this.endTime).then((data) => {
                 // console.log(data.data);
-                this.closedTasksByEmployee = data.data
+                this.closedTasksByEmployee = data.data;
             })
         },
         getDelayByBadge() {
             this.asyncGetDelayByBadge(this.startTime, this.endTime).then((data) => {
                 // console.log(data.data);
-                this.delayByBadge = data.data
+                this.delayByBadge = data.data;
             })
         },
         getDelayByEmployee() {
             this.asyncGetDelayByEmployee(this.startTime, this.endTime).then((data) => {
                 // console.log(data.data);
-                this.delayByEmployee = data.data
+                this.delayByEmployee = data.data;
             })
         },
     }
