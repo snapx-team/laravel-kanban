@@ -30,6 +30,15 @@ class ErpController extends Controller
 
     public function getAllJobSites()
     {
-        return JobSite::orderBy('name')->get();
+        return JobSite::orderBy('name')->take(10)->get();
+    }
+
+    public function getSomeJobSites($search)
+    {
+        return JobSite::
+                where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            })
+            ->orderBy('name')->take(10)->get();
     }
 }
