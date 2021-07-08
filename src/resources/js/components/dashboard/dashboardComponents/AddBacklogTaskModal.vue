@@ -148,11 +148,12 @@
                                     <span
                                         class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Employee</span>
                                         <vSelect :options="erpEmployees"
-                                                 class="text-gray-400"
-                                                 label="full_name"
-                                                 placeholder="Select Employee"
-                                                 style="margin-top: 7px"
-                                                 v-model="task.erpEmployee">
+                                                class="text-gray-400"
+                                                label="full_name"
+                                                placeholder="Select Employee"
+                                                style="margin-top: 7px"
+                                                @search="onTypeEmployee"
+                                                v-model="task.erpEmployee">
                                             <template slot="option" slot-scope="option">
                                                 <avatar :name="option.full_name" :size="4"
                                                         class="mr-3 m-1 float-left"></avatar>
@@ -170,11 +171,12 @@
                                     <span
                                         class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Job Site</span>
                                         <vSelect :options="erpJobSites"
-                                                 class="text-gray-400"
-                                                 label="name"
-                                                 placeholder="Select Job Site"
-                                                 style="margin-top: 7px"
-                                                 v-model="task.erpJobSite">
+                                                class="text-gray-400"
+                                                label="name"
+                                                placeholder="Select Job Site"
+                                                style="margin-top: 7px"
+                                                @search="onTypeJobsite"
+                                                v-model="task.erpJobSite">
                                             <template slot="option" slot-scope="option">
                                                 <p class="inline">{{ option.name }}</p>
                                             </template>
@@ -327,7 +329,38 @@
                 this.eventHub.$emit("save-backlog-task", this.task);
                 this.modalOpen = false;
             },
-
+            onTypeEmployee(search, loading) {
+                if(search.length) {
+                        loading(true);
+                        this.typeEmployee(search, loading, this);
+                    }
+                },
+            typeEmployee : _.debounce(function (search, loading, vm) {
+                this.asyncGetSomeUsers(search).then((data) => {
+                    this.erpEmployees = data.data;
+                })
+                .catch(res => {console.log(res)})
+                .then(function() {
+                    setTimeout(500);
+                    loading(false);
+                });
+            }, 500),
+            onTypeJobsite(search, loading) {
+                if(search.length) {
+                        loading(true);
+                        this.typeJobsite(search, loading, this);
+                    }
+                },
+            typeJobsite : _.debounce(function (search, loading, vm) {
+                this.asyncGetSomeJobSites(search).then((data) => {
+                    this.erpJobSites = data.data;
+                })
+                .catch(res => {console.log(res)})
+                .then(function() {
+                    setTimeout(500);
+                    loading(false);
+                });
+            }, 500),
             getBadges() {
                 this.asyncGetBadges().then((data) => {
                     this.badges = data.data;

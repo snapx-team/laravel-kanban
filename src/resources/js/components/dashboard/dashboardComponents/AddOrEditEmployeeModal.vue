@@ -197,7 +197,7 @@
         mounted(){
             this.asyncGetAllUsers().then((data) => {
                 this.allUsers = data.data;
-                console.log(this.allUsers );
+                // console.log(this.allUsers);
             }).catch(res => {console.log(res)});
         },
 
@@ -212,10 +212,21 @@
                 this.eventHub.$emit("delete-kanban-employee", this.employeeData.id);
                 this.modalOpen = false;
             },
-            onType : _.debounce(function (search) {
+            onType(search, loading) {
+                if(search.length) {
+                        loading(true);
+                        this.type(search, loading, this);
+                    }
+                },
+            type : _.debounce(function (search, loading, vm) {
                 this.asyncGetSomeUsers(search).then((data) => {
                     this.allUsers = data.data;
-                }).catch(res => {console.log(res)});
+                })
+                .catch(res => {console.log(res)})
+                .then(function() {
+                    setTimeout(500);
+                    loading(false);
+                });
             }, 500)
         },
     };

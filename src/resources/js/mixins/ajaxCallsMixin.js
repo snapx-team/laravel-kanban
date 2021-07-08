@@ -140,9 +140,8 @@ export const ajaxCalls = {
         asyncGetSomeUsers(searchTerm) {
             if (searchTerm == '') {
                 return axios.get('get-all-users');
-            } else {
-                return axios.get('get-some-users/' + searchTerm);
             }
+            return axios.get('get-some-users/' + searchTerm);
         },
 
         asyncGetKanbanEmployees() {
@@ -165,6 +164,13 @@ export const ajaxCalls = {
 
         asyncGetAllJobSites() {
             return axios.get('get-all-job-sites');
+        },
+
+        asyncGetSomeJobSites(searchTerm) {
+            if (searchTerm == '') {
+                return axios.get('get-all-job-sites');
+            }
+            return axios.get('get-some-job-sites/' + searchTerm);
         },
 
         // Badges
