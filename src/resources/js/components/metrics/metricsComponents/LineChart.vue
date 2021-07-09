@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-if="this.series.length > 0" id="chart">
-            <vue-apex-charts type="bar" height="350" :options="computedChartOptions" :series="computedSeries"></vue-apex-charts>
+            <vue-apex-charts type="area" height="350" :options="computedChartOptions" :series="series"></vue-apex-charts>
         </div>
         <div v-if="this.series.length == 0">
                 No Data for {{ this.title }}
@@ -19,49 +19,32 @@ export default {
     },
     data() {
         return {
-            series: [{
-                name: '',
-                data:[]
-            }],
             chartOptions: {
                 chart: {
                     height: 350,
-                    type: 'bar',
-                },
-                plotOptions: {
-                    bar: {
-                        columnWidth: '60%',
-                    }
+                    type: 'area'
                 },
                 dataLabels: {
                     enabled: false
                 },
                 stroke: {
-                    width: 2
+                    curve: 'smooth'
                 },
-                grid: {
-                    row: {
-                        colors: ['#fff', '#f2f2f2']
-                    }
+                colors: ['#47DF11', '#F12007'],
+                xaxis: {
+                    type: 'datetime',
+                    categories: []
                 },
-                fill: {
-                    type: 'gradient',
-                    gradient: {
-                        shade: 'light',
-                        type: "horizontal",
-                        shadeIntensity: 0.25,
-                        gradientToColors: undefined,
-                        inverseColors: true,
-                        opacityFrom: 0.85,
-                        opacityTo: 0.85,
-                        stops: [50, 0, 100]
+                tooltip: {
+                    x: {
+                        format: 'dd/MM/yy'
                     },
                 },
             }
         }
     },
     props: {
-        data: {
+        series: {
             default: Array,
         },
         xname: {
@@ -83,10 +66,7 @@ export default {
                 ...this.chartOptions, ...{
                     xaxis: {
                         title: {
-                            text: this.yname,
-                        },
-                        labels: {
-                            rotate: -45
+                            text: this.xname,
                         },
                         categories: this.categories,
                         tickPlacement: 'on'
@@ -107,18 +87,12 @@ export default {
                     },
                      yaxis: {
                         title: {
-                            text: this.xname,
+                            text: this.yname,
                         },
                     },
                 }
             };
         },
-        computedSeries() {
-            return [{
-                name: this.xname,
-                data: this.data
-            }]
-        }
     }
 }
 </script>
