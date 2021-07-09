@@ -52,6 +52,10 @@ export const ajaxCalls = {
             return axios.get('get-delay-by-employee/' + start + '/' + end);
         },
 
+        asyncGetCreatedVsResolved(start, end) {
+            return axios.get('get-created-vs-resolved/' + start + '/' + end);
+        },
+
         // Board
 
         asyncGetBoards() {

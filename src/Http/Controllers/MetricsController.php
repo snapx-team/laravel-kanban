@@ -3,6 +3,8 @@
 namespace Xguard\LaravelKanban\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use DateInterval;
+use DatePeriod;
 use DateTime;
 use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Log;
@@ -188,7 +190,8 @@ class MetricsController extends Controller
         $closedLogs = Log::where('log_type', Log::TYPE_CARD_CLOSED)
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
-            ->orderBy('task_id')->get();
+            ->orderBy('task_id')
+            ->get();
         $assignedLogs = Log::with('user')
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
@@ -223,6 +226,67 @@ class MetricsController extends Controller
         return [
             'names' => $names,
             'hits' => $averages,
+        ];
+    }
+
+    public function getCreatedVsResolved($start, $end)
+    {
+        $beginning = new DateTime($start);
+        $ending = new DateTime($end);
+        $resolvedLogs = Log::where('log_type', Log::TYPE_CARD_CLOSED)
+            ->orWhere('log_type', Log::TYPE_CARD_CANCELED)
+            ->whereDate('created_at', '>=', $beginning)
+            ->whereDate('created_at', '<=', $ending)
+            ->orderBy('task_id')
+            ->get();
+        $createdLogs = Log::with('user')
+            ->whereDate('created_at', '>=', $beginning)
+            ->whereDate('created_at', '<=', $ending)
+            ->where('log_type', Log::TYPE_CARD_CREATED)
+            ->orderBy('task_id')
+            ->get();
+
+        $period = new DatePeriod($beginning, new DateInterval('P1D'), $ending);
+
+        $series = [
+            (object) [
+                'name' => 'Resolved',
+                'data' => []
+            ],
+            (object) [
+                'name' => 'Opened',
+                'data' => []
+            ]
+        ];
+
+        $categories = [];
+        foreach ($period as $day) {
+            $currentDay = $day->format("m/d");
+            array_push($categories, $currentDay);
+            $count = 0;
+            foreach($createdLogs as $createdLog) {
+                $tempDay = new DateTime($createdLog->created_at);
+                $createdDay = $tempDay->format("m/d");
+                if($currentDay == $createdDay) {
+                    $count += 1;
+                }
+            }
+            array_push($series[0]->data, $count);
+
+            $count = 0;
+            foreach($resolvedLogs as $resolvedLog) {
+                $tempDay = new DateTime($resolvedLog->created_at);
+                $resolvedDay = $tempDay->format("m/d");
+                if($currentDay == $resolvedDay) {
+                    $count += 1;
+                }
+            }
+            array_push($series[1]->data, $count);
+        }
+
+        return [
+            'series' => $series,
+            'categories' => $categories,
         ];
     }
     

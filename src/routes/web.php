@@ -27,6 +27,7 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             Route::get('/get-closed-by-employee/{start}/{end}', 'MetricsController@getClosedTasksByEmployee');
             Route::get('/get-delay-by-badge/{start}/{end}', 'MetricsController@getDelayByBadge');
             Route::get('/get-delay-by-employee/{start}/{end}', 'MetricsController@getDelayByEmployee');
+            Route::get('/get-created-vs-resolved/{start}/{end}', 'MetricsController@getCreatedVsResolved');
 
 
             // Board
@@ -76,6 +77,7 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             Route::get('/get-all-users', 'ErpController@getAllUsers');
             Route::get('/get-some-users/{searchTerm}', 'ErpController@getSomeUsers');
             Route::get('/get-all-job-sites', 'ErpController@getAllJobSites');
+            Route::get('/get-some-job-sites/{searchTerm}', 'ErpController@getSomeJobSites');
 
         });
     });

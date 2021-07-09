@@ -57,6 +57,13 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="table-row">
+                            <div class="table-cell border cursor-pointer text-lg" @click="showCreatedVsResolved()">
+                                <div class="m-2">
+                                    Created Vs Resolved
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="flex bg-gray-100 py-3">
@@ -82,6 +89,9 @@
                         <div v-if="showHS" class="flex-auto rounded shadow-lg m-2 bg-white">
                             <bar-chart  v-if="delayByEmployee != null" :data="delayByEmployee.hits" :categories="delayByEmployee.names" :xname="'Hours'" :yname="'Employees'" :title="'Average Hours by Employee'"></bar-chart>
                         </div>
+                        <div v-if="showCR" class="flex-auto rounded shadow-lg m-2 bg-white">
+                            <line-chart v-if="createdVsResolved != null" :series="createdVsResolved.series" :categories="createdVsResolved.categories" :xname="'Days'" :yname="'Total Tickets'" :title="'Created Vs Resolved'"></line-chart> <!-- :data="delayByEmployee.hits"   -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -93,12 +103,14 @@
 import {ajaxCalls} from "../../mixins/ajaxCallsMixin";
 import PieChart from  "./metricsComponents/PieChart.vue";
 import BarChart from  "./metricsComponents/BarChart.vue";
+import LineChart from  "./metricsComponents/LineChart.vue";
 
 export default {
     inject: ["eventHub"],
     components: {
         PieChart,
         BarChart,
+        LineChart
     },
     data() {
         return {
@@ -109,12 +121,14 @@ export default {
             closedTasksByEmployee: null,
             delayByBadge: null,
             delayByEmployee: null,
+            createdVsResolved: null,
             start: this.getMonday(new Date()),
             end: new Date(),
             showTB: true,
             showTE: false,
             showTS: false,
             showHS: false,
+            showCR: false,
         }
     },
 
@@ -149,12 +163,17 @@ export default {
                 this.getDelayByBadge();
                 this.getDelayByEmployee();
             }
+            if (this.showCR) {
+                this.getCreatedVsResolved();
+            }
+        
         },
         showTicketBreakdown() {
             this.showTB = true;
             this.showTE = false;
             this.showTS = false;
             this.showHS = false;
+            this.showCR = false;
             this.getBadgeData();
             this.getJobSiteData();
         },
@@ -163,6 +182,7 @@ export default {
             this.showTE = true;
             this.showTS = false;
             this.showHS = false;
+            this.showCR = false;
             this.getTicketsByEmployee();
             this.getClosedTasksByEmployee();
         },
@@ -171,6 +191,7 @@ export default {
             this.showTE = false;
             this.showTS = true;
             this.showHS = false;
+            this.showCR = false;
             this.getCreationByHour();
         },
         showHourlyStats() {
@@ -178,8 +199,17 @@ export default {
             this.showTE = false;
             this.showTS = false;
             this.showHS = true;
+            this.showCR = false;
             this.getDelayByBadge();
             this.getDelayByEmployee();
+        },
+        showCreatedVsResolved() {
+            this.showTB = false;
+            this.showTE = false;
+            this.showTS = false;
+            this.showHS = false;
+            this.showCR = true;
+            this.getCreatedVsResolved();
         },
         getMonday(d) {
             d = new Date(d);
@@ -236,6 +266,12 @@ export default {
                 this.delayByEmployee = data.data;
             })
         },
+        getCreatedVsResolved() {
+            this.asyncGetCreatedVsResolved(this.startTime, this.endTime).then((data) => {
+                console.log(data.data);
+                this.createdVsResolved = data.data;
+            })
+        }
     }
 }
 </script>
