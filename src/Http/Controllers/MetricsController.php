@@ -12,7 +12,7 @@ use Xguard\LaravelKanban\Models\Task;
 
 class MetricsController extends Controller
 {
-    
+
     public function getBadgeData($start, $end)
     {
         $tasks = Task::with('badge')
@@ -38,7 +38,7 @@ class MetricsController extends Controller
 
     public function getJobSiteData($start, $end)
     {
-        $tasks = Task::with('jobSite')
+        $tasks = Task::with('erpJobSite')
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
             ->orderBy('erp_job_site_id')
@@ -85,7 +85,7 @@ class MetricsController extends Controller
                 $assArray[$task->reporter->email] += 1;
             }
         }
-        
+
         return [
             'hits' => array_values($assArray),
             'names' => $reporters,
@@ -289,5 +289,5 @@ class MetricsController extends Controller
             'categories' => $categories,
         ];
     }
-    
+
 }

@@ -47,16 +47,11 @@ class Task extends Model
     public function column(): BelongsTo
     {
         return $this->belongsTo(Column::class);
-    }  
+    }
 
     public function row(): BelongsTo
     {
         return $this->belongsTo(Row::class);
-    }
-
-    public function badge(): BelongsTo
-    {
-        return $this->belongsTo(Badge::class);
     }
 
     public function erpJobSite(): BelongsTo
