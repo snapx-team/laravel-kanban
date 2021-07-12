@@ -20,7 +20,7 @@ export default new Router({
             component: Dashboard
         },
         {
-            path: "/kanban/phoneline",
+            path: "/kanban/board",
             component: Kanban,
             props: (route) => ({id: Number(route.query.id)})
         },

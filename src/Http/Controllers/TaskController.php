@@ -209,4 +209,20 @@ class TaskController extends Controller
         }
         return response(['success' => 'true'], 200);
     }
+
+    public function setStatus($taskCardId, $status)
+    {
+        try {
+            $taskCard = Task::find($taskCardId);
+            $taskCard->update([
+                'status' => $status,
+            ]);
+        } catch (\Exception $e) {
+            return response([
+                'success' => 'false',
+                'message' => $e->getMessage(),
+            ], 400);
+        }
+        return response(['success' => 'true'], 200);
+    }
 }

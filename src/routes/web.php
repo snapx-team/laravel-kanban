@@ -11,7 +11,7 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             // All view routes are handled by vue router
             Route::get('/', 'LaravelKanbanController@getIndex');
             Route::get('/dashboard', 'LaravelKanbanController@getIndex');
-            Route::get('/phoneline', 'LaravelKanbanController@getIndex');
+            Route::get('/board', 'LaravelKanbanController@getIndex');
 
             // Kanban App Data
             Route::get('/get-board-data/{id}', 'LaravelKanbanController@getkanbanData');
@@ -58,6 +58,9 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
 
             Route::post('/delete-kanban-task-card/{id}', 'TaskController@deleteTaskCard');
             Route::post('/update-task-description', 'TaskController@updateDescription');
+
+            Route::post('/set-status/{taskCardId}/{status}', 'TaskController@setStatus');
+
 
             // Comments
 

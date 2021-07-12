@@ -61,6 +61,9 @@
 .ql-editor ul {
     border-left: 5px solid #6366f1;
 }
+.ql-editor li:not(.ql-direction-rtl)::before{
+    direction: ltr;
+}
 
 #task-description {
     padding: 0px !important;

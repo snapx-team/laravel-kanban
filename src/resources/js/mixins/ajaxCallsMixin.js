@@ -151,6 +151,12 @@ export const ajaxCalls = {
             });
         },
 
+        asyncSetStatus(taskCardId, status) {
+            return axios.post('set-status/' + taskCardId +'/'+ status).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
+        },
+
         // Employees
 
         asyncGetAllUsers() {
@@ -192,7 +198,7 @@ export const ajaxCalls = {
             });
         },
 
-        asyncDeleteTemplate(employeeId) {
+        asyncDeleteTemplate(templateId) {
             return axios.post('delete-template/' + templateId).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });

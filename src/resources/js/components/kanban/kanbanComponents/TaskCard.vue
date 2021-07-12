@@ -57,7 +57,7 @@
 </template>
 <script>
     import Avatar from "../../global/Avatar.vue";
-    import Badge from "./Badge.vue";
+    import Badge from "../../global/Badge.vue";
     import {helperFunctions} from "../../../mixins/helperFunctionsMixin";
 
     export default {

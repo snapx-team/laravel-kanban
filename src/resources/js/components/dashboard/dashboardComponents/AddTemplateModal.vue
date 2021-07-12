@@ -181,7 +181,6 @@
                     {name: 'Deadline',},
                     {name: 'ERP Employee',},
                     {name: 'ERP Job Site',},
-                    {name: 'Group',},
                 ],
 
                 badges: [],
@@ -191,7 +190,10 @@
         created() {
             this.eventHub.$on("create-template", (template) => {
                 if (template !== undefined) {
+
                     this.templateData = {...template};
+                    this.templateData.checkedOptions = template.unserialized_options;
+
                     this.isEdit = true;
                 }
                 else {

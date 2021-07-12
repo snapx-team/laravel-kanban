@@ -50,8 +50,7 @@ class TemplateController extends Controller
         return response(['success' => 'true'], 200);
     }
 
-
-    public function deleteTaskComment($id)
+    public function deleteTemplate($id)
     {
         try {
             $template = Template::find($id);

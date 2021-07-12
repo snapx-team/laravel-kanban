@@ -123,7 +123,6 @@
                                 <div class="flex-grow space-y-2">
                                     <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"> Description</span>
                                     <quill-editor :options="config"
-                                                  @change="log($event)"
                                                   output="html"
                                                   v-model="task.description"></quill-editor>
 
@@ -335,7 +334,6 @@
         created() {
             this.eventHub.$on("create-backlog-task", () => {
                 this.modalOpen = true;
-                this.log();
             });
 
             this.getBadges();
@@ -429,68 +427,9 @@
             },
 
             setTemplate(){
-
-                console.log(this.selectedTemplate);
-
                 this.task.badge = this.selectedTemplate.badge;
                 this.task.description = this.selectedTemplate.description;
                 this.checkedOptions = this.selectedTemplate.unserialized_options;
-
-
-            },
-
-            log() {
-
-                let parser = new DOMParser();
-                let doc = parser.parseFromString(this.task.description, 'text/html');
-                let uls = doc.querySelectorAll('ul[data-checked]');
-
-                for (let i = 0; i < uls.length; i++) {
-
-                    let div = document.createElement('div');
-
-                    for (let x = 0; x < uls[i].childNodes.length; x++) {
-                        let ul = document.createElement('ul');
-                        let li = document.createElement('li');
-                        li.onclick = () => {alert(x);};
-
-                        ul.setAttribute('data-checked', uls[i].attributes[0].value);
-                        li.innerHTML = (uls[i].childNodes[x].innerText);
-                        ul.appendChild(li);
-                        div.appendChild(ul);
-                    }
-
-                    uls[i].replaceWith(div);
-                    this.formatted = new XMLSerializer().serializeToString(doc);
-
-                    this.$nextTick(() => {
-                        let ul = document.querySelectorAll('ul[data-checked]');
-                        for (let i = 0; i < ul.length; i++) {
-                            ul[i].replaceWith(ul[i].cloneNode(true));
-                        }
-                    })
-
-                    this.$nextTick(() => {
-                        let ul = document.querySelectorAll('ul[data-checked]');
-                        for (let i = 0; i < ul.length; i++) {
-                            ul[i].addEventListener("click", el => {
-                                let toggle = el.currentTarget.getAttribute("data-checked") === 'true' ? "false" : "true";
-                                el.currentTarget.setAttribute('data-checked', toggle);
-                                this.task.description = (document.getElementById('task-description').innerHTML);
-                                this.asyncUpdateDescription({
-                                    'description': this.cloneCardData.description,
-                                    'taskId': this.cloneCardData.id
-                                });
-
-                                const li = document.querySelectorAll('ul[data-checked] li');
-                                const done = document.querySelectorAll('ul[data-checked="true"] li');
-
-                                this.checklistStatus = li.length > 0 ? done.length + "/" + li.length : null;
-
-                            }, true);
-                        }
-                    })
-                }
             },
         },
 

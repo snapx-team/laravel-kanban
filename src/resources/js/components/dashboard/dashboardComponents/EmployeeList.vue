@@ -39,7 +39,7 @@
                                 <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                     Email
                                 </th>
-                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider text-right">
                                     Edit
                                 </th>
                             </tr>
@@ -69,7 +69,7 @@
                                                 {{ employee.user.email }} </p>
                                         </td>
 
-                                        <td class="px-5 py-5 bg-white text-sm">
+                                        <td class="px-5 py-5 bg-white text-sm text-right">
                                             <a @click="editEmployee(employeeIndex)"
                                                class="cursor-pointer px-2 text-gray-400 hover:text-gray-600 transition duration-300 ease-in-out focus:outline-none">
                                                 <i class="fas fa-edit"></i>

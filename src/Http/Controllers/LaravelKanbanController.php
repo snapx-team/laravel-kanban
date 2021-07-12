@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use DateTime;
 use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Board;
+use Xguard\LaravelKanban\Models\Template;
 use Xguard\LaravelKanban\Models\Task;
 use Xguard\LaravelKanban\Models\Badge;
 
@@ -43,11 +44,13 @@ class LaravelKanbanController extends Controller
     public function getDashboardData()
     {
         $employees = Employee::with('user')->get();
+        $boards = Board::orderBy('name')->with('members')->get();
+        $templates=Template::orderBy('name')->with('badge')->get();
 
-        $board = Board::orderBy('name')->with('members')->get();
         return [
             'employees' => $employees,
-            'boards' => $board
+            'boards' => $boards,
+            'templates' => $templates
         ];
     }
 

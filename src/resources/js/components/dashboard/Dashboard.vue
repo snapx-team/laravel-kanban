@@ -14,6 +14,9 @@
 
             <employee-list :class="{ 'animate-pulse': loadingEmployee }"
                            :employees="dashboardData.employees"></employee-list>
+
+            <template-list :class="{ 'animate-pulse': loadingTemplates }"
+                           :templates="dashboardData.templates"></template-list>
             <add-or-edit-employee-modal></add-or-edit-employee-modal>
             <add-or-edit-board-modal></add-or-edit-board-modal>
             <add-backlog-task-modal :boards="dashboardData.boards"></add-backlog-task-modal>
@@ -25,6 +28,7 @@
 <script>
     import EmployeeList from "./dashboardComponents/EmployeeList.vue";
     import BoardList from "./dashboardComponents/BoardList.vue";
+    import TemplateList from "./dashboardComponents/TemplateList";
     import Actions from "./dashboardComponents/Actions.vue";
     import AddOrEditEmployeeModal from "./dashboardComponents/AddOrEditEmployeeModal.vue";
     import AddOrEditBoardModal from "./dashboardComponents/AddOrEditBoardModal.vue";
@@ -38,6 +42,7 @@
             AddTemplateModal,
             EmployeeList,
             BoardList,
+            TemplateList,
             Actions,
             AddOrEditEmployeeModal,
             AddOrEditBoardModal,
@@ -159,7 +164,6 @@
                         this.dashboardData.templates = data.data;
                         this.loadingTemplates = false;
                     }).catch(res => {console.log(res)});
-
                 });
             },
 
