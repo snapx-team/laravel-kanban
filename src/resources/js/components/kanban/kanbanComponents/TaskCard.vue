@@ -1,12 +1,13 @@
 <template>
     <div class="bg-white hover:shadow-md shadow rounded px-3 pt-3 pb-5 border-l-4"
-         v-bind:class="`border-indigo-400`">
+         v-bind:class="`border-indigo-500`" :style=priorityHue>
         <div class="flex justify-between">
             <p class="text-gray-700 font-semibold font-sans tracking-wide text-sm mr-3">
-                TASK TITLE </p>
+                {{ task_card.name }} </p>
+
 
             <div class="flex justify-end">
-                <template v-for="(employee, employeeIndex) in task_card.assignedTo">
+                <template v-for="(employee, employeeIndex) in task_card.assigned_to">
                     <template v-if="employeeIndex < 3">
                         <avatar :borderColor="'white'"
                                 :borderSize="0"
@@ -18,38 +19,50 @@
                     </template>
                 </template>
 
-                <div class="flex" v-if="task_card.assignedTo">
-          <span class="z-10 flex items-center justify-center font-semibold text-gray-800 text-xs w-6 h-6 rounded-full bg-gray-300 border-white border -ml-2 pr-1"
-                v-if="task_card.assignedTo.length > 3">+{{ task_card.assignedTo.length - 3 }}
-          </span>
+                <div class="flex" v-if="task_card.assigned_to">
+                  <span
+                      class="z-10 flex items-center justify-center font-semibold text-gray-800 text-xs w-6 h-6 rounded-full bg-gray-300 border-white border -ml-2 pr-1"
+                      v-if="task_card.assigned_to.length > 3">+{{ task_card.assigned_to.length - 3 }}
+                  </span>
                 </div>
             </div>
         </div>
-        <div class="flex mt-4 justify-between items-center">
-            <div class="flex flex-wrap items-center">
-                <avatar :name="task_card.reporter.full_name" :size="6" :tooltip="true" class="border border-white"></avatar>
-                <span class="text-sm text-gray-600 px-1"> • {{ task_card.created_at }} </span>
-            </div>
-            <badge :color="task_card.badge.color" v-if="task_card.badge">{{ task_card.badge.title }}</badge>
-        </div>
 
+        <div class="py-2">
+
+            <p v-if="task_card.erp_employee_id !== null" class="text-xs text-gray-600">
+                <span class="font-bold leading-4 tracking-wide text-gray-600">Employee: </span>
+                {{ task_card.erp_employee.full_name }}
+            </p>
+            <p v-if="task_card.erp_job_site_id !== null" class="text-xs text-gray-600">
+                <span class="font-bold leading-4 tracking-wide text-gray-600">Job Site: </span>
+                {{ task_card.erp_job_site.name }}
+            </p>
+            <p v-if="task_card.deadline !== null" class="text-xs text-gray-600">
+                <span class="font-bold leading-4 tracking-wide text-gray-600">Deadline: </span>
+                {{ task_card.deadline | moment("DD MMM, YYYY") }}
+            </p>
+        </div>
+        <div class="flex mt-2 justify-between items-center">
+            <div class="flex flex-wrap items-center">
+                <avatar :name="task_card.reporter.full_name" :size="6" :tooltip="true"
+                        class="border border-white"></avatar>
+                <span class="text-xs text-gray-600 px-1"> • {{ task_card.created_at | moment("DD MMM, YYYY") }}</span>
+            </div>
+            <badge :name="task_card.badge.name" v-if="task_card.badge !== []"></badge>
+        </div>
     </div>
 
-    <!--        <div class="flex justify-between items-center">-->
-    <!--            <div class="flex flex-wrap items-center">-->
-    <!--                <span class="text-sm text-gray-600"> {{ task_card.employee.user.full_name }} </span>-->
-    <!--            </div>-->
-    <!--            <avatar :name="task_card.employee.user.full_name"-->
-    <!--                    :size="6"-->
-    <!--                    :tooltip="false"-->
-    <!--                    class="border border-white"></avatar>-->
-    <!--        </div>-->
+
 </template>
 <script>
     import Avatar from "../../global/Avatar.vue";
-    import Badge from "./Badge.vue";
+    import Badge from "../../global/Badge.vue";
+    import {helperFunctions} from "../../../mixins/helperFunctionsMixin";
 
     export default {
+        mixins: [helperFunctions],
+
         components: {
             Badge,
             Avatar
@@ -57,5 +70,18 @@
         props: {
             task_card: Object,
         },
+        computed: {
+            priorityHue() {
+                if (this.task_card.hours_to_deadline <= 0) {
+                    return 'border-color: hsl( 0 , 90%, 40%); background-color:hsl(0, 100%, 97%)'
+                } else if (this.task_card.hours_to_deadline >= 200) {
+                    return 'border-color: hsl( 100 , 90%, 40%)'
+                } else {
+
+                    return 'border-color: hsl( ' + this.task_card.hours_to_deadline / 2 + ' , 100%, 50%)'
+                }
+            },
+        },
+
     };
 </script>

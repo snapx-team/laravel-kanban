@@ -21,6 +21,7 @@ class CreateKanbanTasksTable extends Migration
             $table->dateTime('deadline')->nullable();
             $table->unsignedBigInteger('reporter_id')->nullable();
             $table->unsignedBigInteger('column_id')->nullable();
+            $table->unsignedBigInteger('row_id')->nullable();
             $table->unsignedBigInteger('board_id')->nullable();
             $table->unsignedBigInteger('badge_id')->nullable();
             $table->unsignedBigInteger('erp_employee_id')->nullable();

@@ -1,21 +1,23 @@
-.test{
+.test {
     font-weight: bold;
 }
 
 @import "~tailwindcss";
-@import "quill.snow";
 @import '~vue2-datepicker/index.css';
-
 
 // vue select overrides
 
-.vs__dropdown-toggle{
-    height: 50px;
+.vs__dropdown-toggle {
+    min-height: 50px;
     margin-top: 8px;
 }
 
-.vs__selected{
+.vs__selected {
     padding: 0 0.45em;
+}
+
+.vs__selected-options {
+    display: contents !important;
 }
 
 .vs__deselect {
@@ -30,5 +32,39 @@
 }
 
 .mx-input {
-    height:50px;
+    min-height: 50px;
+}
+
+// quill overrides
+
+.ql-editor {
+    height: auto !important;
+}
+
+.ql-editor ul[data-checked=false] > li::before {
+    content: '\2610'!important;
+}
+
+.ql-editor ul[data-checked=true] > li::before {
+    content: '\2612'!important;
+}
+
+.ql-editor ul[data-checked=true] > li {
+    text-decoration: line-through;
+}
+
+.ql-editor ul > li {
+    padding: 10px 5px;
+    border-bottom: 1px solid lightgray;
+}
+
+.ql-editor ul {
+    border-left: 5px solid #6366f1;
+}
+.ql-editor li:not(.ql-direction-rtl)::before{
+    direction: ltr;
+}
+
+#task-description {
+    padding: 0px !important;
 }

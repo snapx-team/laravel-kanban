@@ -26,7 +26,7 @@
                                         {{ board.members.length }}
                                     </span>
 
-                                    <router-link :to="{path: '/kanban/phoneline',query: { id: board.id }}">
+                                    <router-link :to="{path: '/kanban/board',query: { id: board.id }}">
                                         <span class="whitespace-no-wrap underline text-blue-600 hover:text-blue-800">Navigate to board</span>
                                     </router-link>
                                 </p>

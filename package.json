@@ -31,8 +31,13 @@
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "^5.15.3",
+        "apexcharts": "^3.27.2",
+        "splitpanes": "^2.3.6",
         "tailwindcss": "^2.0.2",
+        "vue-apexcharts": "^1.6.1",
+        "vue-moment": "^4.1.0",
         "vue-quill": "^1.5.1",
+        "vue-quill-editor": "^3.0.6",
         "vue-select": "^3.11.2",
         "vue-time-ranges-picker-edit": "^0.9.91",
         "vue-toastification": "^1.7.11",

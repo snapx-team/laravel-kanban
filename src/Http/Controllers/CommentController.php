@@ -18,7 +18,7 @@ class CommentController extends Controller
 
     public function getAllTaskComments($taskId)
     {
-        return Comment::where('task_id', $taskId)->with('employee.user')->get();
+        return Comment::where('task_id', $taskId)->with('employee.user')->orderBy('created_at', 'desc')->get();
     }
 
     public function getAllTaskAndRelatedTaskComments($taskId)
@@ -37,7 +37,8 @@ class CommentController extends Controller
                     'comment' => $request->input('comment'),
                 ]);
             } else {
-                $comment = Comment::create([
+                Comment::create([
+                    'task_id' => $request->input('taskId'),
                     'comment' => $request->input('comment'),
                     'employee_id' => $employee->id,
                 ]);

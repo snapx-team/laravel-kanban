@@ -43,7 +43,7 @@
             <div class="my-2 -mx-3 pb-2 ">
                 <template v-for="(board, boardIndex) in boards">
                     <router-link :key="boardIndex"
-                                 :to="{ path: '/kanban/phoneline', query: { id: board.id } }"
+                                 :to="{ path: '/kanban/board', query: { id: board.id } }"
                                  class="flex justify-between items-center px-3 py-2 hover:bg-gray-200 rounded-lg">
                         <span class="text-sm font-medium text-gray-700">{{ board.name }}</span>
                     </router-link>

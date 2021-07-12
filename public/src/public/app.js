@@ -8854,7 +8854,7 @@ var render = function() {
                                             { staticClass: "text-indigo-700" },
                                             [
                                               _vm._v(
-                                                "Can be added to phonelines"
+                                                "Can be added to boards"
                                               )
                                             ]
                                           )
@@ -9674,7 +9674,7 @@ var render = function() {
                             {
                               attrs: {
                                 to: {
-                                  path: "/phoneline",
+                                  path: "/board",
                                   query: { name: board.name }
                                 }
                               }
@@ -9869,7 +9869,7 @@ var render = function() {
                     staticClass:
                       "flex justify-between items-center px-3 py-2 hover:bg-gray-200 rounded-lg",
                     attrs: {
-                      to: { path: "/phoneline", query: { name: kanban.name } }
+                      to: { path: "/board", query: { name: kanban.name } }
                     }
                   },
                   [
@@ -31692,7 +31692,7 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_router__WEBPACK_IMPORTED_MODU
     path: "/dashboard",
     component: _components_dashboard_Dashboard__WEBPACK_IMPORTED_MODULE_3__["default"]
   }, {
-    path: "/phoneline",
+    path: "/board",
     component: _components_kanban_Kanban__WEBPACK_IMPORTED_MODULE_2__["default"],
     props: function props(route) {
       return {

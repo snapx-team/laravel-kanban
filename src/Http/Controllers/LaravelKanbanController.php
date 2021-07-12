@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use DateTime;
 use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Board;
+use Xguard\LaravelKanban\Models\Template;
 use Xguard\LaravelKanban\Models\Task;
 use Xguard\LaravelKanban\Models\Badge;
 
@@ -19,18 +20,37 @@ class LaravelKanbanController extends Controller
 
     public function getkanbanData($id)
     {
-        $board = Board::with('members.employee.user', 'rows.columns.taskCards.reporter', 'rows.columns.taskCards.erpEmployee', 'rows.columns.taskCards.assignedTo.user', 'rows.columns.taskCards.badge')->find($id);
+        $board = Board::with('rows.columns.taskCards.badge')
+            ->with(['rows.columns.taskCards.assignedTo.user' => function($q){
+                $q->select(['id','first_name','last_name']);
+            }])
+            ->with(['rows.columns.taskCards.erpEmployee' => function($q){
+                $q->select(['id','first_name','last_name']);
+            }])
+            ->with(['rows.columns.taskCards.reporter' => function($q){
+                $q->select(['id','first_name','last_name']);
+            }])
+            ->with(['members.employee.user' => function($q){
+                $q->select(['id','first_name','last_name']);
+            }])
+            ->with(['rows.columns.taskCards.erpJobSite' => function($q){
+                $q->select(['id','name']);
+            }])
+            ->with(['rows.columns.taskCards.row', 'rows.columns.taskCards.column',])
+            ->find($id);
         return $board;
     }
 
     public function getDashboardData()
     {
         $employees = Employee::with('user')->get();
+        $boards = Board::orderBy('name')->with('members')->get();
+        $templates=Template::orderBy('name')->with('badge')->get();
 
-        $board = Board::orderBy('name')->with('members')->get();
         return [
             'employees' => $employees,
-            'boards' => $board
+            'boards' => $boards,
+            'templates' => $templates
         ];
     }
 
