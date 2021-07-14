@@ -4,7 +4,7 @@
     @click="onClick()"
     :class="clicked ? 'unclick-theme' : 'click-theme'"
   >
-    {{ board.title }}
+    {{ board.name }}
     <div class="flex>">
       <div
         id="container"
@@ -82,7 +82,7 @@ export default {
       this.showMore = !this.showMore;
     },
     onClick() {
-      this.eventHub.$emit("filter-by-board", this.board.title);
+      this.eventHub.$emit("filter-by-board", this.board.name);
       this.clicked = !this.clicked;
     },
   },

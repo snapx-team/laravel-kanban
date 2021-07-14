@@ -85,7 +85,7 @@
             </draggable>
           </pane>
           <pane v-if="hideTaskPane">
-            <task-pane :task="taskPaneInfo"></task-pane>
+            <task-pane :task="taskPaneInfo" :badges="backlogData.badges" :boards="backlogData.boardNames"></task-pane>
           </pane>
         </splitpanes>
       </div>
@@ -129,12 +129,11 @@ export default {
       canceledBool: true,
       completedBool: true,
       taskPaneInfo: {
-        title: "default",
-        creator: "john smith",
-        assignedTo: {},
-        priority: {
-          title: "Medium",
+        name: "default",
+        reporter: {
+          full_name: "john doe"
         },
+        assigned_to: []
       },
     };
   },
@@ -157,6 +156,9 @@ export default {
     });
     this.eventHub.$on("filter-by-board", (board) => {
       this.filterByBoard(board);
+    });
+    this.eventHub.$on("assign-task", (task) => {
+      this.assignTask(task);
     });
   },
   computed: {
@@ -259,6 +261,9 @@ export default {
         // add to array
         this.filterBoard.push(board);
       }
+    },
+    assignTask(task) {
+      console.log(task);
     },
     getBacklogData() {
       this.eventHub.$emit("set-loading-state", true);

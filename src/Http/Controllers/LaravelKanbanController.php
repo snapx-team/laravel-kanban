@@ -59,6 +59,7 @@ class LaravelKanbanController extends Controller
         $boards = Board::orderBy('name')->with('members')->get();
 
         $boardArray = [];
+        $boardNameArray = [];
         foreach ($boards as $board) {
             $boardArray[$board->id] = (object) [
                 'title' => $board->name, 
@@ -70,6 +71,7 @@ class LaravelKanbanController extends Controller
                 'unassigned' => 0,
                 'total' => 0,
             ];
+            array_push($boardNameArray, $board->name);
         }
 
         $badgeArray = [];
@@ -98,6 +100,7 @@ class LaravelKanbanController extends Controller
 
         return [
             'boards' => $boardArray,
+            'boardNames' => $boardNameArray,
             'backlogTasks' => $backlogTasks,
             'badges' => $badgeArray
         ];
