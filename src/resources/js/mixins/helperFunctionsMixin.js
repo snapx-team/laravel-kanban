@@ -16,7 +16,7 @@ export const helperFunctions = {
             for (let i = 0; i < input.length; i++) {
                 hue += input.charCodeAt(i);
             }
-            return hue % 360
+            return hue % 360;
         },
     }
 }
