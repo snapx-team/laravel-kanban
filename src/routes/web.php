@@ -87,6 +87,9 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             // Badges
             Route::get('/get-all-badges', 'BadgeController@getAllBadges');
 
+            // Logs
+
+            Route::get('/get-logs/{id}', 'LogController@getLogs');
 
             //ERP Data
             Route::get('/get-all-users', 'ErpController@getAllUsers');

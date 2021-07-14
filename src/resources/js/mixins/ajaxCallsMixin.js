@@ -223,6 +223,12 @@ export const ajaxCalls = {
             return axios.get('get-all-badges');
         },
 
+        // Logs
+
+        asyncGetLogs(searchTerm) {
+            return axios.get('get-logs/' + searchTerm);
+        },
+
         // Members
 
         asyncGetMembers(boardId) {

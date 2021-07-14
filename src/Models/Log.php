@@ -3,6 +3,7 @@
 namespace Xguard\LaravelKanban\Models;
 
 use App\Models\User;
+use App\Models\JobSite;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -55,6 +56,21 @@ class Log extends Model
         return $this->belongsTo(Employee::class);
     }
 
+    public function erpEmployee(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'erp_employee_id');
+    }
+
+    public function erpJobSite(): BelongsTo
+    {
+        return $this->belongsTo(JobSite::class, 'erp_job_site_id');
+    }
+
+    public function board(): BelongsTo
+    {
+        return $this->belongsTo(Board::class, 'board_id');
+    }
+    
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
