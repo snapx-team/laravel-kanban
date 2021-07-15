@@ -82,6 +82,16 @@ export const ajaxCalls = {
             });
         },
 
+        asyncGetColumns(row_id){
+            return axios.get('get-columns/' + row_id);
+        },
+
+        // Rows
+
+        asyncGetRows(board_id){
+            return axios.get('get-rows/' + board_id);
+        },
+
         // Tasks
 
         asyncGetAllTasks() {
@@ -110,6 +120,7 @@ export const ajaxCalls = {
             });
         },
 
+
         asyncGetTaskCardsByColumn(columnId) {
             return axios.post('get-task-cards-by-column/' + columnId);
         },
@@ -133,7 +144,6 @@ export const ajaxCalls = {
         },
 
         asyncUpdateRowIndexes(rows) {
-            console.log(rows);
             return axios.post('update-row-indexes', rows).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
@@ -153,6 +163,12 @@ export const ajaxCalls = {
 
         asyncSetStatus(taskCardId, status) {
             return axios.post('set-status/' + taskCardId +'/'+ status).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
+        },
+
+        asyncAssignTaskToBoard(task_id, row_id, column_id) {
+            return axios.post('assign-task-to-board/' + task_id + '/' + row_id + '/' + column_id).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },

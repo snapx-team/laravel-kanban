@@ -55,11 +55,13 @@ class LaravelKanbanController extends Controller
     }
 
     public function getBacklogData() {
-        $backlogTasks = Task::with('badge', 'board', 'reporter', 'assignedTo.user')->orderBy('deadline')->get();
+        $backlogTasks = Task::
+            with('badge', 'board', 'reporter', 'assignedTo.user', 'erpJobSite', 'erpEmployee')
+            ->orderBy('deadline')
+            ->get();
         $boards = Board::orderBy('name')->with('members')->get();
 
         $boardArray = [];
-        $boardNameArray = [];
         foreach ($boards as $board) {
             $boardArray[$board->id] = (object) [
                 'title' => $board->name, 
@@ -71,7 +73,6 @@ class LaravelKanbanController extends Controller
                 'unassigned' => 0,
                 'total' => 0,
             ];
-            array_push($boardNameArray, $board->name);
         }
 
         $badgeArray = [];
@@ -100,7 +101,7 @@ class LaravelKanbanController extends Controller
 
         return [
             'boards' => $boardArray,
-            'boardNames' => $boardNameArray,
+            'allBoards' => $boards,
             'backlogTasks' => $backlogTasks,
             'badges' => $badgeArray
         ];

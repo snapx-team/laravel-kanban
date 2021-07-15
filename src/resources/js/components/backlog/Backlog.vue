@@ -85,7 +85,7 @@
             </draggable>
           </pane>
           <pane v-if="hideTaskPane">
-            <task-pane :task="taskPaneInfo" :badges="backlogData.badges" :boards="backlogData.boardNames"></task-pane>
+            <task-pane :task="taskPaneInfo" :badges="backlogData.badges" :boards="backlogData.allBoards"></task-pane>
           </pane>
         </splitpanes>
       </div>

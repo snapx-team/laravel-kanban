@@ -225,4 +225,21 @@ class TaskController extends Controller
         }
         return response(['success' => 'true'], 200);
     }
+
+    public function assignTaskToBoard($task_id, $row_id, $column_id) {
+        try {
+            $taskCard = Task::find($task_id);
+            $taskCard->update([
+                'row_id' => $row_id,
+                'column_id' => $column_id
+            ]);
+        } catch (\Exception $e) {
+            return response([
+                'success' => 'false',
+                'message' => $e->getMessage(),
+            ], 400);
+        }
+        return response(['success' => 'true'], 200);
+
+    }
 }

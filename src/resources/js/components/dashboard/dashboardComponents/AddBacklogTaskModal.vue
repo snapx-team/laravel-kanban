@@ -247,7 +247,7 @@
                                         class="px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
                                         type="button">
 
-                                    <span>Create Board</span>
+                                    <span>Create Task</span>
                                 </button>
                             </div>
                         </div>
