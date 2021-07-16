@@ -5,6 +5,7 @@ namespace Xguard\LaravelKanban\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Xguard\LaravelKanban\Models\Badge;
+use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Task;
 use Xguard\LaravelKanban\Models\Log;
 use Illuminate\Support\Facades\Auth;
@@ -19,19 +20,19 @@ class TaskController extends Controller
     public function getRelatedTasks($id)
     {
         $group = Task::where('id', $id)->first()->group;
-        return Task::where('id', '!=' , $id)->where('group', $group)->with('badge','row', 'column')
-        ->with(['assignedTo.user' => function($q){
-            $q->select(['id','first_name','last_name']);
-        }])
-        ->with(['erpEmployee' => function($q){
-            $q->select(['id','first_name','last_name']);
-        }])
-        ->with(['reporter' => function($q){
-            $q->select(['id','first_name','last_name']);
-        }])
-        ->with(['erpJobSite' => function($q){
-            $q->select(['id','name']);
-        }])->get();
+        return Task::where('id', '!=', $id)->where('group', $group)->with('badge', 'row', 'column')
+            ->with(['assignedTo.employee.user' => function ($q) {
+                $q->select(['id', 'first_name', 'last_name']);
+            }])
+            ->with(['erpEmployee' => function ($q) {
+                $q->select(['id', 'first_name', 'last_name']);
+            }])
+            ->with(['reporter' => function ($q) {
+                $q->select(['id', 'first_name', 'last_name']);
+            }])
+            ->with(['erpJobSite' => function ($q) {
+                $q->select(['id', 'name']);
+            }])->get();
     }
 
 
@@ -107,6 +108,14 @@ class TaskController extends Controller
             'name' => $taskCard['badge']['name'],
         ]);
 
+        $employeeArray = [];
+        foreach ($taskCard['assigned_to'] as $employee) {
+            array_push($employeeArray, $employee['id']);
+        }
+
+        $task = Task::find($taskCard['id']);
+        $task->assignedTo()->sync($employeeArray);
+
         try {
             Task::where('id', $taskCard['id'])
                 ->update([
@@ -127,21 +136,20 @@ class TaskController extends Controller
         return response(['success' => 'true'], 200);
     }
 
-
     public function getTaskCardsByColumn($id)
     {
-        return Task::where('column_id', $id)->with('badge','row', 'column')
-            ->with(['assignedTo.user' => function($q){
-                $q->select(['id','first_name','last_name']);
+        return Task::where('column_id', $id)->with('badge', 'row', 'column')
+            ->with(['assignedTo.employee.user' => function ($q) {
+                $q->select(['id', 'first_name', 'last_name']);
             }])
-            ->with(['erpEmployee' => function($q){
-                $q->select(['id','first_name','last_name']);
+            ->with(['erpEmployee' => function ($q) {
+                $q->select(['id', 'first_name', 'last_name']);
             }])
-            ->with(['reporter' => function($q){
-                $q->select(['id','first_name','last_name']);
+            ->with(['reporter' => function ($q) {
+                $q->select(['id', 'first_name', 'last_name']);
             }])
-            ->with(['erpJobSite' => function($q){
-                $q->select(['id','name']);
+            ->with(['erpJobSite' => function ($q) {
+                $q->select(['id', 'name']);
             }])->get();
     }
 
@@ -163,7 +171,7 @@ class TaskController extends Controller
         return response(['success' => 'true'], 200);
     }
 
-    public function updateTaskCardColumnId($columnId, $rowId, $taskCardId)
+    public function updateTaskCardRowAndColumnId($columnId, $rowId, $taskCardId)
     {
         try {
             Task::find($taskCardId)->update(['column_id' => $columnId, 'row_id' => $rowId]);

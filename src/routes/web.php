@@ -16,8 +16,8 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             // Kanban App Data
             Route::get('/get-board-data/{id}', 'LaravelKanbanController@getkanbanData');
             Route::get('/get-dashboard-data', 'LaravelKanbanController@getDashboardData');
-            Route::get('/get-backlog-data', 'LaravelKanbanController@getBacklogData');            
-            
+            Route::get('/get-backlog-data', 'LaravelKanbanController@getBacklogData');
+
             // Metrics
 
             Route::get('/get-badge-data/{start}/{end}', 'MetricsController@getBadgeData');
@@ -58,7 +58,7 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             Route::post('/update-column-indexes', 'RowAndColumnsController@updateColumnIndexes');
             Route::post('/update-row-indexes', 'RowAndColumnsController@updateRowIndexes');
 
-            Route::post('/update-task-card-column/{columnId}/{rowId}/{taskCardId}', 'TaskController@updateTaskCardColumnId');
+            Route::post('/update-task-card-row-and-column/{columnId}/{rowId}/{taskCardId}', 'TaskController@updateTaskCardRowAndColumnId');
 
             Route::post('/delete-kanban-task-card/{id}', 'TaskController@deleteTaskCard');
             Route::post('/update-task-description', 'TaskController@updateDescription');

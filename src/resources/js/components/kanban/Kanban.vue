@@ -68,7 +68,7 @@
                                                :task_card="task_card"
                                                class="mt-3 cursor-move"
                                                v-for="task_card in column.task_cards"
-                                               v-on:click.native="updateTask(task_card)"></task-card>
+                                               v-on:click.native="openTask(task_card)"></task-card>
                                 </draggable>
                             </div>
                         </draggable>
@@ -93,292 +93,299 @@
 </template>
 
 <script>
-    import draggable from "vuedraggable";
-    import TaskCard from "./kanbanComponents/TaskCard.vue";
-    import kanbanTaskModal from "./kanbanComponents/KanbanTaskModal";
-    import AddMemberModal from "./kanbanComponents/AddMemberModal.vue";
-    import KanbanBar from "./kanbanComponents/KanbanBar.vue";
-    import {ajaxCalls} from "../../mixins/ajaxCallsMixin";
-    import AddRowAndColumnsModal from "./kanbanComponents/AddRowAndColumnsModal";
+import draggable from "vuedraggable";
+import TaskCard from "./kanbanComponents/TaskCard.vue";
+import kanbanTaskModal from "./kanbanComponents/KanbanTaskModal";
+import AddMemberModal from "./kanbanComponents/AddMemberModal.vue";
+import KanbanBar from "./kanbanComponents/KanbanBar.vue";
+import {ajaxCalls} from "../../mixins/ajaxCallsMixin";
+import AddRowAndColumnsModal from "./kanbanComponents/AddRowAndColumnsModal";
+import axios from "axios";
 
-    export default {
-        inject: ["eventHub"],
-        components: {
-            AddRowAndColumnsModal,
-            TaskCard,
-            draggable,
-            AddMemberModal,
-            KanbanBar,
-            kanbanTaskModal,
-        },
+export default {
+    inject: ["eventHub"],
+    components: {
+        AddRowAndColumnsModal,
+        TaskCard,
+        draggable,
+        AddMemberModal,
+        KanbanBar,
+        kanbanTaskModal,
+    },
 
-        mixins: [ajaxCalls],
+    mixins: [ajaxCalls],
 
-        props: {'id': Number},
+    props: {'id': Number},
 
-        data() {
-            return {
-                kanban: null,
-                loadingRow: {rowId: null, isLoading: false},
-                loadingCards: {columnId: null, isLoading: false},
-                loadingMembers: {memberId: null, isLoading: false},
-                isDraggableDisabled: false
-            };
-        },
+    data() {
+        return {
+            kanban: null,
+            loadingRow: {rowId: null, isLoading: false},
+            loadingCards: {columnId: null, isLoading: false},
+            loadingMembers: {memberId: null, isLoading: false},
+            isDraggableDisabled: false
+        };
+    },
 
-        mounted() {
-            this.getKanban(this.id);
-        },
+    mounted() {
+        this.getKanban(this.id);
+    },
 
-        watch: {
-            id: function (newVal) {
-                this.getKanban(newVal);
-            }
-        },
+    watch: {
+        id: function (newVal) {
+            this.getKanban(newVal);
+        }
+    },
 
-        created() {
-            this.eventHub.$on("update-task-card-data", (cardData) => {
-                this.updateTaskCard(cardData);
+    created() {
+        this.eventHub.$on("update-task-card-data", (cardData) => {
+            this.updateTaskCard(cardData);
+        });
+        this.eventHub.$on("save-members", (selectedMembers) => {
+            this.saveMember(selectedMembers);
+        });
+        this.eventHub.$on("remove-member", (memberData) => {
+            this.deleteMember(memberData);
+        });
+        this.eventHub.$on("save-row-and-columns", (rowData) => {
+            this.saveRowAndColumns(rowData);
+        });
+    },
+
+    beforeDestroy() {
+        this.eventHub.$off('save-task-cards');
+        this.eventHub.$off('delete-kanban-task-cards');
+        this.eventHub.$off('save-members');
+        this.eventHub.$off('remove-member');
+        this.eventHub.$off('save-row-and-columns');
+    },
+
+    methods: {
+        createTaskCard(rowIndex, columnIndex) {
+            let rowName = this.kanban.rows[rowIndex].name;
+            let columnName = this.kanban.rows[rowIndex].columns[columnIndex].name;
+            let columnId = this.kanban.rows[rowIndex].columns[columnIndex].id;
+
+            this.eventHub.$emit("create-kanban-task-cards", {
+                rowIndex,
+                rowName,
+                columnIndex,
+                columnName,
+                columnId,
             });
-            this.eventHub.$on("save-members", (selectedMembers) => {
-                this.saveMember(selectedMembers);
-            });
-            this.eventHub.$on("remove-member", (memberData) => {
-                this.deleteMember(memberData);
-            });
-            this.eventHub.$on("save-row-and-columns", (rowData) => {
-                this.saveRowAndColumns(rowData);
+        },
+        createRowAndColumns(rowIndex, rowColumns, rowId, rowName) {
+            this.eventHub.$emit("create-row-and-columns", {
+                rowIndex,
+                rowColumns,
+                rowId,
+                rowName,
             });
         },
 
-        beforeDestroy() {
-            this.eventHub.$off('save-task-cards');
-            this.eventHub.$off('delete-kanban-task-cards');
-            this.eventHub.$off('save-members');
-            this.eventHub.$off('remove-member');
-            this.eventHub.$off('save-row-and-columns');
-        },
-
-        methods: {
-            createTaskCard(rowIndex, columnIndex) {
-                let rowName = this.kanban.rows[rowIndex].name;
-                let columnName = this.kanban.rows[rowIndex].columns[columnIndex].name;
-                let columnId = this.kanban.rows[rowIndex].columns[columnIndex].id;
-
-                this.eventHub.$emit("create-kanban-task-cards", {
-                    rowIndex,
-                    rowName,
-                    columnIndex,
-                    columnName,
-                    columnId,
-                });
-            },
-            createRowAndColumns(rowIndex, rowColumns, rowId, rowName) {
-                this.eventHub.$emit("create-row-and-columns", {
-                    rowIndex,
-                    rowColumns,
-                    rowId,
-                    rowName,
-                });
-            },
-
-            // Whenever a user drags a card
-            getTaskChangeData(event, columnIndex, rowIndex) {
-                var eventName = Object.keys(event)[0];
-                let taskCardData = this.kanban.rows[rowIndex].columns[columnIndex].task_cards;
-                let columnId = this.kanban.rows[rowIndex].columns[columnIndex].id;
-                let rowId = this.kanban.rows[rowIndex].id
-                this.isDraggableDisabled = true;
-
-                console.log(eventName);
+        // Whenever a user drags a card
+        getTaskChangeData(event, columnIndex, rowIndex) {
+            let eventName = Object.keys(event)[0];
+            let taskCardData = this.kanban.rows[rowIndex].columns[columnIndex].task_cards;
+            let columnId = this.kanban.rows[rowIndex].columns[columnIndex].id;
+            let rowId = this.kanban.rows[rowIndex].id
+            this.isDraggableDisabled = true;
 
 
-                switch (eventName) {
-                    case "moved":
-                        this.asyncUpdateTaskCardIndexes(taskCardData).then(() => {
-                            this.isDraggableDisabled = false
-                        });
-                        break;
-                    case "added":
-                        this.asyncUpdateTaskCardColumnId(columnId, rowId, event.added.element.id).then(() => {
-                                this.asyncUpdateTaskCardIndexes(taskCardData).then(() => {
-                                    this.isDraggableDisabled = false
+            switch (eventName) {
+                case "moved":
+                    this.asyncUpdateTaskCardIndexes(taskCardData).then(() => {
+                        this.isDraggableDisabled = false
+                        this.triggerSuccessToast('task moved')
+                    });
+                    break;
+                case "added":
+                    this.asyncUpdateTaskCardRowAndColumnId(columnId, rowId, event.added.element.id).then(() => {
+                            this.asyncUpdateTaskCardIndexes(taskCardData).then(() => {
+                                this.asyncGetTaskCardsByColumn(columnId).then((data) => {
+                                    this.kanban.rows[rowIndex].columns[columnIndex].task_cards = data.data;
+                                }).catch(res => {
+                                    console.log(res)
                                 });
-                            }
-                        );
-                        break;
-                    case "removed":
-                        this.asyncUpdateTaskCardIndexes(taskCardData).then(() => {
-                            this.isDraggableDisabled = false
-                        });
-                        break;
-                    default:
-                        alert('event "' + eventName + '" not handled: ');
-                }
-            },
-
-            // Whenever a user drags a column
-            getColumnChangeData(event, rowIndex) {
-
-                if (event.oldIndex !== event.newIndex) {
-                    console.log('column');
-                    let columns = this.kanban.rows[rowIndex].columns;
-                    this.isDraggableDisabled = true;
-                    this.asyncUpdateColumnIndexes(columns).then(() => {
-
+                                this.isDraggableDisabled = false
+                                this.triggerSuccessToast('task moved');
+                            });
+                        }
+                    );
+                    break;
+                case "removed":
+                    this.asyncUpdateTaskCardIndexes(taskCardData).then(() => {
                         this.isDraggableDisabled = false
-                        this.getKanban(this.kanban.id);
-
                     });
-                }
-
-            },
-
-            // Whenever a user drags a row
-            getRowChangeData(event) {
-                console.log('row');
-
-                if (event.oldIndex !== event.newIndex) {
-                    this.isDraggableDisabled = true
-                    this.asyncUpdateRowIndexes(this.kanban.rows).then(() => {
-                        this.isDraggableDisabled = false
-                        this.getKanban(this.kanban.id);
-                    });
-                }
-            },
-
-            saveMember(selectedMembers) {
-                this.loadingMembers = {memberId: null, isLoading: true}
-                const cloneSelectedMembers = {...selectedMembers};
-                this.asyncAddMembers(cloneSelectedMembers, this.kanban.id
-                ).then(() => {
-
-                    this.asyncGetMembers(this.kanban.id).then((data) => {
-                        this.kanban.members = data.data;
-                        this.loadingMembers = {memberId: null, isLoading: false}
-                    }).catch(res => {
-                        console.log(res)
-                    });
-                }).catch(res => {
-                    console.log(res)
-                });
-            },
-
-            deleteMember(member) {
-                this.asyncDeleteMember(member.id).then(() => {
-                    this.loadingMembers = {memberId: member.id, isLoading: true}
-                    this.asyncGetMembers(this.kanban.id).then((data) => {
-                        this.kanban.members = data.data;
-                        this.loadingMembers = {memberId: null, isLoading: false};
-                    }).catch(res => {
-                        console.log(res)
-                    });
-                }).catch(res => {
-                    console.log(res)
-                });
-
-                this.getKanban(this.kanban.id);
-            },
-
-            updateTaskCard(cardData) {
-                console.log('test');
-                console.log(cardData);
-
-                const cloneCardData = {...cardData};
-                this.loadingCards = {columnId: cloneCardData.column_id, isLoading: true}
-                this.asyncUpdateTask(cloneCardData).then(() => {
-                    this.asyncGetTaskCardsByColumn(cloneCardData.column_id).then((data) => {
-                        console.log(cloneCardData.row.index + ' ' + cloneCardData.column.index);
-                        this.kanban.rows[cloneCardData.row.index-1].columns[cloneCardData.column.index-1].task_cards = data.data;
-                        this.loadingCards = {columnId: null, isLoading: false}
-                    }).catch(res => {
-                        console.log(res)
-                    });
-                }).catch(res => {
-                    console.log(res)
-                });
-            },
-
-            saveTaskCard(cardData) {
-                const cloneCardData = {...cardData};
-                this.loadingCards = {columnId: cloneCardData.columnId, isLoading: true}
-                this.asyncCreateTask(cloneCardData).then(() => {
-                    this.asyncGetTaskCardsByColumn(cloneCardData.columnId).then((data) => {
-                        this.kanban.rows[cloneCardData.row.index].columns[cloneCardData.column.index].task_cards = data.data;
-                        this.loadingCards = {columnId: null, isLoading: false}
-                    }).catch(res => {
-                        console.log(res)
-                    });
-                }).catch(res => {
-                    console.log(res)
-                });
-            },
-
-            deleteTaskCard(cardData) {
-                const cloneCardData = {...cardData};
-                this.loadingCards = {columnId: cloneCardData.selectedCardData.column_id, isLoading: true}
-                this.asyncDeleteKanbanTaskCard(cloneCardData.selectedCardData.id).then(() => {
-                    this.asyncGetTaskCardsByColumn(cloneCardData.selectedCardData.column_id).then((data) => {
-                        this.kanban.rows[cloneCardData.selectedRowIndex].columns[cloneCardData.selectedColumnIndex].task_cards = data.data;
-                        this.loadingCards = {columnId: null, isLoading: false}
-                    }).catch(res => {
-                        console.log(res)
-                    });
-                }).catch(res => {
-                    console.log(res)
-                });
-            },
-
-            saveRowAndColumns(rowData) {
-                const cloneRowData = {...rowData};
-                var rowIndex = cloneRowData.rowIndex;
-
-                if (cloneRowData.rowId !== null)
-                    this.loadingRow = {rowId: this.kanban.rows[rowIndex].id, isLoading: true}
-
-                this.asyncCreateRowAndColumns(cloneRowData).then((data) => {
-
-                    if (cloneRowData.rowId !== null) {
-                        this.kanban.rows[rowIndex] = data.data[0];
-
-                    } else {
-                        this.kanban.rows.push(data.data[0]);
-                    }
-
-                    this.loadingRow = {rowId: null, isLoading: false}
-
-                }).catch(res => {
-                    console.log(res)
-                });
-            },
-
-            getKanban(kanbanID) {
-                this.eventHub.$emit("set-loading-state", true);
-
-                this.asyncGetkanbanData(kanbanID).then((data) => {
-                    this.kanban = data.data;
-                    this.eventHub.$emit("set-loading-state", false);
-
-                }).catch(res => {
-                    console.log(res)
-                });
-            },
-
-            updateTask(task) {
-                this.eventHub.$emit("update-kanban-task-cards", task);
+                    break;
+                default:
+                    alert('event "' + eventName + '" not handled: ');
             }
         },
-    };
+
+        // Whenever a user drags a column
+        getColumnChangeData(event, rowIndex) {
+
+            if (event.oldIndex !== event.newIndex) {
+                console.log('column');
+                let columns = this.kanban.rows[rowIndex].columns;
+                this.isDraggableDisabled = true;
+                this.asyncUpdateColumnIndexes(columns).then(() => {
+
+                    this.isDraggableDisabled = false
+                    this.getKanban(this.kanban.id);
+                    this.triggerSuccessToast('Column position updated')
+                });
+            }
+        },
+
+        // Whenever a user drags a row
+        getRowChangeData(event) {
+            console.log('row');
+
+            if (event.oldIndex !== event.newIndex) {
+                this.isDraggableDisabled = true
+                this.asyncUpdateRowIndexes(this.kanban.rows).then(() => {
+                    this.isDraggableDisabled = false
+                    this.getKanban(this.kanban.id);
+                    this.triggerSuccessToast('Row position updated')
+                });
+            }
+        },
+
+        saveMember(selectedMembers) {
+            this.loadingMembers = {memberId: null, isLoading: true}
+            const cloneSelectedMembers = {...selectedMembers};
+            this.asyncAddMembers(cloneSelectedMembers, this.kanban.id
+            ).then(() => {
+                this.asyncGetMembers(this.kanban.id).then((data) => {
+                    this.kanban.members = data.data;
+                    this.loadingMembers = {memberId: null, isLoading: false}
+                    this.triggerSuccessToast('New kanban members saved')
+
+                }).catch(res => {
+                    console.log(res)
+                });
+            }).catch(res => {
+                console.log(res)
+            });
+        },
+
+        deleteMember(member) {
+            this.asyncDeleteMember(member.id).then(() => {
+                this.loadingMembers = {memberId: member.id, isLoading: true}
+                this.asyncGetMembers(this.kanban.id).then((data) => {
+                    this.kanban.members = data.data;
+                    this.loadingMembers = {memberId: null, isLoading: false};
+                    this.triggerSuccessToast('Kanban member deleted')
+                }).catch(res => {
+                    console.log(res)
+                });
+            }).catch(res => {
+                console.log(res)
+            });
+
+            this.getKanban(this.kanban.id);
+        },
+
+        updateTaskCard(cardData) {
+            const cloneCardData = {...cardData};
+            this.loadingCards = {columnId: cloneCardData.column_id, isLoading: true}
+            this.asyncUpdateTask(cloneCardData).then(() => {
+                this.asyncGetTaskCardsByColumn(cloneCardData.column_id).then((data) => {
+                    this.kanban.rows[cloneCardData.row.index].columns[cloneCardData.column.index].task_cards = data.data;
+                    this.loadingCards = {columnId: null, isLoading: false}
+                    this.triggerSuccessToast('Task Updated')
+
+                }).catch(res => {
+                    console.log(res)
+                });
+            }).catch(res => {
+                console.log(res)
+            });
+        },
+
+        saveTaskCard(cardData) {
+            const cloneCardData = {...cardData};
+            this.loadingCards = {columnId: cloneCardData.columnId, isLoading: true}
+            this.asyncCreateTask(cloneCardData).then(() => {
+                this.asyncGetTaskCardsByColumn(cloneCardData.columnId).then((data) => {
+                    this.kanban.rows[cloneCardData.row.index].columns[cloneCardData.column.index].task_cards = data.data;
+                    this.loadingCards = {columnId: null, isLoading: false}
+                    this.triggerSuccessToast('Task Created')
+                }).catch(res => {
+                    console.log(res)
+                });
+            }).catch(res => {
+                console.log(res)
+            });
+        },
+
+        deleteTaskCard(cardData) {
+            const cloneCardData = {...cardData};
+            this.loadingCards = {columnId: cloneCardData.selectedCardData.column_id, isLoading: true}
+            this.asyncDeleteKanbanTaskCard(cloneCardData.selectedCardData.id).then(() => {
+                this.asyncGetTaskCardsByColumn(cloneCardData.selectedCardData.column_id).then((data) => {
+                    this.kanban.rows[cloneCardData.selectedRowIndex].columns[cloneCardData.selectedColumnIndex].task_cards = data.data;
+                    this.loadingCards = {columnId: null, isLoading: false}
+                    this.triggerSuccessToast('Task Deleted')
+                }).catch(res => {
+                    console.log(res)
+                });
+            }).catch(res => {
+                console.log(res)
+            });
+        },
+
+        saveRowAndColumns(rowData) {
+            const cloneRowData = {...rowData};
+            let rowIndex = cloneRowData.rowIndex;
+
+            if (cloneRowData.rowId !== null)
+                this.loadingRow = {rowId: this.kanban.rows[rowIndex].id, isLoading: true}
+
+            this.asyncCreateRowAndColumns(cloneRowData).then((data) => {
+
+                if (cloneRowData.rowId !== null) {
+                    this.kanban.rows[rowIndex] = data.data[0];
+
+                } else {
+                    this.kanban.rows.push(data.data[0]);
+                }
+                this.loadingRow = {rowId: null, isLoading: false}
+
+            }).catch(res => {
+                console.log(res)
+            });
+        },
+
+        getKanban(kanbanID) {
+            this.eventHub.$emit("set-loading-state", true);
+
+            this.asyncGetkanbanData(kanbanID).then((data) => {
+                this.kanban = data.data;
+                this.eventHub.$emit("set-loading-state", false);
+
+            }).catch(res => {
+                console.log(res)
+            });
+        },
+
+        openTask(task) {
+            this.eventHub.$emit("update-kanban-task-cards", task);
+        }
+    },
+};
 </script>
 
 <style scoped>
-    .column-width {
-        min-width: 300px;
-    }
+.column-width {
+    min-width: 300px;
+}
 
-    .ghost-card {
-        opacity: 0.5;
-        background: #F7FAFC;
-        border: 1px solid #4299e1;
-    }
+.ghost-card {
+    opacity: 0.5;
+    background: #F7FAFC;
+    border: 1px solid #4299e1;
+}
 </style>

@@ -21,7 +21,7 @@ class LaravelKanbanController extends Controller
     public function getkanbanData($id)
     {
         $board = Board::with('rows.columns.taskCards.badge')
-            ->with(['rows.columns.taskCards.assignedTo.user' => function($q){
+            ->with(['rows.columns.taskCards.assignedTo.employee.user' => function($q){
                 $q->select(['id','first_name','last_name']);
             }])
             ->with(['rows.columns.taskCards.erpEmployee' => function($q){
@@ -64,7 +64,7 @@ class LaravelKanbanController extends Controller
         $boardArray = [];
         foreach ($boards as $board) {
             $boardArray[$board->id] = (object) [
-                'title' => $board->name, 
+                'title' => $board->name,
                 'percent' => 0,
                 'total' => 0,
                 'active' => 0,

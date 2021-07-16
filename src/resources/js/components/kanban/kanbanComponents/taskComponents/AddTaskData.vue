@@ -12,7 +12,8 @@
                      class=" grid divide-y divide-gray-400 pt-2">
                     <label :key="taskOptionIndex" class="flex">
                         <input name="task-options" type="checkbox" :value="taskOption.name"
-                               class="mt-1 form-radio text-indigo-600" v-model="checkedOptions" @change="removeNotNeededData">
+                               class="mt-1 form-radio text-indigo-600" v-model="checkedOptions"
+                               @change="removeNotNeededData">
                         <div class="ml-3 text-gray-700 font-medium">
                             <p>{{ taskOption.name }}</p>
                         </div>
@@ -37,7 +38,8 @@
                             :create-option="option => ({name: option.toLowerCase()})">
                             class="text-gray-700">
                             <template slot="option" slot-scope="option">
-                                <span class="fa fa-circle mr-4" :style="`color:#${option.color};`"></span>
+                                    <span :style="`color: hsl(${option.hue}, 50%, 45%);`"
+                                          class="fa fa-circle mr-4"></span>
                                 {{ option.name }}
                             </template>
                             <template #no-options="{ search, searching, loading }">
@@ -48,22 +50,21 @@
 
 
                     <label class="flex-grow space-y-2">
-                                    <span
-                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Task Name </span>
+                        <span
+                            class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Task Name </span>
                         <input
                             class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
                             placeholder="Task Name"
                             type="text"
                             v-model="cloneCardData.name"/>
                     </label>
-
-
                 </div>
 
                 <div>
                     <div class="flex-grow space-y-2">
                         <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Description</span>
-                        <quill-editor v-model="cloneCardData.description" :options="config" output="html"></quill-editor>
+                        <quill-editor v-model="cloneCardData.description" :options="config"
+                                      output="html"></quill-editor>
                     </div>
                 </div>
 
@@ -74,15 +75,14 @@
                             v-model="cloneCardData.assigned_to"
                             multiple
                             :options="kanbanData.members"
-                            :getOptionLabel="opt => opt.user.full_name"
-
+                            :getOptionLabel="opt => opt.employee.user.full_name"
                             style="margin-top: 7px"
                             placeholder="Select one or more kanban members"
                             class="text-gray-400">
                             <template slot="option" slot-scope="option">
-                                <avatar :name="option.user.full_name" :size="4"
+                                <avatar :name="option.employee.user.full_name" :size="4"
                                         class="mr-3 m-1 float-left"></avatar>
-                                <p class="inline">{{ option.user.full_name }}</p>
+                                <p class="inline">{{ option.employee.user.full_name }}</p>
                             </template>
                             <template #no-options="{ search, searching, loading }">
                                 No result .
@@ -95,8 +95,7 @@
                      v-if="checkedOptions.includes('Deadline') || checkedOptions.includes('ERP Employee') ||checkedOptions.includes('ERP Job Site')">
                     <div class="flex-1" v-if="checkedOptions.includes('Deadline')">
                         <div class="flex-1 space-y-2">
-                                        <span
-                                            class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline</span>
+                            <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline</span>
                             <date-picker type="datetime" v-model="cloneCardData.deadline"
                                          placeholder="YYYY-MM-DD HH:mm"
                                          :popup-style="{ position: 'fixed' }" format="YYYY-MM-DD HH:mm"
@@ -113,6 +112,7 @@
                                      label="full_name"
                                      placeholder="Select Employee"
                                      style="margin-top: 7px"
+                                     @search="onTypeEmployee"
                                      v-model="cloneCardData.erp_employee">
                                 <template slot="option" slot-scope="option">
                                     <avatar :name="option.full_name" :size="4"
@@ -134,6 +134,7 @@
                                      label="name"
                                      placeholder="Select Job Site"
                                      style="margin-top: 7px"
+                                     @search="onTypeJobsite"
                                      v-model="cloneCardData.erp_job_site">
                                 <template slot="option" slot-scope="option">
                                     <p class="inline">{{ option.name }}</p>
@@ -143,34 +144,6 @@
                                 </template>
                             </vSelect>
                         </div>
-                    </div>
-                </div>
-
-                <div class="flex-1" v-if="checkedOptions.includes('Group')">
-                    <div class="flex-1 space-y-2">
-                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with task</span>
-                        <vSelect :options="tasks"
-                                 class="text-gray-400"
-                                 label="name"
-                                 placeholder="Select task"
-                                 style="margin-top: 7px"
-                                 v-model="cloneCardData.group">
-                            <template slot="selected-option" slot-scope="option">
-                                <p>
-                                    <span class="font-bold">task-{{ option.id }}: </span>
-                                    <span class="italic">{{ option.name }}</span>
-                                </p>
-                            </template>
-                            <template slot="option" slot-scope="option">
-                                <p>
-                                    <span class="font-bold">task-{{ option.id }}: </span>
-                                    <span class="italic">{{ option.name }}</span>
-                                </p>
-                            </template>
-                            <template #no-options="{ search, searching, loading }">
-                                No result .
-                            </template>
-                        </vSelect>
                     </div>
                 </div>
 
@@ -193,133 +166,172 @@
     </div>
 </template>
 <script>
-    import vSelect from "vue-select";
-    import Avatar from "../../../global/Avatar.vue";
-    import {ajaxCalls} from "../../../../mixins/ajaxCallsMixin";
+import vSelect from "vue-select";
+import Avatar from "../../../global/Avatar.vue";
+import {ajaxCalls} from "../../../../mixins/ajaxCallsMixin";
+import {helperFunctions} from "../../../../mixins/helperFunctionsMixin";
+import _ from 'lodash';
 
+export default {
+    mixins: [ajaxCalls, helperFunctions],
 
-    export default {
-        mixins: [ajaxCalls],
+    inject: ["eventHub"],
+    components: {
+        vSelect,
+        Avatar,
+    },
+    props: {
+        kanbanData: Object,
+        cardData: Object,
+    },
+    data() {
+        return {
+            cloneCardData: {},
+            taskOptions: [
+                {name: 'Deadline',},
+                {name: 'ERP Employee',},
+                {name: 'ERP Job Site',},
+            ],
+            checkedOptions: [],
+            config: {
+                readOnly: false,
+                placeholder: 'Describe your task in greater detail',
+                theme: 'snow',
+                modules: {
+                    toolbar: [['bold', 'italic', 'underline', 'strike'],
+                        ['code-block'],
+                        [{'list': 'ordered'}, {'list': 'bullet'}, {'list': 'check'}],
+                        [{'script': 'sub'}, {'script': 'super'}],
+                        [{'color': []}, {'background': []}],
+                        [{'align': []}],
+                        ['clean']
+                    ]
+                }
+            },
 
-        inject: ["eventHub"],
-        components: {
-            vSelect,
-            Avatar,
+            badges: [],
+            erpEmployees: [],
+            erpJobSites: [],
+            tasks: [],
+        };
+    },
+
+    created() {
+        this.cloneCardData = {...this.cardData};
+
+        if (this.cloneCardData.deadline) {
+            this.cloneCardData.deadline = new Date(this.cardData.deadline);
+            this.checkedOptions.push('Deadline');
+        }
+        if (this.cloneCardData.erp_job_site_id)
+            this.checkedOptions.push('ERP Job Site');
+        if (this.cloneCardData.erp_employee_id)
+            this.checkedOptions.push('ERP Employee');
+
+        this.getErpEmployees();
+        this.getBadges();
+        this.getJobSites();
+    },
+
+    computed: {
+        computedBadges() {
+            return this.badges.map(badge => {
+                let computedBadges = {};
+                computedBadges.name = badge.name;
+                computedBadges.hue = this.generateHslColorWithText(badge.name);
+                return computedBadges;
+            })
         },
-        props: {
-            kanbanData: Object,
-            cardData: Object,
-        },
-        data() {
-            return {
-                cloneCardData: {},
-                taskOptions: [
-                    {name: 'Deadline',},
-                    {name: 'ERP Employee',},
-                    {name: 'ERP Job Site',},
-                ],
-                checkedOptions: [],
-                config: {
-                    readOnly: false,
-                    placeholder: 'Describe your task in greater detail',
-                    theme: 'snow',
-                    modules: {
-                        toolbar: [['bold', 'italic', 'underline', 'strike'],
-                            ['code-block'],
-                            [{'list': 'ordered'}, {'list': 'bullet'}, {'list': 'check'}],
-                            [{'script': 'sub'}, {'script': 'super'}],
-                            [{'color': []}, {'background': []}],
-                            [{'align': []}],
-                            ['clean']
-                        ]
-                    }
-                },
+    },
+    methods: {
 
-                badges: [],
-                erpEmployees: [],
-                erpJobSites: [],
-                tasks: [],
-            };
-        },
-
-        created() {
-            this.cloneCardData = {...this.cardData};
-
-            if (this.cloneCardData.deadline) {
-                this.cloneCardData.deadline = new Date(this.cardData.deadline);
-                this.checkedOptions.push('Deadline');
+        onTypeEmployee(search, loading) {
+            if (search.length) {
+                loading(true);
+                this.typeEmployee(search, loading, this);
             }
-            if (this.cloneCardData.erp_job_site_id)
-                this.checkedOptions.push('ERP Job Site');
-            if (this.cloneCardData.erp_employee_id)
-                this.checkedOptions.push('ERP Employee');
-
         },
-
-
-        computed: {
-            computedBadges() {
-                return this.badges.map(badge => {
-                    let computedBadges = {};
-                    computedBadges.name = badge.name;
-                    computedBadges.color = this.generateHexColorWithText(badge.name);
-                    return computedBadges;
+        typeEmployee: _.debounce(function (search, loading, vm) {
+            this.asyncGetSomeUsers(search).then((data) => {
+                this.erpEmployees = data.data;
+            })
+                .catch(res => {
+                    console.log(res)
                 })
-            },
+                .then(function () {
+                    setTimeout(500);
+                    loading(false);
+                });
+        }, 500),
+        onTypeJobsite(search, loading) {
+            if (search.length) {
+                loading(true);
+                this.typeJobsite(search, loading, this);
+            }
         },
-        methods: {
-            updateTaskData(event) {
-                event.target.disabled = true;
-                this.eventHub.$emit("update-task-card-data", this.cloneCardData);
-                this.modalOpen = false;
-            },
-
-            getBadges() {
-                this.asyncGetBadges().then((data) => {
-                    this.badges = data.data;
-                }).catch(res => {
+        typeJobsite: _.debounce(function (search, loading, vm) {
+            this.asyncGetSomeJobSites(search).then((data) => {
+                this.erpJobSites = data.data;
+            })
+                .catch(res => {
                     console.log(res)
+                })
+                .then(function () {
+                    setTimeout(500);
+                    loading(false);
                 });
-            },
+        }, 500),
 
-            getErpEmployees() {
-                this.asyncGetAllUsers().then((data) => {
-                    this.erpEmployees = data.data;
-                }).catch(res => {
-                    console.log(res)
-                });
-            },
-
-            getJobSites() {
-                this.asyncGetAllJobSites().then((data) => {
-                    this.erpJobSites = data.data;
-                }).catch(res => {
-                    console.log(res)
-                });
-            },
-
-            getTasks() {
-                this.asyncGetAllTasks().then((data) => {
-                    this.tasks = data.data;
-                }).catch(res => {
-                    console.log(res)
-                });
-            },
-
-            removeNotNeededData(){
-
-                if(!this.checkedOptions.includes('Deadline')){
-                    this.cloneCardData.deadline = null
-                }
-                if(!this.checkedOptions.includes('ERP Employee')){
-                    this.cloneCardData.erp_employee = null
-                }
-                if(!this.checkedOptions.includes('ERP Job Site')){
-                    this.cloneCardData.erp_job_site = null
-                }
-            },
-
+        updateTaskData(event) {
+            event.target.disabled = true;
+            this.eventHub.$emit("update-task-card-data", this.cloneCardData);
         },
-    };
+
+        getBadges() {
+            this.asyncGetBadges().then((data) => {
+                this.badges = data.data;
+            }).catch(res => {
+                console.log(res)
+            });
+        },
+
+        getErpEmployees() {
+            this.asyncGetAllUsers().then((data) => {
+                this.erpEmployees = data.data;
+            }).catch(res => {
+                console.log(res)
+            });
+        },
+
+        getJobSites() {
+            this.asyncGetAllJobSites().then((data) => {
+                this.erpJobSites = data.data;
+            }).catch(res => {
+                console.log(res)
+            });
+        },
+
+        getTasks() {
+            this.asyncGetAllTasks().then((data) => {
+                this.tasks = data.data;
+            }).catch(res => {
+                console.log(res)
+            });
+        },
+
+        removeNotNeededData() {
+
+            if (!this.checkedOptions.includes('Deadline')) {
+                this.cloneCardData.deadline = null
+            }
+            if (!this.checkedOptions.includes('ERP Employee')) {
+                this.cloneCardData.erp_employee = null
+            }
+            if (!this.checkedOptions.includes('ERP Job Site')) {
+                this.cloneCardData.erp_job_site = null
+            }
+        },
+    },
+};
 </script>
 
