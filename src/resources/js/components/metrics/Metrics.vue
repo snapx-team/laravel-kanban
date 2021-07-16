@@ -27,7 +27,7 @@
             </button>
 
             <div class="flex">
-                <div class="flex-1 mr-2">
+                <div class="mr-2">
                     <div class="table border w-80">
                         <div class="table-row">
                             <div class="table-cell border cursor-pointer text-lg" @click="showTicketBreakdown()">
@@ -66,8 +66,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="flex bg-gray-100 py-3">
-                    <div class="p-2 flex flex-wrap flex-grow">
+                <div class="fex flex-1 bg-gray-100 py-3">
+                    <div class="p-2 flex-grow">
                         <div v-if="showTB" class="flex-auto rounded shadow-lg m-2 bg-white">
                             <pie-chart v-if="badgeData != null" :series="badgeData.hits" :labels="badgeData.names" :title="'Tickets by Badge'"></pie-chart>
                         </div>
@@ -268,7 +268,7 @@ export default {
         },
         getCreatedVsResolved() {
             this.asyncGetCreatedVsResolved(this.startTime, this.endTime).then((data) => {
-                console.log(data.data);
+                // console.log(data.data);
                 this.createdVsResolved = data.data;
             })
         }
