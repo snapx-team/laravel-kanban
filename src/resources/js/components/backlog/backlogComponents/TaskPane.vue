@@ -26,7 +26,7 @@
                             placeholder="Select one or more kanban boards"
                             style="margin-top: 7px"
                             v-model="task.board"
-                            @input="loadRowsAndColumns">
+                            @input="loadRowsAndColumnsFromRow">
                         <template slot="option" slot-scope="option">
                             {{ option.name }}
                         </template>
@@ -334,7 +334,7 @@ export default {
         this.getTasks();
     },
     mounted() {
-        this.loadRowsAndColumns(this.task);
+        this.loadRowsAndColumnsFromId(this.task.board_id);
     },
     methods: {
         closeTaskView() {
@@ -351,12 +351,14 @@ export default {
                 this.columns = data.data;
             }).catch(res => {console.log(res)});
         },
-        loadRowsAndColumns(option) {
-            console.log(option);
+        loadRowsAndColumnsFromRow(row) {
+            loadRowsAndColumnsFromId(row.id);
+        },
+        loadRowsAndColumnsFromId(id) {
             this.chosenRow = {};
             this.chosenColumn = {};
             this.columns = [];
-            this.getRows(option.id);
+            this.getRows(id);
         },
         updateBacklogTask() {
             let backlogTaskData = {

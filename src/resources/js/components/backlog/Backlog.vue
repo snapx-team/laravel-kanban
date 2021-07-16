@@ -158,9 +158,6 @@ export default {
     this.eventHub.$on("filter-by-board", (board) => {
       this.filterByBoard(board);
     });
-    this.eventHub.$on("assign-task", (task) => {
-      this.assignTask(task);
-    });
   },
   computed: {
     filtered() {
@@ -262,9 +259,6 @@ export default {
         // add to array
         this.filterBoard.push(board);
       }
-    },
-    assignTask(task) {
-      console.log(task);
     },
     getBacklogData() {
       this.eventHub.$emit("set-loading-state", true);

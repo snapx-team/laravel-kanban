@@ -65,11 +65,7 @@ export default {
       clicked: false,
     };
   },
-
-    created() {
-      console.log(this.board);
-    },
-    props: {
+  props: {
     board: {
       type: Object,
     },

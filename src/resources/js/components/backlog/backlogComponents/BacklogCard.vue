@@ -102,7 +102,6 @@ export default {
   methods: {
     onClick(task) {
       this.eventHub.$emit("open-task-view", task);
-      this.eventHub.$emit("assign-task", task);
     },
   },
 };
