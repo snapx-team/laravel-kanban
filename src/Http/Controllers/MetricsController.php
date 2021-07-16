@@ -46,11 +46,11 @@ class MetricsController extends Controller
 
         $jobsiteCounts = [];
         foreach($tasks as $task) {
-            if($task->jobsite !== null) {
-                if(array_key_exists($task->jobsite->name, $jobsiteCounts)){
-                    $jobsiteCounts[$task->jobsite->name] += 1;
+            if($task->erpJobsite !== null) {
+                if(array_key_exists($task->erpJobsite->name, $jobsiteCounts)){
+                    $jobsiteCounts[$task->erpJobsite->name] += 1;
                 } else {
-                    $jobsiteCounts[$task->jobsite->name] = 1;
+                    $jobsiteCounts[$task->erpJobsite->name] = 1;
                 }
             }
         }
@@ -58,7 +58,6 @@ class MetricsController extends Controller
         return [
             'hits' => array_values($jobsiteCounts),
             'names' => array_keys($jobsiteCounts),
-            'test' => $tasks
         ];
     }
 
@@ -130,7 +129,7 @@ class MetricsController extends Controller
             if(array_key_exists($log->user->email, $hits)){
                 $hits[$log->user->email] += 1;
             } else {
-                $hits[$log->user->user] = 1;
+                $hits[$log->user->email] = 1;
                 array_push($names, $log->user->full_name);
             }
         }
@@ -176,7 +175,7 @@ class MetricsController extends Controller
 
         $averages = [];
         foreach($hits as $value) {
-            array_push($averages, array_sum($value)/count($value));
+            array_push($averages, sprintf("%.2f",array_sum($value)/count($value)));
         }
 
         return [
@@ -220,7 +219,7 @@ class MetricsController extends Controller
 
         $averages = [];
         foreach($hits as $value) {
-            array_push($averages, array_sum($value)/count($value));
+            array_push($averages, sprintf("%.2f", array_sum($value)/count($value)));
         }
 
         return [
@@ -250,11 +249,11 @@ class MetricsController extends Controller
 
         $series = [
             (object) [
-                'name' => 'Resolved',
+                'name' => 'Created',
                 'data' => []
             ],
             (object) [
-                'name' => 'Opened',
+                'name' => 'Resolved',
                 'data' => []
             ]
         ];

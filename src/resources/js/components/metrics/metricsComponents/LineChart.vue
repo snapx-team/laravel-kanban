@@ -30,7 +30,7 @@ export default {
                 stroke: {
                     curve: 'smooth'
                 },
-                colors: ['#47DF11', '#F12007'],
+                colors: ['#F12007', '#47DF11'],
                 xaxis: {
                     type: 'datetime',
                     categories: []
