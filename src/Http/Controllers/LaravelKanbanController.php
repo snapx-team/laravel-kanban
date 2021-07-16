@@ -64,14 +64,13 @@ class LaravelKanbanController extends Controller
         $boardArray = [];
         foreach ($boards as $board) {
             $boardArray[$board->id] = (object) [
-                'title' => $board->name,
+                'name' => $board->name,
                 'percent' => 0,
                 'total' => 0,
                 'active' => 0,
                 'completed' => 0,
                 'canceled' => 0,
                 'unassigned' => 0,
-                'total' => 0,
             ];
         }
 

@@ -6,26 +6,20 @@
   >
     <div class="border-gray-300 border px-3 py-3">
       <div class="flex flex-no-wrap">
-        <div class="min-w-0">
-          <p
-            class="truncate flex-shrink text-gray-700 font-semibold font-sans tracking-wide text-sm mr-3"
-          >
+        <div class="min-w-0 flex">
+            <div class="w-auto mr-3 -mt-1">
+                <badge :name="task.badge.name" class="inline-flex" v-if="task.badge !== []"></badge>
+            </div>
+          <p class="truncate flex-shrink text-gray-700 font-semibold font-sans tracking-wide text-sm mr-3">
             {{ task.name }}
           </p>
+
         </div>
 
         <div class="flex flex-1 justify-end">
-          <div class="w-40">
-            <div class="w-auto">
-              <badge
-                class="inline-flex"
-                v-if="task.badge.name"
-              >
-                {{ task.badge.name }}
-              </badge>
+            <div class="flex mx-3 -mt-1">
+                <badge :name="task.board.name" ></badge>
             </div>
-          </div>
-
           <div class="flex">
             <div class="flex w-32">
               <div class="flex flex-wrap items-center">
@@ -84,7 +78,7 @@ export default {
   },
   created: function () {
     this.moment = moment;
-  },
+      },
   props: {
     task: {
       badge: {

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Xguard\LaravelKanban\Models\Board;
+use Xguard\LaravelKanban\Models\Log;
 use Xguard\LaravelKanban\Models\Row;
 use Illuminate\Support\Facades\Auth;
 
@@ -40,11 +41,6 @@ class BoardsController extends Controller
                 $board = Board::create([
                     'name' => $request->input('name'),
                 ]);
-                $daysOfWeek = array("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday");
-
-                foreach ($daysOfWeek as $day) {
-                    Row::create(['name' => $day, 'board_id' => $board->id]);
-                }
 
                 Log::createLog(Auth::user()->id, Log::TYPE_BOARD_CREATED, 'Added new board', null, $board->id, null, null, null, null);
             }

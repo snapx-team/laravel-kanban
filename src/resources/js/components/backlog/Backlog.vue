@@ -18,7 +18,8 @@
           multiple
           :options="backlogData.badges"
           label="name"
-          class="w-72 flex-grow text-gray-700"
+          placeholder="Filter By Badge"
+          class="w-72 flex-grow text-gray-400"
         >
           <template slot="option" slot-scope="option">
             <p class="inline">{{ option.name }}</p>

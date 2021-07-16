@@ -14,11 +14,11 @@
         <!-- start of container -->
 
         <!-- move items -->
-        <div class="space-y-6 overflow-auto px-8 py-6 flex-1">
+        <div class="space-y-6 px-8 py-6 flex-1 bg-gray-50 border-b">
             <div class="flex space-x-3">
                 <div class="flex-1 space-y-2">
-                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Assign to Kanban</span>
-                    <vSelect 
+                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Kanban</span>
+                    <vSelect
                             :create-option="option => ({name: option.toLowerCase()})"
                             :options="boards"
                             class="text-gray-400"
@@ -37,11 +37,11 @@
                 </div>
             </div>
 
-        
+
             <div class="flex space-x-3">
                 <div class="flex-1 space-y-2">
                     <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Row</span>
-                    <vSelect  
+                    <vSelect
                         :create-option="option => ({name: option.toLowerCase()})"
                         :options="rows"
                         class="text-gray-700"
@@ -58,7 +58,7 @@
                 </div>
                 <div class="flex-1 space-y-2">
                     <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Column</span>
-                    <vSelect  
+                    <vSelect
                         :create-option="option => ({name: option.toLowerCase()})"
                         :options="columns"
                         class="text-gray-700"
@@ -142,7 +142,7 @@
 
                 {{checklistStatus}}
 
-               
+
                     <div class="flex-1" v-if="checkedOptions.includes('Deadline')">
                         <div class="flex-1 space-y-2">
                             <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline</span>
@@ -198,7 +198,7 @@
                         </div>
                     </div>
 
-                
+
 
                 <div class="flex-1" v-if="checkedOptions.includes('Group')">
                     <div class="flex-1 space-y-2">

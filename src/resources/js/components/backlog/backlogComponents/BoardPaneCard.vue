@@ -4,21 +4,20 @@
     @click="onClick()"
     :class="clicked ? 'unclick-theme' : 'click-theme'"
   >
-    {{ board.name }}
-    <div class="flex>">
-      <div
-        id="container"
-        v-on:click.stop
-        @click="expandPanel()"
-        class="flex-1 w-6 text-center"
-      >
-        <i
-          id="icon"
-          :class="[showMore ? 'fa-chevron-down' : 'fa-chevron-right', 'fa']"
-        ></i>
+      <div class="flex">
+          <div
+              id="container"
+              v-on:click.stop
+              @click="expandPanel()"
+              class="w-6 pr-3 "
+          >
+              <i id="icon" :class="[showMore ? 'fa-chevron-down' : 'fa-chevron-right', 'fa']"></i>
+          </div>
+          {{ board.name }}
       </div>
 
-      <div class="flex-1 relative pt-1">
+
+      <div class="pt-1">
         <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-green-200">
           <div
             :style="{ width: percentAssigned}"
@@ -26,7 +25,6 @@
           ></div>
         </div>
       </div>
-    </div>
 
     <div class="flex-1" v-if="showMore">
       <table>
@@ -67,7 +65,11 @@ export default {
       clicked: false,
     };
   },
-  props: {
+
+    created() {
+      console.log(this.board);
+    },
+    props: {
     board: {
       type: Object,
     },

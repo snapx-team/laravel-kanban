@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Xguard\LaravelKanban\Models\Comment;
 use Illuminate\Support\Facades\Auth;
 use Xguard\LaravelKanban\Models\Employee;
+use Xguard\LaravelKanban\Models\Log;
 
 class CommentController extends Controller
 {
