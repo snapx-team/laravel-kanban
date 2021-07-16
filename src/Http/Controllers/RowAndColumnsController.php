@@ -101,4 +101,14 @@ class RowAndColumnsController extends Controller
         $column = Row::find($id);
         $column->delete();
     }
+
+    public function getRows($board_id)
+    {
+        return Row::where('board_id', $board_id)->get();
+    }
+
+    public function getColumns($row_id)
+    {
+        return Column::where('row_id', $row_id)->get();
+    }
 }

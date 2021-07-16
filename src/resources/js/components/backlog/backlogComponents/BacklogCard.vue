@@ -2,7 +2,7 @@
   <div
     class="rounded border-l-4"
     v-bind:class="`border-red-400`"
-    @click="openSideView(task)"
+    @click="onClick(task)"
   >
     <div class="border-gray-300 border px-3 py-3">
       <div class="flex flex-no-wrap">
@@ -106,8 +106,9 @@ export default {
     },
   },
   methods: {
-    openSideView(task) {
+    onClick(task) {
       this.eventHub.$emit("open-task-view", task);
+      this.eventHub.$emit("assign-task", task);
     },
   },
 };

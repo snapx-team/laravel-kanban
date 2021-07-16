@@ -55,7 +55,10 @@ class LaravelKanbanController extends Controller
     }
 
     public function getBacklogData() {
-        $backlogTasks = Task::with('badge', 'board', 'reporter', 'assignedTo.user')->orderBy('deadline')->get();
+        $backlogTasks = Task::
+            with('badge', 'board', 'reporter', 'assignedTo.user', 'erpJobSite', 'erpEmployee')
+            ->orderBy('deadline')
+            ->get();
         $boards = Board::orderBy('name')->with('members')->get();
 
         $boardArray = [];
@@ -98,6 +101,7 @@ class LaravelKanbanController extends Controller
 
         return [
             'boards' => $boardArray,
+            'allBoards' => $boards,
             'backlogTasks' => $backlogTasks,
             'badges' => $badgeArray
         ];

@@ -49,7 +49,7 @@
                         class="border border-white"></avatar>
                 <span class="text-xs text-gray-600 px-1"> • {{ task_card.created_at | moment("DD MMM, YYYY") }}</span>
             </div>
-            <badge :name="task_card.badge.name" v-if="task_card.badge !== []"></badge>
+            <badge :color="task_card.badge.color" v-if="task_card.badge">{{ task_card.badge.name }}</badge>
         </div>
     </div>
 
@@ -65,7 +65,7 @@
 
         components: {
             Badge,
-            Avatar
+            Avatar,
         },
         props: {
             task_card: Object,
