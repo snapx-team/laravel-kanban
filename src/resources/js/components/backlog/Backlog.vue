@@ -1,6 +1,6 @@
 <template>
   <div v-if="backlogData !== null">
-    <backlog-bar></backlog-bar>
+    <backlog-bar :name="'Backlog'"></backlog-bar>
     <div class="flex">
       <div class="flex block relative m-4">
         <span class="absolute inset-y-0 left-0 flex items-center p-2">

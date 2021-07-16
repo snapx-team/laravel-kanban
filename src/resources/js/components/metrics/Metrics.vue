@@ -1,5 +1,6 @@
 <template>
     <div>
+        <backlog-bar :name="'Metrics'"></backlog-bar>
         <div class="bg-gray-100 w-full h-64 absolute top-0 rounded-b-lg" style="z-index: -1"></div>
         <div class="mx-10 my-3 space-y-5 shadow-xl p-5 bg-white">
              <div class="flex-1 space-y-2">
@@ -104,13 +105,15 @@ import {ajaxCalls} from "../../mixins/ajaxCallsMixin";
 import PieChart from  "./metricsComponents/PieChart.vue";
 import BarChart from  "./metricsComponents/BarChart.vue";
 import LineChart from  "./metricsComponents/LineChart.vue";
+import BacklogBar from "../backlog/backlogComponents/BacklogBar.vue"
 
 export default {
     inject: ["eventHub"],
     components: {
         PieChart,
         BarChart,
-        LineChart
+        LineChart,
+        BacklogBar
     },
     data() {
         return {
