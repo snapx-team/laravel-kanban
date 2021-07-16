@@ -1,7 +1,7 @@
 <template>
   <div
     class="rounded border-l-4"
-    v-bind:class="`border-red-400`"
+    v-bind:class="`border-indigo-500`" :style=priorityHue
     @click="onClick(task)"
   >
     <div class="border-gray-300 border px-3 py-3">
@@ -102,6 +102,17 @@ export default {
   methods: {
     onClick(task) {
       this.eventHub.$emit("open-task-view", task);
+    },
+  },
+  computed: {
+    priorityHue() {
+        if (this.task.hours_to_deadline <= 0) {
+            return 'border-color: hsl( 0 , 90%, 40%); background-color:hsl(0, 100%, 97%)'
+        } else if (this.task.hours_to_deadline >= 200) {
+            return 'border-color: hsl( 100 , 90%, 40%)'
+        } else {
+            return 'border-color: hsl( ' + this.task.hours_to_deadline / 2 + ' , 100%, 50%)'
+        }
     },
   },
 };
