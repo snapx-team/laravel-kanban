@@ -89,7 +89,8 @@
                             <div class="flex space-x-3">
 
                                 <div class="flex-1 space-y-2">
-                                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Badge</span>
+                                    <span
+                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Badge</span>
                                     <vSelect :create-option="option => ({name: option.toLowerCase()})"
                                              :options="computedBadges"
                                              class="text-gray-700"
@@ -99,7 +100,7 @@
                                              taggable
                                              v-model="task.badge">
                                         <template slot="option" slot-scope="option">
-                                            <span :style="`color: hsl( ${option.hue} , 45%, 90%);`"
+                                            <span :style="`color: hsl(${option.hue}, 50%, 45%);`"
                                                   class="fa fa-circle mr-4"></span>
                                             {{ option.name }}
                                         </template>
@@ -110,18 +111,21 @@
                                 </div>
 
                                 <label class="flex-grow space-y-2">
-                                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Task Name </span>
-                                    <input class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
-                                           placeholder="Task Name"
-                                           type="text"
-                                           v-model="task.name"/>
+                                    <span
+                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Task Name </span>
+                                    <input
+                                        class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
+                                        placeholder="Task Name"
+                                        type="text"
+                                        v-model="task.name"/>
                                 </label>
 
                             </div>
 
                             <div>
                                 <div class="flex-grow space-y-2">
-                                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"> Description</span>
+                                    <span
+                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"> Description</span>
                                     <quill-editor :options="config"
                                                   output="html"
                                                   v-model="task.description"></quill-editor>
@@ -129,11 +133,12 @@
                                 </div>
                             </div>
 
-                            {{checklistStatus}}
+                            {{ checklistStatus }}
 
                             <div class="flex space-x-3">
                                 <div class="flex-1 space-y-2">
-                                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Assign to Kanban</span>
+                                    <span
+                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Assign to Kanban</span>
                                     <vSelect :options="boards"
                                              class="text-gray-400"
                                              label="name"
@@ -155,7 +160,8 @@
                                  v-if="checkedOptions.includes('Deadline') || checkedOptions.includes('ERP Employee') ||checkedOptions.includes('ERP Job Site')">
                                 <div class="flex-1" v-if="checkedOptions.includes('Deadline')">
                                     <div class="flex-1 space-y-2">
-                                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline</span>
+                                        <span
+                                            class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline</span>
                                         <date-picker :popup-style="{ position: 'fixed' }"
                                                      format="YYYY-MM-DD HH:mm"
                                                      placeholder="YYYY-MM-DD HH:mm"
@@ -166,14 +172,15 @@
 
                                 <div class="flex-1" v-if="checkedOptions.includes('ERP Employee')">
                                     <div class="flex-1 space-y-2">
-                                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Employee</span>
+                                        <span
+                                            class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Employee</span>
                                         <vSelect :options="erpEmployees"
-                                                class="text-gray-400"
-                                                label="full_name"
-                                                placeholder="Select Employee"
-                                                style="margin-top: 7px"
-                                                @search="onTypeEmployee"
-                                                v-model="task.erpEmployee">
+                                                 class="text-gray-400"
+                                                 label="full_name"
+                                                 placeholder="Select Employee"
+                                                 style="margin-top: 7px"
+                                                 @search="onTypeEmployee"
+                                                 v-model="task.erpEmployee">
                                             <template slot="option" slot-scope="option">
                                                 <avatar :name="option.full_name"
                                                         :size="4"
@@ -189,14 +196,15 @@
 
                                 <div class="flex-1" v-if="checkedOptions.includes('ERP Job Site')">
                                     <div class="flex-1 space-y-2">
-                                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Job Site</span>
+                                        <span
+                                            class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Job Site</span>
                                         <vSelect :options="erpJobSites"
-                                                class="text-gray-400"
-                                                label="name"
-                                                placeholder="Select Job Site"
-                                                style="margin-top: 7px"
-                                                @search="onTypeJobsite"
-                                                v-model="task.erpJobSite">
+                                                 class="text-gray-400"
+                                                 label="name"
+                                                 placeholder="Select Job Site"
+                                                 style="margin-top: 7px"
+                                                 @search="onTypeJobsite"
+                                                 v-model="task.erpJobSite">
                                             <template slot="option" slot-scope="option">
                                                 <p class="inline">{{ option.name }}</p>
                                             </template>
@@ -211,7 +219,8 @@
 
                             <div class="flex-1" v-if="checkedOptions.includes('Group')">
                                 <div class="flex-1 space-y-2">
-                                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with task</span>
+                                    <span
+                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with task</span>
                                     <vSelect :options="tasks"
                                              class="text-gray-400"
                                              label="name"
@@ -259,197 +268,201 @@
 </template>
 <script>
 
-    import vSelect from "vue-select";
-    import Avatar from "../../global/Avatar";
+import vSelect from "vue-select";
+import Avatar from "../../global/Avatar";
 
-    import {ajaxCalls} from "../../../mixins/ajaxCallsMixin";
-    import {helperFunctions} from "../../../mixins/helperFunctionsMixin";
+import {ajaxCalls} from "../../../mixins/ajaxCallsMixin";
+import {helperFunctions} from "../../../mixins/helperFunctionsMixin";
 
-    export default {
-        inject: ["eventHub"],
+export default {
+    inject: ["eventHub"],
 
-        components: {
-            vSelect,
-            Avatar
+    components: {
+        vSelect,
+        Avatar
+    },
+
+    mixins: [ajaxCalls, helperFunctions],
+
+    props: {
+        boards: {
+            type: Array,
+            default: null,
         },
+    },
 
-        mixins: [ajaxCalls, helperFunctions],
-
-        props: {
-            boards: {
-                type: Array,
-                default: null,
+    data() {
+        return {
+            taskOptions: [
+                {name: 'Deadline',},
+                {name: 'ERP Employee',},
+                {name: 'ERP Job Site',},
+                {name: 'Group',},
+            ],
+            checkedOptions: [],
+            config: {
+                readOnly: false,
+                placeholder: 'Describe your task in greater detail',
+                theme: 'snow',
+                modules: {
+                    toolbar: [['bold', 'italic', 'underline', 'strike'],
+                        ['code-block'],
+                        [{'list': 'ordered'}, {'list': 'bullet'}, {'list': 'check'}, {'list': 'unchecked'}],
+                        [{'script': 'sub'}, {'script': 'super'}],
+                        [{'color': []}, {'background': []}],
+                        [{'align': []}],
+                        ['clean']
+                    ]
+                }
             },
+
+            task: {
+                name: null,
+                badge: {},
+                description: null,
+                selectedKanbans: [],
+                erpEmployee: null,
+                erpJobSite: null,
+                deadline: null,
+                columnId: null,
+                associatedTask: null,
+            },
+            badges: [],
+            erpEmployees: [],
+            erpJobSites: [],
+            tasks: [],
+            templates: [],
+            selectTemplateIsVisible: false,
+            selectedTemplate: {},
+            modalOpen: false,
+            formatted: null,
+            checklistStatus: null,
+        };
+    },
+
+    created() {
+        this.eventHub.$on("create-backlog-task", () => {
+            this.modalOpen = true;
+        });
+
+        this.getBadges();
+        this.getErpEmployees();
+        this.getJobSites();
+        this.getTasks();
+        this.getTemplates();
+
+    },
+
+    beforeDestroy() {
+        this.eventHub.$off('create-backlog-task');
+    },
+
+    methods: {
+        saveBacklogTask(event) {
+            event.target.disabled = true;
+            this.eventHub.$emit("save-backlog-task", this.task);
+            this.modalOpen = false;
         },
-
-        data() {
-            return {
-                taskOptions: [
-                    {name: 'Deadline',},
-                    {name: 'ERP Employee',},
-                    {name: 'ERP Job Site',},
-                    {name: 'Group',},
-                ],
-                checkedOptions: [],
-                config: {
-                    readOnly: false,
-                    placeholder: 'Describe your task in greater detail',
-                    theme: 'snow',
-                    modules: {
-                        toolbar: [['bold', 'italic', 'underline', 'strike'],
-                            ['code-block'],
-                            [{'list': 'ordered'}, {'list': 'bullet'}, {'list': 'check'}, {'list': 'unchecked'}],
-                            [{'script': 'sub'}, {'script': 'super'}],
-                            [{'color': []}, {'background': []}],
-                            [{'align': []}],
-                            ['clean']
-                        ]
-                    }
-                },
-
-                task: {
-                    name: null,
-                    badge: {},
-                    description: null,
-                    selectedKanbans: [],
-                    erpEmployee: null,
-                    erpJobSite: null,
-                    deadline: null,
-                    columnId: null,
-                    associatedTask: null,
-                },
-                badges: [],
-                erpEmployees: [],
-                erpJobSites: [],
-                tasks: [],
-                templates: [],
-                selectTemplateIsVisible: false,
-                selectedTemplate: {},
-                modalOpen: false,
-                formatted: null,
-                checklistStatus: null,
-            };
-        },
-
-        created() {
-            this.eventHub.$on("create-backlog-task", () => {
-                this.modalOpen = true;
-            });
-
-            this.getBadges();
-            this.getErpEmployees();
-            this.getJobSites();
-            this.getTasks();
-            this.getTemplates();
-
-        },
-
-        beforeDestroy() {
-            this.eventHub.$off('create-backlog-task');
-        },
-
-        methods: {
-            saveBacklogTask(event) {
-                event.target.disabled = true;
-                this.eventHub.$emit("save-backlog-task", this.task);
-                this.modalOpen = false;
-            },
-            onTypeEmployee(search, loading) {
-                if(search.length) {
-                        loading(true);
-                        this.typeEmployee(search, loading, this);
-                    }
-                },
-            typeEmployee : _.debounce(function (search, loading, vm) {
-                this.asyncGetSomeUsers(search).then((data) => {
-                    this.erpEmployees = data.data;
-                })
-                .catch(res => {console.log(res)})
-                .then(function() {
-                    setTimeout(500);
-                    loading(false);
-                });
-            }, 500),
-            onTypeJobsite(search, loading) {
-                if(search.length) {
-                        loading(true);
-                        this.typeJobsite(search, loading, this);
-                    }
-                },
-            typeJobsite : _.debounce(function (search, loading, vm) {
-                this.asyncGetSomeJobSites(search).then((data) => {
-                    this.erpJobSites = data.data;
-                })
-                .catch(res => {console.log(res)})
-                .then(function() {
-                    setTimeout(500);
-                    loading(false);
-                });
-            }, 500),
-            getBadges() {
-                this.asyncGetBadges().then((data) => {
-                    this.badges = data.data;
-                }).catch(res => {
-                    console.log(res)
-                });
-            },
-
-            getErpEmployees() {
-                this.asyncGetAllUsers().then((data) => {
-                    this.erpEmployees = data.data;
-                }).catch(res => {
-                    console.log(res)
-                });
-            },
-
-            getJobSites() {
-                this.asyncGetAllJobSites().then((data) => {
-                    this.erpJobSites = data.data;
-                }).catch(res => {
-                    console.log(res)
-                });
-            },
-
-            getTasks() {
-                this.asyncGetAllTasks().then((data) => {
-                    this.tasks = data.data;
-                }).catch(res => {
-                    console.log(res)
-                });
-            },
-
-            getTemplates() {
-                this.asyncGetTemplates().then((data) => {
-                    this.templates = data.data;
-                }).catch(res => {
-                    console.log(res)
-                });
-            },
-
-            setTemplate(){
-                this.task.badge = this.selectedTemplate.badge;
-                this.task.description = this.selectedTemplate.description;
-                this.checkedOptions = this.selectedTemplate.unserialized_options;
-            },
-        },
-
-        computed: {
-            computedBadges() {
-                return this.badges.map(badge => {
-                    let computedBadges = {};
-                    computedBadges.name = badge.name;
-                    computedBadges.hue = this.generateHslColorWithText(badge.name);
-                    return computedBadges;
-                })
-            },
-
-            checklistData() {
-                let parser = new DOMParser();
-                let doc = parser.parseFromString(this.cloneCardData.description, 'text/html');
-                const li = doc.querySelectorAll('ul[data-checked] li');
-                const done = doc.querySelectorAll('ul[data-checked="true"] li');
-                return done.length + "/" + li.length
+        onTypeEmployee(search, loading) {
+            if (search.length) {
+                loading(true);
+                this.typeEmployee(search, loading, this);
             }
+        },
+        typeEmployee: _.debounce(function (search, loading, vm) {
+            this.asyncGetSomeUsers(search).then((data) => {
+                this.erpEmployees = data.data;
+            })
+                .catch(res => {
+                    console.log(res)
+                })
+                .then(function () {
+                    setTimeout(500);
+                    loading(false);
+                });
+        }, 500),
+        onTypeJobsite(search, loading) {
+            if (search.length) {
+                loading(true);
+                this.typeJobsite(search, loading, this);
+            }
+        },
+        typeJobsite: _.debounce(function (search, loading, vm) {
+            this.asyncGetSomeJobSites(search).then((data) => {
+                this.erpJobSites = data.data;
+            })
+                .catch(res => {
+                    console.log(res)
+                })
+                .then(function () {
+                    setTimeout(500);
+                    loading(false);
+                });
+        }, 500),
+        getBadges() {
+            this.asyncGetBadges().then((data) => {
+                this.badges = data.data;
+            }).catch(res => {
+                console.log(res)
+            });
+        },
+
+        getErpEmployees() {
+            this.asyncGetAllUsers().then((data) => {
+                this.erpEmployees = data.data;
+            }).catch(res => {
+                console.log(res)
+            });
+        },
+
+        getJobSites() {
+            this.asyncGetAllJobSites().then((data) => {
+                this.erpJobSites = data.data;
+            }).catch(res => {
+                console.log(res)
+            });
+        },
+
+        getTasks() {
+            this.asyncGetAllTasks().then((data) => {
+                this.tasks = data.data;
+            }).catch(res => {
+                console.log(res)
+            });
+        },
+
+        getTemplates() {
+            this.asyncGetTemplates().then((data) => {
+                this.templates = data.data;
+            }).catch(res => {
+                console.log(res)
+            });
+        },
+
+        setTemplate() {
+            this.task.badge = this.selectedTemplate.badge;
+            this.task.description = this.selectedTemplate.description;
+            this.checkedOptions = this.selectedTemplate.unserialized_options;
+        },
+    },
+
+    computed: {
+        computedBadges() {
+            return this.badges.map(badge => {
+                let computedBadges = {};
+                computedBadges.name = badge.name;
+                computedBadges.hue = this.generateHslColorWithText(badge.name);
+                return computedBadges;
+            })
+        },
+
+        checklistData() {
+            let parser = new DOMParser();
+            let doc = parser.parseFromString(this.cloneCardData.description, 'text/html');
+            const li = doc.querySelectorAll('ul[data-checked] li');
+            const done = doc.querySelectorAll('ul[data-checked="true"] li');
+            return done.length + "/" + li.length
         }
-    };
+    }
+};
 </script>

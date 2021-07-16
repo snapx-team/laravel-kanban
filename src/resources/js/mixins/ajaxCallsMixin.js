@@ -43,7 +43,7 @@ export const ajaxCalls = {
         asyncGetClosedTasksByEmployee(start, end) {
             return axios.get('get-closed-by-employee/' + start + '/' + end);
         },
-        
+
         asyncGetDelayByBadge(start, end) {
             return axios.get('get-delay-by-badge/' + start + '/' + end);
         },
@@ -149,8 +149,8 @@ export const ajaxCalls = {
             });
         },
 
-        asyncUpdateTaskCardColumnId(columnId, rowId, taskCardId) {
-            return axios.post('update-task-card-column/' + columnId + '/' +rowId +'/'+ taskCardId).catch((error) => {
+        asyncUpdateTaskCardRowAndColumnId(columnId, rowId, taskCardId) {
+            return axios.post('update-task-card-row-and-column/' + columnId + '/' +rowId +'/'+ taskCardId).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
@@ -286,7 +286,7 @@ export const ajaxCalls = {
         // Triggers
 
         triggerSuccessToast(message) {
-            this.$toast(message, {
+            this.$toast.success(message, {
                 position: 'bottom-right',
                 timeout: 4000,
                 closeOnClick: true,
@@ -320,7 +320,7 @@ export const ajaxCalls = {
         },
 
         triggerInfoToast(message) {
-            this.$toast.error(message, {
+            this.$toast.info(message, {
                 position: 'bottom-right',
                 timeout: 4000,
                 closeOnClick: true,

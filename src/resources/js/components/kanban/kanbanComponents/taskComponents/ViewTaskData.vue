@@ -114,10 +114,10 @@
                             <div class="flex items-center">
                                 <avatar class="border border-white max-w-md"
                                         :key="employeeIndex"
-                                        :name="employee.user.full_name"
+                                        :name="employee.employee.user.full_name"
                                         :size="6"
                                         :tooltip="false"></avatar>
-                                <span class="text-xs text-gray-600 px-1"> {{ employee.user.full_name }}</span>
+                                <span class="text-xs text-gray-600 px-1"> {{ employee.employee.user.full_name }}</span>
                             </div>
                         </template>
                     </div>

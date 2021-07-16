@@ -13,7 +13,7 @@
                                 :borderSize="0"
                                 :class="{ '-ml-2': employeeIndex > 0 }"
                                 :key="employeeIndex"
-                                :name="employee.user.full_name"
+                                :name="employee.employee.user.full_name"
                                 :size="6"
                                 :tooltip="true"></avatar>
                     </template>
