@@ -21,14 +21,18 @@
             </div>
         </div>
 
-        <div class="flex">
+        <div class="flex justify-end">
+
+
             <div class="py-2 flex-1">
                 <p class="text-gray-700 font-semibold font-sans tracking-wide text-2xl py-1"> {{ cardData.name }} </p>
-                <p class="text-gray-500 text-sm py-1"> Row:
+                <p class="text-gray-500 text-sm py-1" v-if="cardData.row_id !== null"> Row:
                     <i class="font-semibold">'{{ cardData.row.name }}'</i> Column:
                     <i class="font-semibold">'{{ cardData.column.name }}'</i>
                 </p>
+                <p class="text-gray-500 text-sm py-1" v-else> In Backlog</p>
             </div>
+
 
             <div class="pb-4 w-60">
                 <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">
