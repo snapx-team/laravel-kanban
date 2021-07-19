@@ -18,12 +18,27 @@ class TemplateController extends Controller
 
     public function createOrUpdateTemplate(Request $request)
     {
+
+        $rules = [
+            'selectedKanbans' => 'array|min:1',
+            'description' => 'required',
+            'name' => 'required'
+        ];
+
+        $customMessages = [
+            'selectedKanbans.min' => 'You need to select at least one board',
+            'description.required' => 'Description is required',
+            'name.required' => 'Name is required',
+        ];
+
+
+
         try {
 
             $templateData = $request->all();
 
             $badge = Badge::firstOrCreate([
-                'name' => $templateData['badge']['name'],
+                'name' => count($request->input('badge')) > 0 ? $templateData['badge']['name']: '--',
             ]);
 
             if ($request->filled('id')) {

@@ -108,7 +108,6 @@
                 const cloneEmployeeData = {...employeeData};
                 console.log(cloneEmployeeData);
                 this.asyncCreateKanbanEmployee(cloneEmployeeData).then(res => {
-                    this.triggerSuccessToast("Employee(s) created!");
                     this.asyncGetKanbanEmployees().then((data) => {
                         this.dashboardData.employees = data.data;
                         this.loadingEmployee = false;
@@ -120,7 +119,6 @@
                 this.loadingBoard = true
                 const cloneKanbanData = {...kanbanData};
                 this.asyncCreateBoard(cloneKanbanData).then(res => {
-                    this.triggerSuccessToast("Board Created!");
                     this.eventHub.$emit("update-side-bar");
                     this.asyncGetBoards().then((data) => {
                         this.dashboardData.boards = data.data;
@@ -133,9 +131,7 @@
             saveBacklogTask(backlogTasksData) {
                 this.loadingBacklogTasks = true
                 const cloneBacklogTasksData = {...backlogTasksData};
-                this.asyncCreateBacklogTasks(cloneBacklogTasksData).then(res =>{
-                    this.triggerSuccessToast("Backlog task created");
-                });
+                this.asyncCreateBacklogTasks(cloneBacklogTasksData);
             },
 
             deleteBoard(boardId) {
@@ -143,7 +139,6 @@
                 this.asyncDeleteBoard(boardId).then(res => {
                     this.eventHub.$emit("update-side-bar");
                     this.asyncGetBoards().then((data) => {
-                        this.triggerSuccessToast("Board Deleted!");
                         this.dashboardData.boards = data.data;
                         this.loadingBoard = false;
                     }).catch(res => {console.log(res)});
@@ -155,7 +150,6 @@
                 this.loadingEmployee = true;
                 this.asyncDeleteKanbanEmployee(employeeId).then(res => {
                     this.asyncGetKanbanEmployees().then((data) => {
-                        this.triggerSuccessToast("Employee Deleted!");
                         this.dashboardData.employees = data.data;
                         this.loadingEmployee = false;
                     }).catch(res => {console.log(res)});
@@ -167,7 +161,6 @@
                 const cloneTemplateData = {...templateData};
                 this.asyncCreateTemplate(cloneTemplateData).then(res => {
                     this.asyncGetTemplates().then((data) => {
-                        this.triggerSuccessToast("Template Created!");
                         this.dashboardData.templates = data.data;
                         this.loadingTemplates = false;
                     }).catch(res => {console.log(res)});
@@ -178,7 +171,6 @@
                 this.loadingTemplates = true
                 this.asyncDeleteTemplate(templateId).then(res => {
                     this.asyncGetTemplates().then((data) => {
-                        this.triggerSuccessToast("Template Deleted!");
                         this.dashboardData.templates = data.data;
                         this.loadingTemplates = false;
                     }).catch(res => {console.log(res)});

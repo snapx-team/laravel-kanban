@@ -28,7 +28,7 @@ class BoardsController extends Controller
         if ($validator->fails()) {
             return response([
                 'success' => 'false',
-                'message' => implode(' ', $validator->messages()->all()),
+                'message' => implode(', ', $validator->messages()->all()),
             ], 400);
         }
 
