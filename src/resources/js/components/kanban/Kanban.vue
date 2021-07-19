@@ -174,12 +174,13 @@ export default {
                 columnId,
             });
         },
-        createRowAndColumns(rowIndex, rowColumns, rowId, rowName) {
+        createRowAndColumns(rowIndex, rowColumns, rowId, rowName, boardId = this.kanban.id) {
             this.eventHub.$emit("create-row-and-columns", {
                 rowIndex,
                 rowColumns,
                 rowId,
                 rowName,
+                boardId
             });
         },
 

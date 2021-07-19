@@ -19,7 +19,7 @@ class RowAndColumnsController extends Controller
                 $rowId = $rowData['rowId'];
             } else {
                 $newRow = Row::create([
-                    'board_id' => 1,
+                    'board_id' => $rowData['boardId'],
                     'name' => $rowData['name'],
                     'index' => $rowData['rowIndex'],
                 ]);

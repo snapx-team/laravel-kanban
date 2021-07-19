@@ -30,7 +30,7 @@ class CreateKanbanTasksTable extends Migration
             $table->string('status')->default('active');
             $table->timestamps();
             $table->foreign('column_id')->references('id')->on('kanban_columns')->onDelete('cascade');
-
+            $table->foreign('board_id')->references('id')->on('kanban_boards')->onDelete('cascade');
         });
     }
 

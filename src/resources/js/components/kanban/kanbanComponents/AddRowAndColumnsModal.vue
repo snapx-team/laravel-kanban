@@ -125,6 +125,7 @@
                 isSavingColumn: false,
                 isEdit: false,
                 rowData: {
+                    boardId:null,
                     name: null,
                     rowIndex: null,
                     rowId: null,
@@ -139,16 +140,13 @@
                 this.rowData.name = rowData.rowName;
                 this.rowData.rowIndex = rowData.rowIndex;
                 this.rowData.rowId = rowData.rowId;
+                this.rowData.boardId = rowData.boardId;
 
                 this.rowData.columns = rowData.rowColumns.map(a => ({...a}));
 
-                if (rowData.rowId !== null)
-                    this.isEdit = true;
-                else
-                    this.isEdit = false;
-
-
+                this.isEdit = rowData.rowId !== null;
                 this.modalOpen = true;
+                console.log(this.rowData);
             });
 
         },
