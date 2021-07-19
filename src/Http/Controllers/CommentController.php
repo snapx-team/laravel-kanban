@@ -34,11 +34,11 @@ class CommentController extends Controller
             $employee = Employee::where('user_id', '=', Auth::user()->id)->first();
 
             if ($request->filled('id')) {
-                Comment::where('id', $request->input('id'))->update([
+                $comment = Comment::where('id', $request->input('id'))->update([
                     'comment' => $request->input('comment'),
                 ]);
             } else {
-                Comment::create([
+                $comment = Comment::create([
                     'task_id' => $request->input('taskId'),
                     'comment' => $request->input('comment'),
                     'employee_id' => $employee->id,

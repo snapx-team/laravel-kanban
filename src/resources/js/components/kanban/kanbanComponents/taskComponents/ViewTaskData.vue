@@ -164,12 +164,15 @@
 
                 <p v-if="relatedTasks.length === 0" class="tracking-wide text-sm">No Related Tasks</p>
 
-                <task-card
-                    :key="task_card.id"
-                    :task_card="task_card"
-                    class="mt-3 cursor-move"
-                    v-for="task_card in relatedTasks"
-                    v-on:click.native="updateTask(task_card)"></task-card>
+                <template v-for="task_card in relatedTasks">
+                    <badge :name="task_card.board.name"></badge>
+                    <task-card
+                        :key="task_card.id"
+                        :task_card="task_card"
+                        class="cursor-pointer"
+                        v-on:click.native="updateTask(task_card)"></task-card>
+                </template >
+
 
             </div>
 

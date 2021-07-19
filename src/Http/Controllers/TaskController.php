@@ -21,7 +21,7 @@ class TaskController extends Controller
     public function getRelatedTasks($id)
     {
         $group = Task::where('id', $id)->first()->group;
-        return Task::where('id', '!=', $id)->where('group', $group)->with('badge', 'row', 'column')
+        return Task::where('id', '!=', $id)->where('group', $group)->with('badge', 'row', 'column', 'board')
             ->with(['assignedTo.employee.user' => function ($q) {
                 $q->select(['id', 'first_name', 'last_name']);
             }])
