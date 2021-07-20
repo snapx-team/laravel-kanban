@@ -77,7 +77,6 @@
                 } else if (this.task_card.hours_to_deadline >= 200) {
                     return 'border-color: hsl( 100 , 90%, 40%)'
                 } else {
-
                     return 'border-color: hsl( ' + this.task_card.hours_to_deadline / 2 + ' , 100%, 50%)'
                 }
             },
