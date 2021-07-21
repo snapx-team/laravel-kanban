@@ -60,6 +60,7 @@ class LaravelKanbanController extends Controller
             ->orderBy('deadline')
             ->get();
         $boards = Board::orderBy('name')->with('members')->get();
+        $kanbanUsers = Employee::with('user')->get();
 
         $boardArray = [];
         foreach ($boards as $board) {
@@ -102,7 +103,8 @@ class LaravelKanbanController extends Controller
             'boards' => $boardArray,
             'allBoards' => $boards,
             'backlogTasks' => $backlogTasks,
-            'badges' => $badgeArray
+            'badges' => $badgeArray,
+            'kanbanUsers' => $kanbanUsers,
         ];
     }
 

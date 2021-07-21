@@ -2,7 +2,8 @@
   <div v-if="backlogData !== null">
     <backlog-bar :name="'Backlog'"></backlog-bar>
     <div class="flex">
-      <div class="flex block relative m-4">
+
+      <div class="flex block relative my-2">
         <span class="absolute inset-y-0 left-0 flex items-center p-2">
           <i class="text-gray-400 fas fa-search"></i>
         </span>
@@ -12,7 +13,66 @@
           v-model="filterText"/>
       </div>
 
-      <div class="flex block mt-2 h-10">
+      <div class="flex py-3 h-12 border mt-3 mb-3 ml-2">
+        <label class="flex mx-3">
+            <input
+                class="mt-2 form-radio text-indigo-600"
+                name="task-options"
+                type="checkbox"
+                v-model="activeBool">
+            <div class="ml-1 text-gray-700 font-medium">
+                <p>Active</p>
+            </div>
+        </label>
+        <label class="flex mx-3">
+            <input
+                class="mt-2 form-radio text-indigo-600"
+                name="task-options"
+                type="checkbox"
+                v-model="completedBool">
+            <div class="ml-1 text-gray-700 font-medium">
+                <p>Completed</p>
+            </div>
+        </label>
+        <label class="flex mx-3">
+            <input
+                class="mt-2 form-radio text-indigo-600"
+                name="task-options"
+                type="checkbox"
+                v-model="canceledBool">
+            <div class="ml-1 text-gray-700 font-medium">
+                <p>Canceled</p>
+            </div>
+        </label>
+      </div>
+
+      <div class="flex py-3 h-12 border mt-3 mb-2 mx-2">
+        <label class="flex mx-3">
+            <input
+                class="mt-2 form-radio text-indigo-600"
+                name="task-options"
+                type="checkbox"
+                v-model="assignedToBoard">
+            <div class="ml-1 text-gray-700 font-medium">
+                <p>Assigned To a Board</p>
+            </div>
+        </label>
+        <label class="flex mx-3">
+            <input
+                class="mt-2 form-radio text-indigo-600"
+                name="task-options"
+                type="checkbox"
+                v-model="notAssignedToBoard">
+            <div class="ml-1 text-gray-700 font-medium">
+                <p>Not Assigned To a Board</p>
+            </div>
+        </label>
+      </div>
+
+    </div>
+    <div class="flex mb-3">
+
+      <div class="flex block mr-2">
         <vSelect
           v-model="filterBadge"
           multiple
@@ -29,24 +89,49 @@
           </template>
         </vSelect>
       </div>
-      <div class="flex pt-6 h-14">
-        <button @click="active()"
-          class="px-4 ml-8 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
-          type="button">
-          <span>Active</span>
-        </button>
-        <button @click="completed()"
-          class="px-4 ml-4 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
-          type="button">
-          <span>Completed</span>
-        </button>
-        <button @click="canceled()"
-          class="px-4 ml-4 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
-          type="button">
-          <span>Canceled</span>
-        </button>
+
+      <div class="flex block mx-2">
+        <vSelect
+          v-model="filterAssignedTo"
+          multiple
+          :options="backlogData.kanbanUsers"
+          :getOptionLabel="opt => opt.user.full_name"
+          label="user.full_name"
+          placeholder="Filter By Assigned Employee"
+          class="w-72 flex-grow text-gray-400"
+        >
+          <template slot="option" slot-scope="option">
+            <avatar :name="option.user.full_name" :size="4" class="mr-3 m-1 float-left"></avatar>
+            <p class="inline">{{ option.user.full_name }}</p>
+          </template>
+          <template #no-options="{ search, searching, loading }">
+            No result .
+          </template>
+        </vSelect>
       </div>
+
+      <div class="flex block mx-2">
+        <vSelect
+          v-model="filterReporter"
+          multiple
+          :options="backlogData.kanbanUsers"
+          :getOptionLabel="opt => opt.user.full_name"
+          label="name"
+          placeholder="Filter By Reporter"
+          class="w-72 flex-grow text-gray-400"
+        >
+          <template slot="option" slot-scope="option">
+            <avatar :name="option.user.full_name" :size="4" class="mr-3 m-1 float-left"></avatar>
+            <p class="inline">{{ option.user.full_name }}</p>
+          </template>
+          <template #no-options="{ search, searching, loading }">
+            No result .
+          </template>
+        </vSelect>
+      </div>
+
     </div>
+    
     <hr />
     <div>
       <div class="flex">
@@ -104,6 +189,7 @@ import "splitpanes/dist/splitpanes.css";
 import BacklogBar from "./backlogComponents/BacklogBar.vue";
 import vSelect from "vue-select";
 import {ajaxCalls} from "../../mixins/ajaxCallsMixin";
+import Avatar from "../global/Avatar.vue";
 
 export default {
   inject: ["eventHub"],
@@ -116,19 +202,25 @@ export default {
     BoardPane,
     BacklogBar,
     vSelect,
+    Avatar
   },
   data() {
     return {
       backlogData: null,
       filterText: "",
-      filterBadge: "",
+      filterBadge: [],
       filterBoard: [],
+      filterAssignedTo: [],
+      filterReporter: [],
       currentTask: null,
       hideBoardsPane: true,
       hideTaskPane: false,
       activeBool: true,
       canceledBool: true,
       completedBool: true,
+      assignedToBoard: true,
+      notAssignedToBoard: true,
+      allKanbanEmployees: [],
       taskPaneInfo: {
         name: "default",
         reporter: {
@@ -180,8 +272,11 @@ export default {
           let badgeMatch = this.isBadgeMatch(t, regex);
           let boardMatch = this.isBoardMatch(t, regex);
           let statusMatch = this.isStatusMatch(t);
+          let assignedMatch = this.isAssignedToBoardMatch(t);
+          let assignedToMatch = this.isAssignedToEmployeeMatch(t);
+          let reporterMatch = this.isReporterMatch(t);
 
-          return badgeMatch && boardMatch && statusMatch;
+          return badgeMatch && boardMatch && statusMatch && assignedMatch && assignedToMatch && reporterMatch;
         });
       } else {
         return [];
@@ -192,11 +287,13 @@ export default {
     isBadgeMatch(t, regex){
       let badgeMatch = false;
       if (this.filterBadge.length > 0) {
-        this.filterBadge.forEach(function (value1) {
+        this.filterBadge.every(function (value1) {
           regex = new RegExp(value1, "i");
           if (t.badge.name.match(regex)) {
             badgeMatch = true;
+            return false;
           }
+          return true;
         });
       } else {
         badgeMatch = true;
@@ -206,16 +303,50 @@ export default {
     isBoardMatch(t, regex) {
       let boardMatch = false;
       if (this.filterBoard.length > 0) {
-        this.filterBoard.forEach(function (value2) {
+        this.filterBoard.every(function (value2) {
           regex = new RegExp(value2, "i");
           if (t.board.name.match(regex)) {
             boardMatch = true;
+            return false;
           }
+          return true;
         });
       } else {
         boardMatch = true;
       }
       return boardMatch;
+    },
+    isAssignedToEmployeeMatch(t) {
+      let isMatch = false;
+      if (this.filterAssignedTo.length > 0) {
+        this.filterAssignedTo.every(function (value1) {
+          t.assigned_to.every(function (value2) {
+            if (value1.id == value2.id) {
+              isMatch = true;
+              return false;
+            }
+            return true;
+          });
+        });
+      } else {
+        isMatch = true;
+      }
+      return isMatch;
+    },
+    isReporterMatch(t) {
+      let isMatch = false;
+      if (this.filterReporter.length > 0) {
+        this.filterReporter.every(function (value1) {
+          if (value1.id == t.reporter_id) {
+            isMatch = true;
+            return false;
+          }
+          return true;
+        });
+      } else {
+        isMatch = true;
+      }
+      return isMatch;
     },
     isStatusMatch(t) {
       if (this.activeBool && t.status === "active") {
@@ -229,6 +360,15 @@ export default {
       }
       return false;
     },
+    isAssignedToBoardMatch(t) {
+      if (this.assignedToBoard && t.column_id != null) {
+        return true;
+      }
+      if (this.notAssignedToBoard && t.column_id == null) {
+        return true;
+      }
+      return false;
+    },
     setSideInfo(currentTask) {
       this.hideTaskPane = true;
       this.taskPaneInfo = currentTask;
@@ -238,15 +378,6 @@ export default {
     },
     closeBoardView() {
       this.hideBoardsPane = false;
-    },
-    active() {
-      this.activeBool = !this.activeBool;
-    },
-    canceled() {
-      this.canceledBool = !this.canceledBool;
-    },
-    completed() {
-      this.completedBool = !this.completedBool;
     },
     filterByBoard(board) {
       if (this.filterBoard.includes(board)) {
