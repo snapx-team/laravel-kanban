@@ -13,67 +13,7 @@
           v-model="filterText"/>
       </div>
 
-    </div>
-    <div class="flex">
-
-      <div class="flex block mr-2">
-        <vSelect
-          v-model="filterBadge"
-          multiple
-          :options="backlogData.badges"
-          label="name"
-          placeholder="Filter By Badge"
-          class="w-72 flex-grow text-gray-400"
-        >
-          <template slot="option" slot-scope="option">
-            <p class="inline">{{ option.name }}</p>
-          </template>
-          <template #no-options="{ search, searching, loading }">
-            No result .
-          </template>
-        </vSelect>
-      </div>
-
-      <div class="flex block mx-2">
-        <vSelect
-          v-model="filterBadge"
-          multiple
-          :options="backlogData.badges"
-          label="name"
-          placeholder="Filter By Assigned Employee"
-          class="w-72 flex-grow text-gray-400"
-        >
-          <template slot="option" slot-scope="option">
-            <p class="inline">{{ option.name }}</p>
-          </template>
-          <template #no-options="{ search, searching, loading }">
-            No result .
-          </template>
-        </vSelect>
-      </div>
-
-      <div class="flex block mx-2">
-        <vSelect
-          v-model="filterBadge"
-          multiple
-          :options="backlogData.badges"
-          label="name"
-          placeholder="Filter By Reporter"
-          class="w-72 flex-grow text-gray-400"
-        >
-          <template slot="option" slot-scope="option">
-            <p class="inline">{{ option.name }}</p>
-          </template>
-          <template #no-options="{ search, searching, loading }">
-            No result .
-          </template>
-        </vSelect>
-      </div>
-
-    </div>
-    <div class="flex">
-
-      <div class="flex py-3 h-12 border mt-3 mb-2">
+      <div class="flex py-3 h-12 border mt-3 mb-3 ml-2">
         <label class="flex mx-3">
             <input
                 class="mt-2 form-radio text-indigo-600"
@@ -128,6 +68,68 @@
             </div>
         </label>
       </div>
+
+    </div>
+    <div class="flex mb-3">
+
+      <div class="flex block mr-2">
+        <vSelect
+          v-model="filterBadge"
+          multiple
+          :options="backlogData.badges"
+          label="name"
+          placeholder="Filter By Badge"
+          class="w-72 flex-grow text-gray-400"
+        >
+          <template slot="option" slot-scope="option">
+            <p class="inline">{{ option.name }}</p>
+          </template>
+          <template #no-options="{ search, searching, loading }">
+            No result .
+          </template>
+        </vSelect>
+      </div>
+
+      <div class="flex block mx-2">
+        <vSelect
+          v-model="filterAssignedTo"
+          multiple
+          :options="backlogData.kanbanUsers"
+          :getOptionLabel="opt => opt.user.full_name"
+          label="user.full_name"
+          placeholder="Filter By Assigned Employee"
+          class="w-72 flex-grow text-gray-400"
+        >
+          <template slot="option" slot-scope="option">
+            <avatar :name="option.user.full_name" :size="4" class="mr-3 m-1 float-left"></avatar>
+            <p class="inline">{{ option.user.full_name }}</p>
+          </template>
+          <template #no-options="{ search, searching, loading }">
+            No result .
+          </template>
+        </vSelect>
+      </div>
+
+      <div class="flex block mx-2">
+        <vSelect
+          v-model="filterReporter"
+          multiple
+          :options="backlogData.kanbanUsers"
+          :getOptionLabel="opt => opt.user.full_name"
+          label="name"
+          placeholder="Filter By Reporter"
+          class="w-72 flex-grow text-gray-400"
+        >
+          <template slot="option" slot-scope="option">
+            <avatar :name="option.user.full_name" :size="4" class="mr-3 m-1 float-left"></avatar>
+            <p class="inline">{{ option.user.full_name }}</p>
+          </template>
+          <template #no-options="{ search, searching, loading }">
+            No result .
+          </template>
+        </vSelect>
+      </div>
+
     </div>
     
     <hr />
@@ -187,6 +189,7 @@ import "splitpanes/dist/splitpanes.css";
 import BacklogBar from "./backlogComponents/BacklogBar.vue";
 import vSelect from "vue-select";
 import {ajaxCalls} from "../../mixins/ajaxCallsMixin";
+import Avatar from "../global/Avatar.vue";
 
 export default {
   inject: ["eventHub"],
@@ -199,13 +202,16 @@ export default {
     BoardPane,
     BacklogBar,
     vSelect,
+    Avatar
   },
   data() {
     return {
       backlogData: null,
       filterText: "",
-      filterBadge: "",
+      filterBadge: [],
       filterBoard: [],
+      filterAssignedTo: [],
+      filterReporter: [],
       currentTask: null,
       hideBoardsPane: true,
       hideTaskPane: false,
@@ -214,6 +220,7 @@ export default {
       completedBool: true,
       assignedToBoard: true,
       notAssignedToBoard: true,
+      allKanbanEmployees: [],
       taskPaneInfo: {
         name: "default",
         reporter: {
@@ -265,9 +272,11 @@ export default {
           let badgeMatch = this.isBadgeMatch(t, regex);
           let boardMatch = this.isBoardMatch(t, regex);
           let statusMatch = this.isStatusMatch(t);
-          let assignedMatch = this.isAssignedToMatch(t);
+          let assignedMatch = this.isAssignedToBoardMatch(t);
+          let assignedToMatch = this.isAssignedToEmployeeMatch(t);
+          let reporterMatch = this.isReporterMatch(t);
 
-          return badgeMatch && boardMatch && statusMatch && assignedMatch;
+          return badgeMatch && boardMatch && statusMatch && assignedMatch && assignedToMatch && reporterMatch;
         });
       } else {
         return [];
@@ -278,11 +287,13 @@ export default {
     isBadgeMatch(t, regex){
       let badgeMatch = false;
       if (this.filterBadge.length > 0) {
-        this.filterBadge.forEach(function (value1) {
+        this.filterBadge.every(function (value1) {
           regex = new RegExp(value1, "i");
           if (t.badge.name.match(regex)) {
             badgeMatch = true;
+            return false;
           }
+          return true;
         });
       } else {
         badgeMatch = true;
@@ -292,16 +303,50 @@ export default {
     isBoardMatch(t, regex) {
       let boardMatch = false;
       if (this.filterBoard.length > 0) {
-        this.filterBoard.forEach(function (value2) {
+        this.filterBoard.every(function (value2) {
           regex = new RegExp(value2, "i");
           if (t.board.name.match(regex)) {
             boardMatch = true;
+            return false;
           }
+          return true;
         });
       } else {
         boardMatch = true;
       }
       return boardMatch;
+    },
+    isAssignedToEmployeeMatch(t) {
+      let isMatch = false;
+      if (this.filterAssignedTo.length > 0) {
+        this.filterAssignedTo.every(function (value1) {
+          t.assigned_to.every(function (value2) {
+            if (value1.id == value2.id) {
+              isMatch = true;
+              return false;
+            }
+            return true;
+          });
+        });
+      } else {
+        isMatch = true;
+      }
+      return isMatch;
+    },
+    isReporterMatch(t) {
+      let isMatch = false;
+      if (this.filterReporter.length > 0) {
+        this.filterReporter.every(function (value1) {
+          if (value1.id == t.reporter_id) {
+            isMatch = true;
+            return false;
+          }
+          return true;
+        });
+      } else {
+        isMatch = true;
+      }
+      return isMatch;
     },
     isStatusMatch(t) {
       if (this.activeBool && t.status === "active") {
@@ -315,7 +360,7 @@ export default {
       }
       return false;
     },
-    isAssignedToMatch(t) {
+    isAssignedToBoardMatch(t) {
       if (this.assignedToBoard && t.column_id != null) {
         return true;
       }
