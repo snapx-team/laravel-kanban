@@ -63,13 +63,17 @@ export const ajaxCalls = {
         },
 
         asyncCreateBoard(kanbanData) {
-            return axios.post('create-board', kanbanData).catch((error) => {
+            return axios.post('create-board', kanbanData).then(() =>{
+                this.triggerSuccessToast("Board created!");
+            }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
 
         asyncDeleteBoard(boardId) {
-            return axios.post('delete-board/' + boardId).catch((error) => {
+            return axios.post('delete-board/' + boardId).then(() =>{
+                this.triggerSuccessToast("Board Deleted!");
+            }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
@@ -109,13 +113,17 @@ export const ajaxCalls = {
         },
 
         asyncCreateTask(taskCardData) {
-            return axios.post('create-task', taskCardData).catch((error) => {
+            return axios.post('create-task', taskCardData).then(() =>{
+                this.triggerSuccessToast("Task created!");
+            }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
 
         asyncCreateBacklogTasks(backlogTasksData){
-            return axios.post('create-backlog-tasks', backlogTasksData).catch((error) => {
+            return axios.post('create-backlog-tasks', backlogTasksData).then(() =>{
+                this.triggerSuccessToast("Backlog task created!");
+            }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
@@ -191,13 +199,17 @@ export const ajaxCalls = {
         },
 
         asyncCreateKanbanEmployee(employeeData) {
-            return axios.post('create-kanban-employees', employeeData).catch((error) => {
+            return axios.post('create-kanban-employees', employeeData).then(() =>{
+                this.triggerSuccessToast("Employee Added!");
+            }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
 
         asyncDeleteKanbanEmployee(employeeId) {
-            return axios.post('delete-kanban-employee/' + employeeId).catch((error) => {
+            return axios.post('delete-kanban-employee/' + employeeId).then(() =>{
+                this.triggerSuccessToast("Employee Removed");
+            }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
@@ -209,13 +221,17 @@ export const ajaxCalls = {
         },
 
         asyncCreateTemplate(templateData) {
-            return axios.post('create-template', templateData).catch((error) => {
+            return axios.post('create-template', templateData).then(() =>{
+                this.triggerSuccessToast("Template Created!");
+            }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
 
         asyncDeleteTemplate(templateId) {
-            return axios.post('delete-template/' + templateId).catch((error) => {
+            return axios.post('delete-template/' + templateId).then(() =>{
+                this.triggerSuccessToast("Templated Deleted!");
+            }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },

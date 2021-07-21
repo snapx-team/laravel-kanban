@@ -5,10 +5,11 @@ namespace Xguard\LaravelKanban\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Xguard\LaravelKanban\Models\Badge;
-use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Task;
 use Xguard\LaravelKanban\Models\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+
 
 class TaskController extends Controller
 {
@@ -20,7 +21,7 @@ class TaskController extends Controller
     public function getRelatedTasks($id)
     {
         $group = Task::where('id', $id)->first()->group;
-        return Task::where('id', '!=', $id)->where('group', $group)->with('badge', 'row', 'column')
+        return Task::where('id', '!=', $id)->where('group', $group)->with('badge', 'row', 'column', 'board')
             ->with(['assignedTo.employee.user' => function ($q) {
                 $q->select(['id', 'first_name', 'last_name']);
             }])
@@ -38,10 +39,31 @@ class TaskController extends Controller
 
     public function createBacklogTaskCards(Request $request)
     {
+        $rules = [
+            'selectedKanbans' => 'array|min:1',
+            'description' => 'required',
+            'name' => 'required'
+        ];
+
+        $customMessages = [
+            'selectedKanbans.min' => 'You need to select at least one board',
+            'description.required' => 'Description is required',
+            'name.required' => 'Name is required',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $customMessages);
+
+        if ($validator->fails()) {
+            return response([
+                'success' => 'false',
+                'message' => implode(', ', $validator->messages()->all()),
+            ], 400);
+        }
+
         $backlogTaskData = $request->all();
 
         $badge = Badge::firstOrCreate([
-            'name' => $backlogTaskData['badge']['name'],
+            'name' => count($request->input('badge')) > 0 ? $backlogTaskData['badge']['name']: '--',
         ]);
 
         if ($backlogTaskData['associatedTask'] !== null) {
@@ -56,9 +78,9 @@ class TaskController extends Controller
                     'reporter_id' => Auth::user()->id,
                     'name' => $backlogTaskData['name'],
                     'description' => $backlogTaskData['description'],
-                    'deadline' => date('y-m-d h:m', strtotime($backlogTaskData['deadline'])),
-                    'erp_employee_id' => $backlogTaskData['erpEmployee']['id'],
-                    'erp_job_site_id' => $backlogTaskData['erpJobSite']['id'],
+                    'deadline' => $request->has('deadline') ? date('y-m-d h:m', strtotime($backlogTaskData['deadline'])): null,
+                    'erp_employee_id' => $request->has('erp_employee_id') ? $backlogTaskData['erpEmployee']['id']: null,
+                    'erp_job_site_id' => $request->has('erp_job_site_id') ? $backlogTaskData['erpJobSite']['id']: null,
                     'badge_id' => $badge->id,
                     'column_id' => null,
                     'board_id' => $kanban['id'],

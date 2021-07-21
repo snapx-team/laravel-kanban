@@ -21,14 +21,18 @@
             </div>
         </div>
 
-        <div class="flex">
+        <div class="flex justify-end">
+
+
             <div class="py-2 flex-1">
                 <p class="text-gray-700 font-semibold font-sans tracking-wide text-2xl py-1"> {{ cardData.name }} </p>
-                <p class="text-gray-500 text-sm py-1"> Row:
+                <p class="text-gray-500 text-sm py-1" v-if="cardData.row_id !== null"> Row:
                     <i class="font-semibold">'{{ cardData.row.name }}'</i> Column:
                     <i class="font-semibold">'{{ cardData.column.name }}'</i>
                 </p>
+                <p class="text-gray-500 text-sm py-1" v-else> In Backlog</p>
             </div>
+
 
             <div class="pb-4 w-60">
                 <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">
@@ -160,12 +164,15 @@
 
                 <p v-if="relatedTasks.length === 0" class="tracking-wide text-sm">No Related Tasks</p>
 
-                <task-card
-                    :key="task_card.id"
-                    :task_card="task_card"
-                    class="mt-3 cursor-move"
-                    v-for="task_card in relatedTasks"
-                    v-on:click.native="updateTask(task_card)"></task-card>
+                <template v-for="task_card in relatedTasks">
+                    <badge :name="task_card.board.name"></badge>
+                    <task-card
+                        :key="task_card.id"
+                        :task_card="task_card"
+                        class="cursor-pointer"
+                        v-on:click.native="updateTask(task_card)"></task-card>
+                </template >
+
 
             </div>
 
