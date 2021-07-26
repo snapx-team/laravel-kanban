@@ -73,11 +73,17 @@
                     </vSelect>
                 </div>
             </div>
+
+            <button @click="assignTask($event)"
+                    class="px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
+                    type="button">
+                    <span>Assign Task To Board</span>
+            </button>
         </div>
 
         <!-- task option checklist -->
 
-        <div class="flex">
+        <!-- <div class="flex">
             <div class="px-2 py-6 space-y-2 border-r">
                 <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600 pb-2">Task Options</span>
                 <div class="grid divide-y divide-gray-400 pt-2"
@@ -93,7 +99,7 @@
                         </div>
                     </label>
                 </div>
-            </div>
+            </div> -->
 
         <!-- taks info -->
 
@@ -130,9 +136,33 @@
 
                 </div>
 
+                <div class="flex space-x-3">
+                    <div class="flex-1 space-y-2">
+                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Assign employees</span>
+                        <vSelect
+                            v-model="task.assigned_to"
+                            multiple
+                            :options="kanbanMembers"
+                            :getOptionLabel="opt => opt.employee.user.full_name"
+                            style="margin-top: 7px"
+                            @search="onTypeEmployee"
+                            placeholder="Select one or more kanban members"
+                            class="text-gray-400">
+                            <template slot="option" slot-scope="option">
+                                <avatar :name="option.employee.user.full_name" :size="4"
+                                        class="mr-3 m-1 float-left"></avatar>
+                                <p class="inline">{{ option.employee.user.full_name }}</p>
+                            </template>
+                            <template #no-options="{ search, searching, loading }">
+                                No result .
+                            </template>
+                        </vSelect>
+                    </div>
+                </div>
+
                 <div>
                     <div class="flex-grow space-y-2">
-                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"> Description</span>
+                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Description</span>
                         <quill-editor :options="config"
                                         output="html"
                                         v-model="task.description"></quill-editor>
@@ -143,7 +173,7 @@
                 {{checklistStatus}}
 
 
-                    <div class="flex-1" v-if="checkedOptions.includes('Deadline')">
+                    <!-- <div class="flex-1" v-if="checkedOptions.includes('Deadline')"> -->
                         <div class="flex-1 space-y-2">
                             <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline</span>
                             <date-picker :popup-style="{ position: 'fixed' }"
@@ -153,9 +183,9 @@
                                         v-model="task.deadline">
                             </date-picker>
                         </div>
-                    </div>
+                    <!-- </div> -->
 
-                    <div class="flex-1" v-if="checkedOptions.includes('ERP Employee')">
+                    <!-- <div class="flex-1" v-if="checkedOptions.includes('ERP Employee')"> -->
                         <div class="flex-1 space-y-2">
                             <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Employee</span>
                             <vSelect :options="erpEmployees"
@@ -176,9 +206,9 @@
                                 </template>
                             </vSelect>
                         </div>
-                    </div>
+                    <!-- </div> -->
 
-                    <div class="flex-1" v-if="checkedOptions.includes('ERP Job Site')">
+                    <!-- <div class="flex-1" v-if="checkedOptions.includes('ERP Job Site')"> -->
                         <div class="flex-1 space-y-2">
                             <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Job Site</span>
                             <vSelect :options="erpJobSites"
@@ -196,48 +226,42 @@
                                 </template>
                             </vSelect>
                         </div>
-                    </div>
+                    <!-- </div> -->
 
 
 
-                <div class="flex-1" v-if="checkedOptions.includes('Group')">
-                    <div class="flex-1 space-y-2">
-                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with task</span>
-                        <vSelect :options="tasks"
-                                class="text-gray-400"
-                                label="name"
-                                placeholder="Select task"
-                                style="margin-top: 7px"
-                                v-model="associatedTask">
-                            <template slot="selected-option" slot-scope="option">
-                                <p>
-                                    <span class="font-bold">task-{{ option.id }}: </span>
-                                    <span class="italic">{{ option.name }}</span>
-                                </p>
-                            </template>
-                            <template slot="option" slot-scope="option">
-                                <p>
-                                    <span class="font-bold">task-{{ option.id }}: </span>
-                                    <span class="italic">{{ option.name }}</span>
-                                </p>
-                            </template>
-                            <template #no-options="{ search, searching, loading }">
-                                No result .
-                            </template>
-                        </vSelect>
-                    </div>
-                </div>
+                <!-- <div class="flex-1" v-if="checkedOptions.includes('Group')"> -->
+                        <div class="flex-1 space-y-2">
+                            <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with task</span>
+                            <vSelect :options="tasks"
+                                    class="text-gray-400"
+                                    label="name"
+                                    placeholder="Select task"
+                                    style="margin-top: 7px"
+                                    v-model="associatedTask">
+                                <template slot="selected-option" slot-scope="option">
+                                    <p>
+                                        <span class="font-bold">task-{{ option.id }}: </span>
+                                        <span class="italic">{{ option.name }}</span>
+                                    </p>
+                                </template>
+                                <template slot="option" slot-scope="option">
+                                    <p>
+                                        <span class="font-bold">task-{{ option.id }}: </span>
+                                        <span class="italic">{{ option.name }}</span>
+                                    </p>
+                                </template>
+                                <template #no-options="{ search, searching, loading }">
+                                    No result .
+                                </template>
+                            </vSelect>
+                        </div>
+                <!-- </div> -->
 
                  <button @click="updateBacklogTask($event)"
-                    class="px-4 py-3 border border-gray-200 rounded text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-600 transition duration-300 ease-in-out"
-                    type="button">
-                    <span>Save Changes</span>
-                </button>
-
-                <button @click="assignTask($event)"
                     class="px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
                     type="button">
-                    <span>Assign Task To Board</span>
+                    <span>Save Changes</span>
                 </button>
             </div>
         </div>
@@ -274,6 +298,7 @@ export default {
             erpJobSites: [],
             tasks: [],
             checkedOptions: [],
+            kanbanMembers: [],
             config: {
                 readOnly: false,
                 placeholder: 'Describe your task in greater detail',
@@ -294,9 +319,9 @@ export default {
     },
     props: {
         task: {
-        name: String,
-        badge: {},
-        description: String,
+            name: String,
+            badge: {},
+            description: String,
         },
         badges: {
             type: Array,
@@ -319,7 +344,7 @@ export default {
     },
     created() {
         this.eventHub.$on("open-task-view", (currentTask) => {
-            this.loadRowsAndColumns(currentTask);
+            this.loadRowsAndColumnsFromId(currentTask.board_id);
         });
          if (this.task.deadline) {
             this.task.deadline = new Date(this.task.deadline);
@@ -345,6 +370,12 @@ export default {
                 this.rows = data.data;
             }).catch(res => {console.log(res)});
         },
+        getMembers(board_id) {
+            this.asyncGetMembers(board_id).then((data) => {
+                this.kanbanMembers = data.data;
+                console.log(data.data);
+            })
+        },
         loadColumns(option) {
             this.chosenColumn = {};
             this.asyncGetColumns(option.id).then((data) => {
@@ -359,6 +390,7 @@ export default {
             this.chosenColumn = {};
             this.columns = [];
             this.getRows(id);
+            this.getMembers(id);
         },
         updateBacklogTask() {
             let backlogTaskData = {
@@ -369,6 +401,7 @@ export default {
                 erp_employee: this.task.erp_employee,
                 erp_job_site: this.task.erp_job_site,
                 deadline: this.task.deadline,
+                assigned_to: this.task.assigned_to,
             }
             const cloneBacklogTasksData = {...backlogTaskData};
             this.asyncUpdateTask(cloneBacklogTasksData).then((data) => {
@@ -379,12 +412,6 @@ export default {
             this.asyncAssignTaskToBoard(this.task.id, this.chosenRow.id, this.chosenColumn.id).then((data) => {
                 this.triggerSuccessToast("Task Assigned!");
             }).catch(res => {console.log(res)});
-        },
-        onTypeEmployee(search, loading) {
-            if(search.length) {
-                    loading(true);
-                    this.typeEmployee(search, loading, this);
-                }
         },
         getErpEmployees() {
             this.asyncGetAllUsers().then((data) => {
@@ -406,6 +433,12 @@ export default {
             }).catch(res => {
                 console.log(res)
             });
+        },
+        onTypeEmployee(search, loading) {
+            if(search.length) {
+                    loading(true);
+                    this.typeEmployee(search, loading, this);
+                }
         },
         typeEmployee : _.debounce(function (search, loading) {
             this.asyncGetSomeUsers(search).then((data) => {

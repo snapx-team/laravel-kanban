@@ -41,7 +41,7 @@
                   <avatar
                     :key="userIndex"
                     :class="{ '-ml-2': userIndex > 0 }"
-                    :name="user.user.full_name"
+                    :name="user.full_name"
                     :size="6"
                     :borderSize="0"
                     :borderColor="'white'"

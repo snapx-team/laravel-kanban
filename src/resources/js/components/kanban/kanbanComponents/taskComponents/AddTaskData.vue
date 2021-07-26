@@ -244,7 +244,6 @@ export default {
         },
     },
     methods: {
-
         onTypeEmployee(search, loading) {
             if (search.length) {
                 loading(true);
