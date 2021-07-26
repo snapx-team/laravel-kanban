@@ -84,7 +84,7 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             Route::post('/delete-kanban-employee/{id}', 'EmployeeController@deleteEmployee');
             Route::get('/get-kanban-employees', 'EmployeeController@getEmployees');
 
-            // Phone Line Members
+            // Members
             Route::post('/create-members/{id}', 'MemberController@createMembers');
             Route::post('/delete-member/{id}', 'MemberController@deleteMember');
             Route::get('/get-members/{id}', 'MemberController@getMembers');
