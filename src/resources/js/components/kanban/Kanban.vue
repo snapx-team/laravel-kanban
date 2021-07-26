@@ -89,18 +89,22 @@
         <kanban-task-modal :kanbanData="kanban"></kanban-task-modal>
         <add-member-modal :kanbanData="kanban"></add-member-modal>
         <add-row-and-columns-modal :kanbanData="kanban"></add-row-and-columns-modal>
+        <add-task-by-column-modal :kanbanData="kanban"></add-task-by-column-modal>
+
     </div>
 </template>
 
 <script>
+
 import draggable from "vuedraggable";
+import {ajaxCalls} from "../../mixins/ajaxCallsMixin";
+
 import TaskCard from "./kanbanComponents/TaskCard.vue";
 import kanbanTaskModal from "./kanbanComponents/KanbanTaskModal";
 import AddMemberModal from "./kanbanComponents/AddMemberModal.vue";
 import KanbanBar from "./kanbanComponents/KanbanBar.vue";
-import {ajaxCalls} from "../../mixins/ajaxCallsMixin";
 import AddRowAndColumnsModal from "./kanbanComponents/AddRowAndColumnsModal";
-import axios from "axios";
+import AddTaskByColumnModal from "./kanbanComponents/AddTaskByColumnModal";
 
 export default {
     inject: ["eventHub"],
@@ -111,6 +115,7 @@ export default {
         AddMemberModal,
         KanbanBar,
         kanbanTaskModal,
+        AddTaskByColumnModal,
     },
 
     mixins: [ajaxCalls],
@@ -150,10 +155,13 @@ export default {
         this.eventHub.$on("save-row-and-columns", (rowData) => {
             this.saveRowAndColumns(rowData);
         });
+        this.eventHub.$on("save-task", (taskData) => {
+            this.saveTask(taskData);
+        });
     },
 
     beforeDestroy() {
-        this.eventHub.$off('save-task-cards');
+        this.eventHub.$off('save-task');
         this.eventHub.$off('delete-kanban-task-cards');
         this.eventHub.$off('save-members');
         this.eventHub.$off('remove-member');
@@ -163,15 +171,21 @@ export default {
     methods: {
         createTaskCard(rowIndex, columnIndex) {
             let rowName = this.kanban.rows[rowIndex].name;
+            let rowId = this.kanban.rows[rowIndex].id;
+
             let columnName = this.kanban.rows[rowIndex].columns[columnIndex].name;
             let columnId = this.kanban.rows[rowIndex].columns[columnIndex].id;
 
-            this.eventHub.$emit("create-kanban-task-cards", {
+            let boardId = this.kanban.id;
+
+            this.eventHub.$emit("create-task", {
                 rowIndex,
                 rowName,
+                columnId,
+                rowId,
                 columnIndex,
                 columnName,
-                columnId,
+                boardId
             });
         },
         createRowAndColumns(rowIndex, rowColumns, rowId, rowName, boardId = this.kanban.id) {
@@ -306,37 +320,36 @@ export default {
             });
         },
 
-        saveTaskCard(cardData) {
-            const cloneCardData = {...cardData};
-            this.loadingCards = {columnId: cloneCardData.columnId, isLoading: true}
-            this.asyncCreateTask(cloneCardData).then(() => {
-                this.asyncGetTaskCardsByColumn(cloneCardData.columnId).then((data) => {
-                    this.kanban.rows[cloneCardData.row.index].columns[cloneCardData.column.index].task_cards = data.data;
-                    this.loadingCards = {columnId: null, isLoading: false}
-                    this.triggerSuccessToast('Task Created')
+        saveTask(taskData) {
+
+            this.isDraggableDisabled = true;
+            this.asyncCreateTask(taskData).then((data) => {
+                this.asyncGetTaskCardsByColumn(taskData.selectedColumnId).then((data) => {
+                    console.log(taskData)
+                    this.kanban.rows[taskData.selectedRowIndex].columns[taskData.selectedColumnIndex].task_cards = data.data;
+                    this.isDraggableDisabled = false
                 }).catch(res => {
                     console.log(res)
                 });
-            }).catch(res => {
-                console.log(res)
             });
         },
 
-        deleteTaskCard(cardData) {
-            const cloneCardData = {...cardData};
-            this.loadingCards = {columnId: cloneCardData.selectedCardData.column_id, isLoading: true}
-            this.asyncDeleteKanbanTaskCard(cloneCardData.selectedCardData.id).then(() => {
-                this.asyncGetTaskCardsByColumn(cloneCardData.selectedCardData.column_id).then((data) => {
-                    this.kanban.rows[cloneCardData.selectedRowIndex].columns[cloneCardData.selectedColumnIndex].task_cards = data.data;
-                    this.loadingCards = {columnId: null, isLoading: false}
-                    this.triggerSuccessToast('Task Deleted')
-                }).catch(res => {
-                    console.log(res)
-                });
-            }).catch(res => {
-                console.log(res)
-            });
-        },
+        //
+        // deleteTaskCard(cardData) {
+        //     const cloneCardData = {...cardData};
+        //     this.loadingCards = {columnId: cloneCardData.selectedCardData.column_id, isLoading: true}
+        //     this.asyncDeleteKanbanTaskCard(cloneCardData.selectedCardData.id).then(() => {
+        //         this.asyncGetTaskCardsByColumn(cloneCardData.selectedCardData.column_id).then((data) => {
+        //             this.kanban.rows[cloneCardData.selectedRowIndex].columns[cloneCardData.selectedColumnIndex].task_cards = data.data;
+        //             this.loadingCards = {columnId: null, isLoading: false}
+        //             this.triggerSuccessToast('Task Deleted')
+        //         }).catch(res => {
+        //             console.log(res)
+        //         });
+        //     }).catch(res => {
+        //         console.log(res)
+        //     });
+        // },
 
         saveRowAndColumns(rowData) {
             const cloneRowData = {...rowData};

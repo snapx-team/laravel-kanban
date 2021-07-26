@@ -37,7 +37,7 @@ Create a "package" folder if you don't have one.
     "Xguard\\LaravelKanban\\": "package/laravel-kanban/src/"
 },
 ```
-**3:** Add the Phone Scheduler Service provider to the config/app.php
+**3:** Add the Kanban Service provider to the config/app.php
 
 ```php
 return [
