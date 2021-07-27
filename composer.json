@@ -19,7 +19,7 @@
     "extra": {
         "laravel": {
             "providers": [
-              "LaravelKanbanServiceProvider"
+              "Xguard\\LaravelKanban\\LaravelKanbanServiceProvider"
             ]
         }
     }
