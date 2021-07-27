@@ -74,11 +74,11 @@
                 </div>
             </div>
 
-            <button @click="assignTask($event)"
+            <!-- <button @click="assignTask($event)"
                     class="px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
                     type="button">
                 <span>Place Task</span>
-            </button>
+            </button> -->
         </div>
 
         <!-- taks info -->
@@ -210,17 +210,16 @@
                          class="text-gray-400"
                          label="name"
                          placeholder="Select task"
-                         style="margin-top: 7px"
-                         v-model="associatedTask">
+                         style="margin-top: 7px">
                     <template slot="selected-option" slot-scope="option">
                         <p>
-                            <span class="font-bold">task-{{ option.id }}: </span>
+                            <span class="font-bold">{{ option.board.name.substring(0, 3).toUpperCase() }}-{{ option.id }}: </span>
                             <span class="italic">{{ option.name }}</span>
                         </p>
                     </template>
                     <template slot="option" slot-scope="option">
                         <p>
-                            <span class="font-bold">task-{{ option.id }}: </span>
+                            <span class="font-bold">{{ option.board.name.substring(0, 3).toUpperCase() }}-{{ option.id }}: </span>
                             <span class="italic">{{ option.name }}</span>
                         </p>
                     </template>
@@ -263,7 +262,6 @@ export default {
         return {
             rows: [],
             columns: [],
-            associatedTask: null,
             erpEmployees: [],
             erpJobSites: [],
             tasks: [],

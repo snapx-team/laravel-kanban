@@ -63,13 +63,6 @@
                                 </li>
                                 <li class="mx-1 flex-1 text-center">
                                     <a class="text-xs font-bold uppercase px-5 py-3 rounded block leading-normal"
-                                       v-on:click="toggleTabs(3)"
-                                       v-bind:class="{'text-gray-600 bg-gray-200 hover:bg-gray-300 cursor-pointer ': openTab !== 3, 'text-white bg-gray-500': openTab === 3}">
-                                        <i class="fas fa-briefcase text-base mr-1"></i> Related Tasks (0)
-                                    </a>
-                                </li>
-                                <li class="mx-1 flex-1 text-center">
-                                    <a class="text-xs font-bold uppercase px-5 py-3 rounded block leading-normal"
                                        v-on:click="toggleTabs(4)"
                                        v-bind:class="{'text-gray-600 bg-gray-200 hover:bg-gray-300 cursor-pointer ': openTab !== 4, 'text-white bg-gray-500': openTab === 4}">
                                         <i class="fas fa-space-shuttle text-base mr-1"></i> Logs
@@ -88,11 +81,6 @@
                                         <div v-bind:class="{'hidden': openTab !== 2, 'block': openTab === 2}">
                                             <add-task-data :kanbanData="kanbanData"
                                                            :cardData="cardData"></add-task-data>
-                                        </div>
-                                        <div v-bind:class="{'hidden': openTab !== 3, 'block': openTab === 3}">
-                                            <p>
-                                                <related-tasks></related-tasks>
-                                            </p>
                                         </div>
                                         <div v-bind:class="{'hidden': openTab !== 4, 'block': openTab === 4}">
                                             <p>
@@ -114,7 +102,6 @@ import vSelect from "vue-select";
 import Avatar from "../../global/Avatar.vue";
 import addTaskData from "./taskComponents/AddTaskData";
 import taskComments from "./taskComponents/TaskComments";
-import relatedTasks from "./taskComponents/RelatedTasks";
 import taskLogs from "./taskComponents/TaskLogs"
 import viewTaskData from "./taskComponents/viewTaskData";
 
@@ -125,7 +112,6 @@ export default {
         Avatar,
         addTaskData,
         taskComments,
-        relatedTasks,
         taskLogs,
         viewTaskData
     },

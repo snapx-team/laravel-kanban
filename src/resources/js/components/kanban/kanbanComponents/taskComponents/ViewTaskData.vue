@@ -164,6 +164,40 @@
 
                 <p v-if="relatedTasks.length === 0" class="tracking-wide text-sm">No Related Tasks</p>
 
+                <button @click="selectGroupIsVisible = true"
+                    class="py-2 px-8 text-sm text-indigo-600 hover:text-indigo-800 transition duration-300 ease-in-out focus:outline-none"
+                    v-if="relatedTasks.length === 0">
+                        <i class="fas fa-th-list mr-2"></i>
+                        Click To Add to A Group
+                </button>
+
+                <div v-if="selectGroupIsVisible">
+                    <span
+                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with task</span>
+                    <vSelect :options="tasks"
+                            class="text-gray-400"
+                            label="name"
+                            placeholder="Select task"
+                            style="margin-top: 7px"
+                            v-model="associatedTask">
+                        <template slot="selected-option" slot-scope="option">
+                            <p>
+                                <span class="font-bold">{{ option.board.name.substring(0, 3).toUpperCase() }}-{{ option.id }}: </span>
+                                <span class="italic">{{ option.name }}</span>
+                            </p>
+                        </template>
+                        <template slot="option" slot-scope="option">
+                            <p>
+                                <span class="font-bold">{{ option.board.name.substring(0, 3).toUpperCase() }}-{{ option.id }}: </span>
+                                <span class="italic">{{ option.name }}</span>
+                            </p>
+                        </template>
+                        <template #no-options="{ search, searching, loading }">
+                            No result .
+                        </template>
+                    </vSelect>
+                </div>
+
                 <template v-for="task_card in relatedTasks">
                     <badge :name="task_card.board.name"></badge>
                     <task-card
@@ -216,6 +250,8 @@ export default {
                 total: 0,
                 done: 0,
             },
+            selectGroupIsVisible: false,
+            selectedGroup: {},
             cloneCardData: null,
             selectedStatus: null,
             statuses: [

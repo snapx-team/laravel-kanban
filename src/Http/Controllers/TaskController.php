@@ -15,7 +15,7 @@ class TaskController extends Controller
 {
     public function getAllTasks()
     {
-        return Task::all();
+        return Task::with('board')->get();
     }
 
     public function getRelatedTasks($id)

@@ -229,13 +229,13 @@
                                              v-model="task.associatedTask">
                                         <template slot="selected-option" slot-scope="option">
                                             <p>
-                                                <span class="font-bold">task-{{ option.id }}: </span>
+                                                <span class="font-bold">{{ option.board.name.substring(0, 3).toUpperCase() }}-{{ option.id }}: </span>
                                                 <span class="italic">{{ option.name }}</span>
                                             </p>
                                         </template>
                                         <template slot="option" slot-scope="option">
                                             <p>
-                                                <span class="font-bold">task-{{ option.id }}: </span>
+                                                <span class="font-bold">{{ option.board.name.substring(0, 3).toUpperCase() }}-{{ option.id }}: </span>
                                                 <span class="italic">{{ option.name }}</span>
                                             </p>
                                         </template>
@@ -255,7 +255,6 @@
                                 <button @click="saveBacklogTask($event)"
                                         class="px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
                                         type="button">
-
                                     <span>Create Task</span>
                                 </button>
                             </div>
