@@ -1,5 +1,5 @@
 <template>
-    <div :class="`w-${size} h-${size}`" class="rounded-full inline relative flex flex-col items-center group">
+    <div :class="`w-${size} h-${size} ${isSelected ? 'mb-6' : ''}`" class="rounded-full inline relative flex flex-col items-center group">
         <div :class="`mt-${size}`"
              class="absolute top-0 flex flex-col items-center hidden mb-6 group-hover:flex"
              v-if="tooltip">
@@ -19,12 +19,22 @@
 import {helperFunctions} from "../../mixins/helperFunctionsMixin";
 
 export default {
+    inject: ["eventHub"],
     mixins: [helperFunctions],
 
+    data() {
+        return {
+            isSelected: false,
+        }
+    },
     props: {
         name: {
             type: String, default: "john Doe",
-        }, size: {
+        },
+        user_id: {
+            type: Number, default: null,
+        },
+        size: {
             type: Number, default: 10,
         },
         tooltip: {
@@ -38,7 +48,22 @@ export default {
         },
     },
 
+    created() {
+        this.eventHub.$on("show-employee-tasks", (idArray) => {
+            this.select(idArray);
+        });
+    },
+
     methods: {
+        select(idArray) {
+            if(this.user_id != null) {
+                if (idArray.includes(this.user_id)) {
+                    this.isSelected = true;
+                } else {
+                    this.isSelected = false;
+                }
+            }
+        },
         avatarUrl(name) {
             var color = this.generateHexColorWithText(name);
             return ("https://ui-avatars.com/api/?name=" + name + "&background=" + color + "&color=fff");

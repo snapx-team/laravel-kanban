@@ -51,7 +51,6 @@ export default {
     methods: {
         getLogs() {
             this.asyncGetLogs(this.cardData.id).then((data) => {
-                console.log(data.data);
                 this.logs = data.data;
             }).catch(res => {
                 console.log(res)

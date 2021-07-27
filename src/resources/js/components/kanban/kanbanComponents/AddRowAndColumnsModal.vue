@@ -148,7 +148,6 @@ export default {
 
             this.isEdit = rowData.rowId !== null;
             this.modalOpen = true;
-            console.log(this.rowData);
         });
 
     },

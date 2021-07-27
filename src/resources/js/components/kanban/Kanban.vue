@@ -242,7 +242,6 @@ export default {
         getColumnChangeData(event, rowIndex) {
 
             if (event.oldIndex !== event.newIndex) {
-                console.log('column');
                 let columns = this.kanban.rows[rowIndex].columns;
                 this.isDraggableDisabled = true;
                 this.asyncUpdateColumnIndexes(columns).then(() => {
@@ -256,8 +255,6 @@ export default {
 
         // Whenever a user drags a row
         getRowChangeData(event) {
-            console.log('row');
-
             if (event.oldIndex !== event.newIndex) {
                 this.isDraggableDisabled = true
                 this.asyncUpdateRowIndexes(this.kanban.rows).then(() => {
@@ -325,7 +322,6 @@ export default {
             this.isDraggableDisabled = true;
             this.asyncCreateTask(taskData).then((data) => {
                 this.asyncGetTaskCardsByColumn(taskData.selectedColumnId).then((data) => {
-                    console.log(taskData)
                     this.kanban.rows[taskData.selectedRowIndex].columns[taskData.selectedColumnIndex].task_cards = data.data;
                     this.isDraggableDisabled = false
                 }).catch(res => {

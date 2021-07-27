@@ -106,7 +106,6 @@ export default {
         saveEmployee(employeeData) {
             this.loadingEmployee = true;
             const cloneEmployeeData = {...employeeData};
-            console.log(cloneEmployeeData);
             this.asyncCreateKanbanEmployee(cloneEmployeeData).then(res => {
                 this.asyncGetKanbanEmployees().then((data) => {
                     this.dashboardData.employees = data.data;

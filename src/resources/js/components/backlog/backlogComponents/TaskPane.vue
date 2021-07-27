@@ -345,7 +345,6 @@ export default {
         getMembers(board_id) {
             this.asyncGetMembers(board_id).then((data) => {
                 this.kanbanMembers = data.data;
-                console.log(data.data);
             })
         },
         getMembers(board_id) {
