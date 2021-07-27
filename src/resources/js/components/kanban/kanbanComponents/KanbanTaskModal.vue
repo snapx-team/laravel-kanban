@@ -26,7 +26,8 @@
                         <div class="space-y-1">
 
                             <div>
-                                <h1 class="text-2xl text-white pb-2">Task ID: [{{ kanbanData.name.substring(0,3).toUpperCase() }}-{{ cardData.id}}]</h1>
+                                <h1 class="text-2xl text-white pb-2">Task ID:
+                                    [{{ kanbanData.name.substring(0, 3).toUpperCase() }}-{{ cardData.id }}]</h1>
                                 <p class="text-sm font-medium leading-5 text-gray-500">
                                     View and/or update task information </p>
                             </div>
@@ -109,66 +110,66 @@
     </div>
 </template>
 <script>
-    import vSelect from "vue-select";
-    import Avatar from "../../global/Avatar.vue";
-    import addTaskData from "./taskComponents/AddTaskData";
-    import taskComments from "./taskComponents/TaskComments";
-    import relatedTasks from "./taskComponents/RelatedTasks";
-    import taskLogs from "./taskComponents/TaskLogs"
-    import viewTaskData from "./taskComponents/viewTaskData";
+import vSelect from "vue-select";
+import Avatar from "../../global/Avatar.vue";
+import addTaskData from "./taskComponents/AddTaskData";
+import taskComments from "./taskComponents/TaskComments";
+import relatedTasks from "./taskComponents/RelatedTasks";
+import taskLogs from "./taskComponents/TaskLogs"
+import viewTaskData from "./taskComponents/viewTaskData";
 
-    export default {
-        inject: ["eventHub"],
-        components: {
-            vSelect,
-            Avatar,
-            addTaskData,
-            taskComments,
-            relatedTasks,
-            taskLogs,
-            viewTaskData
-        },
-        props: {
-            kanbanData: Object,
-        },
+export default {
+    inject: ["eventHub"],
+    components: {
+        vSelect,
+        Avatar,
+        addTaskData,
+        taskComments,
+        relatedTasks,
+        taskLogs,
+        viewTaskData
+    },
+    props: {
+        kanbanData: Object,
+    },
 
-        data() {
-            return {
-                openTab: 1,
-                cardData: Object,
-                modalOpen: false,
+    data() {
+        return {
+            openTab: 1,
+            cardData: Object,
+            modalOpen: false,
 
-            };
-        },
+        };
+    },
 
-        methods: {
-            toggleTabs: function (tabNumber) {
-                this.openTab = tabNumber
+    methods: {
+        toggleTabs: function (tabNumber) {
+            this.openTab = tabNumber
+        }
+    },
+
+    created() {
+        this.eventHub.$on("update-kanban-task-cards", (task) => {
+            if (this.modalOpen) {
+                this.modalOpen = false;
+
+                setTimeout(() => {
+                        this.cardData = task;
+                        this.modalOpen = true;
+                    },
+                    100
+                )
+                ;
+            } else {
+                this.cardData = task;
+                this.modalOpen = true;
             }
-        },
+        });
+    },
 
-        created() {
-            this.eventHub.$on("update-kanban-task-cards", (task) => {
-                if (this.modalOpen) {
-                    this.modalOpen = false;
-
-                    setTimeout(() => {
-                            this.cardData = task;
-                            this.modalOpen = true;
-                        },
-                        100
-                    )
-                    ;
-                } else {
-                    this.cardData = task;
-                    this.modalOpen = true;
-                }
-            });
-        },
-
-        beforeDestroy() {
-            this.eventHub.$off('update-kanban-task-cards');
-        },
-    };
+    beforeDestroy() {
+        this.eventHub.$off('update-kanban-task-cards');
+    },
+};
 </script>
 

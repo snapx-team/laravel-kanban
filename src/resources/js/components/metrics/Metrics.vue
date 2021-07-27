@@ -3,19 +3,19 @@
         <backlog-bar :name="'Metrics'"></backlog-bar>
         <div class="bg-gray-100 w-full h-64 absolute top-0 rounded-b-lg" style="z-index: -1"></div>
         <div class="mx-10 my-3 space-y-5 shadow-xl p-5 bg-white">
-             <div class="flex-1 space-y-2">
+            <div class="flex-1 space-y-2">
                 <span
                     class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Start</span>
                 <date-picker type="datetime" v-model="start"
-                                placeholder="YYYY-MM-DD"
-                                :popup-style="{ position: 'fixed' }" format="YYYY-MM-DD"
+                             placeholder="YYYY-MM-DD"
+                             :popup-style="{ position: 'fixed' }" format="YYYY-MM-DD"
                 ></date-picker>
                 <div class="flex-1 space-y-2">
                     <span
                         class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">End</span>
                     <date-picker type="datetime" v-model="end"
-                                    placeholder="YYYY-MM-DD"
-                                    :popup-style="{ position: 'fixed' }" format="YYYY-MM-DD"
+                                 placeholder="YYYY-MM-DD"
+                                 :popup-style="{ position: 'fixed' }" format="YYYY-MM-DD"
                     ></date-picker>
                 </div>
             </div>
@@ -70,28 +70,43 @@
                 <div class="fex flex-1 bg-gray-100 py-3">
                     <div class="p-2 flex-grow">
                         <div v-if="showTB" class="flex-auto rounded shadow-lg m-2 bg-white">
-                            <pie-chart v-if="badgeData != null" :series="badgeData.hits" :labels="badgeData.names" :title="'Tickets by Badge'"></pie-chart>
+                            <pie-chart v-if="badgeData != null" :series="badgeData.hits" :labels="badgeData.names"
+                                       :title="'Tickets by Badge'"></pie-chart>
                         </div>
                         <div v-if="showTE" class="flex-auto rounded shadow-lg m-2 bg-white">
-                            <pie-chart v-if="ticketByEmployeeData != null" :series="ticketByEmployeeData.hits" :labels="ticketByEmployeeData.names" :title="'Tickets Created by Employee'"></pie-chart>
+                            <pie-chart v-if="ticketByEmployeeData != null" :series="ticketByEmployeeData.hits"
+                                       :labels="ticketByEmployeeData.names"
+                                       :title="'Tickets Created by Employee'"></pie-chart>
                         </div>
                         <div v-if="showTB" class="flex-auto rounded shadow-lg m-2 bg-white">
-                            <pie-chart v-if="jobsiteData != null" :series="jobsiteData.hits" :labels="jobsiteData.names" :title="'Tickets by JobSite'"></pie-chart>
+                            <pie-chart v-if="jobsiteData != null" :series="jobsiteData.hits" :labels="jobsiteData.names"
+                                       :title="'Tickets by JobSite'"></pie-chart>
                         </div>
                         <div v-if="showTE" class="flex-auto rounded shadow-lg m-2 bg-white">
-                            <pie-chart v-if="closedTasksByEmployee != null" :series="closedTasksByEmployee.hits" :labels="closedTasksByEmployee.names" :title="'Tickets Closed by Employee'"></pie-chart>
+                            <pie-chart v-if="closedTasksByEmployee != null" :series="closedTasksByEmployee.hits"
+                                       :labels="closedTasksByEmployee.names"
+                                       :title="'Tickets Closed by Employee'"></pie-chart>
                         </div>
                         <div v-if="showTS" class="flex-auto rounded shadow-lg m-2 bg-white">
-                            <bar-chart  v-if="creationByHour != null" :data="creationByHour.hits" :categories="creationByHour.names" :xname="'Tickets'" :yname="'Hour'" :title="'Tickets by Hour Created'"></bar-chart>
+                            <bar-chart v-if="creationByHour != null" :data="creationByHour.hits"
+                                       :categories="creationByHour.names" :xname="'Tickets'" :yname="'Hour'"
+                                       :title="'Tickets by Hour Created'"></bar-chart>
                         </div>
                         <div v-if="showHS" class="flex-auto rounded shadow-lg m-2 bg-white">
-                            <bar-chart  v-if="delayByBadge != null" :data="delayByBadge.hits" :categories="delayByBadge.names" :xname="'Hours'" :yname="'Categories'" :title="'Average Hours by Badge'"></bar-chart>
+                            <bar-chart v-if="delayByBadge != null" :data="delayByBadge.hits"
+                                       :categories="delayByBadge.names" :xname="'Hours'" :yname="'Categories'"
+                                       :title="'Average Hours by Badge'"></bar-chart>
                         </div>
                         <div v-if="showHS" class="flex-auto rounded shadow-lg m-2 bg-white">
-                            <bar-chart  v-if="delayByEmployee != null" :data="delayByEmployee.hits" :categories="delayByEmployee.names" :xname="'Hours'" :yname="'Employees'" :title="'Average Hours by Employee'"></bar-chart>
+                            <bar-chart v-if="delayByEmployee != null" :data="delayByEmployee.hits"
+                                       :categories="delayByEmployee.names" :xname="'Hours'" :yname="'Employees'"
+                                       :title="'Average Hours by Employee'"></bar-chart>
                         </div>
                         <div v-if="showCR" class="flex-auto rounded shadow-lg m-2 bg-white">
-                            <line-chart v-if="createdVsResolved != null" :series="createdVsResolved.series" :categories="createdVsResolved.categories" :xname="'Days'" :yname="'Total Tickets'" :title="'Created Vs Resolved'"></line-chart> <!-- :data="delayByEmployee.hits"   -->
+                            <line-chart v-if="createdVsResolved != null" :series="createdVsResolved.series"
+                                        :categories="createdVsResolved.categories" :xname="'Days'"
+                                        :yname="'Total Tickets'" :title="'Created Vs Resolved'"></line-chart>
+                            <!-- :data="delayByEmployee.hits"   -->
                         </div>
                     </div>
                 </div>
@@ -100,11 +115,11 @@
     </div>
 </template>
 
-<script>  
+<script>
 import {ajaxCalls} from "../../mixins/ajaxCallsMixin";
-import PieChart from  "./metricsComponents/PieChart.vue";
-import BarChart from  "./metricsComponents/BarChart.vue";
-import LineChart from  "./metricsComponents/LineChart.vue";
+import PieChart from "./metricsComponents/PieChart.vue";
+import BarChart from "./metricsComponents/BarChart.vue";
+import LineChart from "./metricsComponents/LineChart.vue";
 import BacklogBar from "../backlog/backlogComponents/BacklogBar.vue"
 
 export default {
@@ -119,7 +134,7 @@ export default {
         return {
             badgeData: null,
             ticketByEmployeeData: null,
-            creationByHour: null,    
+            creationByHour: null,
             jobsiteData: null,
             closedTasksByEmployee: null,
             delayByBadge: null,
@@ -169,7 +184,7 @@ export default {
             if (this.showCR) {
                 this.getCreatedVsResolved();
             }
-        
+
         },
         showTicketBreakdown() {
             this.showTB = true;
@@ -217,7 +232,7 @@ export default {
         getMonday(d) {
             d = new Date(d);
             var day = d.getDay(),
-            diff = d.getDate() - day + (day == 0 ? -6:1); // adjust when day is sunday
+                diff = d.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
             return new Date(d.setDate(diff));
         },
         filter() {
@@ -231,7 +246,9 @@ export default {
             this.asyncGetBadgeData(this.startTime, this.endTime).then((data) => {
                 // console.log(data.data);
                 this.badgeData = data.data;
-            }).catch(res => {console.log(res)});
+            }).catch(res => {
+                console.log(res)
+            });
         },
         getTicketsByEmployee() {
             this.asyncGetTicketsByEmployee(this.startTime, this.endTime).then((data) => {

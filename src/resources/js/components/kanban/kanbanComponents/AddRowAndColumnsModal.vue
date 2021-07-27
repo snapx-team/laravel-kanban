@@ -20,7 +20,7 @@
                 <div @click="modalOpen = false" class="overflow-auto fixed h-full w-full"></div>
                 <div class="flex flex-col overflow-auto z-50 w-100 bg-white rounded-md shadow-2xl m-10"
                      style="width: 700px; min-height: 300px; max-height: 80%">
-                    <!-- Task heading -->
+                    <!-- Heading -->
                     <div class="flex justify-between p-5 bg-indigo-800 border-b">
                         <div class="space-y-1">
                             <h1 class="text-2xl text-white pb-2" v-if="isEdit">Add Row and Columns</h1>
@@ -42,17 +42,18 @@
                             </button>
                         </div>
                     </div>
-                    <!-- Task container -->
+                    <!-- Container -->
                     <div class="space-y-5 overflow-auto px-8 py-6">
 
                         <div class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">
                             Row Title
                         </div>
 
-                        <input class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
-                               placeholder="Write a title for the column"
-                               type="text"
-                               v-model="rowData.name"/>
+                        <input
+                            class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
+                            placeholder="Write a title for the column"
+                            type="text"
+                            v-model="rowData.name"/>
 
                         <hr>
 
@@ -62,10 +63,11 @@
                         <div :key="columnIndex" class="space-y-6" v-for="(column, columnIndex) in rowData.columns">
                             <div class="flex ">
 
-                                <input class="px-3 py-2 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
-                                       placeholder="Write a title for the column"
-                                       type="text"
-                                       v-model="column.name"/>
+                                <input
+                                    class="px-3 py-2 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
+                                    placeholder="Write a title for the column"
+                                    type="text"
+                                    v-model="column.name"/>
 
                                 <button @click="decrement(columnIndex)"
                                         class="w-24 text-sm text-gray-600 hover:text-gray-800 transition duration-300 ease-in-out focus:outline-none"
@@ -116,62 +118,62 @@
 </template>
 <script>
 
-    export default {
-        inject: ["eventHub"],
+export default {
+    inject: ["eventHub"],
 
-        data() {
-            return {
-                modalOpen: false,
-                isSavingColumn: false,
-                isEdit: false,
-                rowData: {
-                    boardId:null,
+    data() {
+        return {
+            modalOpen: false,
+            isSavingColumn: false,
+            isEdit: false,
+            rowData: {
+                boardId: null,
+                name: null,
+                rowIndex: null,
+                rowId: null,
+                columns: [],
+            }
+        };
+    },
+
+    created() {
+        this.eventHub.$on("create-row-and-columns", (rowData) => {
+
+            this.rowData.name = rowData.rowName;
+            this.rowData.rowIndex = rowData.rowIndex;
+            this.rowData.rowId = rowData.rowId;
+            this.rowData.boardId = rowData.boardId;
+
+            this.rowData.columns = rowData.rowColumns.map(a => ({...a}));
+
+            this.isEdit = rowData.rowId !== null;
+            this.modalOpen = true;
+            console.log(this.rowData);
+        });
+
+    },
+
+    beforeDestroy() {
+        this.eventHub.$off('create-row-and-columns');
+    },
+
+    methods: {
+        increment() {
+            this.rowData.columns.push(
+                {
+                    id: null,
                     name: null,
-                    rowIndex: null,
-                    rowId: null,
-                    columns: [],
                 }
-            };
+            );
         },
-
-        created() {
-            this.eventHub.$on("create-row-and-columns", (rowData) => {
-
-                this.rowData.name = rowData.rowName;
-                this.rowData.rowIndex = rowData.rowIndex;
-                this.rowData.rowId = rowData.rowId;
-                this.rowData.boardId = rowData.boardId;
-
-                this.rowData.columns = rowData.rowColumns.map(a => ({...a}));
-
-                this.isEdit = rowData.rowId !== null;
-                this.modalOpen = true;
-                console.log(this.rowData);
-            });
-
+        decrement(index) {
+            this.rowData.columns.splice(index, 1);
         },
-
-        beforeDestroy() {
-            this.eventHub.$off('create-row-and-columns');
+        saveRow() {
+            this.eventHub.$emit("save-row-and-columns", this.rowData);
+            this.modalOpen = false;
+            this.rowData.rowIndex = null;
         },
-
-        methods: {
-            increment() {
-                this.rowData.columns.push(
-                    {
-                        id: null,
-                        name: null,
-                    }
-                );
-            },
-            decrement(index) {
-                this.rowData.columns.splice(index, 1);
-            },
-            saveRow() {
-                this.eventHub.$emit("save-row-and-columns", this.rowData);
-                this.modalOpen = false;
-                this.rowData.rowIndex = null;
-            },
-        },
-    };
+    },
+};
 </script>

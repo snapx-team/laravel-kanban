@@ -20,12 +20,11 @@ class ErpController extends Controller
     public function getSomeUsers($search)
     {
         return User::
-                where(function ($q) use ($search) {
-                $q->where('first_name', 'like', "%{$search}%")
+        where(function ($q) use ($search) {
+            $q->where('first_name', 'like', "%{$search}%")
                 ->orWhere('last_name', 'like', "%{$search}%")
                 ->orWhere(User::raw('CONCAT(first_name, " ", last_name)'), 'like', "%{$search}%");
-            })
-            ->orderBy('first_name')->take(10)->get();
+        })->orderBy('first_name')->take(10)->get();
     }
 
     public function getAllJobSites()
@@ -36,9 +35,9 @@ class ErpController extends Controller
     public function getSomeJobSites($search)
     {
         return JobSite::
-                where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
-            })
+        where(function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%");
+        })
             ->orderBy('name')->take(10)->get();
     }
 }

@@ -4,7 +4,10 @@
              class="absolute top-0 flex flex-col items-center hidden mb-6 group-hover:flex"
              v-if="tooltip">
             <div class="w-3 h-3 -mb-2 rotate-45 bg-gray-800"></div>
-            <span class="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-gray-800 rounded shaow-lg">{{ name }}</span>
+            <span
+                class="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-gray-800 rounded shaow-lg">{{
+                    name
+                }}</span>
         </div>
         <img :class="`border-${borderSize} border-${borderColor} ${borderSize === 0 ? 'border' : ''}`"
              :src="avatarUrl(name)"
@@ -13,42 +16,44 @@
     </div>
 </template>
 <script>
-    import {helperFunctions} from "../../mixins/helperFunctionsMixin";
+import {helperFunctions} from "../../mixins/helperFunctionsMixin";
 
-    export default {
-        mixins: [helperFunctions],
+export default {
+    mixins: [helperFunctions],
 
-        props: {
-            name: {
-                type: String, default: "john Doe",
-            }, size: {
-                type: Number, default: 10,
-            },
-            tooltip: {
-                type: Boolean, default: false,
-            },
-            borderSize: {
-                type: Number, default: 0,
-            },
-            borderColor: {
-                type: String, default: "white",
-            },
-        }, methods: {
-            avatarUrl(name) {
-                var color = this.generateHexColorWithText(name);
-                return ("https://ui-avatars.com/api/?name=" + name + "&background=" + color + "&color=fff");
-            },
+    props: {
+        name: {
+            type: String, default: "john Doe",
+        }, size: {
+            type: Number, default: 10,
         },
-    };
+        tooltip: {
+            type: Boolean, default: false,
+        },
+        borderSize: {
+            type: Number, default: 0,
+        },
+        borderColor: {
+            type: String, default: "white",
+        },
+    },
+
+    methods: {
+        avatarUrl(name) {
+            var color = this.generateHexColorWithText(name);
+            return ("https://ui-avatars.com/api/?name=" + name + "&background=" + color + "&color=fff");
+        },
+    },
+};
 </script>
 
 <style scoped>
-    .rotate-45 {
-        --transform-rotate: 45deg;
-        transform: rotate(45deg);
-    }
+.rotate-45 {
+    --transform-rotate: 45deg;
+    transform: rotate(45deg);
+}
 
-    .group:hover .group-hover\:flex {
-        display: flex;
-    }
+.group:hover .group-hover\:flex {
+    display: flex;
+}
 </style>

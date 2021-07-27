@@ -44,27 +44,27 @@
 </template>
 
 <script>
-    import Avatar from "../../global/Avatar.vue";
+import Avatar from "../../global/Avatar.vue";
 
-    export default {
-        inject: ["eventHub"],
-        components: {
-            Avatar,
-        },
+export default {
+    inject: ["eventHub"],
+    components: {
+        Avatar,
+    },
 
-        props: {
-            boards: {
-                type: Array,
-                default: null,
-            },
+    props: {
+        boards: {
+            type: Array,
+            default: null,
         },
+    },
 
-        methods: {
-            editBoard(board) {
-                this.eventHub.$emit("create-board", board);
-            },
+    methods: {
+        editBoard(board) {
+            this.eventHub.$emit("create-board", board);
         },
-    };
+    },
+};
 </script>
 
 

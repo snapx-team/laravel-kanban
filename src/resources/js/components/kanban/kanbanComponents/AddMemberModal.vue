@@ -20,7 +20,7 @@
                 <div @click="modalOpen = false" class="overflow-auto fixed h-full w-full"></div>
                 <div class="flex flex-col overflow-auto z-50 w-100 bg-white rounded-md shadow-2xl m-10"
                      style="width: 700px; min-height: 300px; max-height: 80%">
-                    <!-- Task heading -->
+                    <!-- Heading -->
                     <div class="flex justify-between p-5 bg-indigo-800 border-b">
                         <div class="space-y-1">
                             <h1 class="text-2xl text-white pb-2">Add Members</h1>
@@ -36,7 +36,7 @@
                             </button>
                         </div>
                     </div>
-                    <!-- Task container -->
+                    <!-- Container -->
                     <form class="space-y-6 overflow-auto px-8 py-6">
                         <!-- Flow options -->
                         <div class="space-y-6">
@@ -52,7 +52,8 @@
                                          style="margin-top: 7px"
                                          v-model="selectedMembers">
                                     <template slot="option" slot-scope="option">
-                                        <avatar :name="option.user.full_name" :size="4" class="mr-3 m-1 float-left"></avatar>
+                                        <avatar :name="option.user.full_name" :size="4"
+                                                class="mr-3 m-1 float-left"></avatar>
                                         <p class="inline">{{ option.user.full_name }}</p>
                                     </template>
                                     <template #no-options="{ search, searching, loading }">
@@ -81,10 +82,11 @@
                                         line </p>
 
                                     <label class="block pb-5">
-                                        <input class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
-                                               placeholder="Filter members"
-                                               type="text"
-                                               v-model="filter"/> </label>
+                                        <input
+                                            class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
+                                            placeholder="Filter members"
+                                            type="text"
+                                            v-model="filter"/> </label>
 
                                     <p class="text-gray-900" v-if="filtered.length === 0">
                                         No matching results </p>
@@ -93,10 +95,13 @@
                                         <div :key="memberIndex"
                                              class="flex justify-between items-center border-b p-1">
                                             <div class="flex items-center">
-                                                <avatar :name="member.employee.user.full_name" :size="6" class="mr-3"></avatar>
-                                                <span class="py-2 mr-3 text-gray-600">{{member.employee.user.full_name}}</span>
+                                                <avatar :name="member.employee.user.full_name" :size="6"
+                                                        class="mr-3"></avatar>
+                                                <span
+                                                    class="py-2 mr-3 text-gray-600">{{ member.employee.user.full_name }}</span>
                                             </div>
-                                            <a @click="removeMember(member)" class="cursor-pointer text-gray-400 text-sm hover:text-gray-600 transition duration-300 ease-in-out">remove</a>
+                                            <a @click="removeMember(member)"
+                                               class="cursor-pointer text-gray-400 text-sm hover:text-gray-600 transition duration-300 ease-in-out">remove</a>
                                         </div>
                                     </template>
                                 </figcaption>
@@ -109,64 +114,66 @@
     </div>
 </template>
 <script>
-    import vSelect from "vue-select";
-    import Avatar from "../../global/Avatar.vue";
-    import {ajaxCalls} from "../../../mixins/ajaxCallsMixin";
+import vSelect from "vue-select";
+import Avatar from "../../global/Avatar.vue";
+import {ajaxCalls} from "../../../mixins/ajaxCallsMixin";
 
-    export default {
-        inject: ["eventHub"],
-        components: {
-            vSelect,
-            Avatar,
-        },
-        mixins: [ajaxCalls],
+export default {
+    inject: ["eventHub"],
+    components: {
+        vSelect,
+        Avatar,
+    },
+    mixins: [ajaxCalls],
 
-        props: {
-            kanbanData: Object,
-        },
-        data() {
-            return {
-                filter: "",
-                modalOpen: false,
-                isSavingMember: false,
-                kanbanID: null,
-                selectedMembers: null,
-                allKanbanUsers: [],
-            };
-        },
-        created() {
-            this.eventHub.$on("add-member", () => {
-                this.modalOpen = true;
+    props: {
+        kanbanData: Object,
+    },
+    data() {
+        return {
+            filter: "",
+            modalOpen: false,
+            isSavingMember: false,
+            kanbanID: null,
+            selectedMembers: null,
+            allKanbanUsers: [],
+        };
+    },
+    created() {
+        this.eventHub.$on("add-member", () => {
+            this.modalOpen = true;
+        });
+    },
+
+    beforeDestroy() {
+        this.eventHub.$off('add-member');
+    },
+
+    mounted() {
+        this.asyncGetKanbanEmployees().then((data) => {
+            this.allKanbanUsers = data.data;
+        }).catch(res => {
+            console.log(res)
+        });
+    },
+
+    computed: {
+        filtered() {
+            const regex = new RegExp(this.filter, "i");
+            return this.kanbanData.members.filter((e) => {
+                return !this.filter || e.name.match(regex);
             });
         },
-
-        beforeDestroy(){
-            this.eventHub.$off('add-member');
+    },
+    methods: {
+        saveMember() {
+            this.eventHub.$emit("save-members", this.selectedMembers);
+            this.modalOpen = false;
+            this.selectedMembers = null;
         },
-
-        mounted(){
-            this.asyncGetKanbanEmployees().then((data) => {
-                this.allKanbanUsers = data.data;
-            }).catch(res => {console.log(res)});
+        removeMember($memberData) {
+            this.eventHub.$emit("remove-member", $memberData);
         },
-
-        computed: {
-            filtered() {
-                const regex = new RegExp(this.filter, "i");
-                return this.kanbanData.members.filter((e) => {
-                    return !this.filter || e.name.match(regex);
-                });
-            },
-        },
-        methods: {
-            saveMember() {
-                this.eventHub.$emit("save-members", this.selectedMembers);
-                this.modalOpen = false;
-                this.selectedMembers = null;
-            },
-            removeMember($memberData) {
-                this.eventHub.$emit("remove-member", $memberData);
-            },
-        },
-    };
+    },
+};
 </script>

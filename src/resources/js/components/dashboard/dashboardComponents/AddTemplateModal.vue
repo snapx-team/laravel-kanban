@@ -20,7 +20,7 @@
                 <div @click="modalOpen = false" class="overflow-auto fixed h-full w-full"></div>
                 <div class="flex flex-col overflow-auto z-50 w-100 bg-white rounded-md shadow-2xl m-10"
                      style="width: 900px; min-height: 300px; max-height: 80%">
-                    <!-- Task heading -->
+                    <!-- Heading -->
                     <div class="flex justify-between p-5 bg-indigo-800 border-b">
                         <div class="space-y-1">
                             <div v-if="isEdit">
@@ -43,21 +43,23 @@
                             </button>
                         </div>
                     </div>
-                    <!-- Task container -->
+                    <!-- Container -->
                     <div class="space-y-6 overflow-auto px-8 py-6">
                         <div class="space-x-3">
 
                             <label class="flex-1 space-y-2">
                                 <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Name </span>
-                                <input class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
-                                       placeholder="John Doe"
-                                       type="text"
-                                       v-model="templateData.name"/>
+                                <input
+                                    class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
+                                    placeholder="John Doe"
+                                    type="text"
+                                    v-model="templateData.name"/>
                             </label>
 
                             <div class="flex my-6">
                                 <div class="pr-6 py-2  space-y-2 border-r whitespace-nowrap">
-                                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600 pb-2">Task Options</span>
+                                    <span
+                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600 pb-2">Task Options</span>
                                     <div class=" grid divide-y divide-gray-400 pt-2"
                                          v-for="(taskOption, taskOptionIndex) in taskOptions">
                                         <label :key="taskOptionIndex" class="flex">
@@ -74,7 +76,8 @@
                                 </div>
                                 <div class="pl-6 py-2 space-y-2">
                                     <div>
-                                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Badge</span>
+                                        <span
+                                            class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Badge</span>
                                         <vSelect :create-option="option => ({name: option.toLowerCase()})"
                                                  :options="computedBadges"
                                                  class="text-gray-700"
@@ -95,7 +98,8 @@
                                     </div>
 
                                     <div class="pt-2">
-                                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600 pb-2">Description</span>
+                                        <span
+                                            class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600 pb-2">Description</span>
                                         <quill-editor :options="config"
                                                       output="html"
                                                       v-model="templateData.description"></quill-editor>
@@ -135,110 +139,109 @@
 </template>
 <script>
 
-    import vSelect from "vue-select";
-    import {ajaxCalls} from "../../../mixins/ajaxCallsMixin";
-    import {helperFunctions} from "../../../mixins/helperFunctionsMixin";
+import vSelect from "vue-select";
+import {ajaxCalls} from "../../../mixins/ajaxCallsMixin";
+import {helperFunctions} from "../../../mixins/helperFunctionsMixin";
 
-    export default {
-        inject: ["eventHub"],
+export default {
+    inject: ["eventHub"],
 
-        components: {
-            vSelect,
+    components: {
+        vSelect,
+    },
+
+    mixins: [ajaxCalls, helperFunctions],
+
+    data() {
+        return {
+            isEdit: false,
+
+            config: {
+                readOnly: false,
+                placeholder: 'Describe your task in greater detail',
+                theme: 'snow',
+                modules: {
+                    toolbar: [['bold', 'italic', 'underline', 'strike'],
+                        ['code-block'],
+                        [{'list': 'ordered'}, {'list': 'bullet'}, {'list': 'check'}, {'list': 'unchecked'}],
+                        [{'script': 'sub'}, {'script': 'super'}],
+                        [{'color': []}, {'background': []}],
+                        [{'align': []}],
+                        ['clean']
+                    ]
+                }
+            },
+
+            templateData: {
+                id: null,
+                name: null,
+                badge: null,
+                checkedOptions: [],
+                description: null,
+            },
+            modalOpen: false,
+
+            taskOptions: [
+                {name: 'Deadline',},
+                {name: 'ERP Employee',},
+                {name: 'ERP Job Site',},
+            ],
+
+            badges: [],
+        };
+    },
+
+    created() {
+        this.eventHub.$on("create-template", (template) => {
+            if (template !== undefined) {
+
+                this.templateData = {...template};
+                this.templateData.checkedOptions = template.unserialized_options;
+
+                this.isEdit = true;
+            } else {
+                this.isEdit = false;
+            }
+            this.modalOpen = true;
+            this.getBadges();
+        });
+    },
+
+    beforeDestroy() {
+        this.eventHub.$off('create-template');
+    },
+
+    methods: {
+        saveTemplate(event) {
+            event.target.disabled = true;
+            this.eventHub.$emit("save-template", this.templateData);
+            this.modalOpen = false;
         },
 
-        mixins: [ajaxCalls, helperFunctions],
-
-        data() {
-            return {
-                isEdit: false,
-
-                config: {
-                    readOnly: false,
-                    placeholder: 'Describe your task in greater detail',
-                    theme: 'snow',
-                    modules: {
-                        toolbar: [['bold', 'italic', 'underline', 'strike'],
-                            ['code-block'],
-                            [{'list': 'ordered'}, {'list': 'bullet'}, {'list': 'check'}, {'list': 'unchecked'}],
-                            [{'script': 'sub'}, {'script': 'super'}],
-                            [{'color': []}, {'background': []}],
-                            [{'align': []}],
-                            ['clean']
-                        ]
-                    }
-                },
-
-                templateData: {
-                    id: null,
-                    name: null,
-                    badge:null,
-                    checkedOptions: [],
-                    description: null,
-                },
-                modalOpen: false,
-
-                taskOptions: [
-                    {name: 'Deadline',},
-                    {name: 'ERP Employee',},
-                    {name: 'ERP Job Site',},
-                ],
-
-                badges: [],
-            };
+        deleteTemplate(event) {
+            event.target.disabled = true;
+            this.eventHub.$emit("delete-template", this.templateData.id);
+            this.modalOpen = false;
         },
 
-        created() {
-            this.eventHub.$on("create-template", (template) => {
-                if (template !== undefined) {
-
-                    this.templateData = {...template};
-                    this.templateData.checkedOptions = template.unserialized_options;
-
-                    this.isEdit = true;
-                }
-                else {
-                    this.isEdit = false;
-                }
-                this.modalOpen = true;
-                this.getBadges();
+        getBadges() {
+            this.asyncGetBadges().then((data) => {
+                this.badges = data.data;
+            }).catch(res => {
+                console.log(res)
             });
         },
+    },
 
-        beforeDestroy() {
-            this.eventHub.$off('create-template');
+    computed: {
+        computedBadges() {
+            return this.badges.map(badge => {
+                let computedBadges = {};
+                computedBadges.name = badge.name;
+                computedBadges.hue = this.generateHslColorWithText(badge.name);
+                return computedBadges;
+            })
         },
-
-        methods: {
-            saveTemplate(event) {
-                event.target.disabled = true;
-                this.eventHub.$emit("save-template", this.templateData);
-                this.modalOpen = false;
-            },
-
-            deleteTemplate(event) {
-                event.target.disabled = true;
-                this.eventHub.$emit("delete-template", this.templateData.id);
-                this.modalOpen = false;
-            },
-
-            getBadges() {
-                this.asyncGetBadges().then((data) => {
-                    this.badges = data.data;
-                }).catch(res => {
-                    console.log(res)
-                });
-            },
-        },
-
-        computed: {
-            computedBadges() {
-                return this.badges.map(badge => {
-                    let computedBadges = {};
-                    computedBadges.name = badge.name;
-                    computedBadges.hue = this.generateHslColorWithText(badge.name);
-                    return computedBadges;
-                })
-            },
-        }
-    };
+    }
+};
 </script>

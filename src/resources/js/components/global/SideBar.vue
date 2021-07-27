@@ -17,13 +17,13 @@
                     <span class="text-sm font-medium text-gray-900">Dashboard</span>
                 </router-link>
             </div>
-             <div class=" -mx-3 pb-2">
+            <div class=" -mx-3 pb-2">
                 <router-link :to="{ path: '/kanban/backlog' }"
                              class="flex justify-between items-center px-3 py-2 hover:bg-gray-200 rounded-lg">
                     <span class="text-sm font-medium text-gray-900">Backlog</span>
                 </router-link>
             </div>
-            
+
             <div class=" -mx-3 pb-2">
                 <router-link :to="{ path: '/kanban/metrics' }"
                              class="flex justify-between items-center px-3 py-2 hover:bg-gray-200 rounded-lg">
@@ -52,7 +52,7 @@
             <hr/>
             <div class="space-y-2 mt-8 ">
                 <a href="/"
-                        class="text-sm font-medium text-gray-600 hover:text-gray-800 transition duration-300 ease-in-out focus:outline-none">
+                   class="text-sm font-medium text-gray-600 hover:text-gray-800 transition duration-300 ease-in-out focus:outline-none">
                     <i class="fas fa-sign-out-alt"></i>
                     <span class="ml-1 font-bold">Exit XKANBAN</span>
                 </a>
@@ -62,35 +62,37 @@
 
 </template>
 <script>
-    import {ajaxCalls} from "../../mixins/ajaxCallsMixin";
+import {ajaxCalls} from "../../mixins/ajaxCallsMixin";
 
-    export default {
-        inject: ["eventHub"],
-        mixins: [ajaxCalls],
+export default {
+    inject: ["eventHub"],
+    mixins: [ajaxCalls],
 
-        data() {
-            return {
-                boards: {},
-                loadingBoard: false
-            };
-        }, mounted() {
+    data() {
+        return {
+            boards: {},
+            loadingBoard: false
+        };
+    }, mounted() {
+        this.getBoards();
+    },
+
+    created() {
+        this.eventHub.$on("update-side-bar", () => {
             this.getBoards();
-        },
+        });
+    },
 
-        created() {
-            this.eventHub.$on("update-side-bar", () => {
-                this.getBoards();
+    methods: {
+        getBoards() {
+            this.loadingBoard = true;
+            this.asyncGetBoards().then((data) => {
+                this.boards = data.data;
+                this.loadingBoard = false;
+            }).catch(res => {
+                console.log(res)
             });
         },
-
-        methods: {
-            getBoards() {
-                this.loadingBoard = true;
-                this.asyncGetBoards().then((data) => {
-                    this.boards = data.data;
-                    this.loadingBoard = false;
-                }).catch(res => {console.log(res)});
-            },
-        },
-    };
+    },
+};
 </script>

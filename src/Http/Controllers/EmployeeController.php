@@ -16,7 +16,6 @@ class EmployeeController extends Controller
         $employeeData = $request->all();
 
         try {
-
             foreach ($employeeData['selectedUsers'] as $user) {
 
                 $employee = Employee::updateOrCreate(
@@ -41,7 +40,7 @@ class EmployeeController extends Controller
         try {
             $employee = Employee::find($id);
             $employee->delete();
-            
+
             Log::createLog(null, Log::TYPE_EMPLOYEE_DELETED, 'Deleted an employee', null, null, null, $employee->user_id, null, $employee->role);
         } catch (\Exception $e) {
             return response([
@@ -57,8 +56,4 @@ class EmployeeController extends Controller
         return Employee::with('user')->get();
     }
 
-    public function getAllUsers()
-    {
-        return User::orderBy('first_name')->get();
-    }
 }

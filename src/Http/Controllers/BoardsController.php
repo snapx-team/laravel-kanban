@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Xguard\LaravelKanban\Models\Board;
 use Xguard\LaravelKanban\Models\Log;
-use Xguard\LaravelKanban\Models\Row;
 use Illuminate\Support\Facades\Auth;
 
 class BoardsController extends Controller
@@ -15,7 +14,7 @@ class BoardsController extends Controller
     public function createBoard(Request $request)
     {
         $rules = [
-            'name' => 'required|unique:kanban_boards,name,'.$request->input('id').',id',
+            'name' => 'required|unique:kanban_boards,name,' . $request->input('id') . ',id',
         ];
 
         $customMessages = [

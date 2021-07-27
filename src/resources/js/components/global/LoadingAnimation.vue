@@ -29,138 +29,138 @@
     </svg>
 </template>
 <script>
-    export default {
-        props: {
-            size: {
-                value: Number,
-                default: 100,
-            },
+export default {
+    props: {
+        size: {
+            value: Number,
+            default: 100,
         },
-    };
+    },
+};
 </script>
 
 <style scoped>
-    .gradient {
-        animation-iteration-count: infinite;
-        animation-duration: 1s;
-        fill: url("#gradient-fill");
-    }
+.gradient {
+    animation-iteration-count: infinite;
+    animation-duration: 1s;
+    fill: url("#gradient-fill");
+}
 
-    .square {
-        animation-iteration-count: infinite;
-        animation-duration: 2s;
-        transition-timing-function: ease-in-out;
-    }
+.square {
+    animation-iteration-count: infinite;
+    animation-duration: 2s;
+    transition-timing-function: ease-in-out;
+}
 
-    .s1 {
-        animation-name: slide-1;
-    }
+.s1 {
+    animation-name: slide-1;
+}
 
-    .s2 {
-        animation-name: slide-2;
-    }
+.s2 {
+    animation-name: slide-2;
+}
 
-    .s3 {
-        animation-name: slide-3;
-    }
+.s3 {
+    animation-name: slide-3;
+}
 
-    .s4 {
-        animation-name: slide-4;
-    }
+.s4 {
+    animation-name: slide-4;
+}
 
-    .s5 {
-        animation-name: slide-5;
-    }
+.s5 {
+    animation-name: slide-5;
+}
 
-    .s6 {
-        animation-name: slide-6;
-    }
+.s6 {
+    animation-name: slide-6;
+}
 
-    .s7 {
-        animation-name: slide-7;
-    }
+.s7 {
+    animation-name: slide-7;
+}
 
-    @keyframes slide-1 {
-        37.5% {
-            transform: translateX(0px);
-        }
-        50% {
-            transform: translateX(100px);
-        }
-        100% {
-            transform: translateX(100px);
-        }
+@keyframes slide-1 {
+    37.5% {
+        transform: translateX(0px);
     }
+    50% {
+        transform: translateX(100px);
+    }
+    100% {
+        transform: translateX(100px);
+    }
+}
 
-    @keyframes slide-2 {
-        25% {
-            transform: translateX(0px);
-        }
-        37.5% {
-            transform: translateX(100px);
-        }
-        100% {
-            transform: translateX(100px);
-        }
+@keyframes slide-2 {
+    25% {
+        transform: translateX(0px);
     }
+    37.5% {
+        transform: translateX(100px);
+    }
+    100% {
+        transform: translateX(100px);
+    }
+}
 
-    @keyframes slide-3 {
-        12.5% {
-            transform: translateY(0px);
-        }
-        25% {
-            transform: translateY(100px);
-        }
-        100% {
-            transform: translateY(100px);
-        }
+@keyframes slide-3 {
+    12.5% {
+        transform: translateY(0px);
     }
+    25% {
+        transform: translateY(100px);
+    }
+    100% {
+        transform: translateY(100px);
+    }
+}
 
-    @keyframes slide-4 {
-        50% {
-            transform: translateY(0px);
-        }
-        62.5% {
-            transform: translateY(-100px);
-        }
-        100% {
-            transform: translateY(-100px);
-        }
+@keyframes slide-4 {
+    50% {
+        transform: translateY(0px);
     }
+    62.5% {
+        transform: translateY(-100px);
+    }
+    100% {
+        transform: translateY(-100px);
+    }
+}
 
-    @keyframes slide-5 {
-        12.5% {
-            transform: translate(-100px, 0px);
-        }
-        87.5% {
-            transform: translate(-100px, 0px);
-        }
-        100% {
-            transform: translate(-100px, 100px);
-        }
+@keyframes slide-5 {
+    12.5% {
+        transform: translate(-100px, 0px);
     }
+    87.5% {
+        transform: translate(-100px, 0px);
+    }
+    100% {
+        transform: translate(-100px, 100px);
+    }
+}
 
-    @keyframes slide-6 {
-        62.5% {
-            transform: translateY(0px);
-        }
-        75% {
-            transform: translateY(-100px);
-        }
-        100% {
-            transform: translateY(-100px);
-        }
+@keyframes slide-6 {
+    62.5% {
+        transform: translateY(0px);
     }
+    75% {
+        transform: translateY(-100px);
+    }
+    100% {
+        transform: translateY(-100px);
+    }
+}
 
-    @keyframes slide-7 {
-        75% {
-            transform: translateX(0px);
-        }
-        87.5% {
-            transform: translateX(-100px);
-        }
-        100% {
-            transform: translateX(-100px);
-        }
+@keyframes slide-7 {
+    75% {
+        transform: translateX(0px);
     }
+    87.5% {
+        transform: translateX(-100px);
+    }
+    100% {
+        transform: translateX(-100px);
+    }
+}
 </style>

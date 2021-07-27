@@ -20,7 +20,7 @@
                 <div @click="modalOpen = false" class="overflow-auto fixed h-full w-full"></div>
                 <div class="flex flex-col overflow-auto z-50 w-100 bg-white rounded-md shadow-2xl m-10"
                      style="width: 700px; min-height: 300px; max-height: 80%">
-                    <!-- Task heading -->
+                    <!-- Heading -->
                     <div class="flex justify-between p-5 bg-indigo-800 border-b">
                         <div class="space-y-1">
                             <div v-if="isEdit">
@@ -43,7 +43,7 @@
                             </button>
                         </div>
                     </div>
-                    <!-- Task container -->
+                    <!-- Container -->
                     <div class="space-y-6 overflow-auto px-8 py-6">
                         <div class="flex space-x-3">
                             <label class="flex-1 space-y-2">

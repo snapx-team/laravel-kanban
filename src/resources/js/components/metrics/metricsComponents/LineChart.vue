@@ -1,10 +1,11 @@
 <template>
     <div>
         <div v-if="this.series.length > 0" id="chart">
-            <vue-apex-charts type="area" height="350" :options="computedChartOptions" :series="series"></vue-apex-charts>
+            <vue-apex-charts type="area" height="350" :options="computedChartOptions"
+                             :series="series"></vue-apex-charts>
         </div>
-        <div v-if="this.series.length == 0">
-                No Data for {{ this.title }}
+        <div v-if="this.series.length === 0">
+            No Data for {{ this.title }}
         </div>
     </div>
 </template>
@@ -79,13 +80,13 @@ export default {
                         offsetY: 0,
                         floating: false,
                         style: {
-                            fontSize:  '14px',
-                            fontWeight:  'bold',
-                            fontFamily:  undefined,
-                            color:  '#263238'
-                        }, 
+                            fontSize: '14px',
+                            fontWeight: 'bold',
+                            fontFamily: undefined,
+                            color: '#263238'
+                        },
                     },
-                     yaxis: {
+                    yaxis: {
                         title: {
                             text: this.yname,
                         },

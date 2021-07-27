@@ -1,11 +1,7 @@
 import axios from 'axios';
 
 export const ajaxCalls = {
-    data() {
-        return {
-            isShowing: false
-        };
-    },
+
     methods: {
 
         // Kanban App Data
@@ -63,7 +59,7 @@ export const ajaxCalls = {
         },
 
         asyncCreateBoard(kanbanData) {
-            return axios.post('create-board', kanbanData).then(() =>{
+            return axios.post('create-board', kanbanData).then(() => {
                 this.triggerSuccessToast("Board created!");
             }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
@@ -71,7 +67,7 @@ export const ajaxCalls = {
         },
 
         asyncDeleteBoard(boardId) {
-            return axios.post('delete-board/' + boardId).then(() =>{
+            return axios.post('delete-board/' + boardId).then(() => {
                 this.triggerSuccessToast("Board Deleted!");
             }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
@@ -86,13 +82,13 @@ export const ajaxCalls = {
             });
         },
 
-        asyncGetColumns(row_id){
+        asyncGetColumns(row_id) {
             return axios.get('get-columns/' + row_id);
         },
 
         // Rows
 
-        asyncGetRows(board_id){
+        asyncGetRows(board_id) {
             return axios.get('get-rows/' + board_id);
         },
 
@@ -103,7 +99,7 @@ export const ajaxCalls = {
         },
 
         asyncGetRelatedTasks(taskId) {
-            return axios.get('get-related-tasks/'+ taskId);
+            return axios.get('get-related-tasks/' + taskId);
         },
 
         asyncUpdateTask(taskCardData) {
@@ -113,15 +109,15 @@ export const ajaxCalls = {
         },
 
         asyncCreateTask(taskCardData) {
-            return axios.post('create-task', taskCardData).then(() =>{
+            return axios.post('create-task', taskCardData).then(() => {
                 this.triggerSuccessToast("Task created!");
             }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
 
-        asyncCreateBacklogTasks(backlogTasksData){
-            return axios.post('create-backlog-tasks', backlogTasksData).then(() =>{
+        asyncCreateBacklogTasks(backlogTasksData) {
+            return axios.post('create-backlog-tasks', backlogTasksData).then(() => {
                 this.triggerSuccessToast("Backlog task created!");
             }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
@@ -158,7 +154,7 @@ export const ajaxCalls = {
         },
 
         asyncUpdateTaskCardRowAndColumnId(columnId, rowId, taskCardId) {
-            return axios.post('update-task-card-row-and-column/' + columnId + '/' +rowId +'/'+ taskCardId).catch((error) => {
+            return axios.post('update-task-card-row-and-column/' + columnId + '/' + rowId + '/' + taskCardId).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
@@ -170,7 +166,7 @@ export const ajaxCalls = {
         },
 
         asyncSetStatus(taskCardId, status) {
-            return axios.post('set-status/' + taskCardId +'/'+ status).catch((error) => {
+            return axios.post('set-status/' + taskCardId + '/' + status).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
@@ -199,7 +195,7 @@ export const ajaxCalls = {
         },
 
         asyncCreateKanbanEmployee(employeeData) {
-            return axios.post('create-kanban-employees', employeeData).then(() =>{
+            return axios.post('create-kanban-employees', employeeData).then(() => {
                 this.triggerSuccessToast("Employee Added!");
             }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
@@ -207,7 +203,7 @@ export const ajaxCalls = {
         },
 
         asyncDeleteKanbanEmployee(employeeId) {
-            return axios.post('delete-kanban-employee/' + employeeId).then(() =>{
+            return axios.post('delete-kanban-employee/' + employeeId).then(() => {
                 this.triggerSuccessToast("Employee Removed");
             }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
@@ -221,7 +217,7 @@ export const ajaxCalls = {
         },
 
         asyncCreateTemplate(templateData) {
-            return axios.post('create-template', templateData).then(() =>{
+            return axios.post('create-template', templateData).then(() => {
                 this.triggerSuccessToast("Template Created!");
             }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
@@ -229,7 +225,7 @@ export const ajaxCalls = {
         },
 
         asyncDeleteTemplate(templateId) {
-            return axios.post('delete-template/' + templateId).then(() =>{
+            return axios.post('delete-template/' + templateId).then(() => {
                 this.triggerSuccessToast("Templated Deleted!");
             }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
@@ -283,7 +279,7 @@ export const ajaxCalls = {
         // Comments
 
         asyncGetComments(taskId) {
-            return axios.get('get-task-comments/'+ taskId);
+            return axios.get('get-task-comments/' + taskId);
         },
 
         asyncCreateComment(commentData) {

@@ -1,7 +1,7 @@
 <template>
     <div>
 
-        <!-- Task container -->
+        <!-- Container -->
         <div class="flex">
             <div class="px-8 py-6 space-y-2 border-r">
                 <span

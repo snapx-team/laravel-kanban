@@ -56,31 +56,31 @@
 
 </template>
 <script>
-    import Avatar from "../../global/Avatar.vue";
-    import Badge from "../../global/Badge.vue";
-    import {helperFunctions} from "../../../mixins/helperFunctionsMixin";
+import Avatar from "../../global/Avatar.vue";
+import Badge from "../../global/Badge.vue";
+import {helperFunctions} from "../../../mixins/helperFunctionsMixin";
 
-    export default {
-        mixins: [helperFunctions],
+export default {
+    mixins: [helperFunctions],
 
-        components: {
-            Badge,
-            Avatar,
+    components: {
+        Badge,
+        Avatar,
+    },
+    props: {
+        task_card: Object,
+    },
+    computed: {
+        priorityHue() {
+            if (this.task_card.hours_to_deadline <= 0) {
+                return 'border-color: hsl( 0 , 90%, 40%); background-color:hsl(0, 100%, 97%)'
+            } else if (this.task_card.hours_to_deadline >= 200) {
+                return 'border-color: hsl( 100 , 90%, 40%)'
+            } else {
+                return 'border-color: hsl( ' + this.task_card.hours_to_deadline / 2 + ' , 100%, 50%)'
+            }
         },
-        props: {
-            task_card: Object,
-        },
-        computed: {
-            priorityHue() {
-                if (this.task_card.hours_to_deadline <= 0) {
-                    return 'border-color: hsl( 0 , 90%, 40%); background-color:hsl(0, 100%, 97%)'
-                } else if (this.task_card.hours_to_deadline >= 200) {
-                    return 'border-color: hsl( 100 , 90%, 40%)'
-                } else {
-                    return 'border-color: hsl( ' + this.task_card.hours_to_deadline / 2 + ' , 100%, 50%)'
-                }
-            },
-        },
+    },
 
-    };
+};
 </script>

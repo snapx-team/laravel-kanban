@@ -18,7 +18,7 @@
                 </template>
 
                 <span class="z-10 flex items-center justify-center font-semibold text-gray-800 text-sm w-10 h-10 rounded-full bg-gray-300 border-2 border-white -ml-3 pr-2"
-                      v-if="kanbanMembers.length > 5">+{{ kanbanMembers.length - 5 }}</span>
+                    v-if="kanbanMembers.length > 5">+{{ kanbanMembers.length - 5 }}</span>
                 <button @click="createMember()"
                         class="z-20 items-center justify-center w-10 h-10 mr-2 text-indigo-100 transition-colors duration-150 bg-indigo-700 rounded-full focus:outline-none hover:bg-indigo-800 border-2 border-white -ml-3">
                     <i class="fas fa-plus"></i>
@@ -28,51 +28,51 @@
     </div>
 </template>
 <script>
-    import Avatar from "../../global/Avatar.vue";
+import Avatar from "../../global/Avatar.vue";
 
-    export default {
-        inject: ["eventHub"],
-        components: {
-            Avatar,
+export default {
+    inject: ["eventHub"],
+    components: {
+        Avatar,
+    },
+    props: {
+        kanbanName: {
+            type: String,
+            default: "no title",
         },
-        props: {
-            kanbanName: {
-                type: String,
-                default: "no title",
-            },
-            kanbanID: {
-                type: Number,
-                default: null,
-            },
-            kanbanMembers: {
-                type: Array,
-                default: () => [],
-            },
-            kanbanInfo: {
-                type: Object,
-                assignedToMe: Number,
-                createdByMe: String,
-                default: () => ({}),
-            },
-            loadingMembers: {
-                type: Object,
-            },
+        kanbanID: {
+            type: Number,
+            default: null,
         },
-        methods: {
-            createMember() {
-                this.eventHub.$emit("add-member");
-            },
+        kanbanMembers: {
+            type: Array,
+            default: () => [],
         },
-    };
+        kanbanInfo: {
+            type: Object,
+            assignedToMe: Number,
+            createdByMe: String,
+            default: () => ({}),
+        },
+        loadingMembers: {
+            type: Object,
+        },
+    },
+    methods: {
+        createMember() {
+            this.eventHub.$emit("add-member");
+        },
+    },
+};
 </script>
 
 <style scoped>
-    .rotate-45 {
-        --transform-rotate: 45deg;
-        transform: rotate(45deg);
-    }
+.rotate-45 {
+    --transform-rotate: 45deg;
+    transform: rotate(45deg);
+}
 
-    .group:hover .group-hover\:flex {
-        display: flex;
-    }
+.group:hover .group-hover\:flex {
+    display: flex;
+}
 </style>

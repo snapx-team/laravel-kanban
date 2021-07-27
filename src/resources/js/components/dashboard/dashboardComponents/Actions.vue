@@ -80,34 +80,34 @@
 </template>
 
 <script>
-    export default {
-        inject: ["eventHub"],
+export default {
+    inject: ["eventHub"],
 
-        props: {
-            boardsLength: {
-                type: Number,
-                default: 0,
-            },
-            employeesLength: {
-                type: Number,
-                default: 0,
-            },
+    props: {
+        boardsLength: {
+            type: Number,
+            default: 0,
         },
-        methods: {
-            createEmployee() {
-                this.eventHub.$emit("create-kanban-employees");
-            },
-            createBoard() {
-                this.eventHub.$emit("create-board");
-            },
-            createBacklogTask() {
-                this.eventHub.$emit("create-backlog-task");
-            },
-            createTemplate() {
-                this.eventHub.$emit("create-template");
-            },
+        employeesLength: {
+            type: Number,
+            default: 0,
         },
-    };
+    },
+    methods: {
+        createEmployee() {
+            this.eventHub.$emit("create-kanban-employees");
+        },
+        createBoard() {
+            this.eventHub.$emit("create-board");
+        },
+        createBacklogTask() {
+            this.eventHub.$emit("create-backlog-task");
+        },
+        createTemplate() {
+            this.eventHub.$emit("create-template");
+        },
+    },
+};
 </script>
 
 

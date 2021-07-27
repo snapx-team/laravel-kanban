@@ -20,9 +20,10 @@
                         <span class="h-full absolute inset-y-0 left-0 flex items-center pl-2">
                           <i class="text-gray-400 fas fa-search"></i>
                         </span>
-                        <input class="appearance-none rounded-r rounded-l sm:rounded-l-none border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none"
-                               placeholder="Search"
-                               v-model="filter"/>
+                        <input
+                            class="appearance-none rounded-r rounded-l sm:rounded-l-none border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none"
+                            placeholder="Search"
+                            v-model="filter"/>
                     </div>
                 </div>
                 <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
@@ -80,7 +81,8 @@
                             </template>
                             </tbody>
                         </table>
-                        <div class="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
+                        <div
+                            class="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
                             <div class="text-xs xs:text-sm text-gray-900">
                                 Showing {{ Number(paginationIndex) + 1 }} to
                                 <span v-if="paginationIndex + paginationStep <= filtered.length">
@@ -110,50 +112,50 @@
 </template>
 
 <script>
-    import Avatar from "../../global/Avatar.vue";
+import Avatar from "../../global/Avatar.vue";
 
-    export default {
-        inject: ["eventHub"],
-        components: {
-            Avatar,
-        },
+export default {
+    inject: ["eventHub"],
+    components: {
+        Avatar,
+    },
 
-        props: {
-            employees: {
-                type: Array,
-                default: null,
-            },
+    props: {
+        employees: {
+            type: Array,
+            default: null,
         },
+    },
 
-        data() {
-            return {
-                filter: "",
-                paginationIndex: 0,
-                paginationStep: 5,
-            };
-        },
+    data() {
+        return {
+            filter: "",
+            paginationIndex: 0,
+            paginationStep: 5,
+        };
+    },
 
-        computed: {
-            filtered() {
-                const regex = new RegExp(this.filter, "i");
-                return this.employees.filter((e) => {
-                    this.paginationIndex = 0;
-                    return !this.filter || e.user.full_name.match(regex) || e.user.email.match(regex);
-                });
-            },
+    computed: {
+        filtered() {
+            const regex = new RegExp(this.filter, "i");
+            return this.employees.filter((e) => {
+                this.paginationIndex = 0;
+                return !this.filter || e.user.full_name.match(regex) || e.user.email.match(regex);
+            });
         },
-        methods: {
-            editEmployee(index) {
-                console.log(this.employees);
+    },
+    methods: {
+        editEmployee(index) {
+            console.log(this.employees);
 
-                this.eventHub.$emit("create-kanban-employees", this.filtered[index]);
-            },
-            updatePaginationIndex(newIndex) {
-                if (newIndex < 0) newIndex = 0;
-                else if (newIndex < this.filtered.length) this.paginationIndex = newIndex;
-            },
+            this.eventHub.$emit("create-kanban-employees", this.filtered[index]);
         },
-    };
+        updatePaginationIndex(newIndex) {
+            if (newIndex < 0) newIndex = 0;
+            else if (newIndex < this.filtered.length) this.paginationIndex = newIndex;
+        },
+    },
+};
 </script>
 
 

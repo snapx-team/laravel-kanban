@@ -22,11 +22,6 @@ class CommentController extends Controller
         return Comment::where('task_id', $taskId)->with('employee.user')->orderBy('created_at', 'desc')->get();
     }
 
-    public function getAllTaskAndRelatedTaskComments($taskId)
-    {
-        //TODO: We may want to add a toggles switch so that a user can see all comments across all associated tasks in one place
-    }
-
     public function createOrUpdateTaskComment(Request $request)
     {
         try {
@@ -45,6 +40,7 @@ class CommentController extends Controller
                 ]);
                 Log::createLog($comment->employee_id, Log::TYPE_COMMENT_CREATED, 'Added new comment', null, null, $comment->task_id, null, null, null);
             }
+
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
@@ -53,7 +49,6 @@ class CommentController extends Controller
         }
         return response(['success' => 'true'], 200);
     }
-
 
     public function deleteTaskComment($id)
     {

@@ -36,7 +36,6 @@ class TaskController extends Controller
             }])->get();
     }
 
-
     public function createBacklogTaskCards(Request $request)
     {
         $rules = [
@@ -62,25 +61,26 @@ class TaskController extends Controller
 
         $backlogTaskData = $request->all();
 
-        $badge = Badge::firstOrCreate([
-            'name' => count($request->input('badge')) > 0 ? $backlogTaskData['badge']['name']: '--',
-        ]);
-
-        if ($backlogTaskData['associatedTask'] !== null) {
-            $group = $backlogTaskData['associatedTask']['group'];
-        } else
-            $group = 'g-' . (Task::max('id') + 1);
-
         try {
+
+            $badge = Badge::firstOrCreate([
+                'name' => count($request->input('badge')) > 0 ? $backlogTaskData['badge']['name'] : '--',
+            ]);
+
+            if ($backlogTaskData['associatedTask'] !== null) {
+                $group = $backlogTaskData['associatedTask']['group'];
+            } else
+                $group = 'g-' . (Task::max('id') + 1);
+
             foreach ($backlogTaskData['selectedKanbans'] as $kanban) {
                 $task = Task::create([
                     'index' => null,
                     'reporter_id' => Auth::user()->id,
                     'name' => $backlogTaskData['name'],
                     'description' => $backlogTaskData['description'],
-                    'deadline' => $request->has('deadline') ? date('y-m-d h:m', strtotime($backlogTaskData['deadline'])): null,
-                    'erp_employee_id' => $request->has('erp_employee_id') ? $backlogTaskData['erpEmployee']['id']: null,
-                    'erp_job_site_id' => $request->has('erp_job_site_id') ? $backlogTaskData['erpJobSite']['id']: null,
+                    'deadline' => $request->has('deadline') ? date('y-m-d h:m', strtotime($backlogTaskData['deadline'])) : null,
+                    'erp_employee_id' => $request->has('erp_employee_id') ? $backlogTaskData['erpEmployee']['id'] : null,
+                    'erp_job_site_id' => $request->has('erp_job_site_id') ? $backlogTaskData['erpJobSite']['id'] : null,
                     'badge_id' => $badge->id,
                     'column_id' => null,
                     'board_id' => $kanban['id'],
@@ -100,8 +100,6 @@ class TaskController extends Controller
 
     public function createTaskCard(Request $request)
     {
-
-
         $rules = [
             'description' => 'required',
             'name' => 'required'
@@ -124,42 +122,42 @@ class TaskController extends Controller
 
         $taskCard = $request->all();
 
-        $maxIndex = Task::where('column_id', $taskCard['columnId'])->max('index');
-
-
-        $badge = Badge::firstOrCreate([
-            'name' => count($request->input('badge')) > 0 ? $taskCard['badge']['name']: '--',
-        ]);
-
-        if ($taskCard['associatedTask'] !== null) {
-            $group = $taskCard['associatedTask']['group'];
-        } else
-            $group = 'g-' . (Task::max('id') + 1);
-
         try {
-                $task = Task::create([
-                    'index' => null,
-                    'reporter_id' => Auth::user()->id,
-                    'name' => $taskCard['name'],
-                    'description' => $taskCard['description'],
-                    'deadline' => $request->has('deadline') ? date('y-m-d h:m', strtotime($taskCard['deadline'])) : null,
-                    'erp_employee_id' => $request->has('erp_employee_id') ? $taskCard['erpEmployee']['id'] : null,
-                    'erp_job_site_id' => $request->has('erp_job_site_id') ? $taskCard['erpJobSite']['id'] : null,
-                    'badge_id' => $badge->id,
-                    'column_id' => $taskCard['selectedColumnId'],
-                    'row_id' => $taskCard['selectedRowId'],
-                    'board_id' => $taskCard['boardId'],
-                    'group' => $group
-                ]);
+            $maxIndex = Task::where('column_id', $taskCard['columnId'])->max('index');
 
-                $employeeArray = [];
-                foreach ($taskCard['assignedTo'] as $employee) {
-                    array_push($employeeArray, $employee['id']);
-                }
+            $badge = Badge::firstOrCreate([
+                'name' => count($request->input('badge')) > 0 ? $taskCard['badge']['name'] : '--',
+            ]);
 
-                $task->assignedTo()->sync($employeeArray);
+            if ($taskCard['associatedTask'] !== null) {
+                $group = $taskCard['associatedTask']['group'];
+            } else
+                $group = 'g-' . (Task::max('id') + 1);
 
-                Log::createLog($task->reporter_id, Log::TYPE_CARD_CREATED, 'Added new task', $task->badge_id, $task->board_id, $task->id, $task->erp_employee_id, $task->erp_job_site_id, null);
+            $maxIndex++;
+            $task = Task::create([
+                'index' => $maxIndex,
+                'reporter_id' => Auth::user()->id,
+                'name' => $taskCard['name'],
+                'description' => $taskCard['description'],
+                'deadline' => $request->has('deadline') ? date('y-m-d h:m', strtotime($taskCard['deadline'])) : null,
+                'erp_employee_id' => $request->has('erp_employee_id') ? $taskCard['erpEmployee']['id'] : null,
+                'erp_job_site_id' => $request->has('erp_job_site_id') ? $taskCard['erpJobSite']['id'] : null,
+                'badge_id' => $badge->id,
+                'column_id' => $taskCard['selectedColumnId'],
+                'row_id' => $taskCard['selectedRowId'],
+                'board_id' => $taskCard['boardId'],
+                'group' => $group
+            ]);
+
+            $employeeArray = [];
+            foreach ($taskCard['assignedTo'] as $employee) {
+                array_push($employeeArray, $employee['id']);
+            }
+
+            $task->assignedTo()->sync($employeeArray);
+
+            Log::createLog($task->reporter_id, Log::TYPE_CARD_CREATED, 'Added new task', $task->badge_id, $task->board_id, $task->id, $task->erp_employee_id, $task->erp_job_site_id, null);
 
         } catch (\Exception $e) {
             return response([
@@ -170,30 +168,32 @@ class TaskController extends Controller
         return response(['success' => 'true'], 200);
     }
 
+
     public function updateTaskCard(Request $request)
     {
         $taskCard = $request->all();
 
-        $badge = Badge::firstOrCreate([
-            'name' => $taskCard['badge']['name'],
-        ]);
-
-        $employeeArray = [];
-        foreach ($taskCard['assigned_to'] as $employee) {
-            array_push($employeeArray, $employee['id']);
-        }
-
-        $task = Task::find($taskCard['id']);
-        $task->assignedTo()->sync($employeeArray);
-
         try {
+
+            $badge = Badge::firstOrCreate([
+                'name' => count($request->input('badge')) > 0 ? $taskCard['badge']['name'] : '--',
+            ]);
+
+            $employeeArray = [];
+            foreach ($taskCard['assigned_to'] as $employee) {
+                array_push($employeeArray, $employee['id']);
+            }
+
+            $task = Task::find($taskCard['id']);
+            $task->assignedTo()->sync($employeeArray);
+
             Task::where('id', $taskCard['id'])
                 ->update([
                     'name' => $taskCard['name'],
                     'description' => $taskCard['description'],
-                    'deadline' => date('y-m-d h:m', strtotime($taskCard['deadline'])),
-                    'erp_employee_id' => $taskCard['erp_employee']['id'],
-                    'erp_job_site_id' => $taskCard['erp_job_site']['id'],
+                    'deadline' => $request->has('deadline') ? date('y-m-d h:m', strtotime($taskCard['deadline'])) : null,
+                    'erp_employee_id' => $request->input('erp_employee_id') !== null ? $taskCard['erpEmployee']['id'] : null,
+                    'erp_job_site_id' => $request->input('erp_job_site_id') !== null ? $taskCard['erpJobSite']['id'] : null,
                     'badge_id' => $badge->id,
                 ]);
 
@@ -304,7 +304,8 @@ class TaskController extends Controller
         return response(['success' => 'true'], 200);
     }
 
-    public function assignTaskToBoard($task_id, $row_id, $column_id) {
+    public function assignTaskToBoard($task_id, $row_id, $column_id)
+    {
         try {
             $taskCard = Task::find($task_id);
             $taskCard->update([

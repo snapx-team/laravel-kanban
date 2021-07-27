@@ -19,14 +19,14 @@
                 <div class="flex-1 space-y-2">
                     <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Kanban</span>
                     <vSelect
-                            :create-option="option => ({name: option.toLowerCase()})"
-                            :options="boards"
-                            class="text-gray-400"
-                            label="name"
-                            placeholder="Select one or more kanban boards"
-                            style="margin-top: 7px"
-                            v-model="task.board"
-                            @input="loadRowsAndColumnsFromRow">
+                        :create-option="option => ({name: option.toLowerCase()})"
+                        :options="boards"
+                        class="text-gray-400"
+                        label="name"
+                        placeholder="Select one or more kanban boards"
+                        style="margin-top: 7px"
+                        v-model="task.board"
+                        @input="loadRowsAndColumnsFromRow">
                         <template slot="option" slot-scope="option">
                             {{ option.name }}
                         </template>
@@ -51,9 +51,9 @@
                         taggable
                         @input="loadColumns"
                         v-model="chosenRow">
-                            <template #no-options="{ search, searching, loading }">
-                                No result .
-                            </template>
+                        <template #no-options="{ search, searching, loading }">
+                            No result .
+                        </template>
                     </vSelect>
                 </div>
                 <div class="flex-1 space-y-2">
@@ -67,9 +67,9 @@
                         style="margin-top: 7px"
                         taggable
                         v-model="chosenColumn">
-                            <template #no-options="{ search, searching, loading }">
-                                No result .
-                            </template>
+                        <template #no-options="{ search, searching, loading }">
+                            No result .
+                        </template>
                     </vSelect>
                 </div>
             </div>
@@ -77,7 +77,7 @@
             <button @click="assignTask($event)"
                     class="px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
                     type="button">
-                    <span>Assign Task To Board</span>
+                <span>Place Task</span>
             </button>
         </div>
 
@@ -103,168 +103,171 @@
 
         <!-- taks info -->
 
-            <div class="space-y-6 overflow-auto px-8 py-6 flex-1">
-                <div class="flex space-x-3">
-                    <div class="flex-1 space-y-2">
-                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Badge</span>
-                        <vSelect  :create-option="option => ({name: option.toLowerCase()})"
-                                :options="computedBadges"
-                                class="text-gray-700"
-                                label="name"
-                                placeholder="Choose or Create"
-                                style="margin-top: 7px"
-                                taggable
-                                v-model="task.badge">
-                            <template slot="option" slot-scope="option">
+        <div class="space-y-6 overflow-auto px-8 py-6 flex-1">
+            <div class="flex space-x-3">
+                <div class="flex-1 space-y-2">
+                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Badge</span>
+                    <vSelect :create-option="option => ({name: option.toLowerCase()})"
+                             :options="computedBadges"
+                             class="text-gray-700"
+                             label="name"
+                             placeholder="Choose or Create"
+                             style="margin-top: 7px"
+                             taggable
+                             v-model="task.badge">
+                        <template slot="option" slot-scope="option">
                                 <span :style="`color: hsl( ${option.hue} , 45%, 90%);`"
-                                    class="fa fa-circle mr-4"></span>
-                                {{ option.name }}
-                            </template>
-                            <template #no-options="{ search, searching, loading }">
-                                No result .
-                            </template>
-                        </vSelect>
-                    </div>
-
-                    <label class="flex-grow space-y-2">
-                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Task Name </span>
-                        <input class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
-                                placeholder="Task Name"
-                                type="text"
-                                v-model="task.name"/>
-                    </label>
-
+                                      class="fa fa-circle mr-4"></span>
+                            {{ option.name }}
+                        </template>
+                        <template #no-options="{ search, searching, loading }">
+                            No result .
+                        </template>
+                    </vSelect>
                 </div>
 
-                <div class="flex space-x-3">
-                    <div class="flex-1 space-y-2">
-                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Assign employees</span>
-                        <vSelect
-                            v-model="task.assigned_to"
-                            multiple
-                            :options="kanbanMembers"
-                            :getOptionLabel="opt => opt.employee.user.full_name"
-                            style="margin-top: 7px"
-                            @search="onTypeEmployee"
-                            placeholder="Select one or more kanban members"
-                            class="text-gray-400">
-                            <template slot="option" slot-scope="option">
-                                <avatar :name="option.employee.user.full_name" :size="4"
-                                        class="mr-3 m-1 float-left"></avatar>
-                                <p class="inline">{{ option.employee.user.full_name }}</p>
-                            </template>
-                            <template #no-options="{ search, searching, loading }">
-                                No result .
-                            </template>
-                        </vSelect>
-                    </div>
+                <label class="flex-grow space-y-2">
+                    <span
+                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Task Name </span>
+                    <input
+                        class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
+                        placeholder="Task Name"
+                        type="text"
+                        v-model="task.name"/>
+                </label>
+
+            </div>
+
+            <div class="flex space-x-3">
+                <div class="flex-1 space-y-2">
+                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Assign employees</span>
+                    <vSelect
+                        v-model="task.assigned_to"
+                        multiple
+                        :options="kanbanMembers"
+                        :getOptionLabel="opt => opt.employee.user.full_name"
+                        style="margin-top: 7px"
+                        @search="onTypeEmployee"
+                        placeholder="Select one or more kanban members"
+                        class="text-gray-400">
+                        <template slot="option" slot-scope="option">
+                            <avatar :name="option.employee.user.full_name" :size="4"
+                                    class="mr-3 m-1 float-left"></avatar>
+                            <p class="inline">{{ option.employee.user.full_name }}</p>
+                        </template>
+                        <template #no-options="{ search, searching, loading }">
+                            No result .
+                        </template>
+                    </vSelect>
                 </div>
+            </div>
 
-                <div>
-                    <div class="flex-grow space-y-2">
-                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Description</span>
-                        <quill-editor :options="config"
-                                        output="html"
-                                        v-model="task.description"></quill-editor>
-
-                    </div>
+            <div>
+                <div class="flex-grow space-y-2">
+                    <span
+                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Description</span>
+                    <quill-editor :options="config"
+                                  output="html"
+                                  v-model="task.description"></quill-editor>
                 </div>
+            </div>
 
-                {{checklistStatus}}
+            {{ checklistStatus }}
+
+            <!-- <div class="flex-1" v-if="checkedOptions.includes('Deadline')"> -->
+            <div class="flex-1 space-y-2">
+                <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline</span>
+                <date-picker :popup-style="{ position: 'fixed' }"
+                             format="YYYY-MM-DD HH:mm:ss"
+                             placeholder="YYYY-MM-DD HH:mm:ss"
+                             type="datetime"
+                             v-model="task.deadline">
+                </date-picker>
+            </div>
+            <!-- </div> -->
+
+            <!-- <div class="flex-1" v-if="checkedOptions.includes('ERP Employee')"> -->
+            <div class="flex-1 space-y-2">
+                <span
+                    class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Employee</span>
+                <vSelect :options="erpEmployees"
+                         class="text-gray-400"
+                         label="full_name"
+                         placeholder="Select Employee"
+                         style="margin-top: 7px"
+                         @search="onTypeEmployee"
+                         v-model="task.erp_employee">
+                    <template slot="option" slot-scope="option">
+                        <avatar :name="option.full_name"
+                                :size="4"
+                                class="mr-3 m-1 float-left"></avatar>
+                        <p class="inline">{{ option.full_name }}</p>
+                    </template>
+                    <template #no-options="{ search, searching, loading }">
+                        No result .
+                    </template>
+                </vSelect>
+            </div>
+            <!-- </div> -->
+
+            <!-- <div class="flex-1" v-if="checkedOptions.includes('ERP Job Site')"> -->
+            <div class="flex-1 space-y-2">
+                <span
+                    class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Job Site</span>
+                <vSelect :options="erpJobSites"
+                         class="text-gray-400"
+                         label="name"
+                         placeholder="Select Job Site"
+                         style="margin-top: 7px"
+                         @search="onTypeJobsite"
+                         v-model="task.erp_job_site">
+                    <template slot="option" slot-scope="option">
+                        <p class="inline">{{ option.name }}</p>
+                    </template>
+                    <template #no-options="{ search, searching, loading }">
+                        No result .
+                    </template>
+                </vSelect>
+            </div>
+            <!-- </div> -->
 
 
-                    <!-- <div class="flex-1" v-if="checkedOptions.includes('Deadline')"> -->
-                        <div class="flex-1 space-y-2">
-                            <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline</span>
-                            <date-picker :popup-style="{ position: 'fixed' }"
-                                        format="YYYY-MM-DD HH:mm:ss"
-                                        placeholder="YYYY-MM-DD HH:mm:ss"
-                                        type="datetime"
-                                        v-model="task.deadline">
-                            </date-picker>
-                        </div>
-                    <!-- </div> -->
+            <!-- <div class="flex-1" v-if="checkedOptions.includes('Group')"> -->
+            <div class="flex-1 space-y-2">
+                <span
+                    class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with task</span>
+                <vSelect :options="tasks"
+                         class="text-gray-400"
+                         label="name"
+                         placeholder="Select task"
+                         style="margin-top: 7px"
+                         v-model="associatedTask">
+                    <template slot="selected-option" slot-scope="option">
+                        <p>
+                            <span class="font-bold">task-{{ option.id }}: </span>
+                            <span class="italic">{{ option.name }}</span>
+                        </p>
+                    </template>
+                    <template slot="option" slot-scope="option">
+                        <p>
+                            <span class="font-bold">task-{{ option.id }}: </span>
+                            <span class="italic">{{ option.name }}</span>
+                        </p>
+                    </template>
+                    <template #no-options="{ search, searching, loading }">
+                        No result .
+                    </template>
+                </vSelect>
+            </div>
+            <!-- </div> -->
 
-                    <!-- <div class="flex-1" v-if="checkedOptions.includes('ERP Employee')"> -->
-                        <div class="flex-1 space-y-2">
-                            <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Employee</span>
-                            <vSelect :options="erpEmployees"
-                                    class="text-gray-400"
-                                    label="full_name"
-                                    placeholder="Select Employee"
-                                    style="margin-top: 7px"
-                                    @search="onTypeEmployee"
-                                    v-model="task.erp_employee">
-                                <template slot="option" slot-scope="option">
-                                    <avatar :name="option.full_name"
-                                            :size="4"
-                                            class="mr-3 m-1 float-left"></avatar>
-                                    <p class="inline">{{ option.full_name }}</p>
-                                </template>
-                                <template #no-options="{ search, searching, loading }">
-                                    No result .
-                                </template>
-                            </vSelect>
-                        </div>
-                    <!-- </div> -->
-
-                    <!-- <div class="flex-1" v-if="checkedOptions.includes('ERP Job Site')"> -->
-                        <div class="flex-1 space-y-2">
-                            <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Job Site</span>
-                            <vSelect :options="erpJobSites"
-                                    class="text-gray-400"
-                                    label="name"
-                                    placeholder="Select Job Site"
-                                    style="margin-top: 7px"
-                                    @search="onTypeJobsite"
-                                    v-model="task.erp_job_site">
-                                <template slot="option" slot-scope="option">
-                                    <p class="inline">{{ option.name }}</p>
-                                </template>
-                                <template #no-options="{ search, searching, loading }">
-                                    No result .
-                                </template>
-                            </vSelect>
-                        </div>
-                    <!-- </div> -->
-
-
-
-                <!-- <div class="flex-1" v-if="checkedOptions.includes('Group')"> -->
-                        <div class="flex-1 space-y-2">
-                            <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with task</span>
-                            <vSelect :options="tasks"
-                                    class="text-gray-400"
-                                    label="name"
-                                    placeholder="Select task"
-                                    style="margin-top: 7px"
-                                    v-model="associatedTask">
-                                <template slot="selected-option" slot-scope="option">
-                                    <p>
-                                        <span class="font-bold">task-{{ option.id }}: </span>
-                                        <span class="italic">{{ option.name }}</span>
-                                    </p>
-                                </template>
-                                <template slot="option" slot-scope="option">
-                                    <p>
-                                        <span class="font-bold">task-{{ option.id }}: </span>
-                                        <span class="italic">{{ option.name }}</span>
-                                    </p>
-                                </template>
-                                <template #no-options="{ search, searching, loading }">
-                                    No result .
-                                </template>
-                            </vSelect>
-                        </div>
-                <!-- </div> -->
-
-                 <button @click="updateBacklogTask($event)"
+            <button @click="updateBacklogTask($event)"
                     class="px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
                     type="button">
-                    <span>Save Changes</span>
-                </button>
-            </div>
+                <span>Save Changes</span>
+            </button>
         </div>
+    </div>
     </div>
 </template>
 
@@ -285,7 +288,7 @@ export default {
         return {
             rows: [],
             columns: [],
-            chosenRow : {},
+            chosenRow: {},
             chosenColumn: {},
             taskOptions: [
                 {name: 'Deadline',},
@@ -346,7 +349,7 @@ export default {
         this.eventHub.$on("open-task-view", (currentTask) => {
             this.loadRowsAndColumnsFromId(currentTask.board_id);
         });
-         if (this.task.deadline) {
+        if (this.task.deadline) {
             this.task.deadline = new Date(this.task.deadline);
             this.checkedOptions.push('Deadline');
         }
@@ -368,7 +371,9 @@ export default {
         getRows(board_id) {
             this.asyncGetRows(board_id).then((data) => {
                 this.rows = data.data;
-            }).catch(res => {console.log(res)});
+            }).catch(res => {
+                console.log(res)
+            });
         },
         getMembers(board_id) {
             this.asyncGetMembers(board_id).then((data) => {
@@ -380,7 +385,9 @@ export default {
             this.chosenColumn = {};
             this.asyncGetColumns(option.id).then((data) => {
                 this.columns = data.data;
-            }).catch(res => {console.log(res)});
+            }).catch(res => {
+                console.log(res)
+            });
         },
         loadRowsAndColumnsFromRow(row) {
             loadRowsAndColumnsFromId(row.id);
@@ -411,7 +418,9 @@ export default {
         assignTask() {
             this.asyncAssignTaskToBoard(this.task.id, this.chosenRow.id, this.chosenColumn.id).then((data) => {
                 this.triggerSuccessToast("Task Assigned!");
-            }).catch(res => {console.log(res)});
+            }).catch(res => {
+                console.log(res)
+            });
         },
         getErpEmployees() {
             this.asyncGetAllUsers().then((data) => {
@@ -435,36 +444,40 @@ export default {
             });
         },
         onTypeEmployee(search, loading) {
-            if(search.length) {
-                    loading(true);
-                    this.typeEmployee(search, loading, this);
-                }
+            if (search.length) {
+                loading(true);
+                this.typeEmployee(search, loading, this);
+            }
         },
-        typeEmployee : _.debounce(function (search, loading) {
+        typeEmployee: _.debounce(function (search, loading) {
             this.asyncGetSomeUsers(search).then((data) => {
                 this.erpEmployees = data.data;
             })
-            .catch(res => {console.log(res)})
-            .then(function() {
-                setTimeout(500);
-                loading(false);
-            });
+                .catch(res => {
+                    console.log(res)
+                })
+                .then(function () {
+                    setTimeout(500);
+                    loading(false);
+                });
         }, 500),
         onTypeJobsite(search, loading) {
-            if(search.length) {
-                    loading(true);
-                    this.typeJobsite(search, loading, this);
-                }
+            if (search.length) {
+                loading(true);
+                this.typeJobsite(search, loading, this);
+            }
         },
-        typeJobsite : _.debounce(function (search, loading) {
+        typeJobsite: _.debounce(function (search, loading) {
             this.asyncGetSomeJobSites(search).then((data) => {
                 this.erpJobSites = data.data;
             })
-            .catch(res => {console.log(res)})
-            .then(function() {
-                setTimeout(500);
-                loading(false);
-            });
+                .catch(res => {
+                    console.log(res)
+                })
+                .then(function () {
+                    setTimeout(500);
+                    loading(false);
+                });
         }, 500),
     },
 };

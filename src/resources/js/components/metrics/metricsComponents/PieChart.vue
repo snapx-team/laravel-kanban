@@ -1,9 +1,10 @@
 <template>
     <div>
         <div v-if="this.series.length > 0" id="chart">
-            <vue-apex-charts type="pie" width="400" height="400" :options="computedChartOptions" :series="this.series"></vue-apex-charts>
+            <vue-apex-charts type="pie" width="400" height="400" :options="computedChartOptions"
+                             :series="this.series"></vue-apex-charts>
         </div>
-        <div v-if="this.series.length == 0">
+        <div v-if="this.series.length === 0">
             No Data for {{ this.title }}
         </div>
     </div>
@@ -26,9 +27,9 @@ export default {
                 },
                 labels: [],
                 legend: {
-                    formatter: function(val) {
+                    formatter: function (val) {
                         const n = 12
-                        if(val) {
+                        if (val) {
                             return val.length > n ? val.substr(0, n - 1) + '...' : val
                         }
                         return val;
@@ -72,11 +73,11 @@ export default {
                         offsetY: 0,
                         floating: false,
                         style: {
-                            fontSize:  '14px',
-                            fontWeight:  'bold',
-                            fontFamily:  undefined,
-                            color:  '#263238'
-                        }, 
+                            fontSize: '14px',
+                            fontWeight: 'bold',
+                            fontFamily: undefined,
+                            color: '#263238'
+                        },
                     },
                 }
             };

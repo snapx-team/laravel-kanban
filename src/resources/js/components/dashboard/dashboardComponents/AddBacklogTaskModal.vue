@@ -20,7 +20,7 @@
                 <div @click="modalOpen = false" class="overflow-auto fixed h-full w-full"></div>
                 <div class="flex flex-col overflow-auto z-50 w-100 bg-white rounded-md shadow-2xl m-10"
                      style="width: 900px; min-height: 300px; max-height: 80%">
-                    <!-- Task heading -->
+                    <!-- Heading -->
                     <div class="flex justify-between p-5 bg-indigo-800 border-b">
                         <div class="space-y-1">
 
@@ -39,7 +39,7 @@
                             </button>
                         </div>
                     </div>
-                    <!-- Task container -->
+                    <!-- Container -->
 
                     <button @click="selectTemplateIsVisible = true"
                             class="py-6 px-8 text-sm text-indigo-600 hover:text-indigo-800 transition duration-300 ease-in-out focus:outline-none"
@@ -362,6 +362,18 @@ export default {
             event.target.disabled = true;
             this.eventHub.$emit("save-backlog-task", this.task);
             this.modalOpen = false;
+
+            this.task = {
+                name: null,
+                badge: {},
+                description: null,
+                selectedKanbans: [],
+                erpEmployee: null,
+                erpJobSite: null,
+                deadline: null,
+                columnId: null,
+                associatedTask: null,
+            }
         },
         onTypeEmployee(search, loading) {
             if (search.length) {

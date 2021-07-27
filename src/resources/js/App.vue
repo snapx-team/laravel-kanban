@@ -21,36 +21,36 @@
 </template>
 
 <script>
-    import LoadingAnimation from "./components/global/LoadingAnimation.vue";
-    import SideBar from "./components/global/SideBar.vue";
-    import Vue from "vue";
+import LoadingAnimation from "./components/global/LoadingAnimation.vue";
+import SideBar from "./components/global/SideBar.vue";
+import Vue from "vue";
 
-    export default {
-        name: "App",
-        components: {
-            LoadingAnimation,
-            SideBar,
-        },
-        data() {
-            return {
-                eventHub: new Vue(),
-                kanbanIsLoading: false,
-                kanban: {},
-            };
-        },
-        provide() {
-            return {
-                eventHub: this.eventHub,
-            };
-        },
-        created() {
-            this.eventHub.$on("set-loading-state", (state) => {
-                this.kanbanIsLoading = state;
-            });
-        },
+export default {
+    name: "App",
+    components: {
+        LoadingAnimation,
+        SideBar,
+    },
+    data() {
+        return {
+            eventHub: new Vue(),
+            kanbanIsLoading: false,
+            kanban: {},
+        };
+    },
+    provide() {
+        return {
+            eventHub: this.eventHub,
+        };
+    },
+    created() {
+        this.eventHub.$on("set-loading-state", (state) => {
+            this.kanbanIsLoading = state;
+        });
+    },
 
-        beforeDestroy(){
-            this.eventHub.$off('set-loading-state');
-        },
-    };
+    beforeDestroy() {
+        this.eventHub.$off('set-loading-state');
+    },
+};
 </script>

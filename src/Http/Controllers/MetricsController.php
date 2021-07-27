@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use DateInterval;
 use DatePeriod;
 use DateTime;
+use Exception;
 use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Log;
 use Xguard\LaravelKanban\Models\Task;
@@ -13,7 +14,7 @@ use Xguard\LaravelKanban\Models\Task;
 class MetricsController extends Controller
 {
 
-    public function getBadgeData($start, $end)
+    public function getBadgeData($start, $end): array
     {
         $tasks = Task::with('badge')
             ->whereDate('created_at', '>=', new DateTime($start))
@@ -23,7 +24,7 @@ class MetricsController extends Controller
 
         $full = [];
         foreach ($tasks as $task) {
-            if(array_key_exists($task->badge->name, $full)){
+            if (array_key_exists($task->badge->name, $full)) {
                 $full[$task->badge->name] += 1;
             } else {
                 $full[$task->badge->name] = 1;
@@ -36,7 +37,7 @@ class MetricsController extends Controller
         ];
     }
 
-    public function getJobSiteData($start, $end)
+    public function getJobSiteData($start, $end): array
     {
         $tasks = Task::with('erpJobSite')
             ->whereDate('created_at', '>=', new DateTime($start))
@@ -45,9 +46,9 @@ class MetricsController extends Controller
             ->get();
 
         $jobsiteCounts = [];
-        foreach($tasks as $task) {
-            if($task->erpJobsite !== null) {
-                if(array_key_exists($task->erpJobsite->name, $jobsiteCounts)){
+        foreach ($tasks as $task) {
+            if ($task->erpJobsite !== null) {
+                if (array_key_exists($task->erpJobsite->name, $jobsiteCounts)) {
                     $jobsiteCounts[$task->erpJobsite->name] += 1;
                 } else {
                     $jobsiteCounts[$task->erpJobsite->name] = 1;
@@ -61,7 +62,7 @@ class MetricsController extends Controller
         ];
     }
 
-    public function getTicketsByEmployee($start, $end)
+    public function getTicketsByEmployee($start, $end): array
     {
         $tasks = Task::with('reporter')
             ->whereDate('created_at', '>=', new DateTime($start))
@@ -73,14 +74,14 @@ class MetricsController extends Controller
 
         $reporters = [];
         $assArray = array();
-        if(count($tasks) > 0) {
-            foreach($employees as $employee) {
+        if (count($tasks) > 0) {
+            foreach ($employees as $employee) {
                 array_push($reporters, $employee->user->full_name);
-                if(!array_key_exists($employee->user->email, $assArray)) {
+                if (!array_key_exists($employee->user->email, $assArray)) {
                     $assArray[$employee->user->email] = 0;
                 }
             }
-            foreach($tasks as $task) {
+            foreach ($tasks as $task) {
                 $assArray[$task->reporter->email] += 1;
             }
         }
@@ -91,7 +92,7 @@ class MetricsController extends Controller
         ];
     }
 
-    public function getCreationByHour($start, $end)
+    public function getCreationByHour($start, $end): array
     {
         $tasks = Task::whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
@@ -102,7 +103,7 @@ class MetricsController extends Controller
             $arr[strval($i)] = 0;
         }
 
-        foreach($tasks as $task) {
+        foreach ($tasks as $task) {
             $date = (new DateTime(($task->created_at)))->modify('-4 hours');;
             $dateString = $date->format('G');
             $arr[$dateString] += 1;
@@ -115,7 +116,7 @@ class MetricsController extends Controller
         ];
     }
 
-    public function getClosedTasksByEmployee($start, $end)
+    public function getClosedTasksByEmployee($start, $end): array
     {
         $logs = Log::with('user')->where('log_type', Log::TYPE_CARD_CLOSED)
             ->whereDate('created_at', '>=', new DateTime($start))
@@ -125,8 +126,8 @@ class MetricsController extends Controller
 
         $names = [];
         $hits = [];
-        foreach($logs as $log) {
-            if(array_key_exists($log->user->email, $hits)){
+        foreach ($logs as $log) {
+            if (array_key_exists($log->user->email, $hits)) {
                 $hits[$log->user->email] += 1;
             } else {
                 $hits[$log->user->email] = 1;
@@ -141,7 +142,7 @@ class MetricsController extends Controller
     }
 
 
-    public function getDelayByBadge($start, $end)
+    public function getDelayByBadge($start, $end): array
     {
         $closedLogs = Log::where('log_type', Log::TYPE_CARD_CLOSED)
             ->whereDate('created_at', '>=', new DateTime($start))
@@ -156,13 +157,13 @@ class MetricsController extends Controller
 
         $names = [];
         $hits = [];
-        foreach($assignedLogs as $assignedLog) {
+        foreach ($assignedLogs as $assignedLog) {
             foreach ($closedLogs as $key => $closedLog) {
-                if ($assignedLog->task_id == $closedLog->task_id){
+                if ($assignedLog->task_id == $closedLog->task_id) {
                     $beginning = new DateTime($assignedLog->created_at);
                     $end = new DateTime($closedLog->created_at);
                     $hours = ($end->diff($beginning))->h;
-                    if(array_key_exists($assignedLog->badge_id, $hits)){
+                    if (array_key_exists($assignedLog->badge_id, $hits)) {
                         array_push($hits[$assignedLog->badge_id], $hours);
                         unset($closedLogs[$key]);
                     } else {
@@ -174,8 +175,8 @@ class MetricsController extends Controller
         }
 
         $averages = [];
-        foreach($hits as $value) {
-            array_push($averages, sprintf("%.2f",array_sum($value)/count($value)));
+        foreach ($hits as $value) {
+            array_push($averages, sprintf("%.2f", array_sum($value) / count($value)));
         }
 
         return [
@@ -184,7 +185,10 @@ class MetricsController extends Controller
         ];
     }
 
-    public function getDelayByEmployee($start, $end)
+    /**
+     * @throws Exception
+     */
+    public function getDelayByEmployee($start, $end): array
     {
         $closedLogs = Log::where('log_type', Log::TYPE_CARD_CLOSED)
             ->whereDate('created_at', '>=', new DateTime($start))
@@ -200,13 +204,13 @@ class MetricsController extends Controller
 
         $names = [];
         $hits = [];
-        foreach($assignedLogs as $assignedLog) {
+        foreach ($assignedLogs as $assignedLog) {
             foreach ($closedLogs as $key => $closedLog) {
-                if ($assignedLog->task_id == $closedLog->task_id){
+                if ($assignedLog->task_id == $closedLog->task_id) {
                     $beginning = new DateTime($assignedLog->created_at);
                     $end = new DateTime($closedLog->created_at);
                     $hours = ($end->diff($beginning))->h;
-                    if(array_key_exists($assignedLog->user_id, $hits)){
+                    if (array_key_exists($assignedLog->user_id, $hits)) {
                         array_push($hits[$assignedLog->user_id], $hours);
                         unset($closedLogs[$key]);
                     } else {
@@ -218,8 +222,8 @@ class MetricsController extends Controller
         }
 
         $averages = [];
-        foreach($hits as $value) {
-            array_push($averages, sprintf("%.2f", array_sum($value)/count($value)));
+        foreach ($hits as $value) {
+            array_push($averages, sprintf("%.2f", array_sum($value) / count($value)));
         }
 
         return [
@@ -228,7 +232,10 @@ class MetricsController extends Controller
         ];
     }
 
-    public function getCreatedVsResolved($start, $end)
+    /**
+     * @throws Exception
+     */
+    public function getCreatedVsResolved($start, $end): array
     {
         $beginning = new DateTime($start);
         $ending = new DateTime($end);
@@ -248,11 +255,11 @@ class MetricsController extends Controller
         $period = new DatePeriod($beginning, new DateInterval('P1D'), $ending);
 
         $series = [
-            (object) [
+            (object)[
                 'name' => 'Created',
                 'data' => []
             ],
-            (object) [
+            (object)[
                 'name' => 'Resolved',
                 'data' => []
             ]
@@ -263,20 +270,20 @@ class MetricsController extends Controller
             $currentDay = $day->format("m/d");
             array_push($categories, $currentDay);
             $count = 0;
-            foreach($createdLogs as $createdLog) {
+            foreach ($createdLogs as $createdLog) {
                 $tempDay = new DateTime($createdLog->created_at);
                 $createdDay = $tempDay->format("m/d");
-                if($currentDay == $createdDay) {
+                if ($currentDay == $createdDay) {
                     $count += 1;
                 }
             }
             array_push($series[0]->data, $count);
 
             $count = 0;
-            foreach($resolvedLogs as $resolvedLog) {
+            foreach ($resolvedLogs as $resolvedLog) {
                 $tempDay = new DateTime($resolvedLog->created_at);
                 $resolvedDay = $tempDay->format("m/d");
-                if($currentDay == $resolvedDay) {
+                if ($currentDay == $resolvedDay) {
                     $count += 1;
                 }
             }

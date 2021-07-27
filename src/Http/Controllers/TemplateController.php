@@ -31,8 +31,6 @@ class TemplateController extends Controller
             'name.required' => 'Name is required',
         ];
 
-
-
         try {
 
             $templateData = $request->all();

@@ -26,7 +26,7 @@ class RowAndColumnsController extends Controller
                 $rowId = $newRow->id;
             }
 
-            foreach ($rowData['columns'] as $key=>$column) {
+            foreach ($rowData['columns'] as $key => $column) {
                 if ($column['id'] !== null) {
 
                     Column::where('id', $column['id'])
