@@ -174,9 +174,8 @@ class TaskController extends Controller
         $taskCard = $request->all();
 
         try {
-
             $badge = Badge::firstOrCreate([
-                'name' => count($request->input('badge')) > 0 ? $taskCard['badge']['name'] : '--',
+                'name' => count($request->input('badge')) > 0 ? $taskCard['badge']['name'] : '--'
             ]);
 
             $employeeArray = [];
@@ -192,9 +191,11 @@ class TaskController extends Controller
                     'name' => $taskCard['name'],
                     'description' => $taskCard['description'],
                     'deadline' => $request->has('deadline') ? date('y-m-d h:m', strtotime($taskCard['deadline'])) : null,
-                    'erp_employee_id' => $request->input('erp_employee_id') !== null ? $taskCard['erpEmployee']['id'] : null,
-                    'erp_job_site_id' => $request->input('erp_job_site_id') !== null ? $taskCard['erpJobSite']['id'] : null,
+                    'erp_employee_id' => $request->input('erp_employee_id') !== null ? $taskCard['erp_employee']['id'] : null,
+                    'erp_job_site_id' => $request->input('erp_job_site_id') !== null ? $taskCard['erp_job_site']['id'] : null,
                     'badge_id' => $badge->id,
+                    'column_id' => isset($taskCard['column_id']) ? $taskCard['column_id'] : null,
+                    'row_id' => isset($taskCard['row_id']) ? $taskCard['row_id'] : null,
                 ]);
 
         } catch (\Exception $e) {

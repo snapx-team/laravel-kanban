@@ -50,7 +50,7 @@
                         style="margin-top: 7px"
                         taggable
                         @input="loadColumns"
-                        v-model="chosenRow">
+                        v-model="task.row">
                         <template #no-options="{ search, searching, loading }">
                             No result .
                         </template>
@@ -66,7 +66,7 @@
                         placeholder="Choose or Create"
                         style="margin-top: 7px"
                         taggable
-                        v-model="chosenColumn">
+                        v-model="task.column">
                         <template #no-options="{ search, searching, loading }">
                             No result .
                         </template>
@@ -80,26 +80,6 @@
                 <span>Place Task</span>
             </button>
         </div>
-
-        <!-- task option checklist -->
-
-        <!-- <div class="flex">
-            <div class="px-2 py-6 space-y-2 border-r">
-                <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600 pb-2">Task Options</span>
-                <div class="grid divide-y divide-gray-400 pt-2"
-                        v-for="(taskOption, taskOptionIndex) in taskOptions">
-                    <label :key="taskOptionIndex" class="flex">
-                        <input :value="taskOption.name"
-                            class="mt-1 form-radio text-indigo-600"
-                            name="task-options"
-                            type="checkbox"
-                            v-model="checkedOptions">
-                        <div class="ml-3 text-gray-700 font-medium">
-                            <p>{{ taskOption.name }}</p>
-                        </div>
-                    </label>
-                </div>
-            </div> -->
 
         <!-- taks info -->
 
@@ -172,9 +152,6 @@
                 </div>
             </div>
 
-            {{ checklistStatus }}
-
-            <!-- <div class="flex-1" v-if="checkedOptions.includes('Deadline')"> -->
             <div class="flex-1 space-y-2">
                 <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline</span>
                 <date-picker :popup-style="{ position: 'fixed' }"
@@ -184,9 +161,7 @@
                              v-model="task.deadline">
                 </date-picker>
             </div>
-            <!-- </div> -->
 
-            <!-- <div class="flex-1" v-if="checkedOptions.includes('ERP Employee')"> -->
             <div class="flex-1 space-y-2">
                 <span
                     class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Employee</span>
@@ -208,9 +183,7 @@
                     </template>
                 </vSelect>
             </div>
-            <!-- </div> -->
 
-            <!-- <div class="flex-1" v-if="checkedOptions.includes('ERP Job Site')"> -->
             <div class="flex-1 space-y-2">
                 <span
                     class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Job Site</span>
@@ -229,10 +202,7 @@
                     </template>
                 </vSelect>
             </div>
-            <!-- </div> -->
 
-
-            <!-- <div class="flex-1" v-if="checkedOptions.includes('Group')"> -->
             <div class="flex-1 space-y-2">
                 <span
                     class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with task</span>
@@ -259,15 +229,20 @@
                     </template>
                 </vSelect>
             </div>
-            <!-- </div> -->
 
-            <button @click="updateBacklogTask($event)"
+            <div class="w-full grid sm:grid-cols-2 gap-3 sm:gap-3">
+                <button @click="updateBacklogTask($event)"
+                    class="px-4 py-3 border border-gray-200 rounded text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-600 transition duration-300 ease-in-out"
+                    type="button">
+                    <span>Save Changes</span>
+                </button>
+                <button @click="assignTask($event)"
                     class="px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
                     type="button">
-                <span>Save Changes</span>
-            </button>
+                    <span>Assign Task To Board</span>
+                </button>
+            </div>
         </div>
-    </div>
     </div>
 </template>
 
@@ -288,14 +263,6 @@ export default {
         return {
             rows: [],
             columns: [],
-            chosenRow: {},
-            chosenColumn: {},
-            taskOptions: [
-                {name: 'Deadline',},
-                {name: 'ERP Employee',},
-                {name: 'ERP Job Site',},
-                //{name: 'Group',},
-            ],
             associatedTask: null,
             erpEmployees: [],
             erpJobSites: [],
@@ -381,8 +348,14 @@ export default {
                 console.log(data.data);
             })
         },
+        getMembers(board_id) {
+            this.asyncGetMembers(board_id).then((data) => {
+                this.kanbanMembers = data.data;
+            })
+        },
         loadColumns(option) {
             this.chosenColumn = {};
+            this.task.column = {};
             this.asyncGetColumns(option.id).then((data) => {
                 this.columns = data.data;
             }).catch(res => {
@@ -393,8 +366,8 @@ export default {
             loadRowsAndColumnsFromId(row.id);
         },
         loadRowsAndColumnsFromId(id) {
-            this.chosenRow = {};
-            this.chosenColumn = {};
+            this.task.row = {};
+            this.task.column = {};
             this.columns = [];
             this.getRows(id);
             this.getMembers(id);
@@ -406,9 +379,13 @@ export default {
                 badge: this.task.badge,
                 description: this.task.description,
                 erp_employee: this.task.erp_employee,
+                erp_employee_id: this.task.erp_employee ? this.task.erp_employee.id : null,
+                erp_job_site_id: this.task.erp_job_site ? this.task.erp_job_site.id : null,
                 erp_job_site: this.task.erp_job_site,
                 deadline: this.task.deadline,
                 assigned_to: this.task.assigned_to,
+                column_id: this.task.column ? this.task.column.id : null,
+                row_id: this.task.row ? this.task.row.id : null
             }
             const cloneBacklogTasksData = {...backlogTaskData};
             this.asyncUpdateTask(cloneBacklogTasksData).then((data) => {
@@ -453,13 +430,13 @@ export default {
             this.asyncGetSomeUsers(search).then((data) => {
                 this.erpEmployees = data.data;
             })
-                .catch(res => {
-                    console.log(res)
-                })
-                .then(function () {
-                    setTimeout(500);
-                    loading(false);
-                });
+            .catch(res => {
+                console.log(res)
+            })
+            .then(function () {
+                setTimeout(500);
+                loading(false);
+            });
         }, 500),
         onTypeJobsite(search, loading) {
             if (search.length) {
@@ -471,13 +448,13 @@ export default {
             this.asyncGetSomeJobSites(search).then((data) => {
                 this.erpJobSites = data.data;
             })
-                .catch(res => {
-                    console.log(res)
-                })
-                .then(function () {
-                    setTimeout(500);
-                    loading(false);
-                });
+            .catch(res => {
+                console.log(res)
+            })
+            .then(function () {
+                setTimeout(500);
+                loading(false);
+            });
         }, 500),
     },
 };
