@@ -152,7 +152,7 @@ class TaskController extends Controller
 
             $employeeArray = [];
             foreach ($taskCard['assignedTo'] as $employee) {
-                array_push($employeeArray, $employee['id']);
+                array_push($employeeArray, $employee['employee_id']);
             }
 
             $task->assignedTo()->sync($employeeArray);
@@ -180,7 +180,7 @@ class TaskController extends Controller
 
             $employeeArray = [];
             foreach ($taskCard['assigned_to'] as $employee) {
-                array_push($employeeArray, $employee['id']);
+                array_push($employeeArray, $employee['employee_id']);
             }
 
             $task = Task::find($taskCard['id']);

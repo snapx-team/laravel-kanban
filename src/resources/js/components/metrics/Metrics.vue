@@ -244,7 +244,6 @@ export default {
         },
         getBadgeData() {
             this.asyncGetBadgeData(this.startTime, this.endTime).then((data) => {
-                // console.log(data.data);
                 this.badgeData = data.data;
             }).catch(res => {
                 console.log(res)
@@ -252,43 +251,36 @@ export default {
         },
         getTicketsByEmployee() {
             this.asyncGetTicketsByEmployee(this.startTime, this.endTime).then((data) => {
-                // console.log(data.data);
                 this.ticketByEmployeeData = data.data
             })
         },
         getCreationByHour() {
             this.asyncGetCreationByHour(this.startTime, this.endTime).then((data) => {
-                // console.log(data.data);
                 this.creationByHour = data.data;
             })
         },
         getJobSiteData() {
             this.asyncGetJobSiteData(this.startTime, this.endTime).then((data) => {
-                // console.log(data.data);
                 this.jobsiteData = data.data;
             })
         },
         getClosedTasksByEmployee() {
             this.asyncGetClosedTasksByEmployee(this.startTime, this.endTime).then((data) => {
-                // console.log(data.data);
                 this.closedTasksByEmployee = data.data;
             })
         },
         getDelayByBadge() {
             this.asyncGetDelayByBadge(this.startTime, this.endTime).then((data) => {
-                // console.log(data.data);
                 this.delayByBadge = data.data;
             })
         },
         getDelayByEmployee() {
             this.asyncGetDelayByEmployee(this.startTime, this.endTime).then((data) => {
-                // console.log(data.data);
                 this.delayByEmployee = data.data;
             })
         },
         getCreatedVsResolved() {
             this.asyncGetCreatedVsResolved(this.startTime, this.endTime).then((data) => {
-                // console.log(data.data);
                 this.createdVsResolved = data.data;
             })
         }

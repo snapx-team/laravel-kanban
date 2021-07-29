@@ -191,7 +191,6 @@
             displayQuill() {
                 this.isCommentFocus = true;
                 this.$refs.myQuillEditor.quill.focus();
-                console.log(this.$refs.myQuillEditor);
             },
         },
     };

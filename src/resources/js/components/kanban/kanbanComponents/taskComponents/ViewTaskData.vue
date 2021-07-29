@@ -256,8 +256,6 @@ export default {
             });
         },
         setStatus() {
-            console.log(this.cloneCardData.id);
-            console.log(this.selectedStatus);
             this.asyncSetStatus(this.cloneCardData.id, this.selectedStatus.name).then(() => {
                 this.cardData.status = this.selectedStatus.name;
             }).catch(res => {

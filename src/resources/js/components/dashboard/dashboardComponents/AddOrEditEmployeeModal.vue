@@ -197,8 +197,9 @@
         mounted(){
             this.asyncGetAllUsers().then((data) => {
                 this.allUsers = data.data;
-                // console.log(this.allUsers);
-            }).catch(res => {console.log(res)});
+            }).catch(res => {
+                console.log(res)
+            });
         },
 
         methods: {
@@ -222,7 +223,9 @@
                 this.asyncGetSomeUsers(search).then((data) => {
                     this.allUsers = data.data;
                 })
-                .catch(res => {console.log(res)})
+                .catch(res => {
+                    console.log(res)
+                })
                 .then(function() {
                     setTimeout(500);
                     loading(false);

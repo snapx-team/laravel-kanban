@@ -1,6 +1,7 @@
 <template>
     <div class="bg-white hover:shadow-md shadow rounded px-3 pt-3 pb-5 border-l-4"
-         v-bind:class="`border-indigo-500`" :style=priorityHue>
+         v-bind:class="`border-indigo-500`" :style=priorityHue
+         v-if="showCard">
         <div class="flex justify-between">
             <p class="text-gray-700 font-semibold font-sans tracking-wide text-sm mr-3">
                 {{ task_card.name }} </p>
@@ -61,16 +62,40 @@ import Badge from "../../global/Badge.vue";
 import {helperFunctions} from "../../../mixins/helperFunctionsMixin";
 
 export default {
+    inject: ["eventHub"],
     mixins: [helperFunctions],
 
     components: {
         Badge,
         Avatar,
     },
+    data() {
+        return {
+            allCurrentIDs: [],
+        };
+    },
     props: {
         task_card: Object,
     },
+    created() {
+        this.eventHub.$on("show-employee-tasks", (idArray) => {
+            this.allCurrentIDs = idArray;
+        });
+    },
     computed: {
+        showCard() {
+            if (this.allCurrentIDs.length == 0) {
+                return true;
+            }
+            for(let i = 0; i < this.task_card.assigned_to.length; i++) {
+                for(let j = 0; j < this.allCurrentIDs.length; j++) {
+                    if(this.task_card.assigned_to[i].employee.id == this.allCurrentIDs[j]) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        },
         priorityHue() {
             if (this.task_card.hours_to_deadline <= 0) {
                 return 'border-color: hsl( 0 , 90%, 40%); background-color:hsl(0, 100%, 97%)'

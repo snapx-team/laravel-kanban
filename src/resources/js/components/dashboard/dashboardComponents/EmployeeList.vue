@@ -146,8 +146,6 @@ export default {
     },
     methods: {
         editEmployee(index) {
-            console.log(this.employees);
-
             this.eventHub.$emit("create-kanban-employees", this.filtered[index]);
         },
         updatePaginationIndex(newIndex) {
