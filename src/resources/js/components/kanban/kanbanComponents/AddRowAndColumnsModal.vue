@@ -23,15 +23,15 @@
                     <!-- Heading -->
                     <div class="flex justify-between p-5 bg-indigo-800 border-b">
                         <div class="space-y-1">
-                            <h1 class="text-2xl text-white pb-2" v-if="isEdit">Add Row and Columns</h1>
-                            <h1 class="text-2xl text-white pb-2" v-else>Edit Row and Columns</h1>
+                            <h1 class="text-2xl text-white pb-2" v-if="isEdit">Edit Row and Columns</h1>
+                            <h1 class="text-2xl text-white pb-2" v-else>Add Row and Columns</h1>
 
-                            <p class="text-sm font-medium leading-5 text-gray-500" v-if="isEdit">
-                                Create new row and add any column you want associated to it </p>
-
-                            <p class="text-sm font-medium leading-5 text-gray-500" v-else>
+                            <p class="text-sm font-medium leading-5 text-red-500" v-if="isEdit">
                                 Edit or Delete row and columns. Deleting Row will delete all subsequent columns. Any
                                 column deleted will also delete tasks associated to them. </p>
+
+                            <p class="text-sm font-medium leading-5 text-gray-500" v-else>
+                                Create new row and add any column you want associated to it </p>
                         </div>
                         <div>
                             <button @click="modalOpen = false"
