@@ -26,7 +26,7 @@
                         placeholder="Select one or more kanban boards"
                         style="margin-top: 7px"
                         v-model="task.board"
-                        @input="loadRowsAndColumnsFromRow">
+                        @input="loadRowsAndColumns(option.id)">
                         <template slot="option" slot-scope="option">
                             {{ option.name }}
                         </template>
@@ -74,11 +74,11 @@
                 </div>
             </div>
 
-            <!-- <button @click="assignTask($event)"
+            <button @click="assignTask($event)"
                     class="px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
                     type="button">
                 <span>Place Task</span>
-            </button> -->
+            </button>
         </div>
 
         <!-- taks info -->
@@ -203,14 +203,36 @@
                 </vSelect>
             </div>
 
-            <div class="flex-1 space-y-2">
+            <div>
+                <p> Related Tasks: </p>
+                <p v-if="relatedTasks.length === 0" class="tracking-wide text-sm">No Related Tasks</p>
+                <div class="w-full text-center">
+                    <p
+                        v-for="task in relatedTasks"
+                        :key="task.id">
+                        
+                        <span class="font-bold">{{ task.board.name.substring(0, 3).toUpperCase() }}-{{ task.id }}: </span>
+                        <span class="italic">{{ task.name }}</span>
+                    </p>
+                </div>
+            </div>
+
+            <button @click="selectGroupIsVisible = true"
+                    v-if="!selectGroupIsVisible"
+                    class="text-center w-full pt-2 px-4 text-sm text-indigo-600 hover:text-indigo-800 transition duration-300 ease-in-out focus:outline-none">
+                        <i class="fas fa-th-list mr-2"></i>
+                        Click To Add or Change Group
+            </button>
+
+            <div v-if="selectGroupIsVisible" class="flex-1 space-y-2">
                 <span
                     class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with task</span>
                 <vSelect :options="tasks"
                          class="text-gray-400"
                          label="name"
                          placeholder="Select task"
-                         style="margin-top: 7px">
+                         style="margin-top: 7px"
+                         v-model="task.associatedTask">
                     <template slot="selected-option" slot-scope="option">
                         <p>
                             <span class="font-bold">{{ option.board.name.substring(0, 3).toUpperCase() }}-{{ option.id }}: </span>
@@ -231,14 +253,9 @@
 
             <div class="w-full grid sm:grid-cols-2 gap-3 sm:gap-3">
                 <button @click="updateBacklogTask($event)"
-                    class="px-4 py-3 border border-gray-200 rounded text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-600 transition duration-300 ease-in-out"
-                    type="button">
-                    <span>Save Changes</span>
-                </button>
-                <button @click="assignTask($event)"
                     class="px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
                     type="button">
-                    <span>Assign Task To Board</span>
+                    <span>Save Changes</span>
                 </button>
             </div>
         </div>
@@ -265,8 +282,10 @@ export default {
             erpEmployees: [],
             erpJobSites: [],
             tasks: [],
+            relatedTasks: [],
             checkedOptions: [],
             kanbanMembers: [],
+            selectGroupIsVisible: false,
             config: {
                 readOnly: false,
                 placeholder: 'Describe your task in greater detail',
@@ -312,7 +331,7 @@ export default {
     },
     created() {
         this.eventHub.$on("open-task-view", (currentTask) => {
-            this.loadRowsAndColumnsFromId(currentTask.board_id);
+            this.loadRowsAndColumns(currentTask.board_id);
         });
         if (this.task.deadline) {
             this.task.deadline = new Date(this.task.deadline);
@@ -325,9 +344,10 @@ export default {
         this.getErpEmployees();
         this.getJobSites();
         this.getTasks();
+        this.getRelatedTasks();
     },
     mounted() {
-        this.loadRowsAndColumnsFromId(this.task.board_id);
+        this.loadRowsAndColumns(this.task.board_id);
     },
     methods: {
         closeTaskView() {
@@ -345,11 +365,6 @@ export default {
                 this.kanbanMembers = data.data;
             })
         },
-        getMembers(board_id) {
-            this.asyncGetMembers(board_id).then((data) => {
-                this.kanbanMembers = data.data;
-            })
-        },
         loadColumns(option) {
             this.chosenColumn = {};
             this.task.column = {};
@@ -359,17 +374,23 @@ export default {
                 console.log(res)
             });
         },
-        loadRowsAndColumnsFromRow(row) {
-            loadRowsAndColumnsFromId(row.id);
-        },
-        loadRowsAndColumnsFromId(id) {
+        loadRowsAndColumns(id) {
             this.task.row = {};
             this.task.column = {};
             this.columns = [];
             this.getRows(id);
             this.getMembers(id);
         },
+        getRelatedTasks() {
+            this.asyncGetRelatedTasksLessInfo(this.task.id).then((data) => {
+                this.relatedTasks = data.data;
+                console.log(data.data);
+            }).catch(res => {
+                console.log(res)
+            });
+        },
         updateBacklogTask() {
+            console.log(this.task);
             let backlogTaskData = {
                 id: this.task.id,
                 name: this.task.name,
@@ -381,8 +402,7 @@ export default {
                 erp_job_site: this.task.erp_job_site,
                 deadline: this.task.deadline,
                 assigned_to: this.task.assigned_to,
-                column_id: this.task.column ? this.task.column.id : null,
-                row_id: this.task.row ? this.task.row.id : null
+                group: this.task.associatedTask ? this.task.associatedTask.group : this.task.group,
             }
             const cloneBacklogTasksData = {...backlogTaskData};
             this.asyncUpdateTask(cloneBacklogTasksData).then((data) => {
@@ -390,7 +410,7 @@ export default {
             });
         },
         assignTask() {
-            this.asyncAssignTaskToBoard(this.task.id, this.chosenRow.id, this.chosenColumn.id).then((data) => {
+            this.asyncAssignTaskToBoard(this.task.id, this.task.row.id, this.task.column.id).then((data) => {
                 this.triggerSuccessToast("Task Assigned!");
             }).catch(res => {
                 console.log(res)

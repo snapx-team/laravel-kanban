@@ -102,6 +102,12 @@ export const ajaxCalls = {
             return axios.get('get-related-tasks/' + taskId);
         },
 
+        asyncGetRelatedTasksLessInfo(taskId) {
+            return axios.get('get-related-tasks-less-info/' + taskId).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
+        },
+
         asyncUpdateTask(taskCardData) {
             return axios.post('update-task', taskCardData).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
@@ -173,6 +179,12 @@ export const ajaxCalls = {
 
         asyncAssignTaskToBoard(task_id, row_id, column_id) {
             return axios.post('assign-task-to-board/' + task_id + '/' + row_id + '/' + column_id).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
+        },
+
+        asyncUpdateGroup(task_id, group) {
+            return axios.post('update-group/' + task_id + '/' + group).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
