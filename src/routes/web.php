@@ -46,6 +46,7 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             // Task
             Route::get('/get-all-tasks', 'TaskController@getAllTasks');
             Route::get('/get-related-tasks/{id}', 'TaskController@getRelatedTasks');
+            Route::get('/get-related-tasks-less-info/{id}', 'TaskController@getRelatedTasksLessInfo');
 
 
             Route::post('/create-task', 'TaskController@createTaskCard');
@@ -65,6 +66,7 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
 
             Route::post('/set-status/{taskCardId}/{status}', 'TaskController@setStatus');
             Route::post('/assign-task-to-board/{taskId}/{row_id}/{column_id}', 'TaskController@assignTaskToBoard');
+            Route::post('/update-group/{taskId}/{group}', 'TaskController@updateGroup');
 
 
             // Comments

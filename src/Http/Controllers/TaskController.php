@@ -36,6 +36,12 @@ class TaskController extends Controller
             }])->get();
     }
 
+    public function getRelatedTasksLessInfo($id)
+    {
+        $group = Task::where('id', $id)->first()->group;
+        return Task::where('id', '!=', $id)->where('group', $group)->with('board')->get();
+    }
+
     public function createBacklogTaskCards(Request $request)
     {
         $rules = [
@@ -186,6 +192,12 @@ class TaskController extends Controller
             $task = Task::find($taskCard['id']);
             $task->assignedTo()->sync($employeeArray);
 
+            if ($taskCard['group'] !== null) {
+                $group = $taskCard['group'];
+            } else {
+                $group = $task->group;
+            }
+
             Task::where('id', $taskCard['id'])
                 ->update([
                     'name' => $taskCard['name'],
@@ -194,8 +206,7 @@ class TaskController extends Controller
                     'erp_employee_id' => $request->input('erp_employee_id') !== null ? $taskCard['erp_employee']['id'] : null,
                     'erp_job_site_id' => $request->input('erp_job_site_id') !== null ? $taskCard['erp_job_site']['id'] : null,
                     'badge_id' => $badge->id,
-                    'column_id' => isset($taskCard['column_id']) ? $taskCard['column_id'] : null,
-                    'row_id' => isset($taskCard['row_id']) ? $taskCard['row_id'] : null,
+                    'group' => $group
                 ]);
 
         } catch (\Exception $e) {
@@ -312,6 +323,23 @@ class TaskController extends Controller
             $taskCard->update([
                 'row_id' => $row_id,
                 'column_id' => $column_id
+            ]);
+        } catch (\Exception $e) {
+            return response([
+                'success' => 'false',
+                'message' => $e->getMessage(),
+            ], 400);
+        }
+        return response(['success' => 'true'], 200);
+
+    }
+
+    public function updateGroup($task_id, $group)
+    {
+        try {
+            $taskCard = Task::find($task_id);
+            $taskCard->update([
+                'group' => $group,
             ]);
         } catch (\Exception $e) {
             return response([

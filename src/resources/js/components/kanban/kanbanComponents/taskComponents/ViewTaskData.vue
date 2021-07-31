@@ -166,36 +166,48 @@
 
                 <button @click="selectGroupIsVisible = true"
                     class="py-2 px-8 text-sm text-indigo-600 hover:text-indigo-800 transition duration-300 ease-in-out focus:outline-none"
-                    v-if="relatedTasks.length === 0">
+                    v-if="!selectGroupIsVisible">
                         <i class="fas fa-th-list mr-2"></i>
-                        Click To Add to A Group
+                        Click To Add or Change Group
                 </button>
 
                 <div v-if="selectGroupIsVisible">
-                    <span
-                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with task</span>
-                    <vSelect :options="tasks"
-                            class="text-gray-400"
-                            label="name"
-                            placeholder="Select task"
-                            style="margin-top: 7px"
-                            v-model="associatedTask">
-                        <template slot="selected-option" slot-scope="option">
-                            <p>
-                                <span class="font-bold">{{ option.board.name.substring(0, 3).toUpperCase() }}-{{ option.id }}: </span>
-                                <span class="italic">{{ option.name }}</span>
-                            </p>
-                        </template>
-                        <template slot="option" slot-scope="option">
-                            <p>
-                                <span class="font-bold">{{ option.board.name.substring(0, 3).toUpperCase() }}-{{ option.id }}: </span>
-                                <span class="italic">{{ option.name }}</span>
-                            </p>
-                        </template>
-                        <template #no-options="{ search, searching, loading }">
-                            No result .
-                        </template>
-                    </vSelect>
+                     <span
+                            class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with task</span>
+                    <div class="flex flex-row">
+                        <div class="flex-auto w-44">
+                            <vSelect :options="tasks"
+                                    class="text-gray-400"
+                                    label="name"
+                                    placeholder="Select task"
+                                    style="margin-top: 7px"
+                                    v-model="associatedTask"
+                            >
+                                <template slot="selected-option" slot-scope="option">
+                                    <p>
+                                        <span class="font-bold">{{ option.board.name.substring(0, 3).toUpperCase() }}-{{ option.id }}: </span>
+                                        <span class="italic">{{ option.name }}</span>
+                                    </p>
+                                </template>
+                                <template slot="option" slot-scope="option">
+                                    <p>
+                                        <span class="font-bold">{{ option.board.name.substring(0, 3).toUpperCase() }}-{{ option.id }}: </span>
+                                        <span class="italic">{{ option.name }}</span>
+                                    </p>
+                                </template>
+                                <template #no-options="{ search, searching, loading }">
+                                    No result .
+                                </template>
+                            </vSelect>
+                        </div>
+                        <div class="flex-auto mt-2 pl-2">
+                            <button @click="updateGroup()"
+                                class="px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
+                                type="button">
+                                <span>Save</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <template v-for="task_card in relatedTasks">
@@ -245,6 +257,8 @@ export default {
         return {
             loadingRelatedTasks: false,
             relatedTasks: [],
+            tasks: [],
+            associatedTask: null,
             formatted: null,
             checklistData: {
                 total: 0,
@@ -275,6 +289,7 @@ export default {
         this.cloneCardData = {...this.cardData};
         this.handleChecklist();
         this.getRelatedTasks();
+        this.getTasks();
         this.selectedStatus = this.cardData.status;
     },
 
@@ -290,6 +305,19 @@ export default {
             }).catch(res => {
                 console.log(res)
             });
+        },
+        getTasks() {
+            this.asyncGetAllTasks().then((data) => {
+                this.tasks = data.data;
+            }).catch(res => {
+                console.log(res)
+            });
+        },
+        updateGroup() {
+            this.asyncUpdateGroup(this.cardData.id, this.associatedTask.group).then((data) => {
+                this.triggerSuccessToast("Task Updated!");
+                this.getRelatedTasks();
+            });;
         },
         setStatus() {
             this.asyncSetStatus(this.cloneCardData.id, this.selectedStatus.name).then(() => {
