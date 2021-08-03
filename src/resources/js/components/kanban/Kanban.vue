@@ -311,7 +311,6 @@ export default {
                     this.kanban.rows[cloneCardData.row.index].columns[cloneCardData.column.index].task_cards = data.data;
                     this.loadingCards = {columnId: null, isLoading: false}
                     this.triggerSuccessToast('Task Updated')
-
                 }).catch(res => {
                     console.log(res)
                 });

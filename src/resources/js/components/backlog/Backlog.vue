@@ -435,7 +435,7 @@ export default {
             });
         },
         getOneMonthAgo() {
-            var d = new Date()
+            let d = new Date()
             return new Date(d.setMonth(d.getMonth() - 1));
         },
     },

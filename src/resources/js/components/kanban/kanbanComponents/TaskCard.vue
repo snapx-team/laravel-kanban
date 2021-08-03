@@ -86,12 +86,12 @@ export default {
     },
     computed: {
         showCard() {
-            if (this.allCurrentIDs.length == 0) {
+            if (this.allCurrentIDs.length === 0) {
                 return true;
             }
             for (let i = 0; i < this.task_card.assigned_to.length; i++) {
                 for (let j = 0; j < this.allCurrentIDs.length; j++) {
-                    if (this.task_card.assigned_to[i].employee.id == this.allCurrentIDs[j]) {
+                    if (this.task_card.assigned_to[i].employee.id === this.allCurrentIDs[j]) {
                         return true;
                     }
                 }
@@ -110,6 +110,5 @@ export default {
             }
         },
     },
-
 };
 </script>

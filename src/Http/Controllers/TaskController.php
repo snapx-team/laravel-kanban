@@ -184,7 +184,7 @@ class TaskController extends Controller
                 'name' => count($request->input('badge')) > 0 ? $taskCard['badge']['name'] : '--'
             ]);
 
-            if ($request->input('assignedTo') !== null) {
+            if ($request->input('assigned_to') !== null) {
                 $employeeArray = [];
                 foreach ($taskCard['assigned_to'] as $employee) {
                     array_push($employeeArray, $employee['employee']['id']);
@@ -223,7 +223,7 @@ class TaskController extends Controller
 
     public function getTaskCardsByColumn($id)
     {
-        return Task::where('column_id', $id)->with('badge', 'row', 'column')
+        return Task::where('column_id', $id)->with('badge', 'row', 'column', 'board')
             ->with(['assignedTo.employee.user' => function ($q) {
                 $q->select(['id', 'first_name', 'last_name']);
             }])
@@ -235,7 +235,7 @@ class TaskController extends Controller
             }])
             ->with(['erpJobSite' => function ($q) {
                 $q->select(['id', 'name']);
-            }])->get();
+            }])->orderBy('index')->get();
     }
 
     public function updateTaskCardIndexes(Request $request)
@@ -244,8 +244,8 @@ class TaskController extends Controller
         $newIndex = 0;
         try {
             foreach ($taskCards as $taskCard) {
-                $newIndex++;
                 Task::find($taskCard['id'])->update(['index' => $newIndex]);
+                $newIndex++;
             }
         } catch (\Exception $e) {
             return response([
@@ -334,7 +334,6 @@ class TaskController extends Controller
             ], 400);
         }
         return response(['success' => 'true'], 200);
-
     }
 
     public function updateGroup($task_id, $group)
@@ -351,6 +350,5 @@ class TaskController extends Controller
             ], 400);
         }
         return response(['success' => 'true'], 200);
-
     }
 }
