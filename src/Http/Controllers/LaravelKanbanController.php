@@ -8,7 +8,6 @@ use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Board;
 use Xguard\LaravelKanban\Models\Template;
 use Xguard\LaravelKanban\Models\Task;
-use Xguard\LaravelKanban\Models\Badge;
 
 class LaravelKanbanController extends Controller
 {
@@ -53,10 +52,12 @@ class LaravelKanbanController extends Controller
         ];
     }
 
-    public function getBacklogData()
+    public function getBacklogData($start, $end)
     {
         $backlogTasks = Task::
             with('badge', 'row', 'column', 'board', 'reporter', 'assignedTo.employee.user', 'erpJobSite', 'erpEmployee')
+            ->whereDate('created_at', '>=', new DateTime($start))
+            ->whereDate('created_at', '<=', new DateTime($end))
             ->orderBy('deadline')
             ->get();
         $boards = Board::orderBy('name')->with('members')->get();

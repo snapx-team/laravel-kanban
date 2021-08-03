@@ -14,8 +14,8 @@ export const ajaxCalls = {
             return axios.get('get-dashboard-data');
         },
 
-        asyncGetBacklogData() {
-            return axios.get('get-backlog-data');
+        asyncGetBacklogData(start, end) {
+            return axios.get('get-backlog-data/' + start + '/' + end);
         },
 
         // Metrics
@@ -74,7 +74,7 @@ export const ajaxCalls = {
             });
         },
 
-        // Columns
+        // Rows & Columns
 
         asyncCreateRowAndColumns(rowData) {
             return axios.post('save-row-and-columns', rowData).catch((error) => {
@@ -86,10 +86,15 @@ export const ajaxCalls = {
             return axios.get('get-columns/' + row_id);
         },
 
-        // Rows
 
         asyncGetRows(board_id) {
             return axios.get('get-rows/' + board_id);
+        },
+
+        asyncDeleteRow(rowId) {
+            return axios.post('delete-row/' + rowId).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         // Tasks

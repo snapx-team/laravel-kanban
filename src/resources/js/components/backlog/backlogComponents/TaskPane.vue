@@ -203,26 +203,25 @@
                 </vSelect>
             </div>
 
-            <div>
-                <p> Related Tasks: </p>
-                <p v-if="relatedTasks.length === 0" class="tracking-wide text-sm">No Related Tasks</p>
-                <div class="w-full text-center">
-                    <p
-                        v-for="task in relatedTasks"
-                        :key="task.id">
-                        
-                        <span class="font-bold">{{ task.board.name.substring(0, 3).toUpperCase() }}-{{ task.id }}: </span>
+            <div class="space-y-5">
+                <p class="text-gray-700 font-semibold font-sans tracking-wide text-lg"> Related Tasks: </p>
+                <p v-if="relatedTasks.length === 0 && !selectGroupIsVisible" class="tracking-wide text-sm">No Related
+                    Tasks</p>
+                <div class="w-full text-center" v-if="relatedTasks.length !== 0 && !selectGroupIsVisible">
+                    <p v-for="task in relatedTasks" :key="task.id">
+                        <span
+                            class="font-bold">{{ task.board.name.substring(0, 3).toUpperCase() }}-{{ task.id }}: </span>
                         <span class="italic">{{ task.name }}</span>
                     </p>
                 </div>
+                <button @click="selectGroupIsVisible = true"
+                        v-if="relatedTasks.length === 0 && !selectGroupIsVisible"
+                        class="text-sm text-indigo-600 hover:text-indigo-800 transition duration-300 ease-in-out focus:outline-none">
+                    <i class="fas fa-th-list mr-2"></i>
+                    Click To Add or Change Group
+                </button>
             </div>
 
-            <button @click="selectGroupIsVisible = true"
-                    v-if="!selectGroupIsVisible"
-                    class="text-center w-full pt-2 px-4 text-sm text-indigo-600 hover:text-indigo-800 transition duration-300 ease-in-out focus:outline-none">
-                        <i class="fas fa-th-list mr-2"></i>
-                        Click To Add or Change Group
-            </button>
 
             <div v-if="selectGroupIsVisible" class="flex-1 space-y-2">
                 <span
@@ -253,8 +252,8 @@
 
             <div class="w-full grid sm:grid-cols-2 gap-3 sm:gap-3">
                 <button @click="updateBacklogTask($event)"
-                    class="px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
-                    type="button">
+                        class="px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
+                        type="button">
                     <span>Save Changes</span>
                 </button>
             </div>
@@ -332,6 +331,7 @@ export default {
     created() {
         this.eventHub.$on("open-task-view", (currentTask) => {
             this.loadRowsAndColumns(currentTask.board_id);
+            this.selectGroupIsVisible = false;
         });
         if (this.task.deadline) {
             this.task.deadline = new Date(this.task.deadline);
@@ -447,13 +447,13 @@ export default {
             this.asyncGetSomeUsers(search).then((data) => {
                 this.erpEmployees = data.data;
             })
-            .catch(res => {
-                console.log(res)
-            })
-            .then(function () {
-                setTimeout(500);
-                loading(false);
-            });
+                .catch(res => {
+                    console.log(res)
+                })
+                .then(function () {
+                    setTimeout(500);
+                    loading(false);
+                });
         }, 500),
         onTypeJobsite(search, loading) {
             if (search.length) {
@@ -465,13 +465,13 @@ export default {
             this.asyncGetSomeJobSites(search).then((data) => {
                 this.erpJobSites = data.data;
             })
-            .catch(res => {
-                console.log(res)
-            })
-            .then(function () {
-                setTimeout(500);
-                loading(false);
-            });
+                .catch(res => {
+                    console.log(res)
+                })
+                .then(function () {
+                    setTimeout(500);
+                    loading(false);
+                });
         }, 500),
     },
 };

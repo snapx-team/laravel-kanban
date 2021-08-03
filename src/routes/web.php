@@ -16,7 +16,7 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             // Kanban App Data
             Route::get('/get-board-data/{id}', 'LaravelKanbanController@getkanbanData');
             Route::get('/get-dashboard-data', 'LaravelKanbanController@getDashboardData');
-            Route::get('/get-backlog-data', 'LaravelKanbanController@getBacklogData');
+            Route::get('/get-backlog-data/{start}/{end}', 'LaravelKanbanController@getBacklogData');
 
             // Metrics
 
@@ -42,6 +42,7 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
 
             // Rows
             Route::get('/get-rows/{board_id}', 'RowAndColumnsController@getRows');
+            Route::post('/delete-row/{id}', 'RowAndColumnsController@deleteRow');
 
             // Task
             Route::get('/get-all-tasks', 'TaskController@getAllTasks');
