@@ -38,7 +38,7 @@
                         </div>
                         <div>
                             <button @click="modalOpen = false"
-                                    class="focus:outline-none flex flex-col items-center text-gray-400 hover:text-gray-500 transition duration-150 ease-in-out pl-8"
+                                     class="focus:outline-none flex flex-col items-center text-gray-400 hover:text-gray-500 transition duration-150 ease-in-out pl-8"
                                     type="button">
                                 <i class="fas fa-times"></i>
                                 <span class="text-xs font-semibold text-center leading-3 uppercase">Esc</span>

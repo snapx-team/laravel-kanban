@@ -42,6 +42,7 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
 
             // Rows
             Route::get('/get-rows/{board_id}', 'RowAndColumnsController@getRows');
+            Route::post('/delete-row/{id}', 'RowAndColumnsController@deleteRow');
 
             // Task
             Route::get('/get-all-tasks', 'TaskController@getAllTasks');

@@ -173,6 +173,11 @@ export default {
             this.modalOpen = false;
             this.rowData.rowIndex = null;
         },
+        deleteRow() {
+            this.eventHub.$emit("delete-row", this.rowData);
+            this.modalOpen = false;
+            this.rowData.rowIndex = null;
+        },
     },
 };
 </script>

@@ -98,7 +98,7 @@
                                              placeholder="Choose or Create"
                                              style="margin-top: 7px"
                                              taggable
-                                             v-model="task.badge">
+                                             v-model="computedSelectedBadge">
                                         <template slot="option" slot-scope="option">
                                             <span :style="`color: hsl(${option.hue}, 50%, 45%);`"
                                                   class="fa fa-circle mr-4"></span>
@@ -269,6 +269,7 @@
 
 import vSelect from "vue-select";
 import Avatar from "../../global/Avatar";
+import _ from 'lodash';
 
 import {ajaxCalls} from "../../../mixins/ajaxCallsMixin";
 import {helperFunctions} from "../../../mixins/helperFunctionsMixin";
@@ -342,14 +343,12 @@ export default {
     created() {
         this.eventHub.$on("create-backlog-task", () => {
             this.modalOpen = true;
+            this.getBadges();
+            this.getErpEmployees();
+            this.getJobSites();
+            this.getTasks();
+            this.getTemplates();
         });
-
-        this.getBadges();
-        this.getErpEmployees();
-        this.getJobSites();
-        this.getTasks();
-        this.getTemplates();
-
     },
 
     beforeDestroy() {
@@ -466,6 +465,20 @@ export default {
                 return computedBadges;
             })
         },
+
+        computedSelectedBadge: {
+            get () {
+                if (_.isEmpty(this.task.badge)) {
+                    return null
+                } else {
+                    return this.task.badge
+                }
+            },
+            set (val) {
+                this.task.badge = val;
+            }
+        },
+
 
         checklistData() {
             let parser = new DOMParser();

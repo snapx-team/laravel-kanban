@@ -284,6 +284,7 @@ export default {
         updateTaskData(event) {
             event.target.disabled = true;
             this.eventHub.$emit("update-task-card-data", this.cloneCardData);
+            this.eventHub.$emit("close-task-modal");
         },
 
         getBadges() {

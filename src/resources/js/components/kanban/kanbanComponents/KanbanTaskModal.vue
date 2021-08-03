@@ -35,7 +35,7 @@
                         <div>
                             <button
                                 class="focus:outline-none flex flex-col items-center text-gray-400 hover:text-gray-500 transition duration-150 ease-in-out pl-8"
-                                type="button">
+                                type="button" @click="modalOpen = false">
                                 <i class="fas fa-times"></i>
                                 <span class="text-xs font-semibold text-center leading-3 uppercase">Esc</span>
                             </button>
@@ -138,23 +138,25 @@ export default {
         this.eventHub.$on("update-kanban-task-cards", (task) => {
             if (this.modalOpen) {
                 this.modalOpen = false;
-
                 setTimeout(() => {
                         this.cardData = task;
                         this.modalOpen = true;
-                    },
-                    100
-                )
-                ;
+                }, 100);
             } else {
                 this.cardData = task;
                 this.modalOpen = true;
             }
         });
+
+        this.eventHub.$on("close-task-modal", () => {
+            this.modalOpen = false;
+        });
+
     },
 
     beforeDestroy() {
         this.eventHub.$off('update-kanban-task-cards');
+        this.eventHub.$off('close-task-modal');
     },
 };
 </script>

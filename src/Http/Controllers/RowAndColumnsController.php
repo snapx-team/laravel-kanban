@@ -26,6 +26,32 @@ class RowAndColumnsController extends Controller
                 $rowId = $newRow->id;
             }
 
+            /*  Start: Delete columns
+    Code to compare new list of columns with existing list of columns
+    If an existing column isn't included in the new list then it was selected to be deleted
+*/
+
+            $currentRow = Row::where('id', $rowId)->with('columns')->get()->toArray();
+            $currentColumns = $currentRow[0]['columns'];
+            $sentColumns = $rowData['columns'];
+
+            $currentColumnsId = array_map(function ($e) {
+                return is_object($e) ? $e->id : $e['id'];
+            }, $currentColumns);
+
+            $sentColumnsId = array_map(function ($e) {
+                return is_object($e) ? $e->id : $e['id'];
+            }, $sentColumns);
+
+            foreach ($currentColumnsId as $currentColumnId) {
+                if (!in_array($currentColumnId, $sentColumnsId)) {
+                    $column = Column::find($currentColumnId);
+                    $column->delete();
+                }
+            }
+
+            /*  End : Delete columns */
+
             foreach ($rowData['columns'] as $key => $column) {
                 if ($column['id'] !== null) {
 

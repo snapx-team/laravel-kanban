@@ -74,7 +74,7 @@
             <div class="space-y-5 whitespace-nowrap">
 
                 <p class="text-gray-700 font-semibold font-sans tracking-wide text-lg"> Info: </p>
-                <div class="relative mb-5 border-b">
+                <div class="relative mb-5 border-b" v-if="checklistData.total > 0">
                     <div class="flex mb-3 items-center justify-between">
                         <div>
                             <span
@@ -162,18 +162,17 @@
                 <p class="text-gray-700 font-semibold font-sans tracking-wide text-lg"
                    :class="{'animate-pulse': loadingRelatedTasks}"> Related Tasks: </p>
 
-                <p v-if="relatedTasks.length === 0" class="tracking-wide text-sm">No Related Tasks</p>
+                <p v-if="relatedTasks.length === 0 && !selectGroupIsVisible" class="tracking-wide text-sm">No Related Tasks</p>
 
                 <button @click="selectGroupIsVisible = true"
-                    class="py-2 px-8 text-sm text-indigo-600 hover:text-indigo-800 transition duration-300 ease-in-out focus:outline-none"
-                    v-if="!selectGroupIsVisible">
+                    class="py-2 text-sm text-indigo-600 hover:text-indigo-800 transition duration-300 ease-in-out focus:outline-none"
+                    v-if="relatedTasks.length === 0 && !selectGroupIsVisible">
                         <i class="fas fa-th-list mr-2"></i>
                         Click To Add or Change Group
                 </button>
 
                 <div v-if="selectGroupIsVisible">
-                     <span
-                            class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with task</span>
+                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with task</span>
                     <div class="flex flex-row">
                         <div class="flex-auto w-44">
                             <vSelect :options="tasks"
@@ -181,8 +180,7 @@
                                     label="name"
                                     placeholder="Select task"
                                     style="margin-top: 7px"
-                                    v-model="associatedTask"
-                            >
+                                    v-model="associatedTask">
                                 <template slot="selected-option" slot-scope="option">
                                     <p>
                                         <span class="font-bold">{{ option.board.name.substring(0, 3).toUpperCase() }}-{{ option.id }}: </span>

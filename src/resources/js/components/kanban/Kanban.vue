@@ -158,6 +158,9 @@ export default {
         this.eventHub.$on("save-task", (taskData) => {
             this.saveTask(taskData);
         });
+        this.eventHub.$on("delete-row", (rowData) => {
+            this.deleteRow(rowData);
+        });
     },
 
     beforeDestroy() {
@@ -166,6 +169,8 @@ export default {
         this.eventHub.$off('save-members');
         this.eventHub.$off('remove-member');
         this.eventHub.$off('save-row-and-columns');
+        this.eventHub.$off('update-task-card-data');
+        this.eventHub.$off('delete-row');
     },
 
     methods: {
@@ -330,23 +335,6 @@ export default {
             });
         },
 
-        //
-        // deleteTaskCard(cardData) {
-        //     const cloneCardData = {...cardData};
-        //     this.loadingCards = {columnId: cloneCardData.selectedCardData.column_id, isLoading: true}
-        //     this.asyncDeleteKanbanTaskCard(cloneCardData.selectedCardData.id).then(() => {
-        //         this.asyncGetTaskCardsByColumn(cloneCardData.selectedCardData.column_id).then((data) => {
-        //             this.kanban.rows[cloneCardData.selectedRowIndex].columns[cloneCardData.selectedColumnIndex].task_cards = data.data;
-        //             this.loadingCards = {columnId: null, isLoading: false}
-        //             this.triggerSuccessToast('Task Deleted')
-        //         }).catch(res => {
-        //             console.log(res)
-        //         });
-        //     }).catch(res => {
-        //         console.log(res)
-        //     });
-        // },
-
         saveRowAndColumns(rowData) {
             const cloneRowData = {...rowData};
             let rowIndex = cloneRowData.rowIndex;
@@ -363,6 +351,16 @@ export default {
                     this.kanban.rows.push(data.data[0]);
                 }
                 this.loadingRow = {rowId: null, isLoading: false}
+
+            }).catch(res => {
+                console.log(res)
+            });
+        },
+
+        deleteRow(rowData) {
+            this.asyncDeleteRow(rowData.rowId).then(() => {
+                this.triggerSuccessToast('Row Deleted')
+                this.getKanban(this.kanban.id);
 
             }).catch(res => {
                 console.log(res)

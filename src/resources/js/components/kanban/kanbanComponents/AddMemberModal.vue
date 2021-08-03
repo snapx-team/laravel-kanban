@@ -78,8 +78,7 @@
                             <div class="pt-6 md:p-8 text-center md:text-left space-y-4">
                                 <figcaption class="font-medium">
                                     <p class="pb-5 text-gray-500">
-                                        There are a total of {{ kanbanData.members.length }} members on this phone
-                                        line </p>
+                                        There are a total of {{ kanbanData.members.length }} members on this kanban</p>
 
                                     <label class="block pb-5">
                                         <input
@@ -161,7 +160,7 @@ export default {
         filtered() {
             const regex = new RegExp(this.filter, "i");
             return this.kanbanData.members.filter((e) => {
-                return !this.filter || e.name.match(regex);
+                return !this.filter || e.user.full_name.match(regex);
             });
         },
     },

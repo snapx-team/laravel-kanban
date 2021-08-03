@@ -10,7 +10,6 @@ use Xguard\LaravelKanban\Models\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
-
 class TaskController extends Controller
 {
     public function getAllTasks()
@@ -68,15 +67,15 @@ class TaskController extends Controller
         $backlogTaskData = $request->all();
 
         try {
-
             $badge = Badge::firstOrCreate([
                 'name' => count($request->input('badge')) > 0 ? $backlogTaskData['badge']['name'] : '--',
             ]);
 
             if ($backlogTaskData['associatedTask'] !== null) {
                 $group = $backlogTaskData['associatedTask']['group'];
-            } else
+            } else {
                 $group = 'g-' . (Task::max('id') + 1);
+            }
 
             foreach ($backlogTaskData['selectedKanbans'] as $kanban) {
                 $task = Task::create([
@@ -85,8 +84,8 @@ class TaskController extends Controller
                     'name' => $backlogTaskData['name'],
                     'description' => $backlogTaskData['description'],
                     'deadline' => $request->has('deadline') ? date('y-m-d h:m', strtotime($backlogTaskData['deadline'])) : null,
-                    'erp_employee_id' => $request->has('erp_employee_id') ? $backlogTaskData['erpEmployee']['id'] : null,
-                    'erp_job_site_id' => $request->has('erp_job_site_id') ? $backlogTaskData['erpJobSite']['id'] : null,
+                    'erp_employee_id' => $request->input('erpEmployee') !== null ? $backlogTaskData['erpEmployee']['id'] : null,
+                    'erp_job_site_id' => $request->input('erpJobSite') !== null ? $backlogTaskData['erpJobSite']['id'] : null,
                     'badge_id' => $badge->id,
                     'column_id' => null,
                     'board_id' => $kanban['id'],
@@ -137,8 +136,9 @@ class TaskController extends Controller
 
             if ($taskCard['associatedTask'] !== null) {
                 $group = $taskCard['associatedTask']['group'];
-            } else
+            } else {
                 $group = 'g-' . (Task::max('id') + 1);
+            }
 
             $maxIndex++;
             $task = Task::create([
@@ -147,8 +147,8 @@ class TaskController extends Controller
                 'name' => $taskCard['name'],
                 'description' => $taskCard['description'],
                 'deadline' => $request->has('deadline') ? date('y-m-d h:m', strtotime($taskCard['deadline'])) : null,
-                'erp_employee_id' => $request->has('erp_employee_id') ? $taskCard['erpEmployee']['id'] : null,
-                'erp_job_site_id' => $request->has('erp_job_site_id') ? $taskCard['erpJobSite']['id'] : null,
+                'erp_employee_id' => $request->input('erpEmployee') !== null ? $taskCard['erpEmployee']['id'] : null,
+                'erp_job_site_id' => $request->input('erpJobSite') !== null ? $taskCard['erpJobSite']['id'] : null,
                 'badge_id' => $badge->id,
                 'column_id' => $taskCard['selectedColumnId'],
                 'row_id' => $taskCard['selectedRowId'],
@@ -156,15 +156,15 @@ class TaskController extends Controller
                 'group' => $group
             ]);
 
-            $employeeArray = [];
-            foreach ($taskCard['assignedTo'] as $employee) {
-                array_push($employeeArray, $employee['employee_id']);
+            if ($request->input('assignedTo') !== null) {
+                $employeeArray = [];
+                foreach ($taskCard['assignedTo'] as $employee) {
+                    array_push($employeeArray, $employee['employee_id']);
+                }
+                $task->assignedTo()->sync($employeeArray);
             }
 
-            $task->assignedTo()->sync($employeeArray);
-
             Log::createLog($task->reporter_id, Log::TYPE_CARD_CREATED, 'Added new task', $task->badge_id, $task->board_id, $task->id, $task->erp_employee_id, $task->erp_job_site_id, null);
-
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
@@ -184,13 +184,15 @@ class TaskController extends Controller
                 'name' => count($request->input('badge')) > 0 ? $taskCard['badge']['name'] : '--'
             ]);
 
-            $employeeArray = [];
-            foreach ($taskCard['assigned_to'] as $employee) {
-                array_push($employeeArray, $employee['employee_id']);
-            }
+            if ($request->input('assignedTo') !== null) {
+                $employeeArray = [];
+                foreach ($taskCard['assigned_to'] as $employee) {
+                    array_push($employeeArray, $employee['employee']['id']);
+                }
 
-            $task = Task::find($taskCard['id']);
-            $task->assignedTo()->sync($employeeArray);
+                $task = Task::find($taskCard['id']);
+                $task->assignedTo()->sync($employeeArray);
+            }
 
             if ($taskCard['group'] !== null) {
                 $group = $taskCard['group'];
@@ -203,12 +205,13 @@ class TaskController extends Controller
                     'name' => $taskCard['name'],
                     'description' => $taskCard['description'],
                     'deadline' => $request->has('deadline') ? date('y-m-d h:m', strtotime($taskCard['deadline'])) : null,
-                    'erp_employee_id' => $request->input('erp_employee_id') !== null ? $taskCard['erp_employee']['id'] : null,
-                    'erp_job_site_id' => $request->input('erp_job_site_id') !== null ? $taskCard['erp_job_site']['id'] : null,
+                    'erp_employee_id' => $request->input('erp_employee') !== null ? $taskCard['erp_employee']['id'] : null,
+                    'erp_job_site_id' => $request->input('erp_job_site') !== null ? $taskCard['erp_job_site']['id'] : null,
                     'badge_id' => $badge->id,
+                    'column_id' => $taskCard['column_id'] ?? null,
+                    'row_id' => $taskCard['row_id'] ?? null,
                     'group' => $group
                 ]);
-
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
