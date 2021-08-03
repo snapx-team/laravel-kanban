@@ -13,7 +13,7 @@
                         class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Start</span>
                         <date-picker type="datetime" v-model="start"
                                      placeholder="YYYY-MM-DD"
-                                     :popup-style="{ position: 'fixed' }" format="YYYY-MM-DD"
+                                     format="YYYY-MM-DD"
                         ></date-picker>
                     </div>
                     <div class="flex-column w-72 mr-2">
@@ -21,7 +21,7 @@
                         class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">End</span>
                         <date-picker type="datetime" v-model="end"
                                      placeholder="YYYY-MM-DD"
-                                     :popup-style="{ position: 'fixed' }" format="YYYY-MM-DD"
+                                     format="YYYY-MM-DD"
                         ></date-picker>
                     </div>
                     <button @click="getBacklogData()"

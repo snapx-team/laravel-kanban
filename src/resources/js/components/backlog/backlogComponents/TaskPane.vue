@@ -155,8 +155,7 @@
 
             <div class="flex-1 space-y-2">
                 <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline</span>
-                <date-picker :popup-style="{ position: 'fixed' }"
-                             format="YYYY-MM-DD HH:mm:ss"
+                <date-picker format="YYYY-MM-DD HH:mm:ss"
                              placeholder="YYYY-MM-DD HH:mm:ss"
                              type="datetime"
                              v-model="task.deadline">
