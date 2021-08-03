@@ -4,7 +4,9 @@
          v-if="showCard">
         <div class="flex justify-between">
             <p class="text-gray-700 font-semibold font-sans tracking-wide text-sm mr-3">
-                {{ task_card.name }} </p>
+                <span class="font-bold">{{ task_card.board.name.substring(0, 3).toUpperCase() }}-{{ task_card.id }}: </span>
+                <span class="italic">{{ task_card.name }}</span>
+            </p>
 
 
             <div class="flex justify-end">

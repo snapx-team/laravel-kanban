@@ -20,6 +20,7 @@ class LaravelKanbanController extends Controller
     public function getkanbanData($id)
     {
         return Board::with('rows.columns.taskCards.badge')
+            ->with('rows.columns.taskCards.board')
             ->with(['rows.columns.taskCards.assignedTo.employee.user' => function ($q) {
                 $q->select(['id', 'first_name', 'last_name']);
             }])
