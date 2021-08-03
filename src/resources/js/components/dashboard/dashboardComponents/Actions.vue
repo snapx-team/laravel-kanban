@@ -27,7 +27,7 @@
                     <div class="flex flex-row items-center">
                         <div class="flex-shrink pr-4">
                             <div class="rounded-full p-5 bg-blue-500 text-center">
-                                <i class="fa fa-phone fa-2x fa-inverse w-8 h-8"></i>
+                                <i class="fa fa-th-large fa-2x fa-inverse w-8 h-7"></i>
                             </div>
                         </div>
                         <div class="flex-1 text-right md:text-center">
@@ -45,7 +45,7 @@
                     <div class="flex flex-row items-center">
                         <div class="flex-shrink pr-4">
                             <div class="rounded-full p-5 bg-green-500 text-center">
-                                <i class="fa fa-user fa-2x fa-inverse w-8 h-8"></i>
+                                <i class="fa fa-user fa-2x fa-inverse w-8 h-7"></i>
                             </div>
                         </div>
                         <div class="flex-1 text-right md:text-center">
