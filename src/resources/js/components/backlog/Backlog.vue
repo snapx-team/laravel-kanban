@@ -33,7 +33,7 @@
 
                 <!-- general search -->
                 <div class="flex">
-                    <div class="flex block relative my-2">
+                    <div class="flex block relative mt-3">
                     <span class="absolute inset-y-0 left-0 flex items-center p-2">
                         <i class="text-gray-400 fas fa-search"></i>
                     </span>
@@ -44,7 +44,7 @@
                             v-model="filterText"/>
                     </div>
 
-                    <div class="flex py-3 h-12 border mt-3 mb-3 ml-2">
+                    <div class="flex py-3 h-12 border mt-3 ml-2">
                         <label class="flex mx-3">
                             <input
                                 class="mt-2 form-radio text-indigo-600"
@@ -77,7 +77,7 @@
                         </label>
                     </div>
 
-                    <div class="flex py-3 h-12 border mt-3 mb-2 mx-2">
+                    <div class="flex py-3 h-12 border mt-3 mx-2">
                         <label class="flex mx-3">
                             <input
                                 class="mt-2 form-radio text-indigo-600"
@@ -119,7 +119,7 @@
                         </vSelect>
                     </div>
 
-                    <div class="flex block mx-2">
+                    <div class="flex block mr-2">
                         <vSelect
                             v-model="filterAssignedTo"
                             multiple
@@ -138,7 +138,7 @@
                         </vSelect>
                     </div>
 
-                    <div class="flex block mx-2">
+                    <div class="flex block">
                         <vSelect
                             v-model="filterReporter"
                             multiple
@@ -161,12 +161,12 @@
 
             <hr/>
 
-            <div class="pt-2">
+            <div>
                 <div>
                     <button
                         v-if="!hideBoardsPane"
                         @click="hideBoardsPane = !hideBoardsPane"
-                        class="py-6 font-semibold text-indigo-600 hover:text-indigo-800 transition duration-300 ease-in-out focus:outline-none">
+                        class="py-4 font-semibold text-indigo-600 hover:text-indigo-800 transition duration-300 ease-in-out focus:outline-none">
                         {{ hideBoardsPane ? "Hide" : "Show" }} Boards
                         <i class="fa fa-th-large ml-2"></i>
                     </button>
@@ -398,7 +398,7 @@ export default {
             if (this.placedInBoard && t.column_id != null) {
                 return true;
             }
-            if (this.notPlacedInBoard && t.column_id == null) {
+            if (this.notPlacedInBoard && t.column_id == null && t.status === "active") {
                 return true;
             }
             return false;

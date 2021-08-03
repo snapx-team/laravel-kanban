@@ -167,7 +167,7 @@
 
                 <button @click="selectGroupIsVisible = true"
                         class="py-2 text-sm text-indigo-600 hover:text-indigo-800 transition duration-300 ease-in-out focus:outline-none"
-                        v-if="relatedTasks.length === 0 && !selectGroupIsVisible">
+                        v-if="!selectGroupIsVisible">
                     <i class="fas fa-th-list mr-2"></i>
                     Click To Add or Change Group
                 </button>
@@ -221,6 +221,12 @@
                         class="cursor-pointer"
                         v-on:click.native="updateTask(task_card)"></task-card>
                 </template>
+                <button @click="removeGroup()"
+                    v-if="relatedTasks.length > 0"
+                    class="px-2 py-2 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
+                    type="button">
+                        <span>Remove Group</span>
+                </button>
 
 
             </div>
@@ -317,11 +323,18 @@ export default {
             });
         },
         updateGroup() {
-            this.asyncUpdateGroup(this.cardData.id, this.associatedTask.group).then((data) => {
+            this.asyncUpdateGroup(this.cardData.id, this.associatedTask.group).then(() => {
                 this.triggerSuccessToast("Task Updated!");
                 this.getRelatedTasks();
             });
-            ;
+        },
+        removeGroup() {
+            this.asyncRemoveGroup(this.cardData.id).then(() => {
+                this.getRelatedTasks();
+                this.triggerSuccessToast("Group Removed!");
+            }).catch(res => {
+                console.log(res)
+            });
         },
         setStatus() {
             this.asyncSetStatus(this.cloneCardData.id, this.selectedStatus.name).then(() => {

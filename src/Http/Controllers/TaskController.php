@@ -351,4 +351,20 @@ class TaskController extends Controller
         }
         return response(['success' => 'true'], 200);
     }
+
+    public function removeFromGroup($id) {
+        $group = 'g-' . (Task::max('id') + 2);
+        try {
+            $taskCard = Task::find($id);
+            $taskCard->update([
+                'group' => $group,
+            ]);
+        } catch (\Exception $e) {
+            return response([
+                'success' => 'false',
+                'message' => $e->getMessage(),
+            ], 400);
+        }
+        return response(['success' => 'true'], 200);
+    }
 }
