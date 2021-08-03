@@ -73,25 +73,27 @@
 
             <div class="space-y-5 whitespace-nowrap">
 
-                <p class="text-gray-700 font-semibold font-sans tracking-wide text-lg"> Info: </p>
-                <div class="relative mb-5 border-b">
-                    <div class="flex mb-3 items-center justify-between">
-                        <div>
-                            <span
-                                class="text-xs font-semibold inline-block py-1 px-2 rounded-full text-indigo-600 bg-indigo-200">
-                                checklist items: {{ checklistData.done }}/{{ checklistData.total }}
-                            </span>
+                <div v-if="checklistData.total > 0">
+                    <p class="text-gray-700 font-semibold font-sans tracking-wide text-lg"> Info: </p>
+                    <div class="relative mb-5 border-b">
+                        <div class="flex mb-3 items-center justify-between">
+                            <div>
+                                <span
+                                    class="text-xs font-semibold inline-block py-1 px-2 rounded-full text-indigo-600 bg-indigo-200">
+                                    checklist items: {{ checklistData.done }}/{{ checklistData.total }}
+                                </span>
+                            </div>
+                            <div class="text-right">
+                                <span
+                                    class="text-xs font-semibold inline-block text-indigo-600">{{
+                                        checklistPercentage
+                                    }}%</span>
+                            </div>
                         </div>
-                        <div class="text-right">
-                            <span
-                                class="text-xs font-semibold inline-block text-indigo-600">{{
-                                    checklistPercentage
-                                }}%</span>
+                        <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-indigo-200 ">
+                            <div :style="`width:${checklistPercentage}%`"
+                                class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-indigo-500"></div>
                         </div>
-                    </div>
-                    <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-indigo-200 ">
-                        <div :style="`width:${checklistPercentage}%`"
-                             class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-indigo-500"></div>
                     </div>
                 </div>
 
