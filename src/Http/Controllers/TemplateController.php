@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Xguard\LaravelKanban\Models\Badge;
 use Xguard\LaravelKanban\Models\Template;
+use Illuminate\Support\Facades\Validator;
 
 class TemplateController extends Controller
 {
@@ -20,16 +21,22 @@ class TemplateController extends Controller
     {
 
         $rules = [
-            'selectedKanbans' => 'array|min:1',
             'description' => 'required',
             'name' => 'required'
         ];
 
         $customMessages = [
-            'selectedKanbans.min' => 'You need to select at least one board',
             'description.required' => 'Description is required',
             'name.required' => 'Name is required',
         ];
+        $validator = Validator::make($request->all(), $rules, $customMessages);
+
+        if ($validator->fails()) {
+            return response([
+                'success' => 'false',
+                'message' => implode(', ', $validator->messages()->all()),
+            ], 400);
+        }
 
         try {
 
@@ -42,7 +49,7 @@ class TemplateController extends Controller
             if ($request->filled('id')) {
                 Template::where('id', $request->input('id'))->update([
                     'name' => $request->input('name'),
-                    'badge_id' => $badge->id,
+//                    'badge_id' => $badge->id,
                     'description' => $request->input('description'),
                     'options' => serialize($request->input('checkedOptions')),
                 ]);

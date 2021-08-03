@@ -215,8 +215,8 @@ export default {
             switch (eventName) {
                 case "moved":
                     this.asyncUpdateTaskCardIndexes(taskCardData).then(() => {
-                        this.isDraggableDisabled = false
                         this.triggerSuccessToast('task moved')
+                        this.isDraggableDisabled = false
                     });
                     break;
                 case "added":
@@ -224,19 +224,17 @@ export default {
                             this.asyncUpdateTaskCardIndexes(taskCardData).then(() => {
                                 this.asyncGetTaskCardsByColumn(columnId).then((data) => {
                                     this.kanban.rows[rowIndex].columns[columnIndex].task_cards = data.data;
+                                    this.triggerSuccessToast('task moved');
+                                    this.isDraggableDisabled = false
                                 }).catch(res => {
                                     console.log(res)
                                 });
-                                this.isDraggableDisabled = false
-                                this.triggerSuccessToast('task moved');
                             });
                         }
                     );
                     break;
                 case "removed":
-                    this.asyncUpdateTaskCardIndexes(taskCardData).then(() => {
-                        this.isDraggableDisabled = false
-                    });
+                    this.asyncUpdateTaskCardIndexes(taskCardData);
                     break;
                 default:
                     alert('event "' + eventName + '" not handled: ');

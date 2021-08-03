@@ -26,7 +26,7 @@
                             <h1 class="text-2xl text-white pb-2" v-if="isEdit">Edit Row and Columns</h1>
                             <h1 class="text-2xl text-white pb-2" v-else>Add Row and Columns</h1>
 
-                            <p class="text-sm font-medium leading-5 text-red-500" v-if="isEdit">
+                            <p class="text-sm font-medium leading-5 text-red-400" v-if="isEdit">
                                 Edit or Delete row and columns. Deleting Row will delete all subsequent columns. Any
                                 column deleted will also delete tasks associated to them. </p>
 

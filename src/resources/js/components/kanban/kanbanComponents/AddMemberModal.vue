@@ -160,7 +160,7 @@ export default {
         filtered() {
             const regex = new RegExp(this.filter, "i");
             return this.kanbanData.members.filter((e) => {
-                return !this.filter || e.user.full_name.match(regex);
+                return !this.filter || e.employee.user.full_name.match(regex);
             });
         },
     },

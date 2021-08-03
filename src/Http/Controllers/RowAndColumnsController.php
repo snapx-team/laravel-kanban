@@ -84,9 +84,8 @@ class RowAndColumnsController extends Controller
         $newIndex = 0;
         try {
             foreach ($rows as $row) {
-                $newIndex++;
                 Row::find($row['id'])->update(['index' => $newIndex]);
-
+                $newIndex++;
             }
         } catch (\Exception $e) {
             return response([
@@ -103,8 +102,8 @@ class RowAndColumnsController extends Controller
         $newIndex = 0;
         try {
             foreach ($columns as $column) {
-                $newIndex++;
                 Column::find($column['id'])->update(['index' => $newIndex]);
+                $newIndex++;
             }
         } catch (\Exception $e) {
             return response([

@@ -85,7 +85,7 @@
                                                  placeholder="Choose or Create"
                                                  style="margin-top: 7px"
                                                  taggable
-                                                 v-model="templateData.badge">
+                                                 v-model="computedSelectedBadge">
                                             <template slot="option" slot-scope="option">
                                             <span :style="`color: hsl( ${option.hue} , 45%, 90%);`"
                                                   class="fa fa-circle mr-4"></span>
@@ -142,6 +142,7 @@
 import vSelect from "vue-select";
 import {ajaxCalls} from "../../../mixins/ajaxCallsMixin";
 import {helperFunctions} from "../../../mixins/helperFunctionsMixin";
+import _ from "lodash";
 
 export default {
     inject: ["eventHub"],
@@ -175,7 +176,7 @@ export default {
             templateData: {
                 id: null,
                 name: null,
-                badge: null,
+                badge: {},
                 checkedOptions: [],
                 description: null,
             },
@@ -241,6 +242,20 @@ export default {
                 computedBadges.hue = this.generateHslColorWithText(badge.name);
                 return computedBadges;
             })
+        },
+
+        computedSelectedBadge: {
+            get () {
+                if (_.isEmpty(this.templateData.badge)) {
+                    return null
+                } else {
+                    return this.templateData.badge
+                }
+            },
+            set (val) {
+                if( val === null) val = {};
+                this.templateData.badge = val;
+            }
         },
     }
 };

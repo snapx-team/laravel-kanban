@@ -1,6 +1,7 @@
 <template>
     <div class="border-gray-300 border-2">
-        <div class="flex justify-end p-5 bg-indigo-800 border-b">
+        <div class="flex justify-between p-2 bg-indigo-800 border-b">
+            <h1 class="text-white">Task Pane</h1>
             <div>
                 <button @click="closeTaskView()"
                         class="focus:outline-none flex flex-col items-center text-gray-400 hover:text-gray-500 transition duration-150 ease-in-out pl-8"
@@ -154,8 +155,7 @@
 
             <div class="flex-1 space-y-2">
                 <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline</span>
-                <date-picker :popup-style="{ position: 'fixed' }"
-                             format="YYYY-MM-DD HH:mm:ss"
+                <date-picker format="YYYY-MM-DD HH:mm:ss"
                              placeholder="YYYY-MM-DD HH:mm:ss"
                              type="datetime"
                              v-model="task.deadline">

@@ -87,9 +87,9 @@ export default {
             if (this.allCurrentIDs.length == 0) {
                 return true;
             }
-            for(let i = 0; i < this.task_card.assigned_to.length; i++) {
-                for(let j = 0; j < this.allCurrentIDs.length; j++) {
-                    if(this.task_card.assigned_to[i].employee.id == this.allCurrentIDs[j]) {
+            for (let i = 0; i < this.task_card.assigned_to.length; i++) {
+                for (let j = 0; j < this.allCurrentIDs.length; j++) {
+                    if (this.task_card.assigned_to[i].employee.id == this.allCurrentIDs[j]) {
                         return true;
                     }
                 }
@@ -97,7 +97,9 @@ export default {
             return false;
         },
         priorityHue() {
-            if (this.task_card.hours_to_deadline <= 0) {
+            if (this.task_card.hours_to_deadline === null) {
+                return 'border-color: hsl( 0 , 0%, 40%);'
+            } else if (this.task_card.hours_to_deadline <= 0) {
                 return 'border-color: hsl( 0 , 90%, 40%); background-color:hsl(0, 100%, 97%)'
             } else if (this.task_card.hours_to_deadline >= 200) {
                 return 'border-color: hsl( 100 , 90%, 40%)'

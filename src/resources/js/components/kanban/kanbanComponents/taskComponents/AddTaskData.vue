@@ -1,12 +1,10 @@
 <template>
     <div>
-
         <!-- Container -->
         <div class="flex">
             <div class="px-8 py-6 space-y-2 border-r">
                 <span
                     class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600 pb-2">Task Options</span>
-
 
                 <div v-for="(taskOption, taskOptionIndex) in taskOptions"
                      class=" grid divide-y divide-gray-400 pt-2">
@@ -29,7 +27,7 @@
                         <span
                             class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Badge</span>
                         <vSelect
-                            v-model="cloneCardData.badge"
+                            v-model="computedSelectedBadge"
                             :options="computedBadges"
                             label="name"
                             placeholder="Choose or Create"
@@ -241,6 +239,20 @@ export default {
                 computedBadges.hue = this.generateHslColorWithText(badge.name);
                 return computedBadges;
             })
+        },
+
+        computedSelectedBadge: {
+            get () {
+                if (_.isEmpty(this.cloneCardData.badge)) {
+                    return null
+                } else {
+                    return this.cloneCardData.badge
+                }
+            },
+            set (val) {
+                if( val === null) val = {};
+                this.cloneCardData.badge = val;
+            }
         },
     },
     methods: {

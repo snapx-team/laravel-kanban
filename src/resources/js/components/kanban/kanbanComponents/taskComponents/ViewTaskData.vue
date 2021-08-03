@@ -162,13 +162,14 @@
                 <p class="text-gray-700 font-semibold font-sans tracking-wide text-lg"
                    :class="{'animate-pulse': loadingRelatedTasks}"> Related Tasks: </p>
 
-                <p v-if="relatedTasks.length === 0 && !selectGroupIsVisible" class="tracking-wide text-sm">No Related Tasks</p>
+                <p v-if="relatedTasks.length === 0 && !selectGroupIsVisible" class="tracking-wide text-sm">No Related
+                    Tasks</p>
 
                 <button @click="selectGroupIsVisible = true"
-                    class="py-2 text-sm text-indigo-600 hover:text-indigo-800 transition duration-300 ease-in-out focus:outline-none"
-                    v-if="relatedTasks.length === 0 && !selectGroupIsVisible">
-                        <i class="fas fa-th-list mr-2"></i>
-                        Click To Add or Change Group
+                        class="py-2 text-sm text-indigo-600 hover:text-indigo-800 transition duration-300 ease-in-out focus:outline-none"
+                        v-if="relatedTasks.length === 0 && !selectGroupIsVisible">
+                    <i class="fas fa-th-list mr-2"></i>
+                    Click To Add or Change Group
                 </button>
 
                 <div v-if="selectGroupIsVisible">
@@ -176,20 +177,24 @@
                     <div class="flex flex-row">
                         <div class="flex-auto w-44">
                             <vSelect :options="tasks"
-                                    class="text-gray-400"
-                                    label="name"
-                                    placeholder="Select task"
-                                    style="margin-top: 7px"
-                                    v-model="associatedTask">
+                                     class="text-gray-400"
+                                     label="name"
+                                     placeholder="Select task"
+                                     style="margin-top: 7px"
+                                     v-model="associatedTask">
                                 <template slot="selected-option" slot-scope="option">
                                     <p>
-                                        <span class="font-bold">{{ option.board.name.substring(0, 3).toUpperCase() }}-{{ option.id }}: </span>
+                                        <span class="font-bold">{{
+                                                option.board.name.substring(0, 3).toUpperCase()
+                                            }}-{{ option.id }}: </span>
                                         <span class="italic">{{ option.name }}</span>
                                     </p>
                                 </template>
                                 <template slot="option" slot-scope="option">
                                     <p>
-                                        <span class="font-bold">{{ option.board.name.substring(0, 3).toUpperCase() }}-{{ option.id }}: </span>
+                                        <span class="font-bold">{{
+                                                option.board.name.substring(0, 3).toUpperCase()
+                                            }}-{{ option.id }}: </span>
                                         <span class="italic">{{ option.name }}</span>
                                     </p>
                                 </template>
@@ -200,8 +205,8 @@
                         </div>
                         <div class="flex-auto mt-2 pl-2">
                             <button @click="updateGroup()"
-                                class="px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
-                                type="button">
+                                    class="px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
+                                    type="button">
                                 <span>Save</span>
                             </button>
                         </div>
@@ -215,7 +220,7 @@
                         :task_card="task_card"
                         class="cursor-pointer"
                         v-on:click.native="updateTask(task_card)"></task-card>
-                </template >
+                </template>
 
 
             </div>
@@ -315,7 +320,8 @@ export default {
             this.asyncUpdateGroup(this.cardData.id, this.associatedTask.group).then((data) => {
                 this.triggerSuccessToast("Task Updated!");
                 this.getRelatedTasks();
-            });;
+            });
+            ;
         },
         setStatus() {
             this.asyncSetStatus(this.cloneCardData.id, this.selectedStatus.name).then(() => {
@@ -396,12 +402,11 @@ export default {
     computed: {
         priorityHue() {
             if (this.cardData.hours_to_deadline === null) {
-                return 0
-            }
-            if (this.cardData.hours_to_deadline <= 0) {
-                return 0
+                return 0;
+            } else if (this.cardData.hours_to_deadline <= 0) {
+                return 0;
             } else if (this.cardData.hours_to_deadline >= 200) {
-                return 100
+                return 100;
             } else {
                 return this.cardData.hours_to_deadline / 2;
             }

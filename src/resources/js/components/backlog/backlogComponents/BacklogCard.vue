@@ -1,9 +1,7 @@
 <template>
-    <div
-        class="rounded border-l-4"
-        v-bind:class="`border-indigo-500`" :style=priorityHue
-        @click="onClick(task)"
-    >
+    <div class="rounded border-l-4"
+         v-bind:class="`border-indigo-500`" :style=priorityHue
+         @click="onClick(task)">
         <div class="border-gray-300 border px-3 py-3">
             <div class="flex flex-no-wrap">
                 <div class="min-w-0 flex">
@@ -13,7 +11,6 @@
                     <p class="truncate flex-shrink text-gray-700 font-semibold font-sans tracking-wide text-sm mr-3">
                         {{ task.name }}
                     </p>
-
                 </div>
 
                 <div class="flex flex-1 justify-end">
@@ -27,11 +24,8 @@
                                     class="border border-white"
                                     :name="task.reporter.full_name"
                                     :size="6"
-                                    :tooltip="true"
-                                ></avatar>
-                                <span class="text-sm text-gray-600 px-1">
-                  • {{ moment(task.deadline).format("MMM Do") }}
-                </span>
+                                    :tooltip="true"></avatar>
+                                <span class="text-sm text-gray-600 px-1">• {{moment(task.created_at).format("MMM Do") }}</span>
                             </div>
                         </div>
 
@@ -106,7 +100,9 @@ export default {
     },
     computed: {
         priorityHue() {
-            if (this.task.hours_to_deadline <= 0) {
+            if (this.task.hours_to_deadline === null) {
+                return 'border-color: hsl( 0 , 0%, 40%);'
+            } else if (this.task.hours_to_deadline <= 0) {
                 return 'border-color: hsl( 0 , 90%, 40%); background-color:hsl(0, 100%, 97%)'
             } else if (this.task.hours_to_deadline >= 200) {
                 return 'border-color: hsl( 100 , 90%, 40%)'

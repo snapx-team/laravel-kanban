@@ -119,7 +119,6 @@
                                         type="text"
                                         v-model="task.name"/>
                                 </label>
-
                             </div>
 
                             <div>
@@ -129,7 +128,6 @@
                                     <quill-editor :options="config"
                                                   output="html"
                                                   v-model="task.description"></quill-editor>
-
                                 </div>
                             </div>
 
@@ -475,10 +473,10 @@ export default {
                 }
             },
             set (val) {
+                if( val === null) val = {};
                 this.task.badge = val;
             }
         },
-
 
         checklistData() {
             let parser = new DOMParser();

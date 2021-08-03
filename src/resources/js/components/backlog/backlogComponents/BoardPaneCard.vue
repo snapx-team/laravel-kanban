@@ -5,13 +5,14 @@
         :class="clicked ? 'unclick-theme' : 'click-theme'">
         <div class="flex">
             <div
+                :class="{ 'transform rotate-90 ' : showMore }"
+                class="transition duration-150 ease-in-out"
                 id="container"
                 v-on:click.stop
-                @click="expandPanel()"
-                class="w-6 pr-3 ">
-                <i id="icon" :class="[showMore ? 'fa-chevron-down' : 'fa-chevron-right', 'fa']"></i>
+                @click="expandPanel()">
+                <i id="icon " class="fa fa-chevron-right cursor-pointer"></i>
             </div>
-            {{ board.name }}
+            <p class="pl-3">{{ board.name }}</p>
         </div>
 
         <div class="pt-1">

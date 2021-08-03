@@ -104,7 +104,7 @@
                                              placeholder="Choose or Create"
                                              style="margin-top: 7px"
                                              taggable
-                                             v-model="task.badge">
+                                             v-model="computedSelectedBadge">
                                         <template slot="option" slot-scope="option">
                                             <span :style="`color: hsl(${option.hue}, 50%, 45%);`"
                                                   class="fa fa-circle mr-4"></span>
@@ -135,7 +135,6 @@
                                     <quill-editor :options="config"
                                                   output="html"
                                                   v-model="task.description"></quill-editor>
-
                                 </div>
                             </div>
 
@@ -223,7 +222,6 @@
                                         </vSelect>
                                     </div>
                                 </div>
-
                             </div>
 
                             <div class="flex-1" v-if="checkedOptions.includes('Group')">
@@ -282,6 +280,7 @@ import Avatar from "../../global/Avatar";
 
 import {ajaxCalls} from "../../../mixins/ajaxCallsMixin";
 import {helperFunctions} from "../../../mixins/helperFunctionsMixin";
+import _ from "lodash";
 
 export default {
     inject: ["eventHub"],
@@ -363,14 +362,13 @@ export default {
             this.task.boardId = taskData.boardId;
 
             this.modalOpen = true;
+
+            this.getBadges();
+            this.getErpEmployees();
+            this.getJobSites();
+            this.getTasks();
+            this.getTemplates();
         });
-
-        this.getBadges();
-        this.getErpEmployees();
-        this.getJobSites();
-        this.getTasks();
-        this.getTemplates();
-
     },
 
     beforeDestroy() {
@@ -495,6 +493,20 @@ export default {
                 computedBadges.hue = this.generateHslColorWithText(badge.name);
                 return computedBadges;
             })
+        },
+
+        computedSelectedBadge: {
+            get () {
+                if (_.isEmpty(this.task.badge)) {
+                    return null
+                } else {
+                    return this.task.badge
+                }
+            },
+            set (val) {
+                if( val === null) val = {};
+                this.task.badge = val;
+            }
         },
     }
 };
