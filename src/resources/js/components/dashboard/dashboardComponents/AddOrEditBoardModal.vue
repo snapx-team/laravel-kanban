@@ -135,9 +135,33 @@
             },
 
             deleteBoard(event) {
-                event.target.disabled = true;
-                this.eventHub.$emit("delete-board", this.kanbanData.id);
-                this.modalOpen = false;
+                this.$swal({
+                    icon: 'info',
+                    title: 'Delete ' + this.kanbanData.name + '?',
+                    text: 'This will archive all tasks in this board. To continue, type the name of the board below.',
+                    input: 'text',
+                    showCancelButton: true,
+                    confirmButtonText: `Continue`,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        if (result.value === this.kanbanData.name) {
+                            event.target.disabled = true;
+                            this.eventHub.$emit("delete-board", this.kanbanData.id);
+                            this.$swal({
+                                title: 'Success'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    this.modalOpen = false;
+                                }
+                            })
+                        } else {
+                            this.$swal({
+                                title: 'Incorrect value',
+                                text: 'Board not deleted.',
+                            })
+                        }
+                    }
+                });
             },
 
         },
