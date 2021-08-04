@@ -39,6 +39,7 @@
         "vue-quill": "^1.5.1",
         "vue-quill-editor": "^3.0.6",
         "vue-select": "^3.11.2",
+        "vue-sweetalert2": "^5.0.2",
         "vue-time-ranges-picker-edit": "^0.9.91",
         "vue-toastification": "^1.7.11",
         "vue2-datepicker": "^3.9.1",

@@ -8,6 +8,8 @@ import "vue-toastification/dist/index.css";
 import VueQuill from "vue-quill";
 import DatePicker from 'vue2-datepicker';
 import VueMoment from 'vue-moment';
+import VueSweetalert2 from 'vue-sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 import VueQuillEditor from 'vue-quill-editor'
 import 'quill/dist/quill.core.css' // import styles
@@ -24,7 +26,7 @@ Vue.use(Toast, {
 
 Vue.use(VueQuill);
 Vue.use(VueQuillEditor, /* { default global options } */)
-
+Vue.use(VueSweetalert2);
 Vue.use(DatePicker);
 Vue.use(VueMoment);
 

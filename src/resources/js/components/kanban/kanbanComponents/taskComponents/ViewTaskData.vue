@@ -83,10 +83,7 @@
                             </span>
                         </div>
                         <div class="text-right">
-                            <span
-                                class="text-xs font-semibold inline-block text-indigo-600">{{
-                                    checklistPercentage
-                                }}%</span>
+                            <span class="text-xs font-semibold inline-block text-indigo-600">{{ checklistPercentage }}%</span>
                         </div>
                     </div>
                     <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-indigo-200 ">
@@ -128,7 +125,6 @@
                 </div>
 
                 <div class="flex my-4 border-t border-b items-center">
-
 
                     <div class="py-4 space-y-4">
 
@@ -337,11 +333,27 @@ export default {
             });
         },
         setStatus() {
-            this.asyncSetStatus(this.cloneCardData.id, this.selectedStatus.name).then(() => {
-                this.cardData.status = this.selectedStatus.name;
-            }).catch(res => {
-                console.log(res)
-            });
+
+            this.$swal({
+                icon: 'info',
+                title: 'Set status to ' + this.selectedStatus.name,
+                text: 'This will archive the task. You can find it in the backlog.',
+                showCancelButton: true,
+                confirmButtonText: `Continue`,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.asyncSetStatus(this.cloneCardData.id, this.selectedStatus.name).then(() => {
+                        this.eventHub.$emit("fetch-and-set-column-tasks", this.cloneCardData);
+                        this.eventHub.$emit("close-task-modal");
+                        this.triggerSuccessToast('Status Updated')
+                    }).catch(res => {
+                        console.log(res)
+                    });
+                }
+                else{
+                    this.selectedStatus = this.cardData.status;
+                }
+            })
         },
         handleChecklist() {
 
@@ -403,8 +415,6 @@ export default {
                                 'description': this.cardData.description,
                                 'id': this.cardData.id
                             });
-
-
                         }, true);
                     }
                 })
