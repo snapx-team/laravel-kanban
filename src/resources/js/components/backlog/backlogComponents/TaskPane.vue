@@ -205,23 +205,34 @@
 
             <div class="space-y-5">
                 <p class="text-gray-700 font-semibold font-sans tracking-wide text-lg"> Related Tasks: </p>
-                <p v-if="relatedTasks.length === 0 && !selectGroupIsVisible" class="tracking-wide text-sm">No Related
-                    Tasks</p>
-                <div class="w-full text-center" v-if="relatedTasks.length !== 0 && !selectGroupIsVisible">
-                    <p v-for="task in relatedTasks" :key="task.id">
-                        <span
-                            class="font-bold">{{ task.board.name.substring(0, 3).toUpperCase() }}-{{ task.id }}: </span>
-                        <span class="italic">{{ task.name }}</span>
-                    </p>
+                <div class="flex flex-row justify-between">
+                    <div class="flex">
+                        <p v-if="relatedTasks.length === 0" class="tracking-wide text-sm">No Related
+                            Tasks</p>
+                        <div v-if="relatedTasks.length > 0">
+                            <p v-for="task in relatedTasks" :key="task.id">
+                                <span
+                                    class="font-bold">{{ task.board.name.substring(0, 3).toUpperCase() }}-{{ task.id }}: </span>
+                                <span class="italic">{{ task.name }}</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex">
+                        <button @click="removeGroup()"
+                        v-if="relatedTasks.length > 0"
+                        class="px-2 py-2 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
+                        type="button">
+                            <span>Remove Group</span>
+                        </button>
+                    </div>
                 </div>
                 <button @click="selectGroupIsVisible = true"
-                        v-if="relatedTasks.length === 0 && !selectGroupIsVisible"
+                        v-if="!selectGroupIsVisible"
                         class="text-sm text-indigo-600 hover:text-indigo-800 transition duration-300 ease-in-out focus:outline-none">
                     <i class="fas fa-th-list mr-2"></i>
                     Click To Add or Change Group
                 </button>
             </div>
-
 
             <div v-if="selectGroupIsVisible" class="flex-1 space-y-2">
                 <span
@@ -329,22 +340,17 @@ export default {
         },
     },
     created() {
-        this.eventHub.$on("open-task-view", (currentTask) => {
-            this.loadRowsAndColumns(currentTask.board_id);
-            this.selectGroupIsVisible = false;
-        });
-        if (this.task.deadline) {
-            this.task.deadline = new Date(this.task.deadline);
-            this.checkedOptions.push('Deadline');
-        }
-        if (this.task.erp_job_site_id)
-            this.checkedOptions.push('ERP Job Site');
-        if (this.task.erp_employee_id)
-            this.checkedOptions.push('ERP Employee');
         this.getErpEmployees();
         this.getJobSites();
         this.getTasks();
-        this.getRelatedTasks();
+        this.getRelatedTasks(this.task.id);
+        this.eventHub.$on("open-task-view", (currentTask) => {
+            this.loadRowsAndColumns(currentTask.board_id);
+            this.getRelatedTasks(currentTask.id);
+        });
+        if (this.task.deadline) {
+            this.task.deadline = new Date(this.task.deadline);
+        }
     },
     mounted() {
         this.loadRowsAndColumns(this.task.board_id);
@@ -381,16 +387,14 @@ export default {
             this.getRows(id);
             this.getMembers(id);
         },
-        getRelatedTasks() {
-            this.asyncGetRelatedTasksLessInfo(this.task.id).then((data) => {
+        getRelatedTasks(id) {
+            this.asyncGetRelatedTasksLessInfo(id).then((data) => {
                 this.relatedTasks = data.data;
-                console.log(data.data);
             }).catch(res => {
                 console.log(res)
             });
         },
         updateBacklogTask() {
-            console.log(this.task);
             let backlogTaskData = {
                 id: this.task.id,
                 name: this.task.name,
@@ -405,12 +409,25 @@ export default {
                 group: this.task.associatedTask ? this.task.associatedTask.group : this.task.group,
             }
             const cloneBacklogTasksData = {...backlogTaskData};
-            this.asyncUpdateTask(cloneBacklogTasksData).then((data) => {
+            this.asyncUpdateTask(cloneBacklogTasksData).then(() => {
+                if(this.task.associatedTask) {
+                    this.getRelatedTasks(this.task.id);
+                    this.task.associatedTask = null;
+                }
                 this.triggerSuccessToast("Task Updated!");
+            });
+            
+        },
+        removeGroup() {
+            this.asyncRemoveGroup(this.task.id).then(() => {
+                this.getRelatedTasks(this.task.id);
+                this.triggerSuccessToast("Group Removed!");
+            }).catch(res => {
+                console.log(res)
             });
         },
         assignTask() {
-            this.asyncAssignTaskToBoard(this.task.id, this.task.row.id, this.task.column.id).then((data) => {
+            this.asyncAssignTaskToBoard(this.task.id, this.task.row.id, this.task.column.id).then(() => {
                 this.triggerSuccessToast("Task Assigned!");
             }).catch(res => {
                 console.log(res)

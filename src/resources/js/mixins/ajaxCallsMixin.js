@@ -194,6 +194,12 @@ export const ajaxCalls = {
             });
         },
 
+        asyncRemoveGroup(task_id) {
+            return axios.post('remove-group/' + task_id).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
+        },
+
         // Employees
 
         asyncGetAllUsers() {
