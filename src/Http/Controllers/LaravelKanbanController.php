@@ -19,25 +19,25 @@ class LaravelKanbanController extends Controller
 
     public function getkanbanData($id)
     {
-        return Board::with('rows.columns.taskCards.badge')
-            ->with('rows.columns.taskCards.board')
-            ->with(['rows.columns.taskCards.assignedTo.employee.user' => function ($q) {
-                $q->select(['id', 'first_name', 'last_name']);
-            }])
-            ->with(['rows.columns.taskCards.erpEmployee' => function ($q) {
-                $q->select(['id', 'first_name', 'last_name']);
-            }])
-            ->with(['rows.columns.taskCards.reporter' => function ($q) {
-                $q->select(['id', 'first_name', 'last_name']);
-            }])
-            ->with(['members.employee.user' => function ($q) {
-                $q->select(['id', 'first_name', 'last_name']);
-            }])
-            ->with(['rows.columns.taskCards.erpJobSite' => function ($q) {
-                $q->select(['id', 'name']);
-            }])
-            ->with(['rows.columns.taskCards.row', 'rows.columns.taskCards.column',])
-            ->find($id);
+        return Board::with(['rows.columns.taskCards' => function ($q) {
+            $q->where('status', 'active')->with('badge')
+                ->with('board')
+                ->with(['assignedTo.employee.user' => function ($q) {
+                    $q->select(['id', 'first_name', 'last_name']);
+                }])
+                ->with(['erpEmployee' => function ($q) {
+                    $q->select(['id', 'first_name', 'last_name']);
+                }])
+                ->with(['reporter' => function ($q) {
+                    $q->select(['id', 'first_name', 'last_name']);
+                }])
+                ->with(['erpJobSite' => function ($q) {
+                    $q->select(['id', 'name']);
+                }])
+                ->with(['row', 'column',]);
+        }])->with(['members.employee.user' => function ($q) {
+            $q->select(['id', 'first_name', 'last_name']);
+        }])->find($id);
     }
 
     public function getDashboardData()
@@ -56,7 +56,7 @@ class LaravelKanbanController extends Controller
     public function getBacklogData($start, $end)
     {
         $backlogTasks = Task::
-            with('badge', 'row', 'column', 'board', 'reporter', 'assignedTo.employee.user', 'erpJobSite', 'erpEmployee')
+        with('badge', 'row', 'column', 'board', 'reporter', 'assignedTo.employee.user', 'erpJobSite', 'erpEmployee')
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
             ->orderBy('deadline')

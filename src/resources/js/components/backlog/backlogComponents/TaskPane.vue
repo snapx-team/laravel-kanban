@@ -212,16 +212,16 @@
                         <div v-if="relatedTasks.length > 0">
                             <p v-for="task in relatedTasks" :key="task.id">
                                 <span
-                                    class="font-bold">{{ task.board.name.substring(0, 3).toUpperCase() }}-{{ task.id }}: </span>
+                                    class="font-bold">{{ task.board.name.substring(0, 3).toUpperCase() }}-{{task.id }}: </span>
                                 <span class="italic">{{ task.name }}</span>
                             </p>
                         </div>
                     </div>
                     <div class="flex">
                         <button @click="removeGroup()"
-                        v-if="relatedTasks.length > 0"
-                        class="px-2 py-2 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
-                        type="button">
+                                v-if="relatedTasks.length > 0"
+                                class="px-2 py-2 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
+                                type="button">
                             <span>Remove Group</span>
                         </button>
                     </div>
@@ -245,13 +245,13 @@
                          v-model="task.associatedTask">
                     <template slot="selected-option" slot-scope="option">
                         <p>
-                            <span class="font-bold">{{ option.board.name.substring(0, 3).toUpperCase() }}-{{ option.id }}: </span>
+                            <span class="font-bold">{{ option.board.name.substring(0, 3).toUpperCase() }}-{{option.id }}: </span>
                             <span class="italic">{{ option.name }}</span>
                         </p>
                     </template>
                     <template slot="option" slot-scope="option">
                         <p>
-                            <span class="font-bold">{{ option.board.name.substring(0, 3).toUpperCase() }}-{{ option.id }}: </span>
+                            <span class="font-bold">{{ option.board.name.substring(0, 3).toUpperCase() }}-{{option.id }}: </span>
                             <span class="italic">{{ option.name }}</span>
                         </p>
                     </template>
@@ -287,6 +287,7 @@ export default {
     mixins: [helperFunctions, ajaxCalls],
     data() {
         return {
+            task: {},
             rows: [],
             columns: [],
             erpEmployees: [],
@@ -315,11 +316,6 @@ export default {
         }
     },
     props: {
-        task: {
-            name: String,
-            badge: {},
-            description: String,
-        },
         badges: {
             type: Array,
             default: null,
@@ -340,22 +336,29 @@ export default {
         },
     },
     created() {
+        this.eventHub.$on("populate-task-view", (task) => {
+            this.populateTaskView(task);
+        });
+    },
+
+    beforeDestroy() {
+        this.eventHub.$off('open-task-view');
+    },
+
+    mounted() {
         this.getErpEmployees();
         this.getJobSites();
         this.getTasks();
-        this.getRelatedTasks(this.task.id);
-        this.eventHub.$on("open-task-view", (currentTask) => {
-            this.loadRowsAndColumns(currentTask.board_id);
-            this.getRelatedTasks(currentTask.id);
-        });
-        if (this.task.deadline) {
-            this.task.deadline = new Date(this.task.deadline);
-        }
-    },
-    mounted() {
-        this.loadRowsAndColumns(this.task.board_id);
     },
     methods: {
+        populateTaskView(task) {
+            this.task = task;
+            if (task.deadline) {
+                this.task.deadline = new Date(task.deadline);
+            }
+            this.loadRowsAndColumns(task.board_id);
+            this.getRelatedTasks(task.id);
+        },
         closeTaskView() {
             this.eventHub.$emit("close-task-view");
         },
@@ -381,8 +384,6 @@ export default {
             });
         },
         loadRowsAndColumns(id) {
-            this.task.row = {};
-            this.task.column = {};
             this.columns = [];
             this.getRows(id);
             this.getMembers(id);
@@ -410,13 +411,13 @@ export default {
             }
             const cloneBacklogTasksData = {...backlogTaskData};
             this.asyncUpdateTask(cloneBacklogTasksData).then(() => {
-                if(this.task.associatedTask) {
+                if (this.task.associatedTask) {
                     this.getRelatedTasks(this.task.id);
                     this.task.associatedTask = null;
                 }
                 this.triggerSuccessToast("Task Updated!");
             });
-            
+
         },
         removeGroup() {
             this.asyncRemoveGroup(this.task.id).then(() => {

@@ -164,16 +164,16 @@
             <div>
                 <div>
                     <button
-                        v-if="!hideBoardsPane"
-                        @click="hideBoardsPane = !hideBoardsPane"
+                        v-if="!showBoardsPane"
+                        @click="showBoardsPane = !showBoardsPane"
                         class="py-4 font-semibold text-indigo-600 hover:text-indigo-800 transition duration-300 ease-in-out focus:outline-none">
-                        {{ hideBoardsPane ? "Hide" : "Show" }} Boards
+                        {{ showBoardsPane ? "Hide" : "Show" }} Boards
                         <i class="fa fa-th-large ml-2"></i>
                     </button>
                 </div>
                 <div>
                     <splitpanes class="default-theme">
-                        <pane :size="20" :max-size="25" v-if="hideBoardsPane">
+                        <pane :size="20" :max-size="25" v-if="showBoardsPane">
                             <board-pane :boards="backlogData.boards"></board-pane>
                         </pane>
                         <pane :size="50" class="flex-grow">
@@ -194,8 +194,8 @@
                                 </backlog-card>
                             </draggable>
                         </pane>
-                        <pane v-if="hideTaskPane">
-                            <task-pane :task="taskPaneInfo" :badges="backlogData.badges"
+                        <pane v-if="showTaskPane">
+                            <task-pane :badges="backlogData.badges"
                                        :boards="backlogData.allBoards"></task-pane>
                         </pane>
                     </splitpanes>
@@ -241,21 +241,14 @@ export default {
             start: this.getOneMonthAgo(),
             end: new Date(),
             currentTask: null,
-            hideBoardsPane: true,
-            hideTaskPane: false,
+            showBoardsPane: true,
+            showTaskPane: false,
             activeBool: true,
             canceledBool: false,
             completedBool: false,
             placedInBoard: false,
             notPlacedInBoard: true,
             allKanbanEmployees: [],
-            taskPaneInfo: {
-                name: "default",
-                reporter: {
-                    full_name: "john doe"
-                },
-                assigned_to: []
-            },
         };
     },
 
@@ -266,8 +259,8 @@ export default {
     },
 
     created() {
-        this.eventHub.$on("open-task-view", (currentTask) => {
-            this.setSideInfo(currentTask);
+        this.eventHub.$on("open-task-view", (task) => {
+            this.setSideInfo(task);
         });
         this.eventHub.$on("close-task-view", () => {
             this.closeTaskView();
@@ -279,6 +272,14 @@ export default {
             this.filterByBoard(board);
         });
     },
+
+    beforeDestroy() {
+        this.eventHub.$off('open-task-view');
+        this.eventHub.$off('close-task-view');
+        this.eventHub.$off('close-board-view');
+        this.eventHub.$off('filter-by-board');
+    },
+
     computed: {
         filtered() {
             const regex = new RegExp(this.filterText, "i");
@@ -293,6 +294,7 @@ export default {
             });
             return newArray;
         },
+
         filteredWithOptions() {
             if (this.backlogData != null) {
                 let regex = new RegExp("", "i");
@@ -355,7 +357,7 @@ export default {
             if (this.filterAssignedTo.length > 0) {
                 this.filterAssignedTo.every(function (value1) {
                     t.assigned_to.every(function (value2) {
-                        if (value1.id == value2.id) {
+                        if (value1.id === value2.id) {
                             isMatch = true;
                             return false;
                         }
@@ -371,7 +373,7 @@ export default {
             let isMatch = false;
             if (this.filterReporter.length > 0) {
                 this.filterReporter.every(function (value1) {
-                    if (value1.id == t.reporter_id) {
+                    if (value1.id === t.reporter_id) {
                         isMatch = true;
                         return false;
                     }
@@ -403,15 +405,17 @@ export default {
             }
             return false;
         },
-        setSideInfo(currentTask) {
-            this.hideTaskPane = true;
-            this.taskPaneInfo = currentTask;
+        setSideInfo(task) {
+            this.showTaskPane = true;
+            setTimeout(() => {
+                this.eventHub.$emit("populate-task-view", task);
+            }, 100);
         },
         closeTaskView() {
-            this.hideTaskPane = false;
+            this.showTaskPane = false;
         },
         closeBoardView() {
-            this.hideBoardsPane = false;
+            this.showBoardsPane = false;
         },
         filterByBoard(board) {
             if (this.filterBoard.includes(board)) {

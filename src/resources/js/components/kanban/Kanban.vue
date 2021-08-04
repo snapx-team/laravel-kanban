@@ -161,6 +161,10 @@ export default {
         this.eventHub.$on("delete-row", (rowData) => {
             this.deleteRow(rowData);
         });
+        this.eventHub.$on("fetch-and-set-column-tasks", (task)=> {
+            this.fetchAndSetColumnTasks(task);
+        });
+
     },
 
     beforeDestroy() {
@@ -171,6 +175,7 @@ export default {
         this.eventHub.$off('save-row-and-columns');
         this.eventHub.$off('update-task-card-data');
         this.eventHub.$off('delete-row');
+
     },
 
     methods: {
@@ -359,6 +364,15 @@ export default {
                 this.triggerSuccessToast('Row Deleted')
                 this.getKanban(this.kanban.id);
 
+            }).catch(res => {
+                console.log(res)
+            });
+        },
+
+        fetchAndSetColumnTasks(task){
+            this.asyncGetTaskCardsByColumn(task.column.id).then((data) => {
+                this.kanban.rows[task.row.index].columns[task.column.index].task_cards = data.data;
+                this.isDraggableDisabled = false
             }).catch(res => {
                 console.log(res)
             });

@@ -128,7 +128,7 @@ class TaskController extends Controller
         $taskCard = $request->all();
 
         try {
-            $maxIndex = Task::where('column_id', $taskCard['columnId'])->max('index');
+            $maxIndex = Task::where('column_id', $taskCard['columnId'])->where('status', 'active')->max('index');
 
             $badge = Badge::firstOrCreate([
                 'name' => count($request->input('badge')) > 0 ? $taskCard['badge']['name'] : '--',
@@ -223,7 +223,9 @@ class TaskController extends Controller
 
     public function getTaskCardsByColumn($id)
     {
-        return Task::where('column_id', $id)->with('badge', 'row', 'column', 'board')
+        return Task::where('column_id', $id)
+            ->where('status', 'active')
+            ->with('badge', 'row', 'column', 'board')
             ->with(['assignedTo.employee.user' => function ($q) {
                 $q->select(['id', 'first_name', 'last_name']);
             }])
@@ -283,7 +285,6 @@ class TaskController extends Controller
         return response(['success' => 'true'], 200);
     }
 
-
     public function updateDescription(Request $request)
     {
         $descriptionData = $request->all();
@@ -307,9 +308,20 @@ class TaskController extends Controller
     {
         try {
             $taskCard = Task::find($taskCardId);
-            $taskCard->update([
-                'status' => $status,
-            ]);
+            if($status === 'active'){
+                $taskCard->update([
+                    'status' => $status,
+                ]);
+            }
+            else{
+                $taskCard->update([
+                    'status' => $status,
+                    'row_id' => null,
+                    'column_id' => null,
+                    'index' => null
+                ]);
+            }
+
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
