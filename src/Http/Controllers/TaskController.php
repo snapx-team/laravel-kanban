@@ -9,8 +9,10 @@ use Xguard\LaravelKanban\Models\Badge;
 use Xguard\LaravelKanban\Models\Member;
 use Xguard\LaravelKanban\Models\Task;
 use Xguard\LaravelKanban\Models\Log;
+use Xguard\LaravelKanban\Models\Row;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Xguard\LaravelKanban\Models\Column;
 
 class TaskController extends Controller
 {
@@ -273,7 +275,15 @@ class TaskController extends Controller
     public function updateTaskCardRowAndColumnId($columnId, $rowId, $taskCardId)
     {
         try {
-            Task::find($taskCardId)->update(['column_id' => $columnId, 'row_id' => $rowId]);
+            $task = Task::with('row', 'column')->get()->find($taskCardId);
+            $prevRow = $task->row->name;
+            $prevColumn = $task->column->name;
+            $task->update(['column_id' => $columnId, 'row_id' => $rowId]);
+            $task = Task::with('row', 'column')->get()->find($taskCardId);
+            $row = $task->row->name;
+            $column = $task->column->name;
+            Log::createLog(Auth::user()->id, Log::TYPE_CARD_MOVED, 'Changed from row "' . $prevRow . '" and column "' . $prevColumn . '" to row "' . $row . '" and column "' . $column . '"',
+                null, $task->board_id, $task->id, $task->erp_employee_id, $task->erp_jobsite_id, null);
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',

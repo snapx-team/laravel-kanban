@@ -20,7 +20,7 @@ class Log extends Model
     const TYPE_CARD_CREATED = 10;
     const TYPE_CARD_CANCELED = 11;
     const TYPE_CARD_CLOSED = 12;
-    const TYPE_CARD_ASSIGNED = 13;
+    const TYPE_CARD_MOVED = 13;
 
     const TYPE_KANBAN_COLUMNS_CREATED_OR_UPDATED = 15;
 
