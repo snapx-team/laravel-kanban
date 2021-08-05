@@ -39,7 +39,7 @@
                     </span>
                         <input
                             class="w-72 px-7 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 pr-10 outline-none text-md leading-4"
-                            placeholder="Search by any Keyword"
+                            placeholder="Search by keyword"
                             type="text"
                             v-model="filterText"/>
                     </div>
@@ -286,8 +286,10 @@ export default {
             let newArray = [];
             this.filteredWithOptions.forEach(function (value) {
                 if (
+                    (value.board.name.substring(0, 3) + '-' + value.id).match(regex) ||
                     value.name.match(regex) ||
-                    value.badge.name.match(regex)
+                    value.badge.name.match(regex) ||
+                    value.board.name.match(regex)
                 ) {
                     newArray.push(value);
                 }
