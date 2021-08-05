@@ -333,7 +333,6 @@ export default {
             });
         },
         setStatus() {
-
             this.$swal({
                 icon: 'info',
                 title: 'Set status to ' + this.selectedStatus.name,
