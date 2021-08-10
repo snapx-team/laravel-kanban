@@ -7,9 +7,7 @@ use Illuminate\Http\Request;
 use Xguard\LaravelKanban\Http\Helper\CheckHasAccessToBoardWithTaskId;
 use Xguard\LaravelKanban\Models\Comment;
 use Illuminate\Support\Facades\Auth;
-use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Log;
-use Xguard\LaravelKanban\Models\Member;
 use Xguard\LaravelKanban\Models\Task;
 
 class CommentController extends Controller
@@ -37,12 +35,14 @@ class CommentController extends Controller
                         'comment' => $request->input('comment'),
                     ]);
                 } else {
-                    $comment = Comment::create([
+                    $comment = Comment::with('task')->create([
                         'task_id' => $request->input('taskId'),
                         'comment' => $request->input('comment'),
-                        'employee_id' => session('employee_id'),
+                        'employee_id' => $employee->id,
                     ]);
-                    Log::createLog($comment->employee_id, Log::TYPE_COMMENT_CREATED, 'Added new comment', null, null, $comment->task_id, null, null, null);
+    
+                    $task = Task::with('board')->get()->find($comment->task_id);
+                    Log::createLog(Auth::user()->id, Log::TYPE_COMMENT_CREATED, 'Added new comment ' . $comment->comment . ' on task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> on board <' . $task->board->name . '>', null, null, $comment->task_id, null, null, null);
                 }
             } catch (\Exception $e) {
                 return response([
@@ -67,7 +67,9 @@ class CommentController extends Controller
             $comment = Comment::find($id);
             $comment->delete();
 
-            Log::createLog($comment->employee_id, Log::TYPE_COMMENT_DELETED, 'Deleted comment', null, null, $comment->task_id, null, null, null);
+            $task = Task::with('board')->get()->find($comment->task_id);
+
+            Log::createLog(Auth::user()->id, Log::TYPE_COMMENT_DELETED, 'Deleted comment  ' . $comment->comment . ' on task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> on board <' . $task->board->name . '>', null, null, $comment->task_id, null, null, null);
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
