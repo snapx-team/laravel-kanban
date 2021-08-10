@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Xguard\LaravelKanban\Models\Member;
 use Xguard\LaravelKanban\Models\Log;
+use Illuminate\Support\Facades\Auth;
 
 class MemberController extends Controller
 {
@@ -36,7 +37,7 @@ class MemberController extends Controller
             $member = Member::with('employee.user', 'board')->get()->find($id);
             $member->delete();
 
-            Log::createLog(Auth::user()->id, Log::TYPE_KANBAN_MEMBER_DELETED, 'Deleted a member <' . $member->employee->user->full_name . '> to board <' . $member->board->name . '>', null, $member->board_id, null, null, null, null);
+            Log::createLog(Auth::user()->id, Log::TYPE_KANBAN_MEMBER_DELETED, 'Deleted member <' . $member->employee->user->full_name . '> from board <' . $member->board->name . '>', null, $member->board_id, null, null, null, null);
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',

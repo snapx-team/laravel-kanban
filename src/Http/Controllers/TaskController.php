@@ -9,10 +9,8 @@ use Xguard\LaravelKanban\Models\Badge;
 use Xguard\LaravelKanban\Models\Member;
 use Xguard\LaravelKanban\Models\Task;
 use Xguard\LaravelKanban\Models\Log;
-use Xguard\LaravelKanban\Models\Row;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use Xguard\LaravelKanban\Models\Column;
 
 class TaskController extends Controller
 {
@@ -168,7 +166,7 @@ class TaskController extends Controller
                 $task->assignedTo()->sync($employeeArray);
             }
 
-            Log::createLog(Auth::user()->id, Log::TYPE_CARD_CREATED, 'Created new task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> with board <' . $task->board->name . '>',
+            Log::createLog(Auth::user()->id, Log::TYPE_CARD_CREATED, 'Created new task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> on board <' . $task->board->name . '>',
                 $task->badge_id, $task->board_id, $task->id, $task->erp_employee_id, $task->erp_job_site_id, null);
         } catch (\Exception $e) {
             return response([
@@ -290,7 +288,8 @@ class TaskController extends Controller
             $task = Task::with('row', 'column')->get()->find($taskCardId);
             $row = $task->row->name;
             $column = $task->column->name;
-            Log::createLog(Auth::user()->id, Log::TYPE_CARD_MOVED, 'Changed from row "' . $prevRow . '" and column "' . $prevColumn . '" to row "' . $row . '" and column "' . $column . '"',
+            
+            Log::createLog(Auth::user()->id, Log::TYPE_CARD_MOVED, 'Changed from row <' . $prevRow . '> and column <' . $prevColumn . '> to row <' . $row . '> and column <' . $column . '>',
                 null, $task->board_id, $task->id, $task->erp_employee_id, $task->erp_jobsite_id, null);
         } catch (\Exception $e) {
             return response([

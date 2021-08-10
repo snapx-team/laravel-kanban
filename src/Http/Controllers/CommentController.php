@@ -27,18 +27,24 @@ class CommentController extends Controller
     {
         $taskId = $request->input('taskId');
         $hasBoardAccess = (new CheckHasAccessToBoardWithTaskId())->returnBool($taskId);
-
+        
         if ($hasBoardAccess) {
             try {
                 if ($request->filled('id')) {
+                    $prevComment = Comment::find($request->input('id'));
+
                     $comment = Comment::where('id', $request->input('id'))->update([
                         'comment' => $request->input('comment'),
                     ]);
+
+                    $task = Task::with('board')->get()->find($comment->task_id);
+                    Log::createLog(Auth::user()->id, Log::TYPE_COMMENT_EDITED, 'Edited comment from ' . $prevComment->comment . ' to ' .$comment->comment . ' on task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> on board <' . $task->board->name . '>', null, null, $comment->task_id, null, null, null);
+                
                 } else {
                     $comment = Comment::with('task')->create([
                         'task_id' => $request->input('taskId'),
                         'comment' => $request->input('comment'),
-                        'employee_id' => $employee->id,
+                        'employee_id' => session('employee_id'),
                     ]);
     
                     $task = Task::with('board')->get()->find($comment->task_id);

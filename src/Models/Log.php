@@ -35,6 +35,7 @@ class Log extends Model
 
     const TYPE_COMMENT_CREATED = 70;
     const TYPE_COMMENT_DELETED = 71;
+    const TYPE_COMMENT_EDITED = 72;
 
    public static function createLog(?int $userId, int $logId, string $description = '',
         ?int $badgeId, ?int $boardId, ?int $taskId, ?int $erpEmployeeId, ?int $erpJobSiteId, ?string $role)
