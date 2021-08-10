@@ -217,17 +217,18 @@
                             </p>
                         </div>
                     </div>
-                    <div class="flex">
+                    <div>
                         <button @click="removeGroup()"
-                                v-if="relatedTasks.length > 0"
+                                v-if="relatedTasks.length > 0 && $role === 'admin'"
                                 class="px-2 py-2 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
                                 type="button">
                             <span>Remove Group</span>
                         </button>
                     </div>
+
                 </div>
                 <button @click="selectGroupIsVisible = true"
-                        v-if="!selectGroupIsVisible"
+                        v-if="!selectGroupIsVisible && $role === 'admin'"
                         class="text-sm text-indigo-600 hover:text-indigo-800 transition duration-300 ease-in-out focus:outline-none">
                     <i class="fas fa-th-list mr-2"></i>
                     Click To Add or Change Group
@@ -415,22 +416,18 @@ export default {
                     this.getRelatedTasks(this.task.id);
                     this.task.associatedTask = null;
                 }
-                this.triggerSuccessToast("Task Updated!");
             });
 
         },
         removeGroup() {
             this.asyncRemoveGroup(this.task.id).then(() => {
                 this.getRelatedTasks(this.task.id);
-                this.triggerSuccessToast("Group Removed!");
             }).catch(res => {
                 console.log(res)
             });
         },
         assignTask() {
-            this.asyncAssignTaskToBoard(this.task.id, this.task.row.id, this.task.column.id).then(() => {
-                this.triggerSuccessToast("Task Assigned!");
-            }).catch(res => {
+            this.asyncAssignTaskToBoard(this.task.id, this.task.row.id, this.task.column.id).catch(res => {
                 console.log(res)
             });
         },

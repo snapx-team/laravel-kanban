@@ -34,7 +34,8 @@
             </div>
 
 
-            <div class="pb-4 w-60">
+            <div v-if="$role === 'admin'"
+                 class="pb-4 w-60">
                 <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">
                     Status
                 </span>
@@ -91,7 +92,6 @@
                              class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-indigo-500"></div>
                     </div>
                 </div>
-
 
                 <div class="flex items-center">
                     <div class="w-32 flex text-gray-700">
@@ -152,7 +152,6 @@
                             <p class="max-w-md text-xs">{{ cardData.deadline | moment("DD MMM, YYYY") }}</p>
                         </div>
                     </div>
-
                 </div>
 
                 <p class="text-gray-700 font-semibold font-sans tracking-wide text-lg"
@@ -163,7 +162,7 @@
 
                 <button @click="selectGroupIsVisible = true"
                         class="py-2 text-sm text-indigo-600 hover:text-indigo-800 transition duration-300 ease-in-out focus:outline-none"
-                        v-if="!selectGroupIsVisible">
+                        v-if="!selectGroupIsVisible && $role === 'admin'">
                     <i class="fas fa-th-list mr-2"></i>
                     Click To Add or Change Group
                 </button>
@@ -180,17 +179,13 @@
                                      v-model="associatedTask">
                                 <template slot="selected-option" slot-scope="option">
                                     <p>
-                                        <span class="font-bold">{{
-                                                option.board.name.substring(0, 3).toUpperCase()
-                                            }}-{{ option.id }}: </span>
+                                        <span class="font-bold">{{option.board.name.substring(0, 3).toUpperCase() }}-{{ option.id }}: </span>
                                         <span class="italic">{{ option.name }}</span>
                                     </p>
                                 </template>
                                 <template slot="option" slot-scope="option">
                                     <p>
-                                        <span class="font-bold">{{
-                                                option.board.name.substring(0, 3).toUpperCase()
-                                            }}-{{ option.id }}: </span>
+                                        <span class="font-bold">{{option.board.name.substring(0, 3).toUpperCase() }}-{{ option.id }}: </span>
                                         <span class="italic">{{ option.name }}</span>
                                     </p>
                                 </template>
@@ -218,19 +213,14 @@
                         v-on:click.native="updateTask(task_card)"></task-card>
                 </template>
                 <button @click="removeGroup()"
-                    v-if="relatedTasks.length > 0"
+                    v-if="relatedTasks.length > 0 && $role === 'admin'"
                     class="px-2 py-2 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
                     type="button">
                         <span>Remove Group</span>
                 </button>
-
-
             </div>
-
         </div>
-
     </div>
-
 </template>
 <script>
 import Avatar from "../../../global/Avatar.vue";
@@ -320,14 +310,12 @@ export default {
         },
         updateGroup() {
             this.asyncUpdateGroup(this.cardData.id, this.associatedTask.group).then(() => {
-                this.triggerSuccessToast("Task Updated!");
                 this.getRelatedTasks();
             });
         },
         removeGroup() {
             this.asyncRemoveGroup(this.cardData.id).then(() => {
                 this.getRelatedTasks();
-                this.triggerSuccessToast("Group Removed!");
             }).catch(res => {
                 console.log(res)
             });

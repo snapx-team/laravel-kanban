@@ -4,7 +4,9 @@ namespace Xguard\LaravelKanban\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Xguard\LaravelKanban\Http\Helper\CheckHasAccessToBoardWithTaskId;
 use Xguard\LaravelKanban\Models\Badge;
+use Xguard\LaravelKanban\Models\Member;
 use Xguard\LaravelKanban\Models\Task;
 use Xguard\LaravelKanban\Models\Log;
 use Illuminate\Support\Facades\Auth;
@@ -179,45 +181,55 @@ class TaskController extends Controller
     {
         $taskCard = $request->all();
 
-        try {
-            $badge = Badge::firstOrCreate([
-                'name' => count($request->input('badge')) > 0 ? $taskCard['badge']['name'] : '--'
-            ]);
+        $hasBoardAccess = (new CheckHasAccessToBoardWithTaskId())->returnBool($taskCard['id']);
 
-            if ($request->input('assigned_to') !== null) {
-                $employeeArray = [];
-                foreach ($taskCard['assigned_to'] as $employee) {
-                    array_push($employeeArray, $employee['employee']['id']);
+        if ($hasBoardAccess) {
+            try {
+                $badge = Badge::firstOrCreate([
+                    'name' => count($request->input('badge')) > 0 ? $taskCard['badge']['name'] : '--'
+                ]);
+
+                if ($request->input('assigned_to') !== null) {
+                    $employeeArray = [];
+                    foreach ($taskCard['assigned_to'] as $employee) {
+                        array_push($employeeArray, $employee['employee']['id']);
+                    }
+
+                    $task = Task::find($taskCard['id']);
+                    $task->assignedTo()->sync($employeeArray);
                 }
 
-                $task = Task::find($taskCard['id']);
-                $task->assignedTo()->sync($employeeArray);
-            }
+                if ($taskCard['group'] !== null) {
+                    $group = $taskCard['group'];
+                } else {
+                    $group = $task->group;
+                }
 
-            if ($taskCard['group'] !== null) {
-                $group = $taskCard['group'];
-            } else {
-                $group = $task->group;
+                Task::where('id', $taskCard['id'])
+                    ->update([
+                'name' => $taskCard['name'],
+                'description' => $taskCard['description'],
+                'deadline' => $request->input('deadline')  !== null  ? date('y-m-d h:m', strtotime($taskCard['deadline'])) : null,
+                'erp_employee_id' => $request->input('erp_employee') !== null ? $taskCard['erp_employee']['id'] : null,
+                'erp_job_site_id' => $request->input('erp_job_site') !== null ? $taskCard['erp_job_site']['id'] : null,
+                'badge_id' => $badge->id,
+                'column_id' => $taskCard['column_id'] ?? null,
+                'row_id' => $taskCard['row_id'] ?? null,
+                'group' => $group
+                    ]);
+            } catch (\Exception $e) {
+                return response([
+                    'success' => 'false',
+                    'message' => $e->getMessage(),
+                ], 400);
             }
-
-            Task::where('id', $taskCard['id'])
-                ->update([
-                    'name' => $taskCard['name'],
-                    'description' => $taskCard['description'],
-                    'deadline' => $request->input('deadline')  !== null  ? date('y-m-d h:m', strtotime($taskCard['deadline'])) : null,
-                    'erp_employee_id' => $request->input('erp_employee') !== null ? $taskCard['erp_employee']['id'] : null,
-                    'erp_job_site_id' => $request->input('erp_job_site') !== null ? $taskCard['erp_job_site']['id'] : null,
-                    'badge_id' => $badge->id,
-                    'column_id' => $taskCard['column_id'] ?? null,
-                    'row_id' => $taskCard['row_id'] ?? null,
-                    'group' => $group
-                ]);
-        } catch (\Exception $e) {
+        } else {
             return response([
                 'success' => 'false',
-                'message' => $e->getMessage(),
+                'message' => 'You don\'t have access to this board',
             ], 400);
         }
+
         return response(['success' => 'true'], 200);
     }
 
@@ -289,18 +301,28 @@ class TaskController extends Controller
     {
         $descriptionData = $request->all();
 
-        try {
-            $taskCard = Task::find($descriptionData['id']);
-            $taskCard->update([
-                'description' => $descriptionData['description'],
-            ]);
-        } catch (\Exception $e) {
+        $hasBoardAccess = (new CheckHasAccessToBoardWithTaskId())->returnBool($descriptionData['id']);
+
+        if ($hasBoardAccess) {
+            try {
+                $taskCard = Task::find($descriptionData['id']);
+                $taskCard->update([
+                    'description' => $descriptionData['description'],
+                ]);
+            } catch (\Exception $e) {
+                return response([
+                    'success' => 'false',
+                    'message' => $e->getMessage(),
+                    'data' => $descriptionData,
+                ], 400);
+            }
+        } else {
             return response([
                 'success' => 'false',
-                'message' => $e->getMessage(),
-                'data' => $descriptionData,
+                'message' => 'You don\'t have access to this board',
             ], 400);
         }
+
         return response(['success' => 'true'], 200);
     }
 
@@ -364,7 +386,8 @@ class TaskController extends Controller
         return response(['success' => 'true'], 200);
     }
 
-    public function removeFromGroup($id) {
+    public function removeFromGroup($id)
+    {
         $group = 'g-' . (Task::max('id') + 2);
         try {
             $taskCard = Task::find($id);
@@ -378,5 +401,22 @@ class TaskController extends Controller
             ], 400);
         }
         return response(['success' => 'true'], 200);
+    }
+
+    public function hasAccessToBoard($taskId)
+    {
+        $task = Task::find($taskId);
+        $members = Member::where('board_id', $task->board_id)->get();
+
+        if (session('role') === 'admin') {
+            $hasBoardAccess = true;
+        } else {
+            foreach ($members as $member) {
+                if ($member->employee->id === session('employee_id')) {
+                    $hasBoardAccess = true;
+                    break;
+                }
+            }
+        }
     }
 }

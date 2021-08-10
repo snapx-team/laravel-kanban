@@ -60,7 +60,7 @@ export const ajaxCalls = {
 
         asyncCreateBoard(kanbanData) {
             return axios.post('create-board', kanbanData).then(() => {
-                this.triggerSuccessToast("Board created!");
+                this.triggerSuccessToast('Board created!');
             }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
@@ -68,7 +68,7 @@ export const ajaxCalls = {
 
         asyncDeleteBoard(boardId) {
             return axios.post('delete-board/' + boardId).then(() => {
-                this.triggerSuccessToast("Board Deleted!");
+                this.triggerSuccessToast('Board Deleted!');
             }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
@@ -92,7 +92,9 @@ export const ajaxCalls = {
         },
 
         asyncDeleteRow(rowId) {
-            return axios.post('delete-row/' + rowId).catch((error) => {
+            return axios.post('delete-row/' + rowId).then(() => {
+                this.triggerSuccessToast('Row Deleted!');
+            }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
@@ -114,14 +116,16 @@ export const ajaxCalls = {
         },
 
         asyncUpdateTask(taskCardData) {
-            return axios.post('update-task', taskCardData).catch((error) => {
+            return axios.post('update-task', taskCardData).then(() => {
+                this.triggerSuccessToast('Task Updated');
+            }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
 
         asyncCreateTask(taskCardData) {
             return axios.post('create-task', taskCardData).then(() => {
-                this.triggerSuccessToast("Task created!");
+                this.triggerSuccessToast('Task created!');
             }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
@@ -129,7 +133,7 @@ export const ajaxCalls = {
 
         asyncCreateBacklogTasks(backlogTasksData) {
             return axios.post('create-backlog-tasks', backlogTasksData).then(() => {
-                this.triggerSuccessToast("Backlog task created!");
+                this.triggerSuccessToast('Backlog task created!');
             }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
@@ -146,20 +150,27 @@ export const ajaxCalls = {
             });
         },
 
-        asyncUpdateTaskCardIndexes(taskCards) {
-            return axios.post('update-task-card-indexes', taskCards).catch((error) => {
+        asyncUpdateTaskCardIndexes(taskCards, type) {
+            return axios.post('update-task-card-indexes', taskCards).then(() => {
+                if (type === 'moved' || type === 'added')
+                    this.triggerSuccessToast('task moved');
+            }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
 
         asyncUpdateColumnIndexes(columns) {
-            return axios.post('update-column-indexes', columns).catch((error) => {
+            return axios.post('update-column-indexes', columns).then(() => {
+                this.triggerSuccessToast('Column position updated');
+            }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
 
         asyncUpdateRowIndexes(rows) {
-            return axios.post('update-row-indexes', rows).catch((error) => {
+            return axios.post('update-row-indexes', rows).then(() => {
+                this.triggerSuccessToast('Row position updated');
+            }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
@@ -183,19 +194,25 @@ export const ajaxCalls = {
         },
 
         asyncAssignTaskToBoard(task_id, row_id, column_id) {
-            return axios.post('assign-task-to-board/' + task_id + '/' + row_id + '/' + column_id).catch((error) => {
+            return axios.post('assign-task-to-board/' + task_id + '/' + row_id + '/' + column_id).then(() => {
+                this.triggerSuccessToast('Task Assigned!');
+            }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
 
         asyncUpdateGroup(task_id, group) {
-            return axios.post('update-group/' + task_id + '/' + group).catch((error) => {
+            return axios.post('update-group/' + task_id + '/' + group).then(() => {
+                this.triggerSuccessToast('Group Updated!');
+            }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
 
         asyncRemoveGroup(task_id) {
-            return axios.post('remove-group/' + task_id).catch((error) => {
+            return axios.post('remove-group/' + task_id).then(() => {
+                this.triggerSuccessToast('Group Removed!');
+            }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
@@ -219,7 +236,7 @@ export const ajaxCalls = {
 
         asyncCreateKanbanEmployee(employeeData) {
             return axios.post('create-kanban-employees', employeeData).then(() => {
-                this.triggerSuccessToast("Employee Added!");
+                this.triggerSuccessToast('Employee Added!');
             }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
@@ -227,7 +244,7 @@ export const ajaxCalls = {
 
         asyncDeleteKanbanEmployee(employeeId) {
             return axios.post('delete-kanban-employee/' + employeeId).then(() => {
-                this.triggerSuccessToast("Employee Removed");
+                this.triggerSuccessToast('Employee Removed');
             }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
@@ -241,7 +258,7 @@ export const ajaxCalls = {
 
         asyncCreateTemplate(templateData) {
             return axios.post('create-template', templateData).then(() => {
-                this.triggerSuccessToast("Template Created!");
+                this.triggerSuccessToast('Template Created!');
             }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
@@ -249,7 +266,7 @@ export const ajaxCalls = {
 
         asyncDeleteTemplate(templateId) {
             return axios.post('delete-template/' + templateId).then(() => {
-                this.triggerSuccessToast("Templated Deleted!");
+                this.triggerSuccessToast('Templated Deleted!');
             }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
@@ -262,7 +279,7 @@ export const ajaxCalls = {
         },
 
         asyncGetSomeJobSites(searchTerm) {
-            if (searchTerm == '') {
+            if (searchTerm === '') {
                 return axios.get('get-all-job-sites');
             }
             return axios.get('get-some-job-sites/' + searchTerm);
@@ -288,13 +305,17 @@ export const ajaxCalls = {
 
         asyncAddMembers(memberData, boardId) {
 
-            return axios.post('create-members/' + boardId, memberData).catch((error) => {
+            return axios.post('create-members/' + boardId, memberData).then(() => {
+                this.triggerSuccessToast('New Board Member Added!');
+            }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
 
         asyncDeleteMember(memberId) {
-            return axios.post('delete-member/' + memberId).catch((error) => {
+            return axios.post('delete-member/' + memberId).then(() => {
+                this.triggerSuccessToast('Board Member Deleted!');
+            }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },

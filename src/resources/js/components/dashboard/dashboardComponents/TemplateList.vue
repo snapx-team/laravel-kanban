@@ -33,17 +33,15 @@
                             <tr>
                                 <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                     Template Name
-                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider text-right">
+                                <th v-if="$role === 'admin'"
+                                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider text-right">
                                     Edit
                                 </th>
                             </tr>
                             </thead>
                             <tbody>
                             <template v-for="(template, templateIndex) in filtered">
-                                <template v-if="
-                                      templateIndex >= paginationIndex &&
-                                      templateIndex < paginationIndex + paginationStep
-                                    ">
+                                <template v-if="templateIndex >= paginationIndex && templateIndex < paginationIndex + paginationStep">
                                     <tr :key="templateIndex">
                                         <td class="px-5 py-5 bg-white text-sm">
                                             <div class="flex items-center">
@@ -57,7 +55,8 @@
                                             </div>
                                         </td>
 
-                                        <td class="px-5 py-5 bg-white text-sm text-right">
+                                        <td v-if="$role === 'admin'"
+                                            class="px-5 py-5 bg-white text-sm text-right">
                                             <a @click="editTemplate(templateIndex)"
                                                class="cursor-pointer px-2 text-gray-400 hover:text-gray-600 transition duration-300 ease-in-out focus:outline-none">
                                                 <i class="fas fa-edit"></i>

@@ -4,8 +4,11 @@ namespace Xguard\LaravelKanban\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use DateTime;
+use Illuminate\Support\Facades\Auth;
+use Xguard\LaravelKanban\Http\Helper\CheckHasAccessToBoardWithBoardId;
 use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Board;
+use Xguard\LaravelKanban\Models\Member;
 use Xguard\LaravelKanban\Models\Template;
 use Xguard\LaravelKanban\Models\Task;
 
@@ -13,37 +16,56 @@ class LaravelKanbanController extends Controller
 {
     public function getIndex()
     {
-
+        $employee = Employee::where('user_id', '=', Auth::user()->id)->first();
+        session(['role' => $employee->role, 'employee_id' => $employee->id]);
         return view('Xguard\LaravelKanban::index');
+    }
+
+    public function getRole()
+    {
+        return session('role');
     }
 
     public function getkanbanData($id)
     {
-        return Board::with(['rows.columns.taskCards' => function ($q) {
-            $q->where('status', 'active')->with('badge')
-                ->with('board')
-                ->with(['assignedTo.employee.user' => function ($q) {
+        $hasBoardAccess = (new CheckHasAccessToBoardWithBoardId())->returnBool($id);
+
+        if ($hasBoardAccess) {
+            return Board::with('rows.columns.taskCards.badge')
+                ->with('rows.columns.taskCards.board')
+                ->with(['rows.columns.taskCards.assignedTo.employee.user' => function ($q) {
                     $q->select(['id', 'first_name', 'last_name']);
                 }])
-                ->with(['erpEmployee' => function ($q) {
+                ->with(['rows.columns.taskCards.erpEmployee' => function ($q) {
                     $q->select(['id', 'first_name', 'last_name']);
                 }])
-                ->with(['reporter' => function ($q) {
+                ->with(['rows.columns.taskCards.reporter' => function ($q) {
                     $q->select(['id', 'first_name', 'last_name']);
                 }])
-                ->with(['erpJobSite' => function ($q) {
+                ->with(['members.employee.user' => function ($q) {
+                    $q->select(['id', 'first_name', 'last_name']);
+                }])
+                ->with(['rows.columns.taskCards.erpJobSite' => function ($q) {
                     $q->select(['id', 'name']);
                 }])
-                ->with(['row', 'column',]);
-        }])->with(['members.employee.user' => function ($q) {
-            $q->select(['id', 'first_name', 'last_name']);
-        }])->find($id);
+                ->with(['rows.columns.taskCards.row', 'rows.columns.taskCards.column',])
+                ->find($id);
+        } else {
+            abort(403, "You don't have access to this board");
+        }
     }
 
     public function getDashboardData()
     {
+        if (session('role') === 'admin') {
+            $boards = Board::orderBy('name')->with('members')->get();
+        } else {
+            $boards = Board::orderBy('name')->
+            whereHas('members', function ($q) {
+                $q->where('employee_id', session('employee_id'));
+            })->with('members')->get();
+        }
         $employees = Employee::with('user')->get();
-        $boards = Board::orderBy('name')->with('members')->get();
         $templates = Template::orderBy('name')->with('badge')->get();
 
         return [
@@ -55,13 +77,56 @@ class LaravelKanbanController extends Controller
 
     public function getBacklogData($start, $end)
     {
-        $backlogTasks = Task::
-        with('badge', 'row', 'column', 'board', 'reporter', 'assignedTo.employee.user', 'erpJobSite', 'erpEmployee')
-            ->whereDate('created_at', '>=', new DateTime($start))
-            ->whereDate('created_at', '<=', new DateTime($end))
-            ->orderBy('deadline')
-            ->get();
-        $boards = Board::orderBy('name')->with('members')->get();
+
+        if (session('role') === 'admin') {
+            $backlogTasks = Task::
+            with('badge', 'row', 'column', 'board')
+                ->with(['reporter' => function ($q) {
+                    $q->select(['id', 'first_name', 'last_name']);
+                }])
+                ->with(['assignedTo.employee.user' => function ($q) {
+                    $q->select(['id', 'first_name', 'last_name']);
+                }])
+                ->with(['erpEmployee' => function ($q) {
+                    $q->select(['id', 'first_name', 'last_name']);
+                }])
+                ->with(['erpJobSite' => function ($q) {
+                    $q->select(['id', 'name']);
+                }])
+                ->whereDate('created_at', '>=', new DateTime($start))
+                ->whereDate('created_at', '<=', new DateTime($end))
+                ->orderBy('deadline')
+                ->get();
+            $boards = Board::orderBy('name')->with('members')->get();
+        } else {
+            $backlogTasks = Task::with('board', 'badge', 'row', 'column')
+                ->whereHas('board.members', function ($q) {
+                    $q->where('employee_id', session('employee_id'));
+                })
+                ->with(['reporter' => function ($q) {
+                    $q->select(['id', 'first_name', 'last_name']);
+                }])
+                ->with(['assignedTo.employee.user' => function ($q) {
+                    $q->select(['id', 'first_name', 'last_name']);
+                }])
+                ->with(['erpEmployee' => function ($q) {
+                    $q->select(['id', 'first_name', 'last_name']);
+                }])
+                ->with(['erpJobSite' => function ($q) {
+                    $q->select(['id', 'name']);
+                }])
+                ->whereDate('created_at', '>=', new DateTime($start))
+                ->whereDate('created_at', '<=', new DateTime($end))
+                ->orderBy('deadline')
+                ->get();
+
+            $boards = Board::orderBy('name')->
+            whereHas('members', function ($q) {
+                $q->where('employee_id', session('employee_id'));
+            })->with('members')->get();
+        }
+
+
         $kanbanUsers = Employee::with('user')->get();
 
         $boardArray = [];
@@ -109,5 +174,4 @@ class LaravelKanbanController extends Controller
             'kanbanUsers' => $kanbanUsers,
         ];
     }
-
 }

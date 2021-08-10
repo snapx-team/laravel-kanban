@@ -19,11 +19,10 @@ class CheckHasAccess
     {
         if (Auth::check()) {
             $employee = Employee::where('user_id', '=', Auth::user()->id)->first();
-            if ($employee === null || $employee->role !== "admin") {
-                abort(403, "You need to be an admin to view this page");
+            if ($employee === null) {
+                abort(403, "You need to be added to the kanban. Please ask an admin for access. ");
             }
-        }
-        else{
+        } else {
             abort(403, "Please first login to ERP");
         }
         return $next($request);

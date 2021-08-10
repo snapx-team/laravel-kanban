@@ -6,7 +6,7 @@
                 <p class="px-2 text-gray-500 pr-4">{{ kanbanMembers.length }} members</p>
 
                 <template v-for="(member, memberIndex) in kanbanMembers">
-                    <template v-if="memberIndex < 5">
+                    <template v-if="memberIndex < membersOnKanbanBarNumber">
                         <avatar :borderSize="0"
                                 :class="{ '-ml-3': memberIndex > 0}"
                                 :key="memberIndex"
@@ -16,14 +16,16 @@
                                 :tooltip="true"
                                 @click.native="clickMember(member)"
                                 class="cursor-pointer transform hover:-translate-y-1 transition duration-300"
-                                >
+                        >
                         </avatar>
                     </template>
                 </template>
 
-                <span class="z-10 flex items-center justify-center font-semibold text-gray-800 text-sm w-10 h-10 rounded-full bg-gray-300 border-2 border-white -ml-3 pr-2"
-                    v-if="kanbanMembers.length > 5">+{{ kanbanMembers.length - 5 }}</span>
-                <button @click="createMember()"
+                <span @click="expandMembers()"
+                      class="z-10 flex items-center justify-center font-semibold text-gray-800 text-sm w-10 h-10 rounded-full bg-gray-300 border-2 border-white -ml-3 pr-2 cursor-pointer"
+                      v-if="kanbanMembers.length > membersOnKanbanBarNumber">+{{ kanbanMembers.length - membersOnKanbanBarNumber }}</span>
+                <button v-if="$role === 'admin'"
+                        @click="createMember()"
                         class="z-20 items-center justify-center w-10 h-10 mr-2 text-indigo-100 transition-colors duration-150 bg-indigo-700 rounded-full focus:outline-none hover:bg-indigo-800 border-2 border-white -ml-3">
                     <i class="fas fa-plus"></i>
                 </button>
@@ -41,7 +43,8 @@ export default {
     },
     data() {
         return {
-            selected : [],
+            selected: [],
+            membersOnKanbanBarNumber: 5
         }
     },
     props: {
@@ -70,6 +73,9 @@ export default {
     methods: {
         createMember() {
             this.eventHub.$emit("add-member");
+        },
+        expandMembers(){
+          this.membersOnKanbanBarNumber =   this.membersOnKanbanBarNumber + 10
         },
         clickMember(option) {
             if (this.selected.includes(option.employee_id)) {

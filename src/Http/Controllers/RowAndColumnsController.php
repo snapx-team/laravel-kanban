@@ -27,9 +27,9 @@ class RowAndColumnsController extends Controller
             }
 
             /*  Start: Delete columns
-    Code to compare new list of columns with existing list of columns
-    If an existing column isn't included in the new list then it was selected to be deleted
-*/
+                Code to compare new list of columns with existing list of columns
+                If an existing column isn't included in the new list then it was selected to be deleted
+            */
 
             $currentRow = Row::where('id', $rowId)->with('columns')->get()->toArray();
             $currentColumns = $currentRow[0]['columns'];
@@ -54,12 +54,9 @@ class RowAndColumnsController extends Controller
 
             foreach ($rowData['columns'] as $key => $column) {
                 if ($column['id'] !== null) {
-
                     Column::where('id', $column['id'])
                         ->update(['name' => $column['name'], 'index' => $key]);
-
                 } else {
-
                     Column::create([
                         'row_id' => $rowId,
                         'name' => $column['name'],
@@ -69,7 +66,6 @@ class RowAndColumnsController extends Controller
             }
 
             return Row::where('id', $rowId)->with('columns.taskCards')->get();
-
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
