@@ -14,7 +14,7 @@ class Row extends Model
 
     public function board(): BelongsTo
     {
-        return $this->belongsTo(Board::class)->orderBy('index', 'asc');;
+        return $this->belongsTo(Board::class);
     }
 
     public function columns(): HasMany

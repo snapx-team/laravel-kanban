@@ -94,7 +94,7 @@ class TaskController extends Controller
                     'group' => $group
                 ]);
 
-                Log::createLog(Auth::user()->id, Log::TYPE_CARD_CREATED, 'Created new backlog task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> with board <' . $task->board->name . '>', $task->badge_id, $task->board_id, $task->id, $task->erp_employee_id, $task->erp_job_site_id, null);
+                Log::createLog(Auth::user()->id, Log::TYPE_CARD_CREATED, 'Created new backlog task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> with board <' . $task->board->name . '>', $task->badge_id, $task->board_id, $task->id, $task->erp_employee_id, $task->erp_job_site_id);
             }
         } catch (\Exception $e) {
             return response([
@@ -167,7 +167,7 @@ class TaskController extends Controller
             }
 
             Log::createLog(Auth::user()->id, Log::TYPE_CARD_CREATED, 'Created new task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> on board <' . $task->board->name . '>',
-                $task->badge_id, $task->board_id, $task->id, $task->erp_employee_id, $task->erp_job_site_id, null);
+                $task->badge_id, $task->board_id, $task->id, $task->erp_employee_id, $task->erp_job_site_id);
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
@@ -224,7 +224,7 @@ class TaskController extends Controller
                 $task = Task::find($taskCard['id']);
 
                 Log::createLog(Auth::user()->id, Log::TYPE_CARD_UPDATED, 'Task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> was changed from ' . $prevTask . ' <---------- to ----------> ' . $task,
-                        $task->badge_id, $task->board_id, $task->id, $task->erp_employee_id, $task->erp_job_site_id, null);
+                        $task->badge_id, $task->board_id, $task->id, $task->erp_employee_id, $task->erp_job_site_id);
             } catch (\Exception $e) {
                 return response([
                     'success' => 'false',
@@ -290,7 +290,7 @@ class TaskController extends Controller
             $column = $task->column->name;
             
             Log::createLog(Auth::user()->id, Log::TYPE_CARD_MOVED, 'Changed from row <' . $prevRow . '> and column <' . $prevColumn . '> to row <' . $row . '> and column <' . $column . '>',
-                null, $task->board_id, $task->id, $task->erp_employee_id, $task->erp_jobsite_id, null);
+                null, $task->board_id, $task->id, $task->erp_employee_id, $task->erp_jobsite_id);
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
@@ -380,7 +380,7 @@ class TaskController extends Controller
             ]);
 
             Log::createLog(Auth::user()->id, Log::TYPE_CARD_ASSIGNED_TO_BOARD, 'Task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> assigned to board <' . $task->board->name . '> on row <' . $task->row->name . '> and column <' . $task->column->name .'>',
-                $task->badge_id, $task->board_id, $task->id, $task->erp_employee_id, $task->erp_job_site_id, null);
+                $task->badge_id, $task->board_id, $task->id, $task->erp_employee_id, $task->erp_job_site_id);
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
@@ -393,10 +393,13 @@ class TaskController extends Controller
     public function updateGroup($task_id, $group)
     {
         try {
-            $taskCard = Task::find($task_id);
+            $taskCard = Task::with('board')->get()->find($task_id);
             $taskCard->update([
                 'group' => $group,
             ]);
+            
+            Log::createLog(Auth::user()->id, Log::TYPE_CARD_ASSIGNED_GROUP, 'Task <' . substr($taskCard->board->name, 0, 3) . '-' . $taskCard->id . ' : ' . $taskCard->name . '> changed group',
+            null, $taskCard->board->id, $taskCard->id, null, null);
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',

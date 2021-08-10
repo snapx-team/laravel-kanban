@@ -24,8 +24,8 @@ class Log extends Model
     const TYPE_CARD_MOVED = 14;
     const TYPE_CARD_ASSIGNED_TO_BOARD = 15;
     const TYPE_CARD_UPDATED = 16;
-
-    const TYPE_KANBAN_COLUMNS_CREATED_OR_UPDATED = 18;
+    const TYPE_CARD_ASSIGNED_GROUP = 17;
+    const TYPE_CARD_CHANGED_INDEX = 18;
 
     const TYPE_KANBAN_MEMBER_CREATED = 20;
     const TYPE_KANBAN_MEMBER_DELETED = 21;
@@ -37,8 +37,17 @@ class Log extends Model
     const TYPE_COMMENT_DELETED = 71;
     const TYPE_COMMENT_EDITED = 72;
 
+    const TYPE_ROW_CREATED = 80;
+    const TYPE_ROW_DELETED = 81;
+    const TYPE_ROW_UPDATED = 82;
+    const TYPE_COLUMN_CREATED = 83;
+    const TYPE_COLUMN_DELETED = 84;
+    const TYPE_COLUMN_UPDATED = 85;
+
+    const TYPE_KANBAN_COLUMNS_CREATED_OR_UPDATED = 100;
+
    public static function createLog(?int $userId, int $logId, string $description = '',
-        ?int $badgeId, ?int $boardId, ?int $taskId, ?int $erpEmployeeId, ?int $erpJobSiteId, ?string $role)
+        ?int $badgeId, ?int $boardId, ?int $taskId, ?int $erpEmployeeId, ?int $erpJobSiteId)
    {
        return Log::create([
         'user_id' => $userId,
@@ -49,7 +58,6 @@ class Log extends Model
         'task_id' => $taskId,
         'erp_employee_id' => $erpEmployeeId,
         'erp_job_site_id' => $erpJobSiteId,
-        'role' => $role
     ]);
    }
 

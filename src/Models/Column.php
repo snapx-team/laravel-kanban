@@ -14,7 +14,7 @@ class Column extends Model
 
     public function row(): BelongsTo
     {
-        return $this->belongsTo(Row::class)->orderBy('index', 'asc');;
+        return $this->belongsTo(Row::class)->orderBy('index', 'asc');
     }
 
     public function taskCards(): HasMany

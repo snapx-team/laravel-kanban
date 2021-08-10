@@ -38,7 +38,7 @@ class CommentController extends Controller
                     ]);
 
                     $task = Task::with('board')->get()->find($comment->task_id);
-                    Log::createLog(Auth::user()->id, Log::TYPE_COMMENT_EDITED, 'Edited comment from ' . $prevComment->comment . ' to ' .$comment->comment . ' on task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> on board <' . $task->board->name . '>', null, null, $comment->task_id, null, null, null);
+                    Log::createLog(Auth::user()->id, Log::TYPE_COMMENT_EDITED, 'Edited comment from ' . $prevComment->comment . ' to ' .$comment->comment . ' on task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> on board <' . $task->board->name . '>', null, null, $comment->task_id, null, null);
                 
                 } else {
                     $comment = Comment::with('task')->create([
@@ -48,7 +48,7 @@ class CommentController extends Controller
                     ]);
     
                     $task = Task::with('board')->get()->find($comment->task_id);
-                    Log::createLog(Auth::user()->id, Log::TYPE_COMMENT_CREATED, 'Added new comment ' . $comment->comment . ' on task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> on board <' . $task->board->name . '>', null, null, $comment->task_id, null, null, null);
+                    Log::createLog(Auth::user()->id, Log::TYPE_COMMENT_CREATED, 'Added new comment ' . $comment->comment . ' on task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> on board <' . $task->board->name . '>', null, null, $comment->task_id, null, null);
                 }
             } catch (\Exception $e) {
                 return response([
@@ -75,7 +75,7 @@ class CommentController extends Controller
 
             $task = Task::with('board')->get()->find($comment->task_id);
 
-            Log::createLog(Auth::user()->id, Log::TYPE_COMMENT_DELETED, 'Deleted comment  ' . $comment->comment . ' on task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> on board <' . $task->board->name . '>', null, null, $comment->task_id, null, null, null);
+            Log::createLog(Auth::user()->id, Log::TYPE_COMMENT_DELETED, 'Deleted comment  ' . $comment->comment . ' on task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> on board <' . $task->board->name . '>', null, null, $comment->task_id, null, null);
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
