@@ -12,7 +12,8 @@
                         <div class="flex p-4">
                             <div class="pr-1 flex-1">
                                 <h5 class="font-semibold text-md uppercase text-gray-800">{{ board.name }}
-                                    <a @click="editBoard(board)"
+                                    <a v-if="$role === 'admin'"
+                                       @click="editBoard(board)"
                                        class="cursor-pointer px-2 text-gray-400 hover:text-gray-600 transition duration-300 ease-in-out focus:outline-none">
                                         <i class="fas fa-edit"></i>
                                     </a>

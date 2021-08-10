@@ -77,6 +77,13 @@ class BoardsController extends Controller
 
     public function getBoards()
     {
-        return Board::orderBy('name')->with('members')->get();
+        if (session('role') === 'admin') {
+            return Board::orderBy('name')->with('members')->get();
+        } else {
+            return Board::orderBy('name')->
+            whereHas('members', function ($q) {
+                $q->where('employee_id', session('employee_id'));
+            })->with('members')->get();
+        }
     }
 }

@@ -24,7 +24,7 @@
                 </router-link>
             </div>
 
-            <div class=" -mx-3 pb-2">
+            <div class=" -mx-3 pb-2" v-if="$role === 'admin'">
                 <router-link :to="{ path: '/kanban/metrics' }"
                              class="flex justify-between items-center px-3 py-2 hover:bg-gray-200 rounded-lg">
                     <span class="text-sm font-medium text-gray-900">Metrics</span>

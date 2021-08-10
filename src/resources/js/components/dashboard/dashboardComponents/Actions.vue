@@ -3,7 +3,7 @@
         <h2 class="text-2xl font-semibold py-5">Actions</h2>
 
         <div class="flex flex-wrap bg-gray-100">
-            <div class="w-full xl:w-1/2 p-6">
+            <div class="w-full p-6" :class="{'xl:w-1/2':$role === 'admin'}">
                 <div @click="createBacklogTask()"
                      class="cursor-pointer bg-yellow-100 hover:bg-yellow-200 transition duration-300 ease-in-out border-b-4 border-yellow-500 rounded-lg shadow-xl p-5">
                     <div class="flex flex-row items-center">
@@ -21,7 +21,7 @@
                     </div>
                 </div>
             </div>
-            <div class="w-full xl:w-1/2 p-6">
+            <div class="w-full xl:w-1/2 p-6" v-if="$role === 'admin'">
                 <div @click="createBoard()"
                      class="cursor-pointer bg-blue-100 hover:bg-blue-200 transition duration-300 ease-in-out border-b-4 border-blue-500 rounded-lg shadow-xl p-5">
                     <div class="flex flex-row items-center">
@@ -39,7 +39,7 @@
                     </div>
                 </div>
             </div>
-            <div class="w-full xl:w-1/2 p-6">
+            <div class="w-full xl:w-1/2 p-6" v-if="$role === 'admin'">
                 <div @click="createEmployee()"
                      class="cursor-pointer bg-green-100 hover:bg-green-200 transition duration-300 ease-in-out border-b-4 border-green-500 rounded-lg shadow-xl p-5">
                     <div class="flex flex-row items-center">
@@ -57,7 +57,7 @@
                 </div>
             </div>
 
-            <div class="w-full xl:w-1/2 p-6">
+            <div class="w-full xl:w-1/2 p-6" v-if="$role === 'admin'">
                 <div @click="createTemplate()"
                      class="cursor-pointer bg-pink-100 hover:bg-pink-200 transition duration-300 ease-in-out border-b-4 border-pink-500 rounded-lg shadow-xl p-5">
                     <div class="flex flex-row items-center">

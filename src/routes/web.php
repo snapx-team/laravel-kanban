@@ -14,6 +14,7 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             Route::get('/board', 'LaravelKanbanController@getIndex');
 
             // Kanban App Data
+            Route::get('/get-role', 'LaravelKanbanController@getRole');
             Route::get('/get-board-data/{id}', 'LaravelKanbanController@getkanbanData');
             Route::get('/get-dashboard-data', 'LaravelKanbanController@getDashboardData');
             Route::get('/get-backlog-data/{start}/{end}', 'LaravelKanbanController@getBacklogData');
@@ -105,7 +106,6 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             Route::get('/get-some-users/{searchTerm}', 'ErpController@getSomeUsers');
             Route::get('/get-all-job-sites', 'ErpController@getAllJobSites');
             Route::get('/get-some-job-sites/{searchTerm}', 'ErpController@getSomeJobSites');
-
         });
     });
 });
@@ -114,8 +114,6 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
 
 Route::group(['namespace' => 'Xguard\LaravelKanban\Http\Controllers',], function () {
     Route::group(['prefix' => 'kanban',], function () {
-
-        Route::get('/api/formatted-phone-line-data/{id}', 'LaravelKanbanController@getFormattedData');
-        Route::get('/api/get-available-agent/{id}/{level}', 'LaravelKanbanController@getAvailableAgent');
+        // api routes
     });
 });

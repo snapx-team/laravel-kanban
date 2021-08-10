@@ -10,9 +10,7 @@
                    :list="kanban.rows"
                    class="h-full list-group"
                    ghost-class="ghost-card"
-                   :disabled="isDraggableDisabled"
-        >
-
+                   :disabled="isDraggableDisabled || $role !== 'admin'">
             <div :key="row.id" class="mx-10 my-3" v-for="(row, rowIndex) in kanban.rows">
 
                 <div class="border bg-gray-700 pl-3 pr-3 rounded py-2 flex justify-between"
@@ -25,6 +23,7 @@
                         {{ row.name }} </h2>
 
                     <a @click="createRowAndColumns(rowIndex, row.columns, row.id, row.name)"
+                       v-if="$role === 'admin'"
                        class="px-2 text-gray-500 hover:text-gray-400 transition duration-300 ease-in-out focus:outline-none">
                         <i class="fas fa-business-time"></i>
                     </a>
@@ -37,7 +36,7 @@
                                    ghost-class="ghost-card"
                                    :list="row.columns"
                                    :group="'row-'+ row.id"
-                                   :disabled="isDraggableDisabled"
+                                   :disabled="isDraggableDisabled || $role !== 'admin'"
                                    @end="getColumnChangeData($event, rowIndex)">
                             <div :key="column.id"
                                  class="flex-1 bg-gray-200 px-3 py-3 column-width rounded mr-4"
@@ -80,7 +79,7 @@
 
         <hr class="mt-5"/>
 
-        <button @click="createRowAndColumns(kanban.rows.length, [], null, null)"
+        <button v-if="$role === 'admin'" @click="createRowAndColumns(kanban.rows.length, [], null, null)"
                 class="text-gray-500 hover:text-gray-600 font-semibold font-sans tracking-wide bg-gray-200 rounded-lg rounded p-4 m-10 hover:bg-blue-200 mouse transition ease-in duration-200 focus:outline-none">
             <p class="font-bold inline">Create new row</p>
             <i class="pl-2 fas fa-plus"></i>
@@ -219,17 +218,15 @@ export default {
 
             switch (eventName) {
                 case "moved":
-                    this.asyncUpdateTaskCardIndexes(taskCardData).then(() => {
-                        this.triggerSuccessToast('task moved')
+                    this.asyncUpdateTaskCardIndexes(taskCardData, 'moved').then(() => {
                         this.isDraggableDisabled = false
                     });
                     break;
                 case "added":
                     this.asyncUpdateTaskCardRowAndColumnId(columnId, rowId, event.added.element.id).then(() => {
-                            this.asyncUpdateTaskCardIndexes(taskCardData).then(() => {
+                            this.asyncUpdateTaskCardIndexes(taskCardData, 'added').then(() => {
                                 this.asyncGetTaskCardsByColumn(columnId).then((data) => {
                                     this.kanban.rows[rowIndex].columns[columnIndex].task_cards = data.data;
-                                    this.triggerSuccessToast('task moved');
                                     this.isDraggableDisabled = false
                                 }).catch(res => {
                                     console.log(res)
@@ -239,7 +236,7 @@ export default {
                     );
                     break;
                 case "removed":
-                    this.asyncUpdateTaskCardIndexes(taskCardData);
+                    this.asyncUpdateTaskCardIndexes(taskCardData, 'removed');
                     break;
                 default:
                     alert('event "' + eventName + '" not handled: ');
@@ -253,10 +250,8 @@ export default {
                 let columns = this.kanban.rows[rowIndex].columns;
                 this.isDraggableDisabled = true;
                 this.asyncUpdateColumnIndexes(columns).then(() => {
-
                     this.isDraggableDisabled = false
                     this.getKanban(this.kanban.id);
-                    this.triggerSuccessToast('Column position updated')
                 });
             }
         },
@@ -268,7 +263,6 @@ export default {
                 this.asyncUpdateRowIndexes(this.kanban.rows).then(() => {
                     this.isDraggableDisabled = false
                     this.getKanban(this.kanban.id);
-                    this.triggerSuccessToast('Row position updated')
                 });
             }
         },
@@ -281,8 +275,6 @@ export default {
                 this.asyncGetMembers(this.kanban.id).then((data) => {
                     this.kanban.members = data.data;
                     this.loadingMembers = {memberId: null, isLoading: false}
-                    this.triggerSuccessToast('New kanban members saved')
-
                 }).catch(res => {
                     console.log(res)
                 });
@@ -297,7 +289,6 @@ export default {
                 this.asyncGetMembers(this.kanban.id).then((data) => {
                     this.kanban.members = data.data;
                     this.loadingMembers = {memberId: null, isLoading: false};
-                    this.triggerSuccessToast('Kanban member deleted')
                 }).catch(res => {
                     console.log(res)
                 });
@@ -315,7 +306,6 @@ export default {
                 this.asyncGetTaskCardsByColumn(cloneCardData.column_id).then((data) => {
                     this.kanban.rows[cloneCardData.row.index].columns[cloneCardData.column.index].task_cards = data.data;
                     this.loadingCards = {columnId: null, isLoading: false}
-                    this.triggerSuccessToast('Task Updated')
                 }).catch(res => {
                     console.log(res)
                 });
@@ -361,9 +351,7 @@ export default {
 
         deleteRow(rowData) {
             this.asyncDeleteRow(rowData.rowId).then(() => {
-                this.triggerSuccessToast('Row Deleted')
                 this.getKanban(this.kanban.id);
-
             }).catch(res => {
                 console.log(res)
             });
