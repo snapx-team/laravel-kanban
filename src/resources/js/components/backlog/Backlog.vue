@@ -70,9 +70,9 @@
                                 class="mt-2 form-radio text-indigo-600"
                                 name="task-options"
                                 type="checkbox"
-                                v-model="canceledBool">
+                                v-model="cancelledBool">
                             <div class="ml-1 text-gray-700 font-medium">
-                                <p>Canceled</p>
+                                <p>cancelled</p>
                             </div>
                         </label>
                     </div>
@@ -244,7 +244,7 @@ export default {
             showBoardsPane: true,
             showTaskPane: false,
             activeBool: true,
-            canceledBool: false,
+            cancelledBool: false,
             completedBool: false,
             placedInBoard: false,
             notPlacedInBoard: true,
@@ -390,7 +390,7 @@ export default {
             if (this.activeBool && t.status === "active") {
                 return true;
             }
-            if (this.canceledBool && t.status === "canceled") {
+            if (this.cancelledBool && t.status === "cancelled") {
                 return true;
             }
             if (this.completedBool && t.status === "completed") {
@@ -403,6 +403,9 @@ export default {
                 return true;
             }
             if (this.notPlacedInBoard && t.column_id == null && t.status === "active") {
+                return true;
+            }
+            if (!this.notPlacedInBoard && !this.placedInBoard) {
                 return true;
             }
             return false;
