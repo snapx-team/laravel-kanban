@@ -1,29 +1,11 @@
 <template>
-    <div class="">
-        <table >
-            <thead>
-                <tr>
-                    <th>Created At</th>
-                    <th>Log Type</th>
-                    <th>Description</th>
-                    <th>User</th>
-                    <th>Role</th>
-                    <th>Badge</th>
-                    <th>Board</th>
-                    <th>Erp Job Site</th>
-                    <th>Erp Employee</th>
-                </tr>
-            </thead>
-            <tbody>
-                <log-card
-                    v-for="log in logs"
-                    :key="log.id"
-                    :log="log"
-                >
-                </log-card>
-            
-            </tbody>
-        </table>
+    <div>
+        <log-card
+            v-for="log in logs"
+            :key="log.id"
+            :log="log"
+        >
+        </log-card>
     </div>
 </template>
 

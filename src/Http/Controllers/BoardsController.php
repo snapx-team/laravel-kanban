@@ -33,7 +33,7 @@ class BoardsController extends Controller
 
         try {
             if ($request->filled('id')) {
-                Board::where('id', $request->input('id'))->update([
+                $board = Board::where('id', $request->input('id'))->update([
                     'name' => $request->input('name'),
                 ]);
             } else {
@@ -41,7 +41,7 @@ class BoardsController extends Controller
                     'name' => $request->input('name'),
                 ]);
 
-                Log::createLog(Auth::user()->id, Log::TYPE_BOARD_CREATED, 'Added new board', null, $board->id, null, null, null, null);
+                Log::createLog(Auth::user()->id, Log::TYPE_BOARD_CREATED, 'Added new board <' . $board->name . '>', null, $board->id, null, null, null);
             }
 
         } catch (\Exception $e) {
@@ -65,7 +65,7 @@ class BoardsController extends Controller
             $board = Board::find($id);
             $board->delete();
 
-            Log::createLog(Auth::user()->id, Log::TYPE_BOARD_DELETED, 'Deleted board', null, $board->id, null, null, null, null);
+            Log::createLog(Auth::user()->id, Log::TYPE_BOARD_DELETED, 'Deleted board <' . $board->name . '>', null, $board->id, null, null, null);
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',

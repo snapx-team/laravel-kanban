@@ -3,11 +3,10 @@
 namespace Xguard\LaravelKanban\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Xguard\LaravelKanban\Models\Log;
 use Xguard\LaravelKanban\Models\Employee;
+use Illuminate\Support\Facades\Auth;
 
 class EmployeeController extends Controller
 {
@@ -18,12 +17,12 @@ class EmployeeController extends Controller
         try {
             foreach ($employeeData['selectedUsers'] as $user) {
 
-                $employee = Employee::updateOrCreate(
+                $employee = Employee::with('user')->updateOrCreate(
                     ['user_id' => $user['id']],
                     ['role' => $employeeData['role'],]
                 );
 
-                Log::createLog(null, Log::TYPE_EMPLOYEE_CREATED, 'Created a new employee', null, null, null, $employee->user_id, null, $employee->role);
+                Log::createLog(Auth::user()->id, Log::TYPE_EMPLOYEE_CREATED, 'Added employee <' . $employee->user->full_name . '>', null, null, null, $employee->user_id, null);
             }
 
         } catch (\Exception $e) {
@@ -38,10 +37,10 @@ class EmployeeController extends Controller
     public function deleteEmployee($id)
     {
         try {
-            $employee = Employee::find($id);
+            $employee = Employee::with('user')->get()->find($id);
             $employee->delete();
 
-            Log::createLog(null, Log::TYPE_EMPLOYEE_DELETED, 'Deleted an employee', null, null, null, $employee->user_id, null, $employee->role);
+            Log::createLog(Auth::user()->id, Log::TYPE_EMPLOYEE_DELETED, 'Deleted employee <' . $employee->user->full_name . '>', null, null, null, $employee->user_id, null);
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',

@@ -427,7 +427,8 @@ export default {
             });
         },
         assignTask() {
-            this.asyncAssignTaskToBoard(this.task.id, this.task.row.id, this.task.column.id).catch(res => {
+            this.asyncAssignTaskToBoard(this.task.id, this.task.row.id, this.task.column.id)
+            .catch(res => {
                 console.log(res)
             });
         },

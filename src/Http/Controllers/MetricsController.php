@@ -149,7 +149,7 @@ class MetricsController extends Controller
             ->whereDate('created_at', '<=', new DateTime($end))
             ->orderBy('task_id')->get();
         $assignedLogs = Log::with('badge')
-            ->where('log_type', Log::TYPE_CARD_ASSIGNED)
+            ->where('log_type', Log::TYPE_CARD_ASSIGNED_TO_USER)
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
             ->orderBy('task_id')
@@ -198,7 +198,7 @@ class MetricsController extends Controller
         $assignedLogs = Log::with('user')
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
-            ->where('log_type', Log::TYPE_CARD_ASSIGNED)
+            ->where('log_type', Log::TYPE_CARD_ASSIGNED_TO_USER)
             ->orderBy('task_id')
             ->get();
 
