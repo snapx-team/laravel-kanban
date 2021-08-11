@@ -388,6 +388,7 @@ export default {
 
                     for (let i = 0; i < ul.length; i++) {
                         ul[i].addEventListener("click", el => {
+
                             let toggle = el.currentTarget.getAttribute("data-checked") === 'true' ? "false" : "true";
                             el.currentTarget.setAttribute('data-checked', toggle);
                             this.cardData.description = (document.getElementById('task-description').innerHTML);
@@ -400,7 +401,9 @@ export default {
 
                             this.asyncUpdateDescription({
                                 'description': this.cardData.description,
-                                'id': this.cardData.id
+                                'id': this.cardData.id,
+                                'isChecked' : el.currentTarget.getAttribute("data-checked"),
+                                'checkboxContent': el.currentTarget.querySelector('li').innerHTML
                             });
                         }, true);
                     }

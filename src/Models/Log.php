@@ -27,6 +27,8 @@ class Log extends Model
     const TYPE_CARD_ASSIGNED_GROUP = 17;
     const TYPE_CARD_CHANGED_INDEX = 18;
     const TYPE_CARD_ASSIGNED_TO_USER_UPDATED = 19;
+    const TYPE_CARD_CHECKLIST_ITEM_CHECKED = 20;
+    const TYPE_CARD_CHECKLIST_ITEM_UNCHECKED = 21;
 
 
     const TYPE_KANBAN_MEMBER_CREATED = 20;
@@ -51,21 +53,20 @@ class Log extends Model
 
     const TYPE_KANBAN_COLUMNS_CREATED_OR_UPDATED = 100;
 
-   public static function createLog(?int $userId, int $logId, string $description = '',
-        ?int $badgeId, ?int $boardId, ?int $taskId, ?int $erpEmployeeId, ?int $erpJobSiteId)
-   {
-       return Log::create([
-        'user_id' => $userId,
-        'log_type' => $logId,
-        'description' => $description,
-        'badge_id' => $badgeId,
-        'board_id' => $boardId,
-        'task_id' => $taskId,
-        'erp_employee_id' => $erpEmployeeId,
-        'erp_job_site_id' => $erpJobSiteId,
-    ]);
-   }
-
+    public static function createLog(?int $userId, int $logId, string $description = '',
+                                     ?int $badgeId, ?int $boardId, ?int $taskId, ?int $erpEmployeeId, ?int $erpJobSiteId)
+    {
+        return Log::create([
+            'user_id' => $userId,
+            'log_type' => $logId,
+            'description' => $description,
+            'badge_id' => $badgeId,
+            'board_id' => $boardId,
+            'task_id' => $taskId,
+            'erp_employee_id' => $erpEmployeeId,
+            'erp_job_site_id' => $erpJobSiteId,
+        ]);
+    }
 
 
     public function employee(): BelongsTo

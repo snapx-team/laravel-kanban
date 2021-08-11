@@ -75,7 +75,7 @@
                                     <span class="px-4">Remove</span>
                                 </button>
 
-                                <button @click="decrement(columnIndex)"
+                                <button @click="decrementAndCheck(columnIndex)"
                                         class="w-24 text-sm text-gray-600 hover:text-gray-800 transition duration-300 ease-in-out focus:outline-none"
                                         v-else>
                                     <span class="px-4 text-red-600 w-12">Delete</span>
@@ -168,16 +168,46 @@ export default {
         decrement(index) {
             this.rowData.columns.splice(index, 1);
         },
+        decrementAndCheck(index) {
+
+            if (this.rowData.columns[index].task_cards.length > 0) {
+                this.$swal({
+                    icon: 'warning',
+                    title: 'Are you sure?',
+                    text: 'This column contains tasks! Deleting this column will delete its containing tasks',
+                    showCancelButton: true,
+                    confirmButtonText: `Continue`,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.rowData.columns.splice(index, 1);
+                    }
+                })
+            } else {
+                this.rowData.columns.splice(index, 1);
+            }
+
+        },
         saveRow() {
             this.eventHub.$emit("save-row-and-columns", this.rowData);
             this.modalOpen = false;
             this.rowData.rowIndex = null;
         },
         deleteRow() {
-            this.eventHub.$emit("delete-row", this.rowData);
-            this.modalOpen = false;
-            this.rowData.rowIndex = null;
-        },
+
+            this.$swal({
+                icon: 'warning',
+                title: 'Are you sure?',
+                text: 'Deleting a row will delete all its columns and tasks within.',
+                showCancelButton: true,
+                confirmButtonText: `Continue`,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.eventHub.$emit("delete-row", this.rowData);
+                    this.modalOpen = false;
+                    this.rowData.rowIndex = null;
+                }
+            })
+        }
     },
 };
 </script>

@@ -308,7 +308,7 @@ class TaskController extends Controller
 
                 // end logic to log what was changed during update
 
-                if(count($difference) > 0){
+                if (count($difference) > 0) {
                     Log::createLog(
                         Auth::user()->id,
                         Log::TYPE_CARD_UPDATED,
@@ -320,7 +320,6 @@ class TaskController extends Controller
                         $task['erp_job_site_id']
                     );
                 }
-
             } catch (\Exception $e) {
                 return response([
                     'success' => 'false',
@@ -430,6 +429,30 @@ class TaskController extends Controller
                 $taskCard->update([
                     'description' => $descriptionData['description'],
                 ]);
+
+                if ($descriptionData['isChecked'] === "true") {
+                    Log::createLog(
+                        Auth::user()->id,
+                        Log::TYPE_CARD_CHECKLIST_ITEM_CHECKED,
+                        'Checked -> ' . $descriptionData['checkboxContent'],
+                        null,
+                        $taskCard->board_id,
+                        $taskCard->id,
+                        $taskCard->erp_employee_id,
+                        $taskCard->erp_jobsite_id
+                    );
+                } else {
+                    Log::createLog(
+                        Auth::user()->id,
+                        Log::TYPE_CARD_CHECKLIST_ITEM_UNCHECKED,
+                        'Unchecked -> ' . $descriptionData['checkboxContent'],
+                        null,
+                        $taskCard->board_id,
+                        $taskCard->id,
+                        $taskCard->erp_employee_id,
+                        $taskCard->erp_jobsite_id
+                    );
+                }
             } catch (\Exception $e) {
                 return response([
                     'success' => 'false',

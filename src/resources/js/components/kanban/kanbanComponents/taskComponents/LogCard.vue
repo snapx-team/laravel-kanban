@@ -90,6 +90,18 @@ export default {
                         "icon": "fa-people-arrows",
                         "color": "yellow",
                     };
+                case 20:
+                    return {
+                        "type": "checked a checklist item",
+                        "icon": "fa-check-square",
+                        "color": "green",
+                    };
+                case 21:
+                    return {
+                        "type": "unchecked a checklist item",
+                        "icon": "fa-square",
+                        "color": "yellow",
+                    };
                 case 70:
                     return {
                         "type": "wrote a comment",
