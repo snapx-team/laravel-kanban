@@ -1,10 +1,11 @@
 <template>
     <div>
+        <h2 v-if="loadingLogs" class="text-gray-800 text-center text-xl font-medium tracking-wide animate-pulse">
+            Loading... </h2>
         <log-card
             v-for="log in logs"
             :key="log.id"
-            :log="log"
-        >
+            :log="log">
         </log-card>
     </div>
 </template>
@@ -20,6 +21,7 @@ export default {
     },
     data() {
         return {
+            loadingLogs: false,
             logs: []
         }
     },
@@ -32,8 +34,12 @@ export default {
     },
     methods: {
         getLogs() {
+            this.loadingLogs = true;
             this.asyncGetLogs(this.cardData.id).then((data) => {
                 this.logs = data.data;
+                this.loadingLogs = false;
+                console.log(this.logs);
+
             }).catch(res => {
                 console.log(res)
             });

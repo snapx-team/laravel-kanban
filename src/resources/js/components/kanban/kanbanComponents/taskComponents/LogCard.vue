@@ -1,15 +1,24 @@
 <template>
 
-    <div class="my-1 py-3 border-l-4 bg-gray-100">
-        <div class="px-2">
-            <p> 
-                <span class="font-bold text-l">{{ log.user.full_name }}</span><span> {{ getText() }} </span>
-            </p>
-            <p class="text-gray-600">{{ log.description }}</p>
-            <p class="text-gray-700 text-xs mt-1">{{ moment(log.created_at).format("MMMM Do h:mm a") }}</p>
+    <div class="py-3 px-4 mb-2 border-l-4 bg-gray-50 shadow-sm"  :class="`border-${computedLogInfo.color}-400 `">
+
+
+        <div class="flex">
+            <div class="pr-5 flex items-center">
+                <div
+                    class="text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 shadow rounded-full"  :class="`bg-${computedLogInfo.color}-400 `">
+                    <i class="fas"  :class="computedLogInfo.icon"></i></div>
+            </div>
+            <div class="flex-1 ">
+                <p>
+                    <span class="font-bold text-l">{{ log.user.full_name }}</span>
+                    <span> {{ computedLogInfo.type }} </span>
+                </p>
+                <p class="text-gray-600">{{ log.description }}</p>
+                <p class="text-gray-700 text-xs mt-1">{{ moment(log.created_at).format("MMMM Do h:mm a") }}</p>
+            </div>
         </div>
     </div>
-  
 </template>
 
 <script>
@@ -30,25 +39,69 @@ export default {
             subtitle: '',
         }
     },
-    methods: {
-        getText() {
-            switch(this.log.log_type) {
+    computed: {
+        computedLogInfo() {
+            switch (this.log.log_type) {
                 case 10:
-                    return " created a task";
+                    return {
+                        "type": "created a task",
+                        "icon": "fa-tasks",
+                        "color": "blue",
+                    };
                 case 11:
-                    return " cancelled a task";
-                case 12: 
-                    return " closed a task";
+                    return {
+                        "type": "cancelled a task",
+                        "icon": "fa-tasks",
+                        "color": "red",
+                    };
+                case 12:
+                    return {
+                        "type": "closed a task",
+                        "icon": "fa-archive",
+                        "color": "green",
+                    };
                 case 13:
-                    return " assigned a task a user";
+                    return {
+                        "type": "assigned a task a user",
+                        "icon": "fa-people-arrows",
+                        "color": "purple",
+                    };
                 case 14:
-                    return " moved a task";
+                    return {
+                        "type": "moved a task",
+                        "icon": "fa-arrows-alt",
+                        "color": "indigo",
+                    };
                 case 15:
-                    return " assigned a task to a row and column";
+                    return {
+                        "type": "assigned a task to a row and column",
+                        "icon": "fa-vote-yea",
+                        "color": "purple",
+                    };
                 case 16:
-                    return " updated a task";
+                    return {
+                        "type": "updated a task",
+                        "icon": "fa-tasks",
+                        "color": "yellow",
+                    };
+                case 19:
+                    return {
+                        "type": "updated assignees",
+                        "icon": "fa-people-arrows",
+                        "color": "yellow",
+                    };
                 case 70:
-                    return " made a comment";
+                    return {
+                        "type": "wrote a comment",
+                        "icon": "fa-comment",
+                        "color": "blue",
+                    };
+                case 90:
+                    return {
+                        "type": "created a new badge",
+                        "icon": "fa-award",
+                        "color": "purple",
+                    };
             }
         }
     },

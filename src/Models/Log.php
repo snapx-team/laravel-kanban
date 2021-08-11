@@ -26,6 +26,8 @@ class Log extends Model
     const TYPE_CARD_UPDATED = 16;
     const TYPE_CARD_ASSIGNED_GROUP = 17;
     const TYPE_CARD_CHANGED_INDEX = 18;
+    const TYPE_CARD_ASSIGNED_TO_USER_UPDATED = 19;
+
 
     const TYPE_KANBAN_MEMBER_CREATED = 20;
     const TYPE_KANBAN_MEMBER_DELETED = 21;
@@ -43,6 +45,9 @@ class Log extends Model
     const TYPE_COLUMN_CREATED = 83;
     const TYPE_COLUMN_DELETED = 84;
     const TYPE_COLUMN_UPDATED = 85;
+
+    const TYPE_BADGE_CREATED = 90;
+
 
     const TYPE_KANBAN_COLUMNS_CREATED_OR_UPDATED = 100;
 
@@ -82,7 +87,7 @@ class Log extends Model
     {
         return $this->belongsTo(Board::class, 'board_id');
     }
-    
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

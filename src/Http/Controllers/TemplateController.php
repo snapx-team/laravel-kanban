@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Xguard\LaravelKanban\Models\Badge;
+use Xguard\LaravelKanban\Models\Log;
 use Xguard\LaravelKanban\Models\Template;
 use Illuminate\Support\Facades\Validator;
 
@@ -46,10 +47,23 @@ class TemplateController extends Controller
                 'name' => count($request->input('badge')) > 0 ? $templateData['badge']['name']: '--',
             ]);
 
+            if ($badge->wasRecentlyCreated) {
+                Log::createLog(
+                    Auth::user()->id,
+                    Log::TYPE_BADGE_CREATED,
+                    "The badge '" . $badge->name . "' was created",
+                    $badge->id,
+                    null,
+                    null,
+                    null,
+                    null
+                );
+            }
+
             if ($request->filled('id')) {
                 Template::where('id', $request->input('id'))->update([
                     'name' => $request->input('name'),
-//                    'badge_id' => $badge->id,
+                    'badge_id' => $badge->id,
                     'description' => $request->input('description'),
                     'options' => serialize($request->input('checkedOptions')),
                 ]);

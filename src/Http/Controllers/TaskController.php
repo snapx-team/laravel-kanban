@@ -3,6 +3,8 @@
 namespace Xguard\LaravelKanban\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use DateTime;
+use DateTimeZone;
 use Illuminate\Http\Request;
 use Xguard\LaravelKanban\Http\Helper\CheckHasAccessToBoardWithTaskId;
 use Xguard\LaravelKanban\Models\Badge;
@@ -85,7 +87,7 @@ class TaskController extends Controller
                     'reporter_id' => Auth::user()->id,
                     'name' => $backlogTaskData['name'],
                     'description' => $backlogTaskData['description'],
-                    'deadline' => $request->input('deadline')  !== null ? date('y-m-d h:m', strtotime($backlogTaskData['deadline'])) : null,
+                    'deadline' => $request->input('deadline') !== null ? date('y-m-d h:m', strtotime($backlogTaskData['deadline'])) : null,
                     'erp_employee_id' => $request->input('erpEmployee') !== null ? $backlogTaskData['erpEmployee']['id'] : null,
                     'erp_job_site_id' => $request->input('erpJobSite') !== null ? $backlogTaskData['erpJobSite']['id'] : null,
                     'badge_id' => $badge->id,
@@ -93,6 +95,19 @@ class TaskController extends Controller
                     'board_id' => $kanban['id'],
                     'group' => $group
                 ]);
+
+                if ($badge->wasRecentlyCreated) {
+                    Log::createLog(
+                        Auth::user()->id,
+                        Log::TYPE_BADGE_CREATED,
+                        "The badge '" . $badge->name . "' was created",
+                        $badge->id,
+                        null,
+                        $task->id,
+                        null,
+                        null
+                    );
+                }
 
                 Log::createLog(Auth::user()->id, Log::TYPE_CARD_CREATED, 'Created new backlog task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> with board <' . $task->board->name . '>', $task->badge_id, $task->board_id, $task->id, $task->erp_employee_id, $task->erp_job_site_id);
             }
@@ -148,7 +163,7 @@ class TaskController extends Controller
                 'reporter_id' => Auth::user()->id,
                 'name' => $taskCard['name'],
                 'description' => $taskCard['description'],
-                'deadline' => $request->input('deadline')  !== null ? date('y-m-d h:m', strtotime($taskCard['deadline'])) : null,
+                'deadline' => $request->input('deadline') !== null ? date('y-m-d h:m', strtotime($taskCard['deadline'])) : null,
                 'erp_employee_id' => $request->input('erpEmployee') !== null ? $taskCard['erpEmployee']['id'] : null,
                 'erp_job_site_id' => $request->input('erpJobSite') !== null ? $taskCard['erpJobSite']['id'] : null,
                 'badge_id' => $badge->id,
@@ -158,6 +173,19 @@ class TaskController extends Controller
                 'group' => $group
             ]);
 
+            if ($badge->wasRecentlyCreated) {
+                Log::createLog(
+                    Auth::user()->id,
+                    Log::TYPE_BADGE_CREATED,
+                    "The badge '" . $badge->name . "' was created",
+                    $badge->id,
+                    null,
+                    $task->id,
+                    null,
+                    null
+                );
+            }
+
             if ($request->input('assignedTo') !== null) {
                 $employeeArray = [];
                 foreach ($taskCard['assignedTo'] as $employee) {
@@ -166,8 +194,16 @@ class TaskController extends Controller
                 $task->assignedTo()->sync($employeeArray);
             }
 
-            Log::createLog(Auth::user()->id, Log::TYPE_CARD_CREATED, 'Created new task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> on board <' . $task->board->name . '>',
-                $task->badge_id, $task->board_id, $task->id, $task->erp_employee_id, $task->erp_job_site_id);
+            Log::createLog(
+                Auth::user()->id,
+                Log::TYPE_CARD_CREATED,
+                'Created new task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> on board <' . $task->board->name . '>',
+                $task->badge_id,
+                $task->board_id,
+                $task->id,
+                $task->erp_employee_id,
+                $task->erp_job_site_id
+            );
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
@@ -186,9 +222,8 @@ class TaskController extends Controller
 
         if ($hasBoardAccess) {
             try {
-                $badge = Badge::firstOrCreate([
-                    'name' => count($request->input('badge')) > 0 ? $taskCard['badge']['name'] : '--'
-                ]);
+                $prevTask = Task::find($taskCard['id'])->toArray();
+
 
                 if ($request->input('assigned_to') !== null) {
                     $employeeArray = [];
@@ -197,7 +232,38 @@ class TaskController extends Controller
                     }
 
                     $task = Task::find($taskCard['id']);
-                    $task->assignedTo()->sync($employeeArray);
+
+                    $badge = Badge::firstOrCreate([
+                        'name' => count($request->input('badge')) > 0 ? $taskCard['badge']['name'] : '--'
+                    ]);
+
+                    if ($badge->wasRecentlyCreated) {
+                        Log::createLog(
+                            Auth::user()->id,
+                            Log::TYPE_BADGE_CREATED,
+                            "The badge '" . $badge->name . "' was created",
+                            $badge->id,
+                            null,
+                            $task->id,
+                            null,
+                            null
+                        );
+                    }
+
+                    $assignedToResponse = $task->assignedTo()->sync($employeeArray);
+
+                    if (count($assignedToResponse["attached"]) + count($assignedToResponse["detached"]) + count($assignedToResponse["updated"]) > 0) {
+                        Log::createLog(
+                            Auth::user()->id,
+                            Log::TYPE_CARD_ASSIGNED_TO_USER_UPDATED,
+                            "The members assigned to this task has been updated",
+                            null,
+                            $task['board_id'],
+                            $task['id'],
+                            null,
+                            null
+                        );
+                    }
                 }
 
                 if ($taskCard['group'] !== null) {
@@ -206,13 +272,15 @@ class TaskController extends Controller
                     $group = $task->group;
                 }
 
-                $prevTask = Task::find($taskCard['id']);
+                $dt = new DateTime($taskCard['deadline']);
+                $dt->setTimezone(new DateTimeZone('America/New_York'));
+                $dt->format('y-m-d h:m');
 
                 Task::where('id', $taskCard['id'])
                     ->update([
                         'name' => $taskCard['name'],
                         'description' => $taskCard['description'],
-                        'deadline' => $request->input('deadline')  !== null  ? date('y-m-d h:m', strtotime($taskCard['deadline'])) : null,
+                        'deadline' => $request->input('deadline') !== null ? $dt : null,
                         'erp_employee_id' => $request->input('erp_employee') !== null ? $taskCard['erp_employee']['id'] : null,
                         'erp_job_site_id' => $request->input('erp_job_site') !== null ? $taskCard['erp_job_site']['id'] : null,
                         'badge_id' => $badge->id,
@@ -221,10 +289,38 @@ class TaskController extends Controller
                         'group' => $group
                     ]);
 
-                $task = Task::find($taskCard['id']);
+                $task = Task::find($taskCard['id'])->toArray();
 
-                Log::createLog(Auth::user()->id, Log::TYPE_CARD_UPDATED, 'Task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> was changed from ' . $prevTask . ' <---------- to ----------> ' . $task,
-                        $task->badge_id, $task->board_id, $task->id, $task->erp_employee_id, $task->erp_job_site_id);
+
+                // logic to log what was changed during update
+
+                $ignoreColumns = array_flip(['created_at', 'updated_at', 'hours_to_deadline']);
+                $keys = array_filter(array_keys($task), function ($key) use ($ignoreColumns) {
+                    return !array_key_exists($key, $ignoreColumns);
+                });
+                $currentData = [];
+                $previousData = [];
+                foreach ($keys as $key) {
+                    $currentData[$key] = $task[$key];
+                    $previousData[$key] = $prevTask[$key];
+                }
+                $difference = array_diff($previousData, $currentData);
+
+                // end logic to log what was changed during update
+
+                if(count($difference) > 0){
+                    Log::createLog(
+                        Auth::user()->id,
+                        Log::TYPE_CARD_UPDATED,
+                        "'" . implode("','", array_keys($difference)) . "' was updated.",
+                        $task['badge_id'],
+                        $task['board_id'],
+                        $task['id'],
+                        $task['erp_employee_id'],
+                        $task['erp_job_site_id']
+                    );
+                }
+
             } catch (\Exception $e) {
                 return response([
                     'success' => 'false',
@@ -288,9 +384,17 @@ class TaskController extends Controller
             $task = Task::with('row', 'column')->get()->find($taskCardId);
             $row = $task->row->name;
             $column = $task->column->name;
-            
-            Log::createLog(Auth::user()->id, Log::TYPE_CARD_MOVED, 'Changed from row <' . $prevRow . '> and column <' . $prevColumn . '> to row <' . $row . '> and column <' . $column . '>',
-                null, $task->board_id, $task->id, $task->erp_employee_id, $task->erp_jobsite_id);
+
+            Log::createLog(
+                Auth::user()->id,
+                Log::TYPE_CARD_MOVED,
+                'Changed from row <' . $prevRow . '> and column <' . $prevColumn . '> to row <' . $row . '> and column <' . $column . '>',
+                null,
+                $task->board_id,
+                $task->id,
+                $task->erp_employee_id,
+                $task->erp_jobsite_id
+            );
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
@@ -347,12 +451,11 @@ class TaskController extends Controller
     {
         try {
             $taskCard = Task::find($taskCardId);
-            if($status === 'active'){
+            if ($status === 'active') {
                 $taskCard->update([
                     'status' => $status,
                 ]);
-            }
-            else{
+            } else {
                 $taskCard->update([
                     'status' => $status,
                     'row_id' => null,
@@ -360,7 +463,6 @@ class TaskController extends Controller
                     'index' => null
                 ]);
             }
-
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
@@ -379,8 +481,16 @@ class TaskController extends Controller
                 'column_id' => $column_id
             ]);
 
-            Log::createLog(Auth::user()->id, Log::TYPE_CARD_ASSIGNED_TO_BOARD, 'Task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> assigned to board <' . $task->board->name . '> on row <' . $task->row->name . '> and column <' . $task->column->name .'>',
-                $task->badge_id, $task->board_id, $task->id, $task->erp_employee_id, $task->erp_job_site_id);
+            Log::createLog(
+                Auth::user()->id,
+                Log::TYPE_CARD_ASSIGNED_TO_BOARD,
+                'Task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> assigned to board <' . $task->board->name . '> on row <' . $task->row->name . '> and column <' . $task->column->name . '>',
+                $task->badge_id,
+                $task->board_id,
+                $task->id,
+                $task->erp_employee_id,
+                $task->erp_job_site_id
+            );
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
@@ -397,9 +507,17 @@ class TaskController extends Controller
             $taskCard->update([
                 'group' => $group,
             ]);
-            
-            Log::createLog(Auth::user()->id, Log::TYPE_CARD_ASSIGNED_GROUP, 'Task <' . substr($taskCard->board->name, 0, 3) . '-' . $taskCard->id . ' : ' . $taskCard->name . '> changed group',
-            null, $taskCard->board->id, $taskCard->id, null, null);
+
+            Log::createLog(
+                Auth::user()->id,
+                Log::TYPE_CARD_ASSIGNED_GROUP,
+                'Task <' . substr($taskCard->board->name, 0, 3) . '-' . $taskCard->id . ' : ' . $taskCard->name . '> changed group',
+                null,
+                $taskCard->board->id,
+                $taskCard->id,
+                null,
+                null
+            );
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',

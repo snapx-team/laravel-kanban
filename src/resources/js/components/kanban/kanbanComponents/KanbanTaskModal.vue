@@ -143,6 +143,7 @@ export default {
                         this.modalOpen = true;
                 }, 100);
             } else {
+                this.openTab = 1;
                 this.cardData = task;
                 this.modalOpen = true;
             }
