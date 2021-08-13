@@ -348,6 +348,10 @@ export default {
             let doc = parser.parseFromString(this.cloneCardData.description, 'text/html');
             let uls = doc.querySelectorAll('ul[data-checked]');
 
+            if(uls.length === 0){
+                this.formatted = this.cloneCardData.description;
+            }
+
             for (let i = 0; i < uls.length; i++) {
 
                 let div = document.createElement('div');

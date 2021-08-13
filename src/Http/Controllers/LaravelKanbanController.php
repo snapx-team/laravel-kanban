@@ -34,25 +34,25 @@ class LaravelKanbanController extends Controller
         $hasBoardAccess = (new CheckHasAccessToBoardWithBoardId())->returnBool($id);
 
         if ($hasBoardAccess) {
-            return Board::with('rows.columns.taskCards.badge')
-                ->with('rows.columns.taskCards.board')
-                ->with(['rows.columns.taskCards.assignedTo.employee.user' => function ($q) {
-                    $q->select(['id', 'first_name', 'last_name']);
-                }])
-                ->with(['rows.columns.taskCards.erpEmployee' => function ($q) {
-                    $q->select(['id', 'first_name', 'last_name']);
-                }])
-                ->with(['rows.columns.taskCards.reporter' => function ($q) {
-                    $q->select(['id', 'first_name', 'last_name']);
-                }])
-                ->with(['members.employee.user' => function ($q) {
-                    $q->select(['id', 'first_name', 'last_name']);
-                }])
-                ->with(['rows.columns.taskCards.erpJobSite' => function ($q) {
-                    $q->select(['id', 'name']);
-                }])
-                ->with(['rows.columns.taskCards.row', 'rows.columns.taskCards.column',])
-                ->find($id);
+
+            return Board::with(['rows.columns.taskCards' => function ($q) {
+                $q->where('status', 'active')
+                    ->with('badge', 'board', 'row', 'column',)
+                    ->with(['assignedTo.employee.user' => function ($q) {
+                        $q->select(['id', 'first_name', 'last_name']);
+                    }])
+                    ->with(['erpEmployee' => function ($q) {
+                        $q->select(['id', 'first_name', 'last_name']);
+                    }])
+                    ->with(['reporter' => function ($q) {
+                        $q->select(['id', 'first_name', 'last_name']);
+                    }])
+                    ->with(['erpJobSite' => function ($q) {
+                        $q->select(['id', 'name']);
+                    }]);
+            }])->with(['members.employee.user' => function ($q) {
+                $q->select(['id', 'first_name', 'last_name']);
+            }])->find($id);
         } else {
             abort(403, "You don't have access to this board");
         }
