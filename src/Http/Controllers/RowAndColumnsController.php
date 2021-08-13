@@ -21,8 +21,15 @@ class RowAndColumnsController extends Controller
                 $rowId = $rowData['rowId'];
                 $newRow = Row::with('board')->get()->find($rowId);
 
-                Log::createLog(Auth::user()->id, Log::TYPE_ROW_UPDATED, 'Updated row <' . $newRow->name . '> in board <' . $newRow->board->name . '>',
-                    null, $newRow->board->id, null, null, null);
+                Log::createLog(
+                    Auth::user()->id,
+                    Log::TYPE_ROW_UPDATED, 'Updated row <' . $newRow->name . '> in board <' . $newRow->board->name . '>',
+                    null, 
+                    $newRow->board->id,
+                    null,
+                    null,
+                    null
+                );
             } else {
                 $newRow = Row::with('board')->create([
                     'board_id' => $rowData['boardId'],
@@ -30,8 +37,15 @@ class RowAndColumnsController extends Controller
                     'index' => $rowData['rowIndex'],
                 ]);
                 $rowId = $newRow->id;
-                Log::createLog(Auth::user()->id, Log::TYPE_ROW_CREATED, 'Crreated row <' . $newRow->name . '> in board <' . $newRow->board->name . '>',
-                    null, $newRow->board->id, null, null, null);
+                Log::createLog(
+                    Auth::user()->id,
+                    Log::TYPE_ROW_CREATED, 'Crreated row <' . $newRow->name . '> in board <' . $newRow->board->name . '>',
+                    null,
+                    $newRow->board->id,
+                    null,
+                    null,
+                    null
+                );
             }
 
             /*  Start: Delete columns
@@ -56,8 +70,16 @@ class RowAndColumnsController extends Controller
                     $column = Column::with('row.board')->get()->find($currentColumnId);
                     $column->delete();
 
-                    Log::createLog(Auth::user()->id, Log::TYPE_COLUMN_DELETED, 'Deleted column <' . $column->name . '> from row <' . $column->row->name . '> from board <' . $column->row->board->name . '>',
-                        null, $column->row->board->id, null, null, null);
+                    Log::createLog(
+                        Auth::user()->id,
+                        Log::TYPE_COLUMN_DELETED,
+                        'Deleted column <' . $column->name . '> from row <' . $column->row->name . '> from board <' . $column->row->board->name . '>',
+                        null,
+                        $column->row->board->id,
+                        null,
+                        null,
+                        null
+                    );
                 }
             }
 
@@ -69,8 +91,15 @@ class RowAndColumnsController extends Controller
                         ->update(['name' => $column['name'], 'index' => $key]);
                     $newCol = Column::with('row.board')->get()->find($column['id']);
 
-                    Log::createLog(Auth::user()->id, Log::TYPE_COLUMN_UPDATED, 'Updated column  <' . $newCol->name . '> in row <' . $newCol->row->name . '> from board <' . $newCol->row->board->name . '>',
-                        null, $newCol->row->board->id, null, null, null);
+                    Log::createLog(
+                        Auth::user()->id,
+                        Log::TYPE_COLUMN_UPDATED, 'Updated column  <' . $newCol->name . '> in row <' . $newCol->row->name . '> from board <' . $newCol->row->board->name . '>',
+                        null,
+                        $newCol->row->board->id,
+                        null,
+                        null,
+                        null
+                    );
                 } else {
                     $newColumn = Column::with('row.board')->create([
                         'row_id' => $rowId,
@@ -78,8 +107,15 @@ class RowAndColumnsController extends Controller
                         'index' => $key,
                     ]);
 
-                    Log::createLog(Auth::user()->id, Log::TYPE_COLUMN_CREATED, 'Created column <' . $newColumn->name . '> in row <' . $newColumn->row->name . '> in board <' . $newColumn->row->board->name . '>',
-                    null, $newColumn->row->board->id, null, null, null);
+                    Log::createLog(
+                        Auth::user()->id,
+                        Log::TYPE_COLUMN_CREATED, 'Created column <' . $newColumn->name . '> in row <' . $newColumn->row->name . '> in board <' . $newColumn->row->board->name . '>',
+                        null,
+                        $newColumn->row->board->id,
+                        null,
+                        null,
+                        null
+                    );
                 }
             }
 
@@ -133,16 +169,31 @@ class RowAndColumnsController extends Controller
     {
         $column = Column::with('row.board')->get()->find($id);
         $column->delete();
-        Log::createLog(Auth::user()->id, Log::TYPE_COLUMN_DELETED, 'Deleted  column <' . $column->name . '> from row <' . $column->row->name . '> from board <' . $column->row->board->name . '>',
-            null, $column->row->board->id, null, null, null);
+        Log::createLog(
+            Auth::user()->id,
+            Log::TYPE_COLUMN_DELETED,
+            'Deleted  column <' . $column->name . '> from row <' . $column->row->name . '> from board <' . $column->row->board->name . '>',
+            null,
+            $column->row->board->id,
+            null,
+            null,
+            null
+        );
     }
 
     public function deleteRow($id)
     {
         $row = Row::with('board')->get()->find($id);
         $row->delete();
-        Log::createLog(Auth::user()->id, Log::TYPE_ROW_DELETED, 'Deleted row <' . $row->name . '> from board <' . $row->board->name . '>',
-            null, $row->board->id, null, null, null);
+        Log::createLog(
+            Auth::user()->id,
+            Log::TYPE_ROW_DELETED, 'Deleted row <' . $row->name . '> from board <' . $row->board->name . '>',
+            null,
+            $row->board->id,
+            null,
+            null,
+            null
+        );
     }
 
     public function getRows($board_id)
