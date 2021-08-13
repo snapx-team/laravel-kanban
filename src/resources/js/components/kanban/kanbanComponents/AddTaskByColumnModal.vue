@@ -346,7 +346,7 @@ export default {
             tasks: [],
             templates: [],
             selectTemplateIsVisible: false,
-            selectedTemplate: {},
+            selectedTemplate: null,
         };
     },
 
@@ -399,6 +399,8 @@ export default {
                 selectedColumnName: null,
                 boardId: null
             }
+            this.checkedOptions = [];
+            this.selectedTemplate = null;
 
         },
         onTypeEmployee(search, loading) {
@@ -479,9 +481,16 @@ export default {
         },
 
         setTemplate() {
-            this.task.badge = this.selectedTemplate.badge;
-            this.task.description = this.selectedTemplate.description;
-            this.checkedOptions = this.selectedTemplate.unserialized_options;
+            if(this.selectedTemplate !== null){
+                this.task.badge = this.selectedTemplate.badge;
+                this.task.description = this.selectedTemplate.description;
+                this.checkedOptions = this.selectedTemplate.unserialized_options;
+            }
+            else{
+                this.task.badge = {};
+                this.task.description = null;
+                this.checkedOptions = [];
+            }
         },
     },
 

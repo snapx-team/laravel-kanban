@@ -331,7 +331,7 @@ export default {
             tasks: [],
             templates: [],
             selectTemplateIsVisible: false,
-            selectedTemplate: {},
+            selectedTemplate: null,
             modalOpen: false,
             formatted: null,
             checklistStatus: null,
@@ -370,6 +370,8 @@ export default {
                 columnId: null,
                 associatedTask: null,
             }
+            this.checkedOptions = [];
+            this.selectedTemplate = null;
         },
         onTypeEmployee(search, loading) {
             if (search.length) {
@@ -448,9 +450,16 @@ export default {
         },
 
         setTemplate() {
-            this.task.badge = this.selectedTemplate.badge;
-            this.task.description = this.selectedTemplate.description;
-            this.checkedOptions = this.selectedTemplate.unserialized_options;
+            if(this.selectedTemplate !== null){
+                this.task.badge = this.selectedTemplate.badge;
+                this.task.description = this.selectedTemplate.description;
+                this.checkedOptions = this.selectedTemplate.unserialized_options;
+            }
+            else{
+                this.task.badge = {};
+                this.task.description = null;
+                this.checkedOptions = [];
+            }
         },
     },
 
