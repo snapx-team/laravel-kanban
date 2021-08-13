@@ -257,7 +257,7 @@ class TaskController extends Controller
                             Auth::user()->id,
                             Log::TYPE_CARD_ASSIGNED_TO_USER_UPDATED,
                             "The members assigned to this task has been updated",
-                            null,
+                            $task['badge_id'],
                             $task['board_id'],
                             $task['id'],
                             null,
@@ -276,16 +276,16 @@ class TaskController extends Controller
                 $dt->setTimezone(new DateTimeZone('America/New_York'));
                 $dt->format('y-m-d h:m');
 
-                Task::where('id', $taskCard['id'])
-                    ->update([
+                $task = Task::find($taskCard['id']);
+                $task->update([
                         'name' => $taskCard['name'],
                         'description' => $taskCard['description'],
                         'deadline' => $request->input('deadline') !== null ? $dt : null,
                         'erp_employee_id' => $request->input('erp_employee') !== null ? $taskCard['erp_employee']['id'] : null,
                         'erp_job_site_id' => $request->input('erp_job_site') !== null ? $taskCard['erp_job_site']['id'] : null,
                         'badge_id' => $badge->id,
-                        'column_id' => $taskCard['column_id'] ?? null,
-                        'row_id' => $taskCard['row_id'] ?? null,
+                        'column_id' => $taskCard['column_id'] ?? $task->column_id,
+                        'row_id' => $taskCard['row_id'] ?? $task->row_id,
                         'group' => $group
                     ]);
 
@@ -376,18 +376,18 @@ class TaskController extends Controller
     public function updateTaskCardRowAndColumnId($columnId, $rowId, $taskCardId)
     {
         try {
-            $task = Task::with('row', 'column')->get()->find($taskCardId);
+            $task = Task::with('row', 'column', 'board')->get()->find($taskCardId);
             $prevRow = $task->row->name;
             $prevColumn = $task->column->name;
             $task->update(['column_id' => $columnId, 'row_id' => $rowId]);
-            $task = Task::with('row', 'column')->get()->find($taskCardId);
+            $task = Task::with('row', 'column', 'board')->get()->find($taskCardId);
             $row = $task->row->name;
             $column = $task->column->name;
 
             Log::createLog(
                 Auth::user()->id,
                 Log::TYPE_CARD_MOVED,
-                'Changed from row <' . $prevRow . '> and column <' . $prevColumn . '> to row <' . $row . '> and column <' . $column . '>',
+                'Task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> changed from row <' . $prevRow . '> and column <' . $prevColumn . '> to row <' . $row . '> and column <' . $column . '>',
                 null,
                 $task->board_id,
                 $task->id,
@@ -473,18 +473,42 @@ class TaskController extends Controller
     public function setStatus($taskCardId, $status)
     {
         try {
-            $taskCard = Task::find($taskCardId);
+            $task = Task::with('board')->get()->find($taskCardId);
             if ($status === 'active') {
-                $taskCard->update([
+                $task->update([
                     'status' => $status,
                 ]);
             } else {
-                $taskCard->update([
+                $task->update([
                     'status' => $status,
                     'row_id' => null,
                     'column_id' => null,
                     'index' => null
                 ]);
+            }
+
+            if ($status === 'completed') {
+                Log::createLog(
+                    Auth::user()->id,
+                    Log::TYPE_CARD_COMPLETED,
+                    'Task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> in board <' . $task->board->name . '> set to completed',
+                    $task->badge_id,
+                    $task->board_id,
+                    $task->id,
+                    $task->erp_employee_id,
+                    $task->erp_job_site_id
+                );
+            } else if ($status === 'cancelled') {
+                Log::createLog(
+                    Auth::user()->id,
+                    Log::TYPE_CARD_CANCELED,
+                    'Task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> in board <' . $task->board->name . '> set to cancelled',
+                    $task->badge_id,
+                    $task->board_id,
+                    $task->id,
+                    $task->erp_employee_id,
+                    $task->erp_job_site_id
+                );
             }
         } catch (\Exception $e) {
             return response([
