@@ -118,7 +118,7 @@ class MetricsController extends Controller
 
     public function getClosedTasksByEmployee($start, $end): array
     {
-        $logs = Log::with('user')->where('log_type', Log::TYPE_CARD_CLOSED)
+        $logs = Log::with('user')->where('log_type', Log::TYPE_CARD_COMPLETED)
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
             ->orderBy('user_id')
@@ -144,16 +144,18 @@ class MetricsController extends Controller
 
     public function getDelayByBadge($start, $end): array
     {
-        $closedLogs = Log::where('log_type', Log::TYPE_CARD_CLOSED)
+        $closedLogs = Log::where('log_type', Log::TYPE_CARD_COMPLETED)
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
             ->orderBy('task_id')->get();
         $assignedLogs = Log::with('badge')
-            ->where('log_type', Log::TYPE_CARD_ASSIGNED_TO_USER)
+            ->where('log_type', Log::TYPE_CARD_ASSIGNED_TO_USER_UPDATED)
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
             ->orderBy('task_id')
-            ->get();
+            ->latest()
+            ->get()
+            ->unique('task_id');
 
         $names = [];
         $hits = [];
@@ -190,17 +192,22 @@ class MetricsController extends Controller
      */
     public function getDelayByEmployee($start, $end): array
     {
-        $closedLogs = Log::where('log_type', Log::TYPE_CARD_CLOSED)
+        $closedLogs = Log::where('log_type', Log::TYPE_CARD_COMPLETED)
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
             ->orderBy('task_id')
             ->get();
         $assignedLogs = Log::with('user')
+            ->with(['task.assignedTo.employee.user' => function ($q) {
+                $q->select(['id', 'first_name', 'last_name']);
+            }])
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
-            ->where('log_type', Log::TYPE_CARD_ASSIGNED_TO_USER)
+            ->where('log_type', Log::TYPE_CARD_ASSIGNED_TO_USER_UPDATED)
             ->orderBy('task_id')
-            ->get();
+            ->latest()
+            ->get()
+            ->unique('task_id');
 
         $names = [];
         $hits = [];
@@ -209,13 +216,18 @@ class MetricsController extends Controller
                 if ($assignedLog->task_id == $closedLog->task_id) {
                     $beginning = new DateTime($assignedLog->created_at);
                     $end = new DateTime($closedLog->created_at);
-                    $hours = ($end->diff($beginning))->h;
-                    if (array_key_exists($assignedLog->user_id, $hits)) {
-                        array_push($hits[$assignedLog->user_id], $hours);
-                        unset($closedLogs[$key]);
-                    } else {
-                        $hits[$assignedLog->user_id] = [$hours];
-                        array_push($names, $assignedLog->user->full_name);
+                    $diff = $end->diff($beginning);
+                    $hours = $diff->h;
+                    $hours = $hours + ($diff->days*24);
+
+                    foreach($assignedLog->task->assignedTo as $user){
+                        if (array_key_exists($user->employee->user->id, $hits)) {
+                            array_push($hits[$user->employee->user->id], $hours);
+                            unset($closedLogs[$key]);
+                        } else {
+                            $hits[$user->employee->user->id] = [$hours];
+                            array_push($names, $user->employee->user->full_name);
+                        }
                     }
                 }
             }
@@ -239,7 +251,7 @@ class MetricsController extends Controller
     {
         $beginning = new DateTime($start);
         $ending = new DateTime($end);
-        $resolvedLogs = Log::where('log_type', Log::TYPE_CARD_CLOSED)
+        $resolvedLogs = Log::where('log_type', Log::TYPE_CARD_COMPLETED)
             ->orWhere('log_type', Log::TYPE_CARD_CANCELED)
             ->whereDate('created_at', '>=', $beginning)
             ->whereDate('created_at', '<=', $ending)
