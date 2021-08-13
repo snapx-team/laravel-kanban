@@ -109,7 +109,15 @@ class TaskController extends Controller
                     );
                 }
 
-                Log::createLog(Auth::user()->id, Log::TYPE_CARD_CREATED, 'Created new backlog task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> with board <' . $task->board->name . '>', $task->badge_id, $task->board_id, $task->id, $task->erp_employee_id, $task->erp_job_site_id);
+                Log::createLog(
+                    Auth::user()->id,
+                    Log::TYPE_CARD_CREATED, 'Created new backlog task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> with board <' . $task->board->name . '>',
+                    $task->badge_id,
+                    $task->board_id,
+                    $task->id,
+                    $task->erp_employee_id,
+                    $task->erp_job_site_id
+                );
             }
         } catch (\Exception $e) {
             return response([

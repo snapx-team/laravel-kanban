@@ -22,7 +22,16 @@ class EmployeeController extends Controller
                     ['role' => $employeeData['role'],]
                 );
 
-                Log::createLog(Auth::user()->id, Log::TYPE_EMPLOYEE_CREATED, 'Added employee <' . $employee->user->full_name . '>', null, null, null, $employee->user_id, null);
+                Log::createLog(
+                    Auth::user()->id,
+                    Log::TYPE_EMPLOYEE_CREATED,
+                    'Added employee <' . $employee->user->full_name . '>',
+                    null,
+                    null,
+                    null,
+                    $employee->user_id,
+                    null
+                );
             }
 
         } catch (\Exception $e) {
@@ -40,7 +49,16 @@ class EmployeeController extends Controller
             $employee = Employee::with('user')->get()->find($id);
             $employee->delete();
 
-            Log::createLog(Auth::user()->id, Log::TYPE_EMPLOYEE_DELETED, 'Deleted employee <' . $employee->user->full_name . '>', null, null, null, $employee->user_id, null);
+            Log::createLog(
+                Auth::user()->id,
+                Log::TYPE_EMPLOYEE_DELETED,
+                'Deleted employee <' . $employee->user->full_name . '>',
+                null,
+                null,
+                null,
+                $employee->user_id,
+                null
+            );
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
