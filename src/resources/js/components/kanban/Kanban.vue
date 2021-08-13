@@ -56,27 +56,29 @@
                                    :disabled="isDraggableDisabled || $role !== 'admin'"
                                    @end="getColumnChangeData($event, rowIndex)">
                             <div :key="column.id"
-                                 class="flex-1 bg-gray-200 px-3 py-3 column-width rounded mr-4"
+                                 class="flex flex-col flex-1 bg-gray-200 px-3 py-3 column-width rounded mr-4 overflow-y-auto overflow-x-hidden"
+                                 style="max-height: 800px"
                                  v-for="(column, columnIndex) in row.columns">
-                                <div class="flex" v-if="loadingCards.columnId === column.id && loadingCards.isLoading ">
-                                    <p class="flex-auto text-gray-700 font-semibold font-sans tracking-wide pt-1 animate-pulse">
-                                        Loading... </p>
-                                </div>
-                                <div class="flex" v-else>
+                                    <div class="flex" v-if="loadingCards.columnId === column.id && loadingCards.isLoading ">
+                                        <p class="flex-auto text-gray-700 font-semibold font-sans tracking-wide pt-1 animate-pulse">
+                                            Loading... </p>
+                                    </div>
+                                    <div class="flex" v-else>
 
-                                    <p class="flex-auto text-gray-700 font-semibold font-sans tracking-wide pt-1">
-                                        {{ column.name }} </p>
+                                        <p class="flex-auto text-gray-700 font-semibold font-sans tracking-wide pt-1">
+                                            {{ column.name }} </p>
 
-                                    <button @click="createTaskCard(rowIndex, columnIndex)"
-                                            class="w-6 h-6 bg-blue-200 rounded-full hover:bg-blue-300 mouse transition ease-in duration-200 focus:outline-none">
-                                        <i class="fas fa-plus text-white"></i>
-                                    </button>
-                                </div>
+                                        <button @click="createTaskCard(rowIndex, columnIndex)"
+                                                class="w-6 h-6 bg-blue-200 rounded-full hover:bg-blue-300 mouse transition ease-in duration-200 focus:outline-none">
+                                            <i class="fas fa-plus text-white"></i>
+                                        </button>
+                                    </div>
+
                                 <draggable :animation="200"
                                            :disabled="isDraggableDisabled"
                                            :list="column.task_cards"
                                            @change="getTaskChangeData($event, columnIndex, rowIndex)"
-                                           class="h-full list-group"
+                                           class="list-group flex-col flex-1"
                                            ghost-class="ghost-card"
                                            group="tasks">
                                     <task-card :class="{'opacity-60':isDraggableDisabled}"
