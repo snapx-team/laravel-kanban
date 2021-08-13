@@ -37,7 +37,7 @@ class LaravelKanbanController extends Controller
 
             return Board::with(['rows.columns.taskCards' => function ($q) {
                 $q->where('status', 'active')
-                    ->with('badge', 'board', 'row', 'column',)
+                    ->with('badge', 'board', 'row', 'column')
                     ->with(['assignedTo.employee.user' => function ($q) {
                         $q->select(['id', 'first_name', 'last_name']);
                     }])
