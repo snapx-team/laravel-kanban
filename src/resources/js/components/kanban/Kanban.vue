@@ -19,8 +19,25 @@
                         Loading... </h2>
                 </div>
                 <div class="border bg-gray-700 pl-3 pr-3 rounded py-2 flex justify-between" v-else>
-                    <h2 class="text-gray-100 font-medium tracking-wide">
-                        {{ row.name }} </h2>
+
+
+
+
+
+                    <div class="flex">
+                        <div
+                            :class="{ 'transform rotate-90 ' : collapsedRows.includes(row.id)  }"
+                            class="transition duration-150 ease-in-out text-white"
+                            id="container"
+                            @click="collapseRow(row.id)">
+                            <i id="icon " class="fa fa-chevron-right cursor-pointer"></i>
+                        </div>
+                        <h2 class="text-gray-100 font-medium tracking-wide pl-3">{{ row.name }} </h2>
+
+                    </div>
+
+<!--                    <h2 class="text-gray-100 font-medium tracking-wide">{{ row.name }} </h2>-->
+
 
                     <a @click="createRowAndColumns(rowIndex, row.columns, row.id, row.name)"
                        v-if="$role === 'admin'"
@@ -28,7 +45,7 @@
                         <i class="fas fa-business-time"></i>
                     </a>
                 </div>
-                <div class="flex flex-wrap">
+                <div class="flex flex-wrap" :class="{ 'hidden' : collapsedRows.includes(row.id)  }">
                     <div class="space-x-2  flex flex-1 flex-col pt-3 pb-2 overflow-x-auto overflow-y-hidden">
 
                         <draggable :animation="200"
@@ -127,17 +144,24 @@ export default {
             loadingRow: {rowId: null, isLoading: false},
             loadingCards: {columnId: null, isLoading: false},
             loadingMembers: {memberId: null, isLoading: false},
-            isDraggableDisabled: false
+            isDraggableDisabled: false,
+            collapsedRows:[]
         };
     },
 
     mounted() {
         this.getKanban(this.id);
+        if (localStorage.collapsedRows) {
+            this.collapsedRows = localStorage.collapsedRows.split(',').map(Number);
+        }
     },
 
     watch: {
         id: function (newVal) {
             this.getKanban(newVal);
+        },
+        collapsedRows(newCollapsedRows) {
+            localStorage.collapsedRows = newCollapsedRows;
         }
     },
 
@@ -380,6 +404,15 @@ export default {
 
         openTask(task) {
             this.eventHub.$emit("update-kanban-task-cards", task);
+        },
+
+        collapseRow(rowId){
+
+            if(!this.collapsedRows.includes(rowId)){          //checking weather array contain the id
+                this.collapsedRows.push(rowId);               //adding to array because value doesnt exists
+            }else{
+                this.collapsedRows.splice(this.collapsedRows.indexOf(rowId), 1);  //deleting
+            }
         }
     },
 };

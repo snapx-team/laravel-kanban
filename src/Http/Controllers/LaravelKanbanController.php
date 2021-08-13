@@ -21,9 +21,12 @@ class LaravelKanbanController extends Controller
         return view('Xguard\LaravelKanban::index');
     }
 
-    public function getRole()
+    public function getRoleAndEmployeeId(): array
     {
-        return session('role');
+        return [
+            'role' => session('role'),
+            'employee_id' => session('employee_id'),
+        ];
     }
 
     public function getkanbanData($id)

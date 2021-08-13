@@ -9,7 +9,7 @@ Kanban package for Laravel Projects
 Use the following commands to install
 
 ```bash
-composer require xguard/kanban
+composer require xguard/laravel-kanban
 php artisan migrate
 php artisan vendor:publish --provider="Xguard\LaravelKanban\LaravelKanbanServiceProvider" --force
 ```

@@ -41,14 +41,26 @@ Vue.mixin({
             set: function (newRole) {
                 globalData.$data.$role = newRole;
             }
+        },
+
+        $employeeIdSession: {
+            get: function () {
+                return globalData.$data.$employeeId;
+            },
+            set: function (newEmployeeId) {
+                globalData.$data.$employeeId = newEmployeeId;
+            }
         }
     }
 });
 new Vue({
     router,
     mounted() {
-        axios.get('get-role').then((data) => {
-            this.$role = data.data;
+        axios.get('get-role-and-employee-id').then((data) => {
+
+            this.$role = data.data['role'];
+            this.$employeeIdSession = data.data['employee_id'];
+
         }).catch(res => {
             console.log(res);
         });

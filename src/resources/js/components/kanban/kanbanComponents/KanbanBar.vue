@@ -5,7 +5,7 @@
             <div :class="{'animate-pulse' : loadingMembers.isLoading }" class="flex items-center py-1 pr-8 h-16">
                 <p class="px-2 text-gray-500 pr-4">{{ kanbanMembers.length }} members</p>
 
-                <template v-for="(member, memberIndex) in kanbanMembers">
+                <template v-for="(member, memberIndex) in computedMembers">
                     <template v-if="memberIndex < membersOnKanbanBarNumber">
                         <avatar :borderSize="0"
                                 :class="{ '-ml-3': memberIndex > 0}"
@@ -16,8 +16,7 @@
                                 :tooltip="true"
                                 @click.native="clickMember(member)"
                                 class="cursor-pointer transform hover:-translate-y-1 transition duration-300"
-                        >
-                        </avatar>
+                        ></avatar>
                     </template>
                 </template>
 
@@ -47,6 +46,7 @@ export default {
             membersOnKanbanBarNumber: 5
         }
     },
+
     props: {
         kanbanName: {
             type: String,
@@ -88,6 +88,11 @@ export default {
             }
             this.eventHub.$emit("show-employee-tasks", this.selected); //user id, not erp id
         }
+    },
+    computed: {
+        computedMembers() {
+            return this.kanbanMembers.sort((x,y) => { return x.employee_id === this.$employeeIdSession ? -1 : y.employee_id === this.$employeeIdSession ? 1 : 0; });
+        },
     },
 };
 </script>
