@@ -41,7 +41,16 @@ class BoardsController extends Controller
                     'name' => $request->input('name'),
                 ]);
 
-                Log::createLog(Auth::user()->id, Log::TYPE_BOARD_CREATED, 'Added new board <' . $board->name . '>', null, $board->id, null, null, null);
+                Log::createLog(
+                    Auth::user()->id,
+                    Log::TYPE_BOARD_CREATED,
+                    'Added new board <' . $board->name . '>',
+                    null,
+                    $board->id,
+                    null,
+                    null,
+                    null
+                );
             }
 
         } catch (\Exception $e) {
@@ -65,7 +74,16 @@ class BoardsController extends Controller
             $board = Board::find($id);
             $board->delete();
 
-            Log::createLog(Auth::user()->id, Log::TYPE_BOARD_DELETED, 'Deleted board <' . $board->name . '>', null, $board->id, null, null, null);
+            Log::createLog(
+                Auth::user()->id,
+                Log::TYPE_BOARD_DELETED,
+                'Deleted board <' . $board->name . '>',
+                null,
+                $board->id,
+                null,
+                null,
+                null
+            );
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',

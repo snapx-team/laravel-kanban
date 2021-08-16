@@ -1,9 +1,7 @@
 <template>
     <div v-if="backlogData !== null">
         <backlog-bar :name="'Backlog'"></backlog-bar>
-
         <div class="p-5">
-
             <div class="flex-column">
 
                 <!-- date filter -->
@@ -44,6 +42,7 @@
                             v-model="filterText"/>
                     </div>
 
+                    <!-- active, completed, cancelled -->
                     <div class="flex py-3 h-12 border mt-3 ml-2">
                         <label class="flex mx-3">
                             <input
@@ -77,6 +76,7 @@
                         </label>
                     </div>
 
+                    <!-- placed in board, awaiting placement -->
                     <div class="flex py-3 h-12 border mt-3 mx-2">
                         <label class="flex mx-3">
                             <input
@@ -100,8 +100,9 @@
                         </label>
                     </div>
                 </div>
-                <div class="flex mb-3">
 
+                <!-- badges -->
+                <div class="flex mb-3">
                     <div class="flex block mr-2">
                         <vSelect
                             v-model="filterBadge"
@@ -119,6 +120,7 @@
                         </vSelect>
                     </div>
 
+                    <!-- assigned to -->
                     <div class="flex block mr-2">
                         <vSelect
                             v-model="filterAssignedTo"
@@ -138,6 +140,7 @@
                         </vSelect>
                     </div>
 
+                    <!-- reporter -->
                     <div class="flex block">
                         <vSelect
                             v-model="filterReporter"
@@ -240,7 +243,6 @@ export default {
             filterReporter: [],
             start: this.getOneMonthAgo(),
             end: new Date(),
-            currentTask: null,
             showBoardsPane: true,
             showTaskPane: false,
             activeBool: true,
@@ -248,7 +250,6 @@ export default {
             completedBool: false,
             placedInBoard: false,
             notPlacedInBoard: true,
-            allKanbanEmployees: [],
         };
     },
 
@@ -354,6 +355,18 @@ export default {
             }
             return boardMatch;
         },
+        filterByBoard(board) {
+            if (this.filterBoard.includes(board)) {
+                // remove it from array
+                let newArray = this.filterBoard.filter((t) => {
+                    return t !== board;
+                });
+                this.filterBoard = newArray;
+            } else {
+                // add to array
+                this.filterBoard.push(board);
+            }
+        },
         isAssignedToEmployeeMatch(t) {
             let isMatch = false;
             if (this.filterAssignedTo.length > 0) {
@@ -421,18 +434,6 @@ export default {
         },
         closeBoardView() {
             this.showBoardsPane = false;
-        },
-        filterByBoard(board) {
-            if (this.filterBoard.includes(board)) {
-                // remove it from array
-                let newArray = this.filterBoard.filter((t) => {
-                    return t !== board;
-                });
-                this.filterBoard = newArray;
-            } else {
-                // add to array
-                this.filterBoard.push(board);
-            }
         },
         getBacklogData() {
             this.eventHub.$emit("set-loading-state", true);

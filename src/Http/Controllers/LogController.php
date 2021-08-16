@@ -11,6 +11,6 @@ class LogController extends Controller
 
     public function getLogs($searchTerm)
     {
-        return Log::with('badge', 'board', 'user', 'erpEmployee', 'erpJobSite')->where('task_id', $searchTerm)->get();
+        return Log::with('badge', 'board', 'user', 'erpEmployee', 'erpJobSite')->where('task_id', $searchTerm)->orderBy('created_at', 'desc')->get();
     }
 }
