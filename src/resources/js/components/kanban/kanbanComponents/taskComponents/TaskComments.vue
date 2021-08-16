@@ -139,9 +139,6 @@
                             ['code-block'],
                             [{'list': 'ordered'}, {'list': 'bullet'}],
                             [{'script': 'sub'}, {'script': 'super'}],
-                            [{'color': []}, {'background': []}],
-                            [{'align': []}],
-                            ['clean']
                         ]
                     }
                 },

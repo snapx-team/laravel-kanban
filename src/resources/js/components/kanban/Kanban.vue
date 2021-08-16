@@ -26,7 +26,7 @@
 
                     <div class="flex">
                         <div
-                            :class="{ 'transform rotate-90 ' : collapsedRows.includes(row.id)  }"
+                            :class="{ 'transform rotate-90 ' : !collapsedRows.includes(row.id)  }"
                             class="transition duration-150 ease-in-out text-white"
                             id="container"
                             @click="collapseRow(row.id)">
@@ -42,7 +42,7 @@
                     <a @click="createRowAndColumns(rowIndex, row.columns, row.id, row.name)"
                        v-if="$role === 'admin'"
                        class="px-2 text-gray-500 hover:text-gray-400 transition duration-300 ease-in-out focus:outline-none">
-                        <i class="fas fa-business-time"></i>
+                        <i class="fas fa-edit"></i>
                     </a>
                 </div>
                 <div class="flex flex-wrap" :class="{ 'hidden' : collapsedRows.includes(row.id)  }">

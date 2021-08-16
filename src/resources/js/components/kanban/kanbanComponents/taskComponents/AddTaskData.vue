@@ -147,6 +147,7 @@
 
                 <div class="w-full grid sm:grid-cols-2 gap-3 sm:gap-3">
                     <button
+                        @click="cancel($event)"
                         class="px-4 py-3 border border-gray-200 rounded text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-600 transition duration-300 ease-in-out"
                         type="button">
                         Cancel
@@ -296,6 +297,11 @@ export default {
         updateTaskData(event) {
             event.target.disabled = true;
             this.eventHub.$emit("update-task-card-data", this.cloneCardData);
+            this.eventHub.$emit("close-task-modal");
+        },
+
+        cancel(event) {
+            event.target.disabled = true;
             this.eventHub.$emit("close-task-modal");
         },
 

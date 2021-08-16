@@ -118,8 +118,12 @@
 </template>
 <script>
 
+import {ajaxCalls} from "../../../mixins/ajaxCallsMixin";
+
 export default {
+
     inject: ["eventHub"],
+    mixins: [ajaxCalls],
 
     data() {
         return {
@@ -188,9 +192,28 @@ export default {
 
         },
         saveRow() {
-            this.eventHub.$emit("save-row-and-columns", this.rowData);
-            this.modalOpen = false;
-            this.rowData.rowIndex = null;
+
+            let isValidated = true;
+
+            if (!!this.rowData.name.trim() === false){
+                this.triggerErrorToast('Row name cannot be empty');
+                isValidated = false;
+            }
+
+            this.rowData.columns.forEach( (value) => {
+                if (!!value.name.trim() === false)
+                {
+                    this.triggerErrorToast('Column name cannot be empty');
+                    isValidated = false;
+                }
+            });
+
+            if(isValidated){
+                this.eventHub.$emit("save-row-and-columns", this.rowData);
+                this.modalOpen = false;
+                this.rowData.rowIndex = null;
+            }
+
         },
         deleteRow() {
 

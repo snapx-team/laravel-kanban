@@ -27,7 +27,7 @@
                         placeholder="Select one or more kanban boards"
                         style="margin-top: 7px"
                         v-model="task.board"
-                        @input="loadRowsAndColumns(option.id)">
+                        @input="loadRowsAndColumns(task.board.id)">
                         <template slot="option" slot-scope="option">
                             {{ option.name }}
                         </template>

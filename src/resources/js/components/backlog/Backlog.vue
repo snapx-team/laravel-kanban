@@ -11,7 +11,7 @@
                     <div class="flex-column w-72 mr-2">
                     <span
                         class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Start</span>
-                        <date-picker type="datetime" v-model="start"
+                        <date-picker type="date" v-model="start"
                                      placeholder="YYYY-MM-DD"
                                      format="YYYY-MM-DD"
                         ></date-picker>
@@ -19,7 +19,7 @@
                     <div class="flex-column w-72 mr-2">
                     <span
                         class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">End</span>
-                        <date-picker type="datetime" v-model="end"
+                        <date-picker type="date" v-model="end"
                                      placeholder="YYYY-MM-DD"
                                      format="YYYY-MM-DD"
                         ></date-picker>
