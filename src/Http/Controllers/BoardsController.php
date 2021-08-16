@@ -44,7 +44,7 @@ class BoardsController extends Controller
                 Log::createLog(
                     Auth::user()->id,
                     Log::TYPE_BOARD_CREATED,
-                    'Added new board <' . $board->name . '>',
+                    'Added new board [' . $board->name . ']',
                     null,
                     $board->id,
                     null,
@@ -77,7 +77,7 @@ class BoardsController extends Controller
             Log::createLog(
                 Auth::user()->id,
                 Log::TYPE_BOARD_DELETED,
-                'Deleted board <' . $board->name . '>',
+                'Deleted board [' . $board->name . ']',
                 null,
                 $board->id,
                 null,

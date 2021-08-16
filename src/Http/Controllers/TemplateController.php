@@ -51,7 +51,7 @@ class TemplateController extends Controller
                 Log::createLog(
                     Auth::user()->id,
                     Log::TYPE_BADGE_CREATED,
-                    "The badge '" . $badge->name . "' was created",
+                    "The badge [" . $badge->name . "] was created",
                     $badge->id,
                     null,
                     null,

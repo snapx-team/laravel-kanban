@@ -100,7 +100,7 @@ class TaskController extends Controller
                     Log::createLog(
                         Auth::user()->id,
                         Log::TYPE_BADGE_CREATED,
-                        "The badge '" . $badge->name . "' was created",
+                        "The badge [" . $badge->name . "] was created",
                         $badge->id,
                         null,
                         $task->id,
@@ -111,7 +111,7 @@ class TaskController extends Controller
 
                 Log::createLog(
                     Auth::user()->id,
-                    Log::TYPE_CARD_CREATED, 'Created new backlog task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> with board <' . $task->board->name . '>',
+                    Log::TYPE_CARD_CREATED, 'Created new backlog task [' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '] with board [' . $task->board->name . '>',
                     $task->badge_id,
                     $task->board_id,
                     $task->id,
@@ -185,7 +185,7 @@ class TaskController extends Controller
                 Log::createLog(
                     Auth::user()->id,
                     Log::TYPE_BADGE_CREATED,
-                    "The badge '" . $badge->name . "' was created",
+                    "The badge [" . $badge->name . "] was created",
                     $badge->id,
                     null,
                     $task->id,
@@ -205,7 +205,7 @@ class TaskController extends Controller
             Log::createLog(
                 Auth::user()->id,
                 Log::TYPE_CARD_CREATED,
-                'Created new task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> on board <' . $task->board->name . '>',
+                'Created new task [' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '] on board [' . $task->board->name . ']',
                 $task->badge_id,
                 $task->board_id,
                 $task->id,
@@ -249,7 +249,7 @@ class TaskController extends Controller
                         Log::createLog(
                             Auth::user()->id,
                             Log::TYPE_BADGE_CREATED,
-                            "The badge '" . $badge->name . "' was created",
+                            "The badge [" . $badge->name . "] was created",
                             $badge->id,
                             null,
                             $task->id,
@@ -320,7 +320,7 @@ class TaskController extends Controller
                     Log::createLog(
                         Auth::user()->id,
                         Log::TYPE_CARD_UPDATED,
-                        "'" . implode("','", array_keys($difference)) . "' was updated.",
+                        "[" . implode("','", array_keys($difference)) . "] was updated.",
                         $task['badge_id'],
                         $task['board_id'],
                         $task['id'],
@@ -395,7 +395,7 @@ class TaskController extends Controller
             Log::createLog(
                 Auth::user()->id,
                 Log::TYPE_CARD_MOVED,
-                'Task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> changed from row <' . $prevRow . '> and column <' . $prevColumn . '> to row <' . $row . '> and column <' . $column . '>',
+                'Task [' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '] changed from [' . $prevRow . ':' . $prevColumn . '] to [' . $row . ':' . $column . ']',
                 null,
                 $task->board_id,
                 $task->id,
@@ -499,7 +499,7 @@ class TaskController extends Controller
                 Log::createLog(
                     Auth::user()->id,
                     Log::TYPE_CARD_COMPLETED,
-                    'Task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> in board <' . $task->board->name . '> set to completed',
+                    'Task [' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '] in board [' . $task->board->name . '] set to completed',
                     $task->badge_id,
                     $task->board_id,
                     $task->id,
@@ -510,7 +510,7 @@ class TaskController extends Controller
                 Log::createLog(
                     Auth::user()->id,
                     Log::TYPE_CARD_CANCELED,
-                    'Task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> in board <' . $task->board->name . '> set to cancelled',
+                    'Task [' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '] in board [' . $task->board->name . '] set to cancelled',
                     $task->badge_id,
                     $task->board_id,
                     $task->id,
@@ -539,7 +539,7 @@ class TaskController extends Controller
             Log::createLog(
                 Auth::user()->id,
                 Log::TYPE_CARD_ASSIGNED_TO_BOARD,
-                'Task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> assigned to board <' . $task->board->name . '> on row <' . $task->row->name . '> and column <' . $task->column->name . '>',
+                'Task [' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '] assigned to board [' . $task->board->name . '] on [' . $task->row->name . ':' . $task->column->name . ']',
                 $task->badge_id,
                 $task->board_id,
                 $task->id,
@@ -566,7 +566,7 @@ class TaskController extends Controller
             Log::createLog(
                 Auth::user()->id,
                 Log::TYPE_CARD_ASSIGNED_GROUP,
-                'Task <' . substr($taskCard->board->name, 0, 3) . '-' . $taskCard->id . ' : ' . $taskCard->name . '> changed group',
+                'Task [' . substr($taskCard->board->name, 0, 3) . '-' . $taskCard->id . ' : ' . $taskCard->name . '] changed group',
                 null,
                 $taskCard->board->id,
                 $taskCard->id,

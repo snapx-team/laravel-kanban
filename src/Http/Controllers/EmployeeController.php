@@ -25,7 +25,7 @@ class EmployeeController extends Controller
                 Log::createLog(
                     Auth::user()->id,
                     Log::TYPE_EMPLOYEE_CREATED,
-                    'Added employee <' . $employee->user->full_name . '>',
+                    'Added employee [' . $employee->user->full_name . ']',
                     null,
                     null,
                     null,
@@ -52,7 +52,7 @@ class EmployeeController extends Controller
             Log::createLog(
                 Auth::user()->id,
                 Log::TYPE_EMPLOYEE_DELETED,
-                'Deleted employee <' . $employee->user->full_name . '>',
+                'Deleted employee [' . $employee->user->full_name . ']',
                 null,
                 null,
                 null,
