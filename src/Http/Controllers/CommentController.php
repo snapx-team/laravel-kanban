@@ -41,7 +41,7 @@ class CommentController extends Controller
                     Log::createLog(
                         Auth::user()->id,
                         Log::TYPE_COMMENT_EDITED,
-                        'Edited comment from ' . $prevComment->comment . ' to ' .$comment->comment . ' on task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> on board <' . $task->board->name . '>',
+                        'Edited comment on task [' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '] on board [' . $task->board->name . ']',
                         null,
                         null,
                         $comment->task_id,
@@ -60,7 +60,7 @@ class CommentController extends Controller
                     Log::createLog(
                         Auth::user()->id,
                         Log::TYPE_COMMENT_CREATED,
-                        'Added new comment ' . $comment->comment . ' on task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> on board <' . $task->board->name . '>',
+                        'Added new comment on task [' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '] on board [' . $task->board->name . ']',
                         null,
                         null,
                         $comment->task_id,
@@ -96,7 +96,7 @@ class CommentController extends Controller
             Log::createLog(
                 Auth::user()->id,
                 Log::TYPE_COMMENT_DELETED,
-                'Deleted comment  ' . $comment->comment . ' on task <' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '> on board <' . $task->board->name . '>',
+                'Deleted comment on task [' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '] on board [' . $task->board->name . ']',
                 null,
                 null,
                 $comment->task_id,

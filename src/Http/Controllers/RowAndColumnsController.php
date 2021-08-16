@@ -23,7 +23,7 @@ class RowAndColumnsController extends Controller
 
                 Log::createLog(
                     Auth::user()->id,
-                    Log::TYPE_ROW_UPDATED, 'Updated row <' . $newRow->name . '> in board <' . $newRow->board->name . '>',
+                    Log::TYPE_ROW_UPDATED, 'Updated row [' . $newRow->name . '] in board [' . $newRow->board->name . ']',
                     null, 
                     $newRow->board->id,
                     null,
@@ -39,7 +39,7 @@ class RowAndColumnsController extends Controller
                 $rowId = $newRow->id;
                 Log::createLog(
                     Auth::user()->id,
-                    Log::TYPE_ROW_CREATED, 'Crreated row <' . $newRow->name . '> in board <' . $newRow->board->name . '>',
+                    Log::TYPE_ROW_CREATED, 'Crreated row [' . $newRow->name . '] in board [' . $newRow->board->name . ']',
                     null,
                     $newRow->board->id,
                     null,
@@ -73,7 +73,7 @@ class RowAndColumnsController extends Controller
                     Log::createLog(
                         Auth::user()->id,
                         Log::TYPE_COLUMN_DELETED,
-                        'Deleted column <' . $column->name . '> from row <' . $column->row->name . '> from board <' . $column->row->board->name . '>',
+                        'Deleted column [' . $column->name . '] from row [' . $column->row->name . '] from board [' . $column->row->board->name . ']',
                         null,
                         $column->row->board->id,
                         null,
@@ -93,7 +93,7 @@ class RowAndColumnsController extends Controller
 
                     Log::createLog(
                         Auth::user()->id,
-                        Log::TYPE_COLUMN_UPDATED, 'Updated column  <' . $newCol->name . '> in row <' . $newCol->row->name . '> from board <' . $newCol->row->board->name . '>',
+                        Log::TYPE_COLUMN_UPDATED, 'Updated column  [' . $newCol->name . '] in row [' . $newCol->row->name . '] from board [' . $newCol->row->board->name . ']',
                         null,
                         $newCol->row->board->id,
                         null,
@@ -109,7 +109,7 @@ class RowAndColumnsController extends Controller
 
                     Log::createLog(
                         Auth::user()->id,
-                        Log::TYPE_COLUMN_CREATED, 'Created column <' . $newColumn->name . '> in row <' . $newColumn->row->name . '> in board <' . $newColumn->row->board->name . '>',
+                        Log::TYPE_COLUMN_CREATED, 'Created column [' . $newColumn->name . '] in row [' . $newColumn->row->name . '] in board [' . $newColumn->row->board->name . ']',
                         null,
                         $newColumn->row->board->id,
                         null,
@@ -172,7 +172,7 @@ class RowAndColumnsController extends Controller
         Log::createLog(
             Auth::user()->id,
             Log::TYPE_COLUMN_DELETED,
-            'Deleted  column <' . $column->name . '> from row <' . $column->row->name . '> from board <' . $column->row->board->name . '>',
+            'Deleted  column [' . $column->name . '] from row [' . $column->row->name . '] from board [' . $column->row->board->name . ']',
             null,
             $column->row->board->id,
             null,
@@ -187,7 +187,7 @@ class RowAndColumnsController extends Controller
         $row->delete();
         Log::createLog(
             Auth::user()->id,
-            Log::TYPE_ROW_DELETED, 'Deleted row <' . $row->name . '> from board <' . $row->board->name . '>',
+            Log::TYPE_ROW_DELETED, 'Deleted row [' . $row->name . '] from board [' . $row->board->name . ']',
             null,
             $row->board->id,
             null,
