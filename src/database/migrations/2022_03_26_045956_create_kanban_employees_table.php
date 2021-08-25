@@ -17,6 +17,7 @@ class CreateKanbanEmployeesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->string('role');
+            $table->timestamp('last_notif_check'); //is this correct?
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });

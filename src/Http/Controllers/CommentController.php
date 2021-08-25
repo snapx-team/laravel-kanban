@@ -45,7 +45,6 @@ class CommentController extends Controller
                         null,
                         null,
                         $comment->task_id,
-                        null,
                         null
                     );
                 
@@ -64,7 +63,6 @@ class CommentController extends Controller
                         null,
                         null,
                         $comment->task_id,
-                        null,
                         null
                     );
                 }
@@ -100,7 +98,6 @@ class CommentController extends Controller
                 null,
                 null,
                 $comment->task_id,
-                null,
                 null
             );
         } catch (\Exception $e) {

@@ -31,6 +31,11 @@ class Employee extends Model
 
     public function tasks(): BelongsToMany
     {
-        return $this->belongsToMany(Task::class, 'kanban_employee-task', 'employee_id', 'task_id');
+        return $this->belongsToMany(Task::class, 'kanban_employee_task', 'employee_id', 'task_id');
+    }
+
+    public function logs(): BelongsToMany
+    {
+        return $this->belongsToMany(Log::class, 'kanban_employee_log', 'employee_id', 'log_id')->withTimestamps();
     }
 }

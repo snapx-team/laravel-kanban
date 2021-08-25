@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Auth;
 use Xguard\LaravelKanban\Http\Helper\CheckHasAccessToBoardWithBoardId;
 use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Board;
-use Xguard\LaravelKanban\Models\Member;
 use Xguard\LaravelKanban\Models\Template;
 use Xguard\LaravelKanban\Models\Task;
 
@@ -176,4 +175,49 @@ class LaravelKanbanController extends Controller
             'kanbanUsers' => $kanbanUsers,
         ];
     }
+
+    public function getNotificationData() {
+        $employee = Employee::
+            where('user_id', '=', Auth::user()->id)
+            ->with('logs.user')
+            ->with(['logs' => function ($q) {
+                $q->orderBy('created_at', 'desc');
+            }])->first();
+        return $employee->logs;
+    }
+
+    public function getNotificationCount() {
+        $employee = Employee::
+            where('user_id', '=', Auth::user()->id)
+            ->first();
+        $startDate = $employee->last_notif_check;
+        if ($startDate !== null) {
+            $employee = Employee::
+            where('user_id', '=', Auth::user()->id)
+            ->with(['logs' => function ($q) use ($startDate) {
+                $q->where('kanban_logs.created_at', '>=', new DateTime($startDate));
+            }])
+            ->first();
+        }
+        if($employee == null) {
+            return 0;
+        }
+        $count = count($employee->logs);
+        return $count;
+    }
+
+    public function updateNotificationCount() {
+        try {
+            Employee::where('user_id', '=', Auth::user()->id)->update([
+                'last_notif_check' => new DateTime('NOW')
+            ]);
+        } catch (\Exception $e) {
+            return response([
+                'success' => 'false',
+                'message' => $e->getMessage(),
+            ], 400);
+        }
+        return response(['success' => 'true'], 200);
+    }
+
 }
