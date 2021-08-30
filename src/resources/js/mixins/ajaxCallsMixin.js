@@ -109,6 +109,10 @@ export const ajaxCalls = {
             return axios.get('get-related-tasks/' + taskId);
         },
 
+        asyncGetTaskData(taskId) {
+            return axios.get('get-task-data/' + taskId);
+        },
+
         asyncGetRelatedTasksLessInfo(taskId) {
             return axios.get('get-related-tasks-less-info/' + taskId).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
@@ -193,8 +197,8 @@ export const ajaxCalls = {
             });
         },
 
-        asyncAssignTaskToBoard(task_id, row_id, column_id) {
-            return axios.post('assign-task-to-board/' + task_id + '/' + row_id + '/' + column_id).then(() => {
+        asyncAssignTaskToBoard(task_id, row_id, column_id, board_id) {
+            return axios.post('assign-task-to-board/' + task_id + '/' + row_id + '/' + column_id + '/' + board_id).then(() => {
                 this.triggerSuccessToast('Task Assigned!');
             }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
@@ -293,8 +297,8 @@ export const ajaxCalls = {
 
         // Logs
 
-        asyncGetLogs(searchTerm) {
-            return axios.get('get-logs/' + searchTerm);
+        asyncGetLogs(taskId) {
+            return axios.get('get-logs/' + taskId);
         },
 
         // Members

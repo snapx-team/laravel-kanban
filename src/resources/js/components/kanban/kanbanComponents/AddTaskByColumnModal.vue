@@ -132,9 +132,11 @@
                                 <div class="flex-grow space-y-2">
                                     <span
                                         class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"> Description</span>
-                                    <quill-editor :options="config"
+                                    <quill-editor v-if="!checkedOptions.includes('Group')"
+                                                  :options="config"
                                                   output="html"
                                                   v-model="task.description"></quill-editor>
+                                    <p v-else class="text-sm font-medium leading-5 text-red-500">Description will match group description</p>
                                 </div>
                             </div>
 

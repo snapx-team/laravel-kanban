@@ -162,7 +162,7 @@
                 </div>
             </div>
 
-            <hr/>
+            <hr class="mb-5"/>
 
             <div>
                 <div>
@@ -174,28 +174,26 @@
                         <i class="fa fa-th-large ml-2"></i>
                     </button>
                 </div>
-                <div>
+                <div class="h-full">
                     <splitpanes class="default-theme">
-                        <pane :size="20" :max-size="25" v-if="showBoardsPane">
+                        <pane :size="20" :max-size="25" v-if="showBoardsPane" class="bg-indigo-50">
                             <board-pane :boards="backlogData.boards"></board-pane>
                         </pane>
                         <pane :size="50" class="flex-grow">
-                            <draggable
-                                @start="drag = true"
-                                @end="drag = false"
-                                :list="backlogData.backlogTasks"
-                                :animation="200"
-                                ghost-class="ghost-card"
-                                group="tasks"
-                                class="h-full list-group"
-                                @change="getChangeData($event, columnIndex, rowIndex)">
+                            <div v-if="filtered.length > 0" class="h-full list-group">
                                 <backlog-card
                                     v-for="task in filtered"
                                     :key="task.id"
                                     :task="task"
-                                    class="cursor-move">
+                                    class="cursor-pointer">
                                 </backlog-card>
-                            </draggable>
+                            </div>
+                            <div v-else>
+                                <div class="text-2xl text-indigo-800 text-center m-auto font-bold py-10 bg-gray-100" >
+                                    <i class="fas fa-search mb-2 animate-bounce"></i>
+                                    <p >No Tasks Found</p>
+                                </div>
+                            </div>
                         </pane>
                         <pane v-if="showTaskPane">
                             <task-pane :badges="backlogData.badges"
@@ -272,6 +270,9 @@ export default {
         this.eventHub.$on("filter-by-board", (board) => {
             this.filterByBoard(board);
         });
+        this.eventHub.$on("reload-backlog-data", () => {
+            this.getBacklogData();
+        });
     },
 
     beforeDestroy() {
@@ -279,6 +280,7 @@ export default {
         this.eventHub.$off('close-task-view');
         this.eventHub.$off('close-board-view');
         this.eventHub.$off('filter-by-board');
+        this.eventHub.$off('reload-backlog-data');
     },
 
     computed: {
@@ -453,17 +455,9 @@ export default {
 </script>
 
 <style scoped>
-.column-width {
-    min-width: 230px;
-}
 
 .splitpanes.default-theme .splitpanes__pane {
     background-color: #ffffff;
 }
 
-.ghost-card {
-    opacity: 0.5;
-    background: #F7FAFC;
-    border: 1px solid #4299e1;
-}
 </style>

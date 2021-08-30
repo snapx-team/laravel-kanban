@@ -24,6 +24,11 @@ class Task extends Model
         'hours_to_deadline',
     ];
 
+    public function sharedTaskData(): BelongsTo
+    {
+        return $this->belongsTo(SharedTaskData::class, 'shared_task_data_id');
+    }
+
     public function reporter(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reporter_id');

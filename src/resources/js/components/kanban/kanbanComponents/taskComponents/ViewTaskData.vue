@@ -84,7 +84,9 @@
                             </span>
                         </div>
                         <div class="text-right">
-                            <span class="text-xs font-semibold inline-block text-indigo-600">{{ checklistPercentage }}%</span>
+                            <span class="text-xs font-semibold inline-block text-indigo-600">{{
+                                    checklistPercentage
+                                }}%</span>
                         </div>
                     </div>
                     <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-indigo-200 ">
@@ -154,70 +156,78 @@
                     </div>
                 </div>
 
-                <p class="text-gray-700 font-semibold font-sans tracking-wide text-lg"
-                   :class="{'animate-pulse': loadingRelatedTasks}"> Related Tasks: </p>
+                <div class="text-gray-700 font-semibold font-sans tracking-wide text-lg"
+                     :class="{'animate-pulse': loadingRelatedTasks}">
+                    <p v-if="loadingRelatedTasks">Loading Related Tasks</p>
+                    <p v-else>Related Tasks:</p>
 
-                <p v-if="relatedTasks.length === 0 && !selectGroupIsVisible" class="tracking-wide text-sm">No Related
-                    Tasks</p>
-
-                <button @click="selectGroupIsVisible = true"
-                        class="py-2 text-sm text-indigo-600 hover:text-indigo-800 transition duration-300 ease-in-out focus:outline-none"
-                        v-if="!selectGroupIsVisible && $role === 'admin'">
-                    <i class="fas fa-th-list mr-2"></i>
-                    Click To Add or Change Group
-                </button>
-
-                <div v-if="selectGroupIsVisible">
-                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with task</span>
-                    <div class="flex flex-row">
-                        <div class="flex-auto w-44">
-                            <vSelect :options="tasks"
-                                     class="text-gray-400"
-                                     label="name"
-                                     placeholder="Select task"
-                                     style="margin-top: 7px"
-                                     v-model="associatedTask">
-                                <template slot="selected-option" slot-scope="option">
-                                    <p>
-                                        <span class="font-bold">{{option.board.name.substring(0, 3).toUpperCase() }}-{{ option.id }}: </span>
-                                        <span class="italic">{{ option.name }}</span>
-                                    </p>
-                                </template>
-                                <template slot="option" slot-scope="option">
-                                    <p>
-                                        <span class="font-bold">{{option.board.name.substring(0, 3).toUpperCase() }}-{{ option.id }}: </span>
-                                        <span class="italic">{{ option.name }}</span>
-                                    </p>
-                                </template>
-                                <template #no-options="{ search, searching, loading }">
-                                    No result .
-                                </template>
-                            </vSelect>
-                        </div>
-                        <div class="flex-auto mt-2 pl-2">
-                            <button @click="updateGroup()"
-                                    class="px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
-                                    type="button">
-                                <span>Save</span>
-                            </button>
-                        </div>
-                    </div>
                 </div>
 
-                <template v-for="task_card in relatedTasks">
-                    <badge :name="task_card.board.name"></badge>
-                    <task-card
-                        :key="task_card.id"
-                        :task_card="task_card"
-                        class="cursor-pointer"
-                        v-on:click.native="updateTask(task_card)"></task-card>
-                </template>
-                <button @click="removeGroup()"
-                    v-if="relatedTasks.length > 0 && $role === 'admin'"
-                    class="px-2 py-2 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
-                    type="button">
+                <div v-if="!loadingRelatedTasks" class="space-y-4 whitespace-nowrap">
+                    <p v-if="relatedTasks.length === 0 && !selectGroupIsVisible" class="tracking-wide text-sm">No Related Tasks</p>
+                    <button @click="selectGroupIsVisible = true"
+                            class="py-2 text-sm text-indigo-600 hover:text-indigo-800 transition duration-300 ease-in-out focus:outline-none"
+                            v-if="!selectGroupIsVisible && $role === 'admin'">
+                        <i class="fas fa-th-list mr-2"></i>
+                        Click To Add or Change Group
+                    </button>
+
+                    <div v-if="selectGroupIsVisible">
+                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with task</span>
+                        <div class="flex flex-row">
+                            <div class="flex-auto w-44">
+                                <vSelect :options="tasks"
+                                         class="text-gray-400"
+                                         label="name"
+                                         placeholder="Select task"
+                                         style="margin-top: 7px"
+                                         v-model="associatedTask">
+                                    <template slot="selected-option" slot-scope="option">
+                                        <p>
+                                        <span class="font-bold">{{
+                                                option.board.name.substring(0, 3).toUpperCase()
+                                            }}-{{ option.id }}: </span>
+                                            <span class="italic">{{ option.name }}</span>
+                                        </p>
+                                    </template>
+                                    <template slot="option" slot-scope="option">
+                                        <p>
+                                        <span class="font-bold">{{
+                                                option.board.name.substring(0, 3).toUpperCase()
+                                            }}-{{ option.id }}: </span>
+                                            <span class="italic">{{ option.name }}</span>
+                                        </p>
+                                    </template>
+                                    <template #no-options="{ search, searching, loading }">
+                                        No result .
+                                    </template>
+                                </vSelect>
+                            </div>
+                            <div class="flex-auto mt-2 pl-2">
+                                <button @click="updateGroup()"
+                                        class="px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
+                                        type="button">
+                                    <span>Save</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <template v-for="task_card in relatedTasks">
+                        <badge :name="task_card.board.name"></badge>
+                        <task-card
+                            :key="task_card.id"
+                            :task_card="task_card"
+                            class="cursor-pointer"
+                            v-on:click.native="updateTask(task_card)"></task-card>
+                    </template>
+                    <button @click="removeGroup()"
+                            v-if="relatedTasks.length > 0 && $role === 'admin'"
+                            class="px-2 py-2 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
+                            type="button">
                         <span>Remove Group</span>
-                </button>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -251,6 +261,7 @@ export default {
     data() {
         return {
             loadingRelatedTasks: false,
+            loadingSharedData: false,
             relatedTasks: [],
             tasks: [],
             associatedTask: null,
@@ -276,7 +287,8 @@ export default {
                     name: 'cancelled',
                     color: 'red',
                 }
-            ]
+            ],
+            clickedCheckboxEl: null
         };
     },
 
@@ -301,6 +313,20 @@ export default {
                 console.log(res)
             });
         },
+
+        fetchAndReplaceTaskData() {
+            this.loadingSharedData = true;
+            this.asyncGetTaskData(this.cardData.id).then((data) => {
+                this.cloneCardData = data.data;
+                this.handleChecklist();
+                this.getRelatedTasks();
+                this.eventHub.$emit("update-add-task-data-with-group-data", data.data);
+                this.loadingSharedData = false;
+            }).catch(res => {
+                console.log(res)
+            });
+        },
+
         getTasks() {
             this.asyncGetAllTasks().then((data) => {
                 this.tasks = data.data;
@@ -309,13 +335,25 @@ export default {
             });
         },
         updateGroup() {
-            this.asyncUpdateGroup(this.cardData.id, this.associatedTask.group).then(() => {
-                this.getRelatedTasks();
-            });
+
+            this.$swal({
+                icon: 'warning',
+                title: 'Warning',
+                text: 'Updating group will remove the task description and related data and replace it with the new group information',
+                showCancelButton: true,
+                confirmButtonText: `Continue`,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.asyncUpdateGroup(this.cardData.id, this.associatedTask.shared_task_data_id).then(() => {
+                        this.fetchAndReplaceTaskData();
+                    });
+                }
+            })
+
         },
         removeGroup() {
             this.asyncRemoveGroup(this.cardData.id).then(() => {
-                this.getRelatedTasks();
+                this.fetchAndReplaceTaskData();
             }).catch(res => {
                 console.log(res)
             });
@@ -336,8 +374,7 @@ export default {
                     }).catch(res => {
                         console.log(res)
                     });
-                }
-                else{
+                } else {
                     this.selectedStatus = this.cardData.status;
                 }
             })
@@ -345,11 +382,11 @@ export default {
         handleChecklist() {
 
             let parser = new DOMParser();
-            let doc = parser.parseFromString(this.cloneCardData.description, 'text/html');
+            let doc = parser.parseFromString(this.cloneCardData.shared_task_data.description, 'text/html');
             let uls = doc.querySelectorAll('ul[data-checked]');
 
-            if(uls.length === 0){
-                this.formatted = this.cloneCardData.description;
+            if (uls.length === 0) {
+                this.formatted = this.cloneCardData.shared_task_data.description;
             }
 
             for (let i = 0; i < uls.length; i++) {
@@ -380,6 +417,7 @@ export default {
                 });
 
                 this.$nextTick(() => {
+
                     let ul = document.querySelectorAll('#task-description ul[data-checked]');
                     this.checklistData.total = document.querySelectorAll('#task-description ul[data-checked] li');
 
@@ -393,22 +431,43 @@ export default {
                     for (let i = 0; i < ul.length; i++) {
                         ul[i].addEventListener("click", el => {
 
-                            let toggle = el.currentTarget.getAttribute("data-checked") === 'true' ? "false" : "true";
-                            el.currentTarget.setAttribute('data-checked', toggle);
-                            this.cardData.description = (document.getElementById('task-description').innerHTML);
+                            this.clickedCheckboxEl = el.currentTarget;
+                            let title = this.clickedCheckboxEl.getAttribute("data-checked") === 'false' ? "Confirm Checklist Item Completed" : "Confirm Checklist Item Incomplete";
 
-                            let done = document.querySelectorAll('#task-description ul[data-checked="true"] li');
-                            let total = document.querySelectorAll('#task-description ul[data-checked] li');
+                            this.$swal({
+                                icon: 'info',
+                                title: title,
+                                text: 'Ticking this checkbox will notify all members assigned to this task and all related tasks',
+                                showCancelButton: true,
+                                confirmButtonText: `Continue`,
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    let toggle = this.clickedCheckboxEl.getAttribute("data-checked") === 'true' ? "false" : "true";
+                                    this.clickedCheckboxEl.setAttribute('data-checked', toggle);
+                                    this.cardData.shared_task_data.description = (document.getElementById('task-description').innerHTML);
 
-                            this.checklistData.done = done.length;
-                            this.checklistData.total = total.length;
+                                    let done = document.querySelectorAll('#task-description ul[data-checked="true"] li');
+                                    let total = document.querySelectorAll('#task-description ul[data-checked] li');
 
-                            this.asyncUpdateDescription({
-                                'description': this.cardData.description,
-                                'id': this.cardData.id,
-                                'isChecked' : el.currentTarget.getAttribute("data-checked"),
-                                'checkboxContent': el.currentTarget.querySelector('li').innerHTML
-                            });
+                                    this.checklistData.done = done.length;
+                                    this.checklistData.total = total.length;
+
+                                    this.asyncUpdateDescription({
+                                        'description': this.cardData.shared_task_data.description,
+                                        'id': this.cardData.id,
+                                        'isChecked': this.clickedCheckboxEl.getAttribute("data-checked"),
+                                        'checkboxContent': this.clickedCheckboxEl.querySelector('li').innerHTML
+                                    }).then(() => {
+                                        this.asyncGetTaskData(this.cardData.id).then((data) => {
+                                            this.cloneCardData = data.data;
+                                            this.eventHub.$emit("update-add-task-data-with-group-data", data.data);
+                                        }).catch(res => {
+                                            console.log(res)
+                                        });
+                                    })
+                                }
+                            })
+
                         }, true);
                     }
                 })

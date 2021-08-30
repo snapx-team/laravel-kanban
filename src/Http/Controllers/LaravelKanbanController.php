@@ -34,10 +34,9 @@ class LaravelKanbanController extends Controller
         $hasBoardAccess = (new CheckHasAccessToBoardWithBoardId())->returnBool($id);
 
         if ($hasBoardAccess) {
-
             return Board::with(['rows.columns.taskCards' => function ($q) {
                 $q->where('status', 'active')
-                    ->with('badge', 'board', 'row', 'column')
+                    ->with('badge', 'board', 'row', 'column', 'sharedTaskData')
                     ->with(['assignedTo.employee.user' => function ($q) {
                         $q->select(['id', 'first_name', 'last_name']);
                     }])
@@ -83,7 +82,7 @@ class LaravelKanbanController extends Controller
 
         if (session('role') === 'admin') {
             $backlogTasks = Task::
-            with('badge', 'row', 'column', 'board')
+            with('badge', 'row', 'column', 'board', 'sharedTaskData')
                 ->with(['reporter' => function ($q) {
                     $q->select(['id', 'first_name', 'last_name']);
                 }])
@@ -102,7 +101,7 @@ class LaravelKanbanController extends Controller
                 ->get();
             $boards = Board::orderBy('name')->with('members')->get();
         } else {
-            $backlogTasks = Task::with('board', 'badge', 'row', 'column')
+            $backlogTasks = Task::with('board', 'badge', 'row', 'column', 'sharedTaskData')
                 ->whereHas('board.members', function ($q) {
                     $q->where('employee_id', session('employee_id'));
                 })

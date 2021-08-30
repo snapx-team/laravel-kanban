@@ -1,21 +1,27 @@
 <template>
 
-    <div class="py-3 px-4 mb-2 border-l-4 bg-gray-50 shadow-sm"  :class="`border-${computedLogInfo.color}-400 `">
+    <div class="py-3 px-4 mb-2 border-l-4 bg-gray-50 shadow-sm" :class="`border-${computedLogInfo.color}-400 `">
 
+        <div class="flex justify-between">
 
-        <div class="flex">
-            <div class="pr-5 flex items-center">
-                <div
-                    class="text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 shadow rounded-full"  :class="`bg-${computedLogInfo.color}-400 `">
-                    <i class="fas"  :class="computedLogInfo.icon"></i></div>
+            <div class="flex">
+                <div class="pr-5 flex items-center">
+                    <div
+                        class="text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 shadow rounded-full"
+                        :class="`bg-${computedLogInfo.color}-400 `">
+                        <i class="fas" :class="computedLogInfo.icon"></i></div>
+                </div>
+                <div class="flex-1 ">
+                    <p>
+                        <span class="font-bold text-l">{{ log.user.full_name }}</span>
+                        <span> {{ computedLogInfo.type }} </span>
+                    </p>
+                    <p class="text-gray-600">{{ log.description }}</p>
+                    <p class="text-gray-700 text-xs mt-1">{{ moment(log.created_at).format("MMMM Do h:mm a") }}</p>
+                </div>
             </div>
-            <div class="flex-1 ">
-                <p>
-                    <span class="font-bold text-l">{{ log.user.full_name }}</span>
-                    <span> {{ computedLogInfo.type }} </span>
-                </p>
-                <p class="text-gray-600">{{ log.description }}</p>
-                <p class="text-gray-700 text-xs mt-1">{{ moment(log.created_at).format("MMMM Do h:mm a") }}</p>
+            <div>
+                <badge :name="log.board.name"></badge>
             </div>
         </div>
     </div>
@@ -23,10 +29,13 @@
 
 <script>
 import moment from 'moment'
+import Badge from "../../../global/Badge.vue";
 
 export default {
     inject: ["eventHub"],
-    components: {},
+    components: {
+        Badge
+    },
     created: function () {
         this.moment = moment;
     },
@@ -84,6 +93,12 @@ export default {
                         "icon": "fa-tasks",
                         "color": "yellow",
                     };
+                case 17:
+                    return {
+                        "type": "upodated group",
+                        "icon": "fa-layer-group",
+                        "color": "purple",
+                    };
                 case 19:
                     return {
                         "type": "updated assignees",
@@ -113,6 +128,12 @@ export default {
                         "type": "created a new badge",
                         "icon": "fa-award",
                         "color": "purple",
+                    };
+                default:
+                    return {
+                        "type": "undefined",
+                        "icon": "fa-award",
+                        "color": "gray",
                     };
             }
         }

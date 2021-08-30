@@ -125,9 +125,12 @@
                                 <div class="flex-grow space-y-2">
                                     <span
                                         class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"> Description</span>
-                                    <quill-editor :options="config"
+                                    <quill-editor  v-if="!checkedOptions.includes('Group')"
+                                                   :options="config"
                                                   output="html"
                                                   v-model="task.description"></quill-editor>
+                                    <p v-else class="text-sm font-medium leading-5 text-red-500">Description will match group description</p>
+
                                 </div>
                             </div>
 
@@ -355,23 +358,34 @@ export default {
 
     methods: {
         saveBacklogTask(event) {
-            event.target.disabled = true;
-            this.eventHub.$emit("save-backlog-task", this.task);
-            this.modalOpen = false;
 
-            this.task = {
-                name: null,
-                badge: {},
-                description: null,
-                selectedKanbans: [],
-                erpEmployee: null,
-                erpJobSite: null,
-                deadline: null,
-                columnId: null,
-                associatedTask: null,
+            if(!(!!this.task.name) || !(!!this.task.description) || this.task.selectedKanbans.length === 0){
+
+                if(!(!!this.task.name))
+                    this.triggerErrorToast('Task name is required');
+                if(!(!!this.task.description))
+                    this.triggerErrorToast('Task description is required');
+                if(this.task.selectedKanbans.length === 0)
+                    this.triggerErrorToast('At least 1 kanban needs to be selected');
             }
-            this.checkedOptions = [];
-            this.selectedTemplate = null;
+            else{
+                this.eventHub.$emit("save-backlog-task", this.task);
+                this.modalOpen = false;
+
+                this.task = {
+                    name: null,
+                    badge: {},
+                    description: null,
+                    selectedKanbans: [],
+                    erpEmployee: null,
+                    erpJobSite: null,
+                    deadline: null,
+                    columnId: null,
+                    associatedTask: null,
+                }
+                this.checkedOptions = [];
+                this.selectedTemplate = null;
+            }
         },
         onTypeEmployee(search, loading) {
             if (search.length) {
