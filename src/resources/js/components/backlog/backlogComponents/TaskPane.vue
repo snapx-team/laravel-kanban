@@ -1,7 +1,10 @@
 <template>
     <div class="border-gray-300 border-2">
         <div class="flex justify-between p-2 bg-indigo-800 border-b">
-            <h1 class="text-white">Task Pane</h1>
+            <h1 class="text-white">Task: <span class="font-medium">{{
+                    task.board.name.substring(0, 3).toUpperCase()
+                }}-{{ task.id }}</span>
+            </h1>
             <div>
                 <button @click="closeTaskView()"
                         class="focus:outline-none flex flex-col items-center text-gray-400 hover:text-gray-500 transition duration-150 ease-in-out pl-8"
@@ -14,7 +17,9 @@
 
         <!-- start of container -->
 
-        <!-- move items -->
+        <div class="flex justify-between p-2 bg-gray-600 border-b">
+            <h1 class="text-white">Place task in board, row, and column</h1>
+        </div>
         <div class="space-y-6 px-8 py-6 flex-1 bg-gray-50 border-b">
             <div class="flex space-x-3">
                 <div class="flex-1 space-y-2">
@@ -27,7 +32,7 @@
                         placeholder="Select one or more kanban boards"
                         style="margin-top: 7px"
                         v-model="task.board"
-                        @input="loadRowsAndColumns(task.board.id)">
+                        @input="updateBoard(task.board.id)">
                         <template slot="option" slot-scope="option">
                             {{ option.name }}
                         </template>
@@ -82,9 +87,30 @@
             </button>
         </div>
 
-        <!-- taks info -->
+        <!-- task info -->
+
+        <div class="flex justify-between p-2 bg-gray-600 border-b">
+            <h1 class="text-white">Update Task Info</h1>
+        </div>
+
 
         <div class="space-y-6 overflow-auto px-8 py-6 flex-1">
+
+            <div v-if="$role === 'admin'" class="flex space-x-3">
+                <div class="flex-1 space-y-2">
+                <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">
+                    Status
+                </span>
+                    <vSelect
+                        v-model="task.status"
+                        :options="statuses"
+                        label="name"
+                        style="margin-top: 7px"
+                        class="text-gray-700">
+                    </vSelect>
+                </div>
+            </div>
+
             <div class="flex space-x-3">
                 <div class="flex-1 space-y-2">
                     <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Badge</span>
@@ -147,9 +173,13 @@
                 <div class="flex-grow space-y-2">
                     <span
                         class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Description</span>
-                    <quill-editor :options="config"
+                    <quill-editor v-if="!selectGroupIsVisible"
+                                  :options="config"
                                   output="html"
-                                  v-model="task.description"></quill-editor>
+                                  v-model="task.shared_task_data.description"></quill-editor>
+                    <p v-else class="text-sm font-medium leading-5 text-red-500">Description will match group
+                        description</p>
+
                 </div>
             </div>
 
@@ -204,29 +234,34 @@
             </div>
 
             <div class="space-y-5">
-                <p class="text-gray-700 font-semibold font-sans tracking-wide text-lg"> Related Tasks: </p>
-                <div class="flex flex-row justify-between">
-                    <div class="flex">
-                        <p v-if="relatedTasks.length === 0" class="tracking-wide text-sm">No Related
-                            Tasks</p>
-                        <div v-if="relatedTasks.length > 0">
-                            <p v-for="task in relatedTasks" :key="task.id">
-                                <span
-                                    class="font-bold">{{ task.board.name.substring(0, 3).toUpperCase() }}-{{task.id }}: </span>
-                                <span class="italic">{{ task.name }}</span>
-                            </p>
-                        </div>
-                    </div>
-                    <div>
+                <div class="text-gray-700 font-semibold font-sans tracking-wide text-lg"
+                     :class="{'animate-pulse': loadingRelatedTasks}">
+                    <p v-if="loadingRelatedTasks">Loading Related Tasks</p>
+                    <div v-else class="flex justify-between">
+                        <p>Related Tasks:</p>
                         <button @click="removeGroup()"
                                 v-if="relatedTasks.length > 0 && $role === 'admin'"
-                                class="px-2 py-2 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
-                                type="button">
-                            <span>Remove Group</span>
+                                class="text-sm text-red-600 hover:text-indigo-800 transition duration-300 ease-in-out focus:outline-none">
+                            <i class="fas fa-layer-group mr-2"></i>
+                            Remove from group
                         </button>
                     </div>
 
+
                 </div>
+                <div v-if="!loadingRelatedTasks" class="flex">
+                    <p v-if="relatedTasks.length === 0" class="tracking-wide text-sm">No Related Tasks</p>
+                    <div v-if="relatedTasks.length > 0" class="bg-gray-50 py-3 px-4 w-full rounded">
+                        <p v-for="task in relatedTasks" :key="task.id" class="border-b py-1">
+                            <span
+                                class="font-bold">{{ task.board.name.substring(0, 3).toUpperCase() }}-{{
+                                    task.id
+                                }}: </span>
+                            <span class="italic">{{ task.name }}</span>
+                        </p>
+                    </div>
+                </div>
+
                 <button @click="selectGroupIsVisible = true"
                         v-if="!selectGroupIsVisible && $role === 'admin'"
                         class="text-sm text-indigo-600 hover:text-indigo-800 transition duration-300 ease-in-out focus:outline-none">
@@ -235,24 +270,41 @@
                 </button>
             </div>
 
-            <div v-if="selectGroupIsVisible" class="flex-1 space-y-2">
-                <span
-                    class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with task</span>
+            <div v-if="selectGroupIsVisible && $role === 'admin'" class="flex-1 space-y-2">
+
+                <div class="flex justify-between">
+                    <div class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with
+                        task
+                    </div>
+                    <button @click="cancelChangeGroup"
+                            class="text-sm text-red-600 hover:text-red-800 transition duration-300 ease-in-out focus:outline-none">
+                        <i class="fas fa-times mr-2"></i>
+                        Cancel
+                    </button>
+                </div>
+
                 <vSelect :options="tasks"
                          class="text-gray-400"
                          label="name"
                          placeholder="Select task"
                          style="margin-top: 7px"
                          v-model="task.associatedTask">
+
                     <template slot="selected-option" slot-scope="option">
                         <p>
-                            <span class="font-bold">{{ option.board.name.substring(0, 3).toUpperCase() }}-{{option.id }}: </span>
+                            <span
+                                class="font-bold">{{
+                                    option.board.name.substring(0, 3).toUpperCase()
+                                }}-{{ option.id }}: </span>
                             <span class="italic">{{ option.name }}</span>
                         </p>
                     </template>
                     <template slot="option" slot-scope="option">
                         <p>
-                            <span class="font-bold">{{ option.board.name.substring(0, 3).toUpperCase() }}-{{option.id }}: </span>
+                            <span
+                                class="font-bold">{{
+                                    option.board.name.substring(0, 3).toUpperCase()
+                                }}-{{ option.id }}: </span>
                             <span class="italic">{{ option.name }}</span>
                         </p>
                     </template>
@@ -288,14 +340,23 @@ export default {
     mixins: [helperFunctions, ajaxCalls],
     data() {
         return {
-            task: {},
+            loadingRelatedTasks: false,
+            task: {
+                id: null,
+                board: {
+                    name: '',
+                },
+                shared_task_data: {
+                    description: null
+                },
+                status: null,
+            },
             rows: [],
             columns: [],
             erpEmployees: [],
             erpJobSites: [],
             tasks: [],
             relatedTasks: [],
-            checkedOptions: [],
             kanbanMembers: [],
             selectGroupIsVisible: false,
             config: {
@@ -314,6 +375,8 @@ export default {
                 }
             },
             checklistStatus: null,
+            selectedStatus: null,
+            statuses: ['active', 'completed', 'cancelled'],
         }
     },
     props: {
@@ -338,7 +401,9 @@ export default {
     },
     created() {
         this.eventHub.$on("populate-task-view", (task) => {
-            this.populateTaskView(task);
+            this.task = {...task};
+            this.selectGroupIsVisible = false;
+            this.populateTaskView(this.task);
         });
     },
 
@@ -376,7 +441,6 @@ export default {
             })
         },
         loadColumns(option) {
-            this.chosenColumn = {};
             this.task.column = {};
             this.asyncGetColumns(option.id).then((data) => {
                 this.columns = data.data;
@@ -384,53 +448,73 @@ export default {
                 console.log(res)
             });
         },
+        updateBoard(id) {
+            this.task.row = null;
+            this.task.column = null;
+            this.loadRowsAndColumns(id)
+        },
         loadRowsAndColumns(id) {
             this.columns = [];
             this.getRows(id);
             this.getMembers(id);
         },
         getRelatedTasks(id) {
+            this.loadingRelatedTasks = true;
             this.asyncGetRelatedTasksLessInfo(id).then((data) => {
                 this.relatedTasks = data.data;
+                this.loadingRelatedTasks = false;
             }).catch(res => {
                 console.log(res)
             });
         },
         updateBacklogTask() {
-            let backlogTaskData = {
-                id: this.task.id,
-                name: this.task.name,
-                badge: this.task.badge,
-                description: this.task.description,
-                erp_employee: this.task.erp_employee,
-                erp_employee_id: this.task.erp_employee ? this.task.erp_employee.id : null,
-                erp_job_site_id: this.task.erp_job_site ? this.task.erp_job_site.id : null,
-                erp_job_site: this.task.erp_job_site,
-                deadline: this.task.deadline,
-                assigned_to: this.task.assigned_to,
-                group: this.task.associatedTask ? this.task.associatedTask.group : this.task.group,
+            if (this.task.associatedTask) {
+                this.task.shared_task_data_id = this.task.associatedTask.shared_task_data_id
             }
-            const cloneBacklogTasksData = {...backlogTaskData};
-            this.asyncUpdateTask(cloneBacklogTasksData).then(() => {
+            this.asyncUpdateTask(this.task).then(() => {
+                window.scrollTo({top: 0, behavior: 'smooth'});
+                this.eventHub.$emit("reload-backlog-data");
                 if (this.task.associatedTask) {
                     this.getRelatedTasks(this.task.id);
-                    this.task.associatedTask = null;
                 }
             });
-
         },
         removeGroup() {
-            this.asyncRemoveGroup(this.task.id).then(() => {
-                this.getRelatedTasks(this.task.id);
-            }).catch(res => {
-                console.log(res)
-            });
+
+            this.$swal({
+                icon: 'info',
+                title: 'Are you sure?',
+                text: 'This task will no longer be related to any other task. The information on the card will remain the same.',
+                showCancelButton: true,
+                confirmButtonText: `Continue`,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.scrollTo({top: 0, behavior: 'smooth'});
+                    this.eventHub.$emit("reload-backlog-data");
+                    this.asyncRemoveGroup(this.task.id).then(() => {
+                        this.getRelatedTasks(this.task.id);
+                    }).catch(res => {
+                        console.log(res)
+                    });
+                }
+            })
+        },
+
+        cancelChangeGroup() {
+            this.selectGroupIsVisible = false;
         },
         assignTask() {
-            this.asyncAssignTaskToBoard(this.task.id, this.task.row.id, this.task.column.id)
-            .catch(res => {
-                console.log(res)
-            });
+
+            if (this.task.row === null || this.task.column === null) {
+                this.triggerErrorToast('row and column need to be selected!');
+            } else {
+                this.asyncAssignTaskToBoard(this.task.id, this.task.row.id, this.task.column.id, this.task.board.id).then(() => {
+                    window.scrollTo({top: 0, behavior: 'smooth'});
+                    this.eventHub.$emit("reload-backlog-data");
+                }).catch(res => {
+                    console.log(res)
+                });
+            }
         },
         getErpEmployees() {
             this.asyncGetAllUsers().then((data) => {

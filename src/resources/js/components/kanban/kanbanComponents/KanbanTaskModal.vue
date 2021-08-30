@@ -63,8 +63,8 @@
                                 </li>
                                 <li class="mx-1 flex-1 text-center">
                                     <a class="text-xs font-bold uppercase px-5 py-3 rounded block leading-normal"
-                                       v-on:click="toggleTabs(4)"
-                                       v-bind:class="{'text-gray-600 bg-gray-200 hover:bg-gray-300 cursor-pointer ': openTab !== 4, 'text-white bg-gray-500': openTab === 4}">
+                                       v-on:click="toggleTabs(3)"
+                                       v-bind:class="{'text-gray-600 bg-gray-200 hover:bg-gray-300 cursor-pointer ': openTab !== 3, 'text-white bg-gray-500': openTab === 3}">
                                         <i class="fas fa-space-shuttle text-base mr-1"></i> Logs
                                     </a>
                                 </li>
@@ -82,7 +82,7 @@
                                             <add-task-data :kanbanData="kanbanData"
                                                            :cardData="cardData"></add-task-data>
                                         </div>
-                                        <div v-bind:class="{'hidden': openTab !== 4, 'block': openTab === 4}">
+                                        <div v-bind:class="{'hidden': openTab !== 3, 'block': openTab === 3}">
                                             <p>
                                                 <task-logs :cardData="cardData"></task-logs>
                                             </p>
@@ -104,6 +104,7 @@ import addTaskData from "./taskComponents/AddTaskData";
 import taskComments from "./taskComponents/TaskComments";
 import taskLogs from "./taskComponents/TaskLogs"
 import viewTaskData from "./taskComponents/viewTaskData";
+import {ajaxCalls} from "../../../mixins/ajaxCallsMixin";
 
 export default {
     inject: ["eventHub"],
@@ -115,6 +116,9 @@ export default {
         taskLogs,
         viewTaskData
     },
+
+    mixins: [ajaxCalls],
+
     props: {
         kanbanData: Object,
     },
@@ -136,23 +140,27 @@ export default {
 
     created() {
         this.eventHub.$on("update-kanban-task-cards", (task) => {
-            if (this.modalOpen) {
-                this.modalOpen = false;
-                setTimeout(() => {
-                        this.cardData = task;
+
+            this.asyncGetTaskData(task.id).then((data) => {
+                if (this.modalOpen) {
+                    this.modalOpen = false;
+                    setTimeout(() => {
+                        this.cardData = data.data;
                         this.modalOpen = true;
-                }, 100);
-            } else {
-                this.openTab = 1;
-                this.cardData = task;
-                this.modalOpen = true;
-            }
+                    }, 100);
+                } else {
+                    this.openTab = 1;
+                    this.cardData = data.data;
+                    this.modalOpen = true;
+                }
+            }).catch(res => {
+                console.log(res)
+            });
         });
 
         this.eventHub.$on("close-task-modal", () => {
             this.modalOpen = false;
         });
-
     },
 
     beforeDestroy() {

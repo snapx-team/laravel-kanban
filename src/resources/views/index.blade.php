@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Laravel Kanban</title>
+    <title>Kanban</title>
     <link href="{{ asset(mix("app.css", 'vendor/laravel-kanban')) }}?v={{config('app.version')}}" rel="stylesheet" type="text/css">
 </head>
 <body>

@@ -5,10 +5,12 @@ namespace Xguard\LaravelKanban\Http\Controllers;
 use App\Http\Controllers\Controller;
 use DateTime;
 use DateTimeZone;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Xguard\LaravelKanban\Http\Helper\CheckHasAccessToBoardWithTaskId;
 use Xguard\LaravelKanban\Models\Badge;
 use Xguard\LaravelKanban\Models\Member;
+use Xguard\LaravelKanban\Models\SharedTaskData;
 use Xguard\LaravelKanban\Models\Task;
 use Xguard\LaravelKanban\Models\Log;
 use Illuminate\Support\Facades\Auth;
@@ -18,13 +20,31 @@ class TaskController extends Controller
 {
     public function getAllTasks()
     {
-        return Task::with('board')->get();
+        return Task::with('board', 'sharedTaskData')->get();
+    }
+
+    public function getTaskData($id)
+    {
+        return Task::where('id', $id)->with('badge', 'row', 'column', 'board', 'sharedTaskData')
+            ->with(['assignedTo.employee.user' => function ($q) {
+                $q->select(['id', 'first_name', 'last_name']);
+            }])
+            ->with(['erpEmployee' => function ($q) {
+                $q->select(['id', 'first_name', 'last_name']);
+            }])
+            ->with(['reporter' => function ($q) {
+                $q->select(['id', 'first_name', 'last_name']);
+            }])
+            ->with(['erpJobSite' => function ($q) {
+                $q->select(['id', 'name']);
+            }])->first();
     }
 
     public function getRelatedTasks($id)
     {
-        $group = Task::where('id', $id)->first()->group;
-        return Task::where('id', '!=', $id)->where('group', $group)->with('badge', 'row', 'column', 'board')
+        $relatedTasks = Task::where('id', $id)->first()->shared_task_data_id;
+
+        return Task::where('id', '!=', $id)->where('shared_task_data_id', $relatedTasks)->with('badge', 'row', 'column', 'board', 'sharedTaskData')
             ->with(['assignedTo.employee.user' => function ($q) {
                 $q->select(['id', 'first_name', 'last_name']);
             }])
@@ -41,21 +61,21 @@ class TaskController extends Controller
 
     public function getRelatedTasksLessInfo($id)
     {
-        $group = Task::where('id', $id)->first()->group;
-        return Task::where('id', '!=', $id)->where('group', $group)->with('board')->get();
+        $sharedTaskData = Task::where('id', $id)->first()->shared_task_data_id;
+        return Task::where('id', '!=', $id)->where('shared_task_data_id', $sharedTaskData)->with('board', 'sharedTaskData')->get();
     }
+
+
 
     public function createBacklogTaskCards(Request $request)
     {
         $rules = [
             'selectedKanbans' => 'array|min:1',
-            'description' => 'required',
             'name' => 'required'
         ];
 
         $customMessages = [
             'selectedKanbans.min' => 'You need to select at least one board',
-            'description.required' => 'Description is required',
             'name.required' => 'Name is required',
         ];
 
@@ -76,9 +96,10 @@ class TaskController extends Controller
             ]);
 
             if ($backlogTaskData['associatedTask'] !== null) {
-                $group = $backlogTaskData['associatedTask']['group'];
+                $sharedTaskDataId = $backlogTaskData['associatedTask']['shared_task_data_id'];
             } else {
-                $group = 'g-' . (Task::max('id') + 1);
+                $sharedTaskData = SharedTaskData::create(['description' => $backlogTaskData['description']]);
+                $sharedTaskDataId = $sharedTaskData->id;
             }
 
             foreach ($backlogTaskData['selectedKanbans'] as $kanban) {
@@ -86,14 +107,13 @@ class TaskController extends Controller
                     'index' => null,
                     'reporter_id' => Auth::user()->id,
                     'name' => $backlogTaskData['name'],
-                    'description' => $backlogTaskData['description'],
                     'deadline' => $request->input('deadline') !== null ? date('y-m-d h:m', strtotime($backlogTaskData['deadline'])) : null,
                     'erp_employee_id' => $request->input('erpEmployee') !== null ? $backlogTaskData['erpEmployee']['id'] : null,
                     'erp_job_site_id' => $request->input('erpJobSite') !== null ? $backlogTaskData['erpJobSite']['id'] : null,
                     'badge_id' => $badge->id,
                     'column_id' => null,
                     'board_id' => $kanban['id'],
-                    'group' => $group
+                    'shared_task_data_id' => $sharedTaskDataId
                 ]);
 
                 if ($badge->wasRecentlyCreated) {
@@ -111,7 +131,8 @@ class TaskController extends Controller
 
                 Log::createLog(
                     Auth::user()->id,
-                    Log::TYPE_CARD_CREATED, 'Created new backlog task [' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '] with board [' . $task->board->name . '>',
+                    Log::TYPE_CARD_CREATED,
+                    'Created new backlog task [' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '] with board [' . $task->board->name . '>',
                     $task->badge_id,
                     $task->board_id,
                     $task->id,
@@ -131,12 +152,10 @@ class TaskController extends Controller
     public function createTaskCard(Request $request)
     {
         $rules = [
-            'description' => 'required',
             'name' => 'required'
         ];
 
         $customMessages = [
-            'description.required' => 'Description is required',
             'name.required' => 'Name is required',
         ];
 
@@ -160,9 +179,10 @@ class TaskController extends Controller
             ]);
 
             if ($taskCard['associatedTask'] !== null) {
-                $group = $taskCard['associatedTask']['group'];
+                $sharedTaskDataId = $taskCard['associatedTask']['shared_task_data_id'];
             } else {
-                $group = 'g-' . (Task::max('id') + 1);
+                $sharedTaskData = SharedTaskData::create(['description' => $taskCard['description']]);
+                $sharedTaskDataId = $sharedTaskData->id;
             }
 
             $maxIndex++;
@@ -170,7 +190,6 @@ class TaskController extends Controller
                 'index' => $maxIndex,
                 'reporter_id' => Auth::user()->id,
                 'name' => $taskCard['name'],
-                'description' => $taskCard['description'],
                 'deadline' => $request->input('deadline') !== null ? date('y-m-d h:m', strtotime($taskCard['deadline'])) : null,
                 'erp_employee_id' => $request->input('erpEmployee') !== null ? $taskCard['erpEmployee']['id'] : null,
                 'erp_job_site_id' => $request->input('erpJobSite') !== null ? $taskCard['erpJobSite']['id'] : null,
@@ -178,7 +197,7 @@ class TaskController extends Controller
                 'column_id' => $taskCard['selectedColumnId'],
                 'row_id' => $taskCard['selectedRowId'],
                 'board_id' => $taskCard['boardId'],
-                'group' => $group
+                'shared_task_data_id' => $sharedTaskDataId
             ]);
 
             if ($badge->wasRecentlyCreated) {
@@ -231,6 +250,7 @@ class TaskController extends Controller
         if ($hasBoardAccess) {
             try {
                 $prevTask = Task::find($taskCard['id'])->toArray();
+                $prevGroup = Task::find($taskCard['id'])->shared_task_data_id;
 
 
                 if ($request->input('assigned_to') !== null) {
@@ -274,10 +294,17 @@ class TaskController extends Controller
                     }
                 }
 
-                if ($taskCard['group'] !== null) {
-                    $group = $taskCard['group'];
+                $sharedTaskDataId = $taskCard['shared_task_data_id'];
+
+                if ($sharedTaskDataId === $task->shared_task_data_id) {
+                    // update description if group hasn't changed
+                    SharedTaskData::where('id', $sharedTaskDataId)->update(['description' => $taskCard['shared_task_data']['description']]);
                 } else {
-                    $group = $task->group;
+                    // delete previous group if no other tasks point to it
+                    $tasksWithSharedTaskData = Task::where('shared_task_data_id', $prevGroup)->count();
+                    if ($tasksWithSharedTaskData === 0) {
+                        SharedTaskData::where('id', $prevGroup)->delete();
+                    }
                 }
 
                 $dt = new DateTime($taskCard['deadline']);
@@ -286,16 +313,16 @@ class TaskController extends Controller
 
                 $task = Task::find($taskCard['id']);
                 $task->update([
-                        'name' => $taskCard['name'],
-                        'description' => $taskCard['description'],
-                        'deadline' => $request->input('deadline') !== null ? $dt : null,
-                        'erp_employee_id' => $request->input('erp_employee') !== null ? $taskCard['erp_employee']['id'] : null,
-                        'erp_job_site_id' => $request->input('erp_job_site') !== null ? $taskCard['erp_job_site']['id'] : null,
-                        'badge_id' => $badge->id,
-                        'column_id' => $taskCard['column_id'] ?? $task->column_id,
-                        'row_id' => $taskCard['row_id'] ?? $task->row_id,
-                        'group' => $group
-                    ]);
+                    'name' => $taskCard['name'],
+                    'status' => $taskCard['status'],
+                    'deadline' => $request->input('deadline') !== null ? $dt : null,
+                    'erp_employee_id' => $request->input('erp_employee') !== null ? $taskCard['erp_employee']['id'] : null,
+                    'erp_job_site_id' => $request->input('erp_job_site') !== null ? $taskCard['erp_job_site']['id'] : null,
+                    'badge_id' => $badge->id,
+                    'column_id' => $taskCard['column_id'] ?? $task->column_id,
+                    'row_id' => $taskCard['row_id'] ?? $task->row_id,
+                    'shared_task_data_id' => $sharedTaskDataId
+                ]);
 
                 $task = Task::find($taskCard['id'])->toArray();
 
@@ -348,7 +375,7 @@ class TaskController extends Controller
     {
         return Task::where('column_id', $id)
             ->where('status', 'active')
-            ->with('badge', 'row', 'column', 'board')
+            ->with('badge', 'row', 'column', 'board', 'sharedTaskData')
             ->with(['assignedTo.employee.user' => function ($q) {
                 $q->select(['id', 'first_name', 'last_name']);
             }])
@@ -434,9 +461,7 @@ class TaskController extends Controller
         if ($hasBoardAccess) {
             try {
                 $taskCard = Task::find($descriptionData['id']);
-                $taskCard->update([
-                    'description' => $descriptionData['description'],
-                ]);
+                SharedTaskData::where('id', $taskCard->shared_task_data_id)->update(['description' => $descriptionData['description']]);
 
                 if ($descriptionData['isChecked'] === "true") {
                     Log::createLog(
@@ -506,7 +531,7 @@ class TaskController extends Controller
                     $task->erp_employee_id,
                     $task->erp_job_site_id
                 );
-            } else if ($status === 'cancelled') {
+            } elseif ($status === 'cancelled') {
                 Log::createLog(
                     Auth::user()->id,
                     Log::TYPE_CARD_CANCELED,
@@ -527,11 +552,12 @@ class TaskController extends Controller
         return response(['success' => 'true'], 200);
     }
 
-    public function assignTaskToBoard($task_id, $row_id, $column_id)
+    public function assignTaskToBoard($task_id, $row_id, $column_id, $board_id)
     {
         try {
             $task = Task::with('board')->get()->find($task_id);
             $task->update([
+                'board_id' => $board_id,
                 'row_id' => $row_id,
                 'column_id' => $column_id
             ]);
@@ -558,15 +584,24 @@ class TaskController extends Controller
     public function updateGroup($task_id, $group)
     {
         try {
-            $taskCard = Task::with('board')->get()->find($task_id);
+            $taskCard = Task::find($task_id);
+            $prevGroup = $taskCard->shared_task_data_id;
+
+
             $taskCard->update([
-                'group' => $group,
+                'shared_task_data_id' => $group,
             ]);
+
+            // delete previous group if no other tasks point to it
+            $tasksWithSharedTaskData = Task::where('shared_task_data_id', $prevGroup)->count();
+            if ($tasksWithSharedTaskData === 0) {
+                SharedTaskData::where('id', $prevGroup)->delete();
+            }
 
             Log::createLog(
                 Auth::user()->id,
                 Log::TYPE_CARD_ASSIGNED_GROUP,
-                'Task [' . substr($taskCard->board->name, 0, 3) . '-' . $taskCard->id . ' : ' . $taskCard->name . '] changed group',
+                'Task [' . substr($taskCard->board->name, 0, 3) . '-' . $taskCard->id .'] changed group',
                 null,
                 $taskCard->board->id,
                 $taskCard->id,
@@ -584,12 +619,25 @@ class TaskController extends Controller
 
     public function removeFromGroup($id)
     {
-        $group = 'g-' . (Task::max('id') + 2);
         try {
-            $taskCard = Task::find($id);
+            $taskCard = Task::with('sharedTaskData')->find($id);
+
+            $sharedTaskData = SharedTaskData::create(['description' => $taskCard['sharedTaskData']['description']]);
+
             $taskCard->update([
-                'group' => $group,
+                'shared_task_data_id' => $sharedTaskData->id,
             ]);
+
+            Log::createLog(
+                Auth::user()->id,
+                Log::TYPE_CARD_ASSIGNED_GROUP,
+                'Task [' . substr($taskCard->board->name, 0, 3) . '-' . $taskCard->id . '] was removed from group',
+                null,
+                $taskCard->board->id,
+                $taskCard->id,
+                null,
+                null
+            );
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
