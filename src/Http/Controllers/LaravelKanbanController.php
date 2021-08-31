@@ -181,7 +181,8 @@ class LaravelKanbanController extends Controller
             where('user_id', '=', Auth::user()->id)
             ->with('logs.user')
             ->with(['logs' => function ($q) {
-                $q->orderBy('created_at', 'desc');
+                $q->orderBy('created_at', 'desc')
+                ->paginate(10);
             }])->first();
         return $employee->logs;
     }

@@ -20,8 +20,8 @@ export const ajaxCalls = {
 
         // Notifications 
 
-        asyncGetNotificationData() {
-            return axios.get('get-notif-data');
+        asyncGetNotificationData(page) {
+            return axios.get('get-notif-data?page=' + page);
         },
 
         asyncGetNotificationCount() {

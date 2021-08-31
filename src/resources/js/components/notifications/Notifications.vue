@@ -9,6 +9,12 @@
                 :log="log">
             </log-card>
         </div>
+        <div class="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
+            <button @click="getNotificationData()"
+                    class="text-sm bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-r">
+                Show more
+            </button>
+        </div>
     </div>
 </template>
 
@@ -27,6 +33,7 @@ export default {
     data() {
         return {
             notifList: [],
+            pageNumber: 1,
         };
     },
 
@@ -39,9 +46,9 @@ export default {
 
     methods: {
         getNotificationData() {
-            this.asyncGetNotificationData().then((data) => {
-                this.notifList = data.data;
-                console.log(data.data);
+            this.asyncGetNotificationData(this.pageNumber).then((data) => {
+                this.notifList = this.notifList.concat(data.data);
+                this.pageNumber++;
             }).catch(res => {
                 console.log(res)
             });
@@ -52,7 +59,7 @@ export default {
             }).catch(res => {
                 console.log(res)
             });
-        }
+        },
     }
 }
 </script>
