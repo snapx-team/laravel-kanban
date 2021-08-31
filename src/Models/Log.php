@@ -60,12 +60,13 @@ class Log extends Model
         $employeeArray = [];
 
         if($taskId !== null) {
-            //notify reporter
             $task = Task::find($taskId);
 
-            $employee = Employee::where('user_id', '=', $task->reporter_id)->first();
-            array_push($employeeArray, $employee->id);
-
+            //notify reporter
+            if (Auth::user()->id !== $task->reporter_id) {
+                $employee = Employee::where('user_id', '=', $task->reporter_id)->first();
+                array_push($employeeArray, $employee->id);
+            }
             //notify assigned to users
             foreach ($task->assignedTo as $employee) {
                 array_push($employeeArray, $employee['employee']['id']);

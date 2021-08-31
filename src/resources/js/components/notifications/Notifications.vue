@@ -9,10 +9,11 @@
                 :log="log">
             </log-card>
         </div>
-        <div class="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
+        <div v-if="!noMoreItems" class="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
             <button @click="getNotificationData()"
-                    class="text-sm bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-r">
-                Show more
+                    class=" text-sm bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded">
+                <span v-if="!isLoadingMore">Show more</span>
+                <span v-else class="animate-pulse">Loading...</span>
             </button>
         </div>
     </div>
@@ -34,6 +35,8 @@ export default {
         return {
             notifList: [],
             pageNumber: 1,
+            isLoadingMore: false,
+            noMoreItems: false
         };
     },
 
@@ -46,9 +49,14 @@ export default {
 
     methods: {
         getNotificationData() {
+            this.isLoadingMore = true;
             this.asyncGetNotificationData(this.pageNumber).then((data) => {
                 this.notifList = this.notifList.concat(data.data);
+                if(data.data.length < 10) {
+                    this.noMoreItems = true;
+                }
                 this.pageNumber++;
+                this.isLoadingMore = false;
             }).catch(res => {
                 console.log(res)
             });
