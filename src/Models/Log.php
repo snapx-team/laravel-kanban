@@ -36,7 +36,7 @@ class Log extends Model
     const TYPE_KANBAN_MEMBER_CREATED = 40;
     const TYPE_KANBAN_MEMBER_DELETED = 41;
 
-    const TYPE_BOARD_CREATED = 60; //reporter
+    const TYPE_BOARD_CREATED = 60;
     const TYPE_BOARD_DELETED = 61;
 
     const TYPE_COMMENT_CREATED = 70;
@@ -57,29 +57,24 @@ class Log extends Model
     public static function createLog(?int $userId, int $logId, string $description = '',
                                      ?int $badgeId, ?int $boardId, ?int $taskId, ?int $targetedEmployeeId)
     {
+        $employeeArray = [];
+
         if($taskId !== null) {
-            $employeeArray = [];
-            if ($taskId != null){ 
-                //notify reporter
-                $task = Task::find($taskId);
+            //notify reporter
+            $task = Task::find($taskId);
 
-                $employee = Employee::where('user_id', '=', $task->reporter_id)->first();
-                array_push($employeeArray, $employee->id);
+            $employee = Employee::where('user_id', '=', $task->reporter_id)->first();
+            array_push($employeeArray, $employee->id);
 
-                // if ($logId !== Log::TYPE_CARD_ASSIGNED_TO_USER && $logId !== Log::TYPE_CARD_UNASSIGNED_TO_USER) {
-                    //notify assigned to users
-                    foreach ($task->assignedTo as $employee) {
-                        array_push($employeeArray, $employee['employee']['id']);
-                    }
-                // }
+            //notify assigned to users
+            foreach ($task->assignedTo as $employee) {
+                array_push($employeeArray, $employee['employee']['id']);
             }
+        
             if ($targetedEmployeeId !== null) {
                 //do it if there is a targeted emplployee id
                 array_push($employeeArray, $targetedEmployeeId);
             }
-            // // notify user who did the action
-            // $employee = Employee::where('user_id', '=', $userId)->first();
-            // array_push($employeeArray, $employee->id);
         }
 
         $log = Log::create([

@@ -1,5 +1,4 @@
 <template>
-<<<<<<< HEAD
 
     <div class="py-3 px-4 mb-2 border-l-4 bg-gray-50 shadow-sm" :class="`border-${computedLogInfo.color}-400 `">
 
@@ -20,16 +19,8 @@
                     <p class="text-gray-600">{{ log.description }}</p>
                     <p class="text-gray-700 text-xs mt-1">{{ moment(log.created_at).format("MMMM Do h:mm a") }}</p>
                 </div>
-=======
-    <div class="py-3 px-4 mb-2 border-l-4 bg-gray-50 shadow-sm"  :class="`border-${computedLogInfo.color}-400 `">
-        <div class="flex">
-            <div class="pr-5 flex items-center">
-                <div
-                    class="text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 shadow rounded-full"  :class="`bg-${computedLogInfo.color}-400 `">
-                    <i class="fas"  :class="computedLogInfo.icon"></i></div>
->>>>>>> first draft (working)
             </div>
-            <div>
+            <div v-if="log.board">
                 <badge :name="log.board.name"></badge>
             </div>
         </div>

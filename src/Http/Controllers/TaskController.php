@@ -338,7 +338,7 @@ class TaskController extends Controller
 
                 // logic to log what was changed during update
 
-                $ignoreColumns = array_flip(['created_at', 'updated_at', 'hours_to_deadline']);
+                $ignoreColumns = array_flip(['created_at', 'updated_at', 'hours_to_deadline', 'task_simple_name', 'board']);
                 $keys = array_filter(array_keys($task), function ($key) use ($ignoreColumns) {
                     return !array_key_exists($key, $ignoreColumns);
                 });

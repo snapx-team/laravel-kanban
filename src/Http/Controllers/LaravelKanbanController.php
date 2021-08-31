@@ -182,6 +182,7 @@ class LaravelKanbanController extends Controller
             ->with('logs.user')
             ->with(['logs' => function ($q) {
                 $q->orderBy('created_at', 'desc')
+                ->with('board')
                 ->paginate(10);
             }])->first();
         return $employee->logs;

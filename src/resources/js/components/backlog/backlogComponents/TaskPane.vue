@@ -499,7 +499,6 @@ export default {
             this.selectGroupIsVisible = false;
         },
         assignTask() {
-
             if (this.task.row === null || this.task.column === null) {
                 this.triggerErrorToast('row and column need to be selected!');
             } else {
