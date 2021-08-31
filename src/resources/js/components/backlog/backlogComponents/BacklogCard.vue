@@ -9,7 +9,7 @@
                         <badge :name="task.badge.name" class="inline-flex" v-if="task.badge !== []"></badge>
                     </div>
                     <p class="truncate flex-shrink text-gray-700 font-semibold font-sans tracking-wide text-sm mr-3">
-                        <span class="font-bold">{{ task.board.name.substring(0, 3).toUpperCase() }}-{{ task.id }}: </span>
+                        <span class="font-bold">{{ task.task_simple_name}}: </span>
                         <span class="italic">{{ task.name }}</span>
                     </p>
                 </div>

@@ -289,7 +289,7 @@ export default {
             let newArray = [];
             this.filteredWithOptions.forEach(function (value) {
                 if (
-                    (value.board.name.substring(0, 3) + '-' + value.id).match(regex) ||
+                    (value.task_simple_name).match(regex) ||
                     value.name.match(regex) ||
                     value.badge.name.match(regex) ||
                     value.board.name.match(regex)

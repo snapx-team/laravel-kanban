@@ -184,17 +184,13 @@
                                          v-model="associatedTask">
                                     <template slot="selected-option" slot-scope="option">
                                         <p>
-                                        <span class="font-bold">{{
-                                                option.board.name.substring(0, 3).toUpperCase()
-                                            }}-{{ option.id }}: </span>
+                                        <span class="font-bold">{{ option.task_simple_name}}: </span>
                                             <span class="italic">{{ option.name }}</span>
                                         </p>
                                     </template>
                                     <template slot="option" slot-scope="option">
                                         <p>
-                                        <span class="font-bold">{{
-                                                option.board.name.substring(0, 3).toUpperCase()
-                                            }}-{{ option.id }}: </span>
+                                        <span class="font-bold">{{ option.task_simple_name}}: </span>
                                             <span class="italic">{{ option.name }}</span>
                                         </p>
                                     </template>

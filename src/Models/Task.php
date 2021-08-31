@@ -4,6 +4,7 @@ namespace Xguard\LaravelKanban\Models;
 
 use App\Models\User;
 use App\Models\JobSite;
+use Composer\Package\Package;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,6 +13,9 @@ use Carbon\Carbon;
 
 /**
  * @property \Illuminate\Support\Carbon|null $deadline
+ * @property int $id
+ * @property Board $board
+ * @property string $name
  */
 
 class Task extends Model
@@ -22,6 +26,7 @@ class Task extends Model
 
     protected $appends = [
         'hours_to_deadline',
+        'task_simple_name'
     ];
 
     public function sharedTaskData(): BelongsTo
@@ -79,7 +84,7 @@ class Task extends Model
         return $this->HasMany(Log::class);
     }
 
-    public function getHoursToDeadlineAttribute()
+    public function getHoursToDeadlineAttribute(): ?int
     {
         if ($this->deadline === null) {
             return null;
@@ -88,5 +93,10 @@ class Task extends Model
             $deadline = new Carbon($this->deadline);
             return $now->diffInHours($deadline, false);
         }
+    }
+
+    public function getTaskSimpleNameAttribute(): string
+    {
+        return strtoupper(substr($this->board->name, 0, 3)) . '-' . $this->id;
     }
 }
