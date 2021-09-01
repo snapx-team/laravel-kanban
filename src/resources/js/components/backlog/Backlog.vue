@@ -438,13 +438,17 @@ export default {
             this.showBoardsPane = false;
         },
         getBacklogData() {
-            this.eventHub.$emit("set-loading-state", true);
-            this.asyncGetBacklogData(this.startTime, this.endTime).then((data) => {
-                this.backlogData = data.data;
-                this.eventHub.$emit("set-loading-state", false);
-            }).catch(res => {
-                console.log(res)
-            });
+            if(this.start  && this.end){
+                this.eventHub.$emit("set-loading-state", true);
+                this.asyncGetBacklogData(this.startTime, this.endTime).then((data) => {
+                    this.backlogData = data.data;
+                    this.eventHub.$emit("set-loading-state", false);
+                })
+            }
+            else{
+                this.triggerErrorToast('select a start and end time')
+            }
+
         },
         getOneMonthAgo() {
             let d = new Date()

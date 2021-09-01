@@ -112,7 +112,7 @@
 
                                 <label class="flex-grow space-y-2">
                                     <span
-                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Task Name </span>
+                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Task Name *</span>
                                     <input
                                         class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
                                         placeholder="Task Name"
@@ -124,7 +124,7 @@
                             <div>
                                 <div class="flex-grow space-y-2">
                                     <span
-                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"> Description</span>
+                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"> Description *</span>
                                     <quill-editor  v-if="!checkedOptions.includes('Group')"
                                                    :options="config"
                                                   output="html"
@@ -139,7 +139,7 @@
                             <div class="flex space-x-3">
                                 <div class="flex-1 space-y-2">
                                     <span
-                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Assign to Kanban</span>
+                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Assign to Kanban *</span>
                                     <vSelect :options="boards"
                                              class="text-gray-400"
                                              label="name"
@@ -221,7 +221,7 @@
                             <div class="flex-1" v-if="checkedOptions.includes('Group')">
                                 <div class="flex-1 space-y-2">
                                     <span
-                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with task</span>
+                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with task *</span>
                                     <vSelect :options="tasks"
                                              class="text-gray-400"
                                              label="name"
@@ -359,14 +359,15 @@ export default {
     methods: {
         saveBacklogTask(event) {
 
-            if(!(!!this.task.name) || !(!!this.task.description) || this.task.selectedKanbans.length === 0){
 
-                if(!(!!this.task.name))
-                    this.triggerErrorToast('Task name is required');
-                if(!(!!this.task.description))
-                    this.triggerErrorToast('Task description is required');
-                if(this.task.selectedKanbans.length === 0)
-                    this.triggerErrorToast('At least 1 kanban needs to be selected');
+            if(!(!!this.task.name))
+                this.triggerErrorToast('Task name is required');
+            else if(!(!!this.task.description) && !this.checkedOptions.includes('Group'))
+                this.triggerErrorToast('Task description is required');
+            else if(this.task.selectedKanbans.length === 0)
+                this.triggerErrorToast('At least 1 kanban needs to be selected');
+            else if(this.checkedOptions.includes('Group') && !(!!this.task.associatedTask)){
+                this.triggerErrorToast('Choose a task to group with, or uncheck group from options list');
             }
             else{
                 this.eventHub.$emit("save-backlog-task", this.task);

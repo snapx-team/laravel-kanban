@@ -355,25 +355,33 @@ export default {
             });
         },
         setStatus() {
-            this.$swal({
-                icon: 'info',
-                title: 'Set status to ' + this.selectedStatus.name,
-                text: 'This will archive the task. You can find it in the backlog.',
-                showCancelButton: true,
-                confirmButtonText: `Continue`,
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    this.asyncSetStatus(this.cloneCardData.id, this.selectedStatus.name).then(() => {
-                        this.eventHub.$emit("fetch-and-set-column-tasks", this.cloneCardData);
-                        this.eventHub.$emit("close-task-modal");
-                        this.triggerSuccessToast('Status Updated')
-                    }).catch(res => {
-                        console.log(res)
-                    });
-                } else {
-                    this.selectedStatus = this.cardData.status;
-                }
-            })
+
+            if(this.selectedStatus.name !==  this.cardData.status){
+                this.$swal({
+                    icon: 'info',
+                    title: 'Set status to ' + this.selectedStatus.name,
+                    text: 'This will archive the task. You can find it in the backlog.',
+                    showCancelButton: true,
+                    confirmButtonText: `Continue`,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.asyncSetStatus(this.cloneCardData.id, this.selectedStatus.name).then(() => {
+                            this.eventHub.$emit("fetch-and-set-column-tasks", this.cloneCardData);
+                            this.eventHub.$emit("close-task-modal");
+                            this.triggerSuccessToast('Status Updated')
+                        }).catch(res => {
+                            console.log(res)
+                        });
+                    } else {
+                        this.selectedStatus = this.cardData.status;
+                    }
+                })
+            }
+            else{
+                this.triggerInfoToast('You current status is already set to \'' + this.selectedStatus.name + '\'');
+            }
+
+
         },
         handleChecklist() {
 

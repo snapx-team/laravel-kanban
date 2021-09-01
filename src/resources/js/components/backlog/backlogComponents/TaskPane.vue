@@ -1,9 +1,7 @@
 <template>
     <div class="border-gray-300 border-2">
         <div class="flex justify-between p-2 bg-indigo-800 border-b">
-            <h1 class="text-white">Task: <span class="font-medium">{{
-                    task.board.name.substring(0, 3).toUpperCase()
-                }}-{{ task.id }}</span>
+            <h1 class="text-white">Task: <span class="font-medium">{{ task.task_simple_name }}</span>
             </h1>
             <div>
                 <button @click="closeTaskView()"
@@ -169,15 +167,24 @@
                 </div>
             </div>
 
-            <div>
+            <div class="flex">
                 <div class="flex-grow space-y-2">
                     <span
                         class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Description</span>
-                    <quill-editor v-if="!selectGroupIsVisible"
+
+                    <div class="space-y-5">
+                        <div class="rounded border p-5 cursor-text" @click="descriptionIsEditable = true" v-if="!descriptionIsEditable">
+                            <div class="ql-editor h-auto" id="task-description" v-html="task.shared_task_data.description"></div>
+                        </div>
+                    </div>
+
+                    <quill-editor v-if="!selectGroupIsVisible && descriptionIsEditable"
                                   :options="config"
                                   output="html"
-                                  v-model="task.shared_task_data.description"></quill-editor>
-                    <p v-else class="text-sm font-medium leading-5 text-red-500">Description will match group
+                                  scrollingContainer="html"
+                                  v-model="task.shared_task_data.description"
+                                  @blur="descriptionIsEditable = false"></quill-editor>
+                    <p v-if="selectGroupIsVisible" class="text-sm font-medium leading-5 text-red-500">Description will match group
                         description</p>
 
                 </div>
@@ -254,7 +261,7 @@
                     <div v-if="relatedTasks.length > 0" class="bg-gray-50 py-3 px-4 w-full rounded">
                         <p v-for="task in relatedTasks" :key="task.id" class="border-b py-1">
                             <span
-                                class="font-bold">{{ task.board.name.substring(0, 3).toUpperCase() }}-{{
+                                class="font-bold">{{ task.task_simple_name }}-{{
                                     task.id
                                 }}: </span>
                             <span class="italic">{{ task.name }}</span>
@@ -335,6 +342,7 @@ export default {
     mixins: [helperFunctions, ajaxCalls],
     data() {
         return {
+            descriptionIsEditable: false,
             loadingRelatedTasks: false,
             task: {
                 id: null,
@@ -403,7 +411,7 @@ export default {
     },
 
     beforeDestroy() {
-        this.eventHub.$off('open-task-view');
+        this.eventHub.$off('populate-task-view');
     },
 
     mounted() {
@@ -436,7 +444,6 @@ export default {
             })
         },
         loadColumns(option) {
-            this.task.column = {};
             this.asyncGetColumns(option.id).then((data) => {
                 this.columns = data.data;
             }).catch(res => {

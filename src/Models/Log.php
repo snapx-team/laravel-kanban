@@ -54,12 +54,18 @@ class Log extends Model
 
     const TYPE_KANBAN_COLUMNS_CREATED_OR_UPDATED = 100;
 
-    public static function createLog(?int $userId, int $logId, string $description = '',
-                                     ?int $badgeId, ?int $boardId, ?int $taskId, ?int $targetedEmployeeId)
-    {
+    public static function createLog(
+        ?int $userId,
+        int $logId,
+        string $description = '',
+        ?int $badgeId,
+        ?int $boardId,
+        ?int $taskId,
+        ?int $targetedEmployeeId
+    ) {
         $employeeArray = [];
 
-        if($taskId !== null) {
+        if ($taskId !== null) {
             $task = Task::find($taskId);
 
             //notify reporter
@@ -71,7 +77,7 @@ class Log extends Model
             foreach ($task->assignedTo as $employee) {
                 array_push($employeeArray, $employee['employee']['id']);
             }
-        
+
             if ($targetedEmployeeId !== null) {
                 //do it if there is a targeted emplployee id
                 array_push($employeeArray, $targetedEmployeeId);

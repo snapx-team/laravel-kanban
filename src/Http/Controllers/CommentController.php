@@ -4,6 +4,7 @@ namespace Xguard\LaravelKanban\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Xguard\LaravelKanban\Http\Helper\CheckHasAccessToBoardWithTaskId;
 use Xguard\LaravelKanban\Models\Comment;
 use Illuminate\Support\Facades\Auth;
@@ -25,9 +26,27 @@ class CommentController extends Controller
 
     public function createOrUpdateTaskComment(Request $request)
     {
+
+        $rules = [
+            'comment' => 'required'
+        ];
+
+        $customMessages = [
+            'comment.required' => 'Comment cannot be empty',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $customMessages);
+
+        if ($validator->fails()) {
+            return response([
+                'success' => 'false',
+                'message' => implode(', ', $validator->messages()->all()),
+            ], 400);
+        }
+
         $taskId = $request->input('taskId');
         $hasBoardAccess = (new CheckHasAccessToBoardWithTaskId())->returnBool($taskId);
-        
+
         if ($hasBoardAccess) {
             try {
                 if ($request->filled('id')) {
@@ -47,14 +66,14 @@ class CommentController extends Controller
                         $comment->task_id,
                         null
                     );
-                
+
                 } else {
                     $comment = Comment::with('task')->create([
                         'task_id' => $request->input('taskId'),
                         'comment' => $request->input('comment'),
                         'employee_id' => session('employee_id'),
                     ]);
-    
+
                     $task = Task::with('board')->get()->find($comment->task_id);
                     Log::createLog(
                         Auth::user()->id,

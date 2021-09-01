@@ -118,7 +118,7 @@
 
                                 <label class="flex-grow space-y-2">
                                     <span
-                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Task Name </span>
+                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Task Name *</span>
                                     <input
                                         class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
                                         placeholder="Task Name"
@@ -131,7 +131,7 @@
                             <div>
                                 <div class="flex-grow space-y-2">
                                     <span
-                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"> Description</span>
+                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"> Description *</span>
                                     <quill-editor v-if="!checkedOptions.includes('Group')"
                                                   :options="config"
                                                   output="html"
@@ -229,7 +229,7 @@
                             <div class="flex-1" v-if="checkedOptions.includes('Group')">
                                 <div class="flex-1 space-y-2">
                                     <span
-                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with task</span>
+                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with task *</span>
                                     <vSelect :options="tasks"
                                              class="text-gray-400"
                                              label="name"
@@ -379,31 +379,38 @@ export default {
 
     methods: {
         saveTask(event) {
-            event.target.disabled = true;
-            this.eventHub.$emit("save-task", this.task);
-            this.modalOpen = false;
-
-            this.task = {
-                name: null,
-                badge: {},
-                description: null,
-                erpEmployee: null,
-                erpJobSite: null,
-                deadline: null,
-                columnId: null,
-                associatedTask: null,
-                assignedTo: null,
-                selectedRowIndex: null,
-                selectedColumnIndex: null,
-                selectedColumnId: null,
-                selectedRowName: null,
-                selectedRowId: null,
-                selectedColumnName: null,
-                boardId: null
+            if(!(!!this.task.name))
+                this.triggerErrorToast('Task name is required');
+            else if(!(!!this.task.description) && !this.checkedOptions.includes('Group'))
+                this.triggerErrorToast('Task description is required');
+            else if(this.checkedOptions.includes('Group') && !(!!this.task.associatedTask)){
+                this.triggerErrorToast('Choose a task to group with, or uncheck group from options list');
             }
-            this.checkedOptions = [];
-            this.selectedTemplate = null;
+            else{
+                this.eventHub.$emit("save-task", this.task);
+                this.modalOpen = false;
 
+                this.task = {
+                    name: null,
+                    badge: {},
+                    description: null,
+                    erpEmployee: null,
+                    erpJobSite: null,
+                    deadline: null,
+                    columnId: null,
+                    associatedTask: null,
+                    assignedTo: null,
+                    selectedRowIndex: null,
+                    selectedColumnIndex: null,
+                    selectedColumnId: null,
+                    selectedRowName: null,
+                    selectedRowId: null,
+                    selectedColumnName: null,
+                    boardId: null
+                }
+                this.checkedOptions = [];
+                this.selectedTemplate = null;
+            }
         },
         onTypeEmployee(search, loading) {
             if (search.length) {
