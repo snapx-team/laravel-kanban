@@ -20,16 +20,17 @@ class MemberController extends Controller
                     'board_id' => $boardId,
                 ]);
 
-                Log::createLog(
-                    Auth::user()->id,
-                    Log::TYPE_KANBAN_MEMBER_CREATED,
-                    'Added a new member [' . $member->employee->user->full_name . '] to board [' . $member->board->name . ']',
-                    null, 
-                    $member->board_id,
-                    null,
-                    null,
-                    null
-                );
+                if($member->wasRecentlyCreated) {
+                    Log::createLog(
+                        Auth::user()->id,
+                        Log::TYPE_KANBAN_MEMBER_CREATED,
+                        'Added a new member [' . $member->employee->user->full_name . '] to board [' . $member->board->name . ']',
+                        null, 
+                        $member->board_id,
+                        null,
+                        $member->employee_id
+                    );
+                }
             }
         } catch (\Exception $e) {
             return response([
@@ -53,8 +54,7 @@ class MemberController extends Controller
                 null,
                 $member->board_id,
                 null,
-                null,
-                null
+                $member->$member->employee_id
             );
 
         } catch (\Exception $e) {

@@ -18,6 +18,20 @@ export const ajaxCalls = {
             return axios.get('get-backlog-data/' + start + '/' + end);
         },
 
+        // Notifications 
+
+        asyncGetNotificationData(page) {
+            return axios.get('get-notif-data?page=' + page);
+        },
+
+        asyncGetNotificationCount() {
+            return axios.get('get-notif-count');
+        },
+
+        asyncUpdateNotificationCount() {
+            return axios.post('update-notif-count');
+        },
+
         // Metrics
 
         asyncGetBadgeData(start, end) {

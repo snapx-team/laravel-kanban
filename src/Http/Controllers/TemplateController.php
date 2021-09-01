@@ -55,7 +55,6 @@ class TemplateController extends Controller
                     $badge->id,
                     null,
                     null,
-                    null,
                     null
                 );
             }

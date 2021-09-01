@@ -27,7 +27,6 @@ class RowAndColumnsController extends Controller
                     null, 
                     $newRow->board->id,
                     null,
-                    null,
                     null
                 );
             } else {
@@ -42,7 +41,6 @@ class RowAndColumnsController extends Controller
                     Log::TYPE_ROW_CREATED, 'Crreated row [' . $newRow->name . '] in board [' . $newRow->board->name . ']',
                     null,
                     $newRow->board->id,
-                    null,
                     null,
                     null
                 );
@@ -77,7 +75,6 @@ class RowAndColumnsController extends Controller
                         null,
                         $column->row->board->id,
                         null,
-                        null,
                         null
                     );
                 }
@@ -97,7 +94,6 @@ class RowAndColumnsController extends Controller
                         null,
                         $newCol->row->board->id,
                         null,
-                        null,
                         null
                     );
                 } else {
@@ -112,7 +108,6 @@ class RowAndColumnsController extends Controller
                         Log::TYPE_COLUMN_CREATED, 'Created column [' . $newColumn->name . '] in row [' . $newColumn->row->name . '] in board [' . $newColumn->row->board->name . ']',
                         null,
                         $newColumn->row->board->id,
-                        null,
                         null,
                         null
                     );
@@ -176,7 +171,6 @@ class RowAndColumnsController extends Controller
             null,
             $column->row->board->id,
             null,
-            null,
             null
         );
     }
@@ -190,7 +184,6 @@ class RowAndColumnsController extends Controller
             Log::TYPE_ROW_DELETED, 'Deleted row [' . $row->name . '] from board [' . $row->board->name . ']',
             null,
             $row->board->id,
-            null,
             null,
             null
         );

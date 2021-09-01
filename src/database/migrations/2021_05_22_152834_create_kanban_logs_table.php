@@ -21,8 +21,7 @@ class CreateKanbanLogsTable extends Migration
             $table->unsignedInteger('badge_id')->nullable();
             $table->unsignedInteger('board_id')->nullable();
             $table->unsignedInteger('task_id')->nullable();
-            $table->unsignedInteger('erp_employee_id')->nullable();
-            $table->unsignedInteger('erp_job_site_id')->nullable();
+            $table->unsignedInteger('targeted_employee_id')->nullable();
             $table->timestamps();
         });
     }

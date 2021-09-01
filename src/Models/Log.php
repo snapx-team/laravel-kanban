@@ -6,6 +6,9 @@ use App\Models\User;
 use App\Models\JobSite;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Xguard\LaravelKanban\Models\Task;
+use Illuminate\Support\Facades\Auth;
 
 class Log extends Model
 {
@@ -20,7 +23,6 @@ class Log extends Model
     const TYPE_CARD_CREATED = 10;
     const TYPE_CARD_CANCELED = 11;
     const TYPE_CARD_COMPLETED = 12;
-    const TYPE_CARD_ASSIGNED_TO_USER_UPDATED = 13;
     const TYPE_CARD_MOVED = 14;
     const TYPE_CARD_ASSIGNED_TO_BOARD = 15;
     const TYPE_CARD_UPDATED = 16;
@@ -28,10 +30,11 @@ class Log extends Model
     const TYPE_CARD_CHANGED_INDEX = 18;
     const TYPE_CARD_CHECKLIST_ITEM_CHECKED = 20;
     const TYPE_CARD_CHECKLIST_ITEM_UNCHECKED = 21;
+    const TYPE_CARD_ASSIGNED_TO_USER = 22;
+    const TYPE_CARD_UNASSIGNED_TO_USER = 23;
 
-
-    const TYPE_KANBAN_MEMBER_CREATED = 20;
-    const TYPE_KANBAN_MEMBER_DELETED = 21;
+    const TYPE_KANBAN_MEMBER_CREATED = 40;
+    const TYPE_KANBAN_MEMBER_DELETED = 41;
 
     const TYPE_BOARD_CREATED = 60;
     const TYPE_BOARD_DELETED = 61;
@@ -49,22 +52,43 @@ class Log extends Model
 
     const TYPE_BADGE_CREATED = 90;
 
-
     const TYPE_KANBAN_COLUMNS_CREATED_OR_UPDATED = 100;
 
     public static function createLog(?int $userId, int $logId, string $description = '',
-                                     ?int $badgeId, ?int $boardId, ?int $taskId, ?int $erpEmployeeId, ?int $erpJobSiteId)
+                                     ?int $badgeId, ?int $boardId, ?int $taskId, ?int $targetedEmployeeId)
     {
-        return Log::create([
+        $employeeArray = [];
+
+        if($taskId !== null) {
+            $task = Task::find($taskId);
+
+            //notify reporter
+            if (Auth::user()->id !== $task->reporter_id) {
+                $employee = Employee::where('user_id', '=', $task->reporter_id)->first();
+                array_push($employeeArray, $employee->id);
+            }
+            //notify assigned to users
+            foreach ($task->assignedTo as $employee) {
+                array_push($employeeArray, $employee['employee']['id']);
+            }
+        
+            if ($targetedEmployeeId !== null) {
+                //do it if there is a targeted emplployee id
+                array_push($employeeArray, $targetedEmployeeId);
+            }
+        }
+
+        $log = Log::create([
             'user_id' => $userId,
             'log_type' => $logId,
             'description' => $description,
             'badge_id' => $badgeId,
             'board_id' => $boardId,
             'task_id' => $taskId,
-            'erp_employee_id' => $erpEmployeeId,
-            'erp_job_site_id' => $erpJobSiteId,
+            'targeted_employee_id' =>  $targetedEmployeeId
         ]);
+
+        $log->notifAssignedTo()->sync($employeeArray);
     }
 
 
@@ -88,6 +112,11 @@ class Log extends Model
         return $this->belongsTo(Board::class, 'board_id');
     }
 
+    public function targeted_employee_id(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'targeted_employee_id');
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -101,5 +130,10 @@ class Log extends Model
     public function task(): BelongsTo
     {
         return $this->belongsTo(Task::class);
+    }
+
+    public function notifAssignedTo(): BelongsToMany
+    {
+        return $this->belongsToMany(Employee::class, 'kanban_employee_log', 'log_id', 'employee_id')->withTimestamps();
     }
 }

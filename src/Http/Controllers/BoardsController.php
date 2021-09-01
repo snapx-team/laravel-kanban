@@ -48,7 +48,6 @@ class BoardsController extends Controller
                     null,
                     $board->id,
                     null,
-                    null,
                     null
                 );
             }
@@ -80,7 +79,6 @@ class BoardsController extends Controller
                 'Deleted board [' . $board->name . ']',
                 null,
                 $board->id,
-                null,
                 null,
                 null
             );

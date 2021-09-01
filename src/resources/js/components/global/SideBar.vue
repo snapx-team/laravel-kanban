@@ -18,12 +18,26 @@
                 </router-link>
             </div>
             <div class=" -mx-3 pb-2">
+                <router-link :to="{ path: '/kanban/notifications' }"
+                             class="flex justify-between items-center px-3 py-2 hover:bg-gray-200 rounded-lg">
+                    <span class="text-sm font-medium text-gray-900">Notifications</span>
+                    <div v-if="this.notifNumber > 0" class="py-4 pr-4 relative border-2 border-transparent text-gray-800 rounded-full hover:text-gray-400 focus:outline-none focus:text-gray-500 transition duration-150 ease-in-out">
+                        <span class="absolute inset-0 object-right-top pt-0.5">
+                            <div class="inline-flex items-center px-2 py-0.5 border-2 rounded-full text-xs font-semibold leading-4 bg-red-500 text-white">
+                            {{ notifNumber }}
+                            </div>
+                        </span>
+                    </div>
+                </router-link>
+                
+            </div>
+            
+            <div class=" -mx-3 pb-2">
                 <router-link :to="{ path: '/kanban/backlog' }"
                              class="flex justify-between items-center px-3 py-2 hover:bg-gray-200 rounded-lg">
                     <span class="text-sm font-medium text-gray-900">Backlog</span>
                 </router-link>
             </div>
-
             <div class=" -mx-3 pb-2" v-if="$role === 'admin'">
                 <router-link :to="{ path: '/kanban/metrics' }"
                              class="flex justify-between items-center px-3 py-2 hover:bg-gray-200 rounded-lg">
@@ -71,15 +85,20 @@ export default {
     data() {
         return {
             boards: {},
-            loadingBoard: false
+            loadingBoard: false,
+            notifNumber: 0,
         };
     }, mounted() {
         this.getBoards();
+        this.getNotificationCount();
     },
 
     created() {
         this.eventHub.$on("update-side-bar", () => {
             this.getBoards();
+        });
+        this.eventHub.$on("update-notif-count", () => {
+            this.getNotificationCount();
         });
     },
 
@@ -93,6 +112,13 @@ export default {
                 console.log(res)
             });
         },
+        getNotificationCount() {
+            this.asyncGetNotificationCount().then((data) => {
+                this.notifNumber = data.data;
+            }).catch(res => {
+                console.log(res)
+            });
+        }
     },
 };
 </script>

@@ -20,7 +20,7 @@
                     <p class="text-gray-700 text-xs mt-1">{{ moment(log.created_at).format("MMMM Do h:mm a") }}</p>
                 </div>
             </div>
-            <div>
+            <div v-if="log.board">
                 <badge :name="log.board.name"></badge>
             </div>
         </div>
@@ -116,6 +116,18 @@ export default {
                         "type": "unchecked a checklist item",
                         "icon": "fa-square",
                         "color": "yellow",
+                    };
+                case 22:
+                    return {
+                        "type": "assigned card to new user",
+                        "icon": "fa-user-plus",
+                        "color": "green",
+                    };
+                case 23:
+                    return {
+                        "type": "unassigned card from a user",
+                        "icon": "fa-user-minus",
+                        "color": "red",
                     };
                 case 70:
                     return {

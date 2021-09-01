@@ -152,7 +152,7 @@ import {ajaxCalls} from "../../mixins/ajaxCallsMixin";
 import PieChart from "./metricsComponents/PieChart.vue";
 import BarChart from "./metricsComponents/BarChart.vue";
 import LineChart from "./metricsComponents/LineChart.vue";
-import BacklogBar from "../backlog/backlogComponents/BacklogBar.vue"
+import BacklogBar from "../backlog/backlogComponents/BacklogBar.vue";
 
 export default {
     inject: ["eventHub"],

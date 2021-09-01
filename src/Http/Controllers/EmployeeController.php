@@ -29,8 +29,7 @@ class EmployeeController extends Controller
                     null,
                     null,
                     null,
-                    $employee->user_id,
-                    null
+                    $employee->id
                 );
             }
 
@@ -56,8 +55,7 @@ class EmployeeController extends Controller
                 null,
                 null,
                 null,
-                $employee->user_id,
-                null
+                $employee->id
             );
         } catch (\Exception $e) {
             return response([

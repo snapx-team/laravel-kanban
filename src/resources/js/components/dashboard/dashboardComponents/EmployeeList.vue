@@ -47,40 +47,40 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <template v-for="(employee, employeeIndex) in filtered">
-                                <template v-if="
-                                      employeeIndex >= paginationIndex &&
-                                      employeeIndex < paginationIndex + paginationStep
-                                    ">
-                                    <tr :key="employeeIndex">
-                                        <td class="px-5 py-5 bg-white text-sm">
-                                            <div class="flex items-center">
-                                                <avatar :name="employee.user.full_name" :size="6" class="mr-3"></avatar>
-                                                <div class="ml-3">
-                                                    <p class="text-gray-900 whitespace-no-wrap">
-                                                        {{ employee.user.full_name }} </p>
+                                <template v-for="(employee, employeeIndex) in filtered">
+                                    <template v-if="
+                                        employeeIndex >= paginationIndex &&
+                                        employeeIndex < paginationIndex + paginationStep
+                                        ">
+                                        <tr :key="employeeIndex">
+                                            <td class="px-5 py-5 bg-white text-sm">
+                                                <div class="flex items-center">
+                                                    <avatar :name="employee.user.full_name" :size="6" class="mr-3"></avatar>
+                                                    <div class="ml-3">
+                                                        <p class="text-gray-900 whitespace-no-wrap">
+                                                            {{ employee.user.full_name }} </p>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-5 py-5 bg-white text-sm">
-                                            <p class="text-gray-900 whitespace-no-wrap">
-                                                {{ employee.role }} </p>
-                                        </td>
-                                        <td class="px-5 py-5 bg-white text-sm">
-                                            <p class="text-gray-900 whitespace-no-wrap">
-                                                {{ employee.user.email }} </p>
-                                        </td>
+                                            </td>
+                                            <td class="px-5 py-5 bg-white text-sm">
+                                                <p class="text-gray-900 whitespace-no-wrap">
+                                                    {{ employee.role }} </p>
+                                            </td>
+                                            <td class="px-5 py-5 bg-white text-sm">
+                                                <p class="text-gray-900 whitespace-no-wrap">
+                                                    {{ employee.user.email }} </p>
+                                            </td>
 
-                                        <td v-if="$role === 'admin'"
-                                            class="px-5 py-5 bg-white text-sm text-right">
-                                            <a @click="editEmployee(employeeIndex)"
-                                               class="cursor-pointer px-2 text-gray-400 hover:text-gray-600 transition duration-300 ease-in-out focus:outline-none">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
+                                            <td v-if="$role === 'admin'"
+                                                class="px-5 py-5 bg-white text-sm text-right">
+                                                <a @click="editEmployee(employeeIndex)"
+                                                class="cursor-pointer px-2 text-gray-400 hover:text-gray-600 transition duration-300 ease-in-out focus:outline-none">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </template>
                                 </template>
-                            </template>
                             </tbody>
                         </table>
                         <div
