@@ -178,6 +178,7 @@
                 this.asyncCreateComment(this.commentData).then(res => {
                     this.commentData.comment= null;
                     this.getComments();
+                    this.eventHub.$emit("reload-logs");
                 });
             },
 
