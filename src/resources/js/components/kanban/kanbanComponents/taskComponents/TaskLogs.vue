@@ -32,6 +32,11 @@ export default {
     mounted() {
         this.getLogs();
     },
+    created() {
+        this.eventHub.$on("reload-logs", () => {
+            this.getLogs();
+        })
+    },
     methods: {
         getLogs() {
             this.loadingLogs = true;
