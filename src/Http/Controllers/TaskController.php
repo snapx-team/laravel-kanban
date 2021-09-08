@@ -67,7 +67,6 @@ class TaskController extends Controller
     }
 
 
-
     public function createBacklogTaskCards(Request $request)
     {
         $rules = [
@@ -132,7 +131,7 @@ class TaskController extends Controller
                 Log::createLog(
                     Auth::user()->id,
                     Log::TYPE_CARD_CREATED,
-                    'Created new backlog task [' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '] with board [' . $task->board->name . '>',
+                    'Created new backlog task [' . $task->task_simple_name . '] in board [' . $task->board->name . '>',
                     $task->badge_id,
                     $task->board_id,
                     $task->id,
@@ -222,7 +221,7 @@ class TaskController extends Controller
             Log::createLog(
                 Auth::user()->id,
                 Log::TYPE_CARD_CREATED,
-                'Created new task [' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '] on board [' . $task->board->name . ']',
+                'Created new task [' . $task->task_simple_name . '] on board [' . $task->board->name . ']',
                 $task->badge_id,
                 $task->board_id,
                 $task->id,
@@ -254,18 +253,18 @@ class TaskController extends Controller
                     $employeeArray = [];
                     foreach ($taskCard['assigned_to'] as $employee) {
                         array_push($employeeArray, $employee['employee']['id']);
-                    }                    
+                    }
 
                     $task = Task::find($taskCard['id']);
 
                     $assignedToResponse = $task->assignedTo()->sync($employeeArray);
 
-                    foreach($assignedToResponse['attached'] as $employeeId) {
+                    foreach ($assignedToResponse['attached'] as $employeeId) {
                         $employee = Employee::with('user')->find($employeeId);
                         Log::createLog(
                             Auth::user()->id,
                             Log::TYPE_CARD_ASSIGNED_TO_USER,
-                            'User ' . $employee['employee']['user']['full_name'] . ' has been assigned to task [' . substr($prevTask['board']['name'], 0, 3) . '-' . $taskCard['id'] . ' : ' . $taskCard['name'] . ']',
+                            'User ' . $employee['employee']['user']['full_name'] . ' has been assigned to task [' . $task->task_simple_name . ']',
                             $taskCard['badge_id'],
                             $taskCard['board_id'],
                             $taskCard['id'],
@@ -273,19 +272,19 @@ class TaskController extends Controller
                         );
                     }
 
-                    foreach($assignedToResponse['detached'] as $employeeId) {
+                    foreach ($assignedToResponse['detached'] as $employeeId) {
                         $employee = Employee::with('user')->find($employeeId);
                         Log::createLog(
                             Auth::user()->id,
                             Log::TYPE_CARD_UNASSIGNED_TO_USER,
-                            'User ' . $employee['employee']['user']['full_name'] . ' has been removed from task [' . substr($prevTask['board']['name'], 0, 3) . '-' . $taskCard['id'] . ' : ' . $taskCard['name'] . ']',
+                            'User ' . $employee['employee']['user']['full_name'] . ' has been removed from task [' . $task->task_simple_name . ']',
                             $taskCard['badge_id'],
                             $taskCard['board_id'],
                             $taskCard['id'],
                             $employee['id']
                         );
                     }
-                    
+
                     $badge = Badge::firstOrCreate([
                         'name' => count($request->input('badge')) > 0 ? $taskCard['badge']['name'] : '--'
                     ]);
@@ -296,7 +295,7 @@ class TaskController extends Controller
                             Log::TYPE_BADGE_CREATED,
                             "The badge [" . $badge->name . "] was created",
                             $badge->id,
-                            null,
+                            $task->board_id,
                             $task->id,
                             null
                         );
@@ -430,7 +429,7 @@ class TaskController extends Controller
             Log::createLog(
                 Auth::user()->id,
                 Log::TYPE_CARD_MOVED,
-                'Task [' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '] changed from [' . $prevRow . ':' . $prevColumn . '] to [' . $row . ':' . $column . ']',
+                'Task [' . $task->task_simple_name . '] changed from [' . $prevRow . ':' . $prevColumn . '] to [' . $row . ':' . $column . ']',
                 null,
                 $task->board_id,
                 $task->id,
@@ -475,7 +474,7 @@ class TaskController extends Controller
                         Auth::user()->id,
                         Log::TYPE_CARD_CHECKLIST_ITEM_CHECKED,
                         'Checked -> ' . $descriptionData['checkboxContent'],
-                        null,
+                        $taskCard->badge_id,
                         $taskCard->board_id,
                         $taskCard->id,
                         null
@@ -529,7 +528,7 @@ class TaskController extends Controller
                 Log::createLog(
                     Auth::user()->id,
                     Log::TYPE_CARD_COMPLETED,
-                    'Task [' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '] in board [' . $task->board->name . '] set to completed',
+                    'Task [' . $task->task_simple_name . '] in board [' . $task->board->name . '] set to completed',
                     $task->badge_id,
                     $task->board_id,
                     $task->id,
@@ -539,7 +538,17 @@ class TaskController extends Controller
                 Log::createLog(
                     Auth::user()->id,
                     Log::TYPE_CARD_CANCELED,
-                    'Task [' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '] in board [' . $task->board->name . '] set to cancelled',
+                    'Task [' . $task->task_simple_name . '] in board [' . $task->board->name . '] set to cancelled',
+                    $task->badge_id,
+                    $task->board_id,
+                    $task->id,
+                    null
+                );
+            } elseif ($status === 'active') {
+                Log::createLog(
+                    Auth::user()->id,
+                    Log::TYPE_CARD_CANCELED,
+                    'Task [' . $task->task_simple_name . '] in board [' . $task->board->name . '] set to active',
                     $task->badge_id,
                     $task->board_id,
                     $task->id,
@@ -568,7 +577,7 @@ class TaskController extends Controller
             Log::createLog(
                 Auth::user()->id,
                 Log::TYPE_CARD_ASSIGNED_TO_BOARD,
-                'Task [' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '] assigned to board [' . $task->board->name . '] on [' . $task->row->name . ':' . $task->column->name . ']',
+                'Task [' . $task->task_simple_name . '] assigned to board [' . $task->board->name . '] on [' . $task->row->name . ':' . $task->column->name . ']',
                 $task->badge_id,
                 $task->board_id,
                 $task->id,
@@ -632,11 +641,10 @@ class TaskController extends Controller
             Log::createLog(
                 Auth::user()->id,
                 Log::TYPE_CARD_ASSIGNED_GROUP,
-                'Task [' . substr($taskCard->board->name, 0, 3) . '-' . $taskCard->id . '] was removed from group',
+                'Task [' . $taskCard->task_simple_name . '] was removed from group',
                 null,
                 $taskCard->board->id,
                 $taskCard->id,
-                null,
                 null
             );
         } catch (\Exception $e) {
@@ -648,20 +656,4 @@ class TaskController extends Controller
         return response(['success' => 'true'], 200);
     }
 
-    public function hasAccessToBoard($taskId)
-    {
-        $task = Task::find($taskId);
-        $members = Member::where('board_id', $task->board_id)->get();
-
-        if (session('role') === 'admin') {
-            $hasBoardAccess = true;
-        } else {
-            foreach ($members as $member) {
-                if ($member->employee->id === session('employee_id')) {
-                    $hasBoardAccess = true;
-                    break;
-                }
-            }
-        }
-    }
 }

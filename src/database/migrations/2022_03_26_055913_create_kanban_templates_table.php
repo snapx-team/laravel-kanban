@@ -16,6 +16,7 @@ class CreateKanbanTemplatesTable extends Migration
         Schema::create('kanban_templates', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
+            $table->string('task_name')->nullable();
             $table->text('description')->nullable();
             $table->text('options')->nullable();
             $table->unsignedBigInteger('badge_id')->nullable();

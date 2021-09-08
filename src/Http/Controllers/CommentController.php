@@ -21,7 +21,15 @@ class CommentController extends Controller
 
     public function getAllTaskComments($taskId)
     {
-        return Comment::where('task_id', $taskId)->with('employee.user')->orderBy('created_at', 'desc')->get();
+        // this will also get all comments of related tasks
+        $sharedTaskDataId = Task::find($taskId)->shared_task_data_id;
+        $allAssociatedTasks = Task::where('shared_task_data_id', '=', $sharedTaskDataId)->pluck('id')->toArray();
+        return Comment::whereIn('task_id', $allAssociatedTasks)
+            ->with('employee.user')
+            ->with(['task' => function ($q) {
+                $q->with('board');
+            }])
+            ->orderBy('created_at', 'desc')->get();
     }
 
     public function createOrUpdateTaskComment(Request $request)
@@ -60,9 +68,9 @@ class CommentController extends Controller
                     Log::createLog(
                         Auth::user()->id,
                         Log::TYPE_COMMENT_EDITED,
-                        'Edited comment on task [' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '] on board [' . $task->board->name . ']',
+                        'Edited comment on task [' . $task->task_simple_name . ']',
                         null,
-                        null,
+                        $task->board_id,
                         $comment->task_id,
                         null
                     );
@@ -78,9 +86,9 @@ class CommentController extends Controller
                     Log::createLog(
                         Auth::user()->id,
                         Log::TYPE_COMMENT_CREATED,
-                        'Added new comment on task [' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '] on board [' . $task->board->name . ']',
+                        'Added new comment on task [' . $task->task_simple_name . ']',
                         null,
-                        null,
+                        $task->board_id,
                         $comment->task_id,
                         null
                     );
@@ -113,9 +121,9 @@ class CommentController extends Controller
             Log::createLog(
                 Auth::user()->id,
                 Log::TYPE_COMMENT_DELETED,
-                'Deleted comment on task [' . substr($task->board->name, 0, 3) . '-' . $task->id . ' : ' . $task->name . '] on board [' . $task->board->name . ']',
+                'Deleted comment on task [' . $task->task_simple_name . ']',
                 null,
-                null,
+                $task->board_id,
                 $comment->task_id,
                 null
             );

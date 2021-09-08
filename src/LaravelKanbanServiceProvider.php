@@ -17,6 +17,7 @@ class LaravelKanbanServiceProvider extends ServiceProvider
     {
         $this->app->make('Xguard\LaravelKanban\Http\Controllers\LaravelKanbanController');
         $this->loadViewsFrom(__DIR__ . '/resources/views', 'Xguard\LaravelKanban');
+        $this->mergeConfigFrom(__DIR__.'/../config.php', 'laravel_kanban');
     }
 
     /**

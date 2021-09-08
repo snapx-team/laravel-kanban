@@ -48,10 +48,10 @@
                         <div class="space-x-3">
 
                             <label class="flex-1 space-y-2">
-                                <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Name </span>
+                                <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Template Name </span>
                                 <input
                                     class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
-                                    placeholder="John Doe"
+                                    placeholder="Name to identify template"
                                     type="text"
                                     v-model="templateData.name"/>
                             </label>
@@ -74,7 +74,17 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="pl-6 py-2 space-y-2">
+                                <div class="pl-6 py-2 space-y-4">
+
+                                    <label class="flex-1 space-y-2">
+                                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Task Name</span>
+                                        <input
+                                            class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
+                                            placeholder="This will prefill task name"
+                                            type="text"
+                                            v-model="templateData.task_name"/>
+                                    </label>
+
                                     <div>
                                         <span
                                             class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Badge</span>
@@ -97,12 +107,32 @@
                                         </vSelect>
                                     </div>
 
-                                    <div class="pt-2">
+                                    <div>
                                         <span
                                             class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600 pb-2">Description</span>
                                         <quill-editor :options="config"
                                                       output="html"
                                                       v-model="templateData.description"></quill-editor>
+                                    </div>
+
+                                    <div class="flex space-x-3">
+                                        <div class="flex-1 space-y-2">
+                                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Select Kanban Boards</span>
+                                            <vSelect :options="boards"
+                                                     class="text-gray-400"
+                                                     label="name"
+                                                     multiple
+                                                     placeholder="Select one or more kanban boards"
+                                                     style="margin-top: 7px"
+                                                     v-model="templateData.boards">
+                                                <template slot="option" slot-scope="option">
+                                                    {{ option.name }}
+                                                </template>
+                                                <template #no-options="{ search, searching, loading }">
+                                                    No result .
+                                                </template>
+                                            </vSelect>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -153,6 +183,13 @@ export default {
 
     mixins: [ajaxCalls, helperFunctions],
 
+    props: {
+        boards: {
+            type: Array,
+            default: null,
+        },
+    },
+
     data() {
         return {
             isEdit: false,
@@ -176,9 +213,11 @@ export default {
             templateData: {
                 id: null,
                 name: null,
+                task_name: null,
                 badge: {},
                 checkedOptions: [],
                 description: null,
+                boards: [],
             },
             modalOpen: false,
 
@@ -196,12 +235,23 @@ export default {
         this.eventHub.$on("create-template", (template) => {
             if (template !== undefined) {
 
+                console.log(template);
                 this.templateData = {...template};
                 this.templateData.checkedOptions = template.unserialized_options;
+                // this.templateData.boards = template.boards;
 
                 this.isEdit = true;
             } else {
                 this.isEdit = false;
+                this.templateData = {
+                    id: null,
+                    name: null,
+                    task_name: null,
+                    badge: {},
+                    checkedOptions: [],
+                    description: null,
+                    boards: []
+                }
             }
             this.modalOpen = true;
             this.getBadges();
@@ -245,15 +295,15 @@ export default {
         },
 
         computedSelectedBadge: {
-            get () {
+            get() {
                 if (_.isEmpty(this.templateData.badge)) {
                     return null
                 } else {
                     return this.templateData.badge
                 }
             },
-            set (val) {
-                if( val === null) val = {};
+            set(val) {
+                if (val === null) val = {};
                 this.templateData.badge = val;
             }
         },

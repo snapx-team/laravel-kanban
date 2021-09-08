@@ -20,7 +20,7 @@
             <add-or-edit-employee-modal></add-or-edit-employee-modal>
             <add-or-edit-board-modal></add-or-edit-board-modal>
             <add-backlog-task-modal :boards="dashboardData.boards"></add-backlog-task-modal>
-            <add-template-modal :templates="dashboardData.templates"></add-template-modal>
+            <add-template-modal :boards="dashboardData.boards" :templates="dashboardData.templates"></add-template-modal>
         </div>
     </div>
 </template>

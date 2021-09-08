@@ -261,9 +261,7 @@
                     <div v-if="relatedTasks.length > 0" class="bg-gray-50 py-3 px-4 w-full rounded">
                         <p v-for="task in relatedTasks" :key="task.id" class="border-b py-1">
                             <span
-                                class="font-bold">{{ task.task_simple_name }}-{{
-                                    task.id
-                                }}: </span>
+                                class="font-bold">{{ task.task_simple_name }}: </span>
                             <span class="italic">{{ task.name }}</span>
                         </p>
                     </div>
