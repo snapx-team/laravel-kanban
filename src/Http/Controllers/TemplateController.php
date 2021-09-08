@@ -4,6 +4,7 @@ namespace Xguard\LaravelKanban\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Xguard\LaravelKanban\Models\Badge;
 use Xguard\LaravelKanban\Models\Log;
@@ -15,7 +16,7 @@ class TemplateController extends Controller
 
     public function getAllTemplates()
     {
-        return Template::with('badge')->get();
+        return Template::orderBy('name')->with('badge', 'boards')->get();
     }
 
     public function createOrUpdateTemplate(Request $request)
@@ -23,12 +24,14 @@ class TemplateController extends Controller
 
         $rules = [
             'description' => 'required',
-            'name' => 'required'
+            'name' => 'required',
+            'task_name' => 'required'
         ];
 
         $customMessages = [
             'description.required' => 'Description is required',
-            'name.required' => 'Name is required',
+            'name.required' => 'Template name is required',
+            'task_name.required' => 'Task name is required',
         ];
         $validator = Validator::make($request->all(), $rules, $customMessages);
 
@@ -40,7 +43,6 @@ class TemplateController extends Controller
         }
 
         try {
-
             $templateData = $request->all();
 
             $badge = Badge::firstOrCreate([
@@ -62,18 +64,30 @@ class TemplateController extends Controller
             if ($request->filled('id')) {
                 Template::where('id', $request->input('id'))->update([
                     'name' => $request->input('name'),
+                    'task_name' => $request->input('task_name'),
                     'badge_id' => $badge->id,
                     'description' => $request->input('description'),
                     'options' => serialize($request->input('checkedOptions')),
                 ]);
+                $template = Template::find($request->input('id'));
             } else {
-                Template::create([
+                $template = Template::create([
                     'name' => $request->input('name'),
+                    'task_name' => $request->input('task_name'),
                     'badge_id' => $badge->id,
                     'description' => $request->input('description'),
                     'options' => serialize($request->input('checkedOptions')),
                 ]);
             }
+
+            if ($request->input('boards') !== null) {
+                $kanbanArray = [];
+                foreach ($request->input('boards') as $kanban) {
+                    array_push($kanbanArray, $kanban['id']);
+                }
+                $template->boards()->sync($kanbanArray);
+            }
+
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',

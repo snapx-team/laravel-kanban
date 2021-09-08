@@ -28,6 +28,15 @@ class LaravelKanbanController extends Controller
         ];
     }
 
+    public function getFooterInfo(): array
+    {
+        return [
+            'parent_name' => config('laravel_kanban.parent_name'),
+            'version' => config('laravel_kanban.version'),
+            'date' => date("Y")
+        ];
+    }
+
     public function getkanbanData($id)
     {
         $hasBoardAccess = (new CheckHasAccessToBoardWithBoardId())->returnBool($id);
@@ -67,7 +76,7 @@ class LaravelKanbanController extends Controller
             })->with('members')->get();
         }
         $employees = Employee::with('user')->get();
-        $templates = Template::orderBy('name')->with('badge')->get();
+        $templates = Template::orderBy('name')->with('badge', 'boards')->get();
 
         return [
             'employees' => $employees,
@@ -176,7 +185,8 @@ class LaravelKanbanController extends Controller
         ];
     }
 
-    public function getNotificationData() {
+    public function getNotificationData()
+    {
         $employee = Employee::
             where('user_id', '=', Auth::user()->id)
             ->with('logs.user')
@@ -188,7 +198,8 @@ class LaravelKanbanController extends Controller
         return $employee->logs;
     }
 
-    public function getNotificationCount() {
+    public function getNotificationCount()
+    {
         $employee = Employee::
             where('user_id', '=', Auth::user()->id)
             ->first();
@@ -201,14 +212,14 @@ class LaravelKanbanController extends Controller
             }])
             ->first();
         }
-        if($employee == null) {
+        if ($employee == null) {
             return 0;
         }
-        $count = count($employee->logs);
-        return $count;
+        return count($employee->logs);
     }
 
-    public function updateNotificationCount() {
+    public function updateNotificationCount()
+    {
         try {
             Employee::where('user_id', '=', Auth::user()->id)->update([
                 'last_notif_check' => new DateTime('NOW')
@@ -221,5 +232,4 @@ class LaravelKanbanController extends Controller
         }
         return response(['success' => 'true'], 200);
     }
-
 }

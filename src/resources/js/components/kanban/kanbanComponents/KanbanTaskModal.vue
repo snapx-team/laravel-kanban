@@ -27,7 +27,7 @@
 
                             <div>
                                 <h1 class="text-2xl text-white pb-2">Task ID:
-                                    [{{ kanbanData.name.substring(0, 3).toUpperCase() }}-{{ cardData.id }}]</h1>
+                                    [{{ cardData.task_simple_name }}]</h1>
                                 <p class="text-sm font-medium leading-5 text-gray-500">
                                     View and/or update task information </p>
                             </div>

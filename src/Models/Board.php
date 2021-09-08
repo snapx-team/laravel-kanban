@@ -3,6 +3,7 @@
 namespace Xguard\LaravelKanban\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Board extends Model
@@ -19,5 +20,10 @@ class Board extends Model
     public function rows(): HasMany
     {
         return $this->hasMany(Row::class)->orderBy('index');
+    }
+
+    public function templates(): BelongsToMany
+    {
+        return $this->belongsToMany(Template::class, 'kanban_board_template', 'board_id', 'template_id');
     }
 }
