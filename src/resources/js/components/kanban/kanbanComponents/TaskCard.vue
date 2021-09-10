@@ -37,9 +37,9 @@
                 <span class="font-bold leading-4 tracking-wide text-gray-600">Employee: </span>
                 {{ task_card.erp_employee.full_name }}
             </p>
-            <p v-if="task_card.erp_job_site_id !== null" class="text-xs text-gray-600">
-                <span class="font-bold leading-4 tracking-wide text-gray-600">Job Site: </span>
-                {{ task_card.erp_job_site.name }}
+            <p v-if="task_card.erp_contract_id !== null" class="text-xs text-gray-600">
+                <span class="font-bold leading-4 tracking-wide text-gray-600">Contract: </span>
+                {{ task_card.erp_contract.contract_identifier }}
             </p>
             <p v-if="task_card.deadline !== null" class="text-xs text-gray-600">
                 <span class="font-bold leading-4 tracking-wide text-gray-600">Deadline: </span>

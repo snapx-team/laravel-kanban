@@ -36,8 +36,8 @@ class TaskController extends Controller
             ->with(['reporter' => function ($q) {
                 $q->select(['id', 'first_name', 'last_name']);
             }])
-            ->with(['erpJobSite' => function ($q) {
-                $q->select(['id', 'name']);
+            ->with(['erpContract' => function ($q) {
+                $q->select(['id', 'contract_identifier']);
             }])->first();
     }
 
@@ -55,8 +55,8 @@ class TaskController extends Controller
             ->with(['reporter' => function ($q) {
                 $q->select(['id', 'first_name', 'last_name']);
             }])
-            ->with(['erpJobSite' => function ($q) {
-                $q->select(['id', 'name']);
+            ->with(['erpContract' => function ($q) {
+                $q->select(['id', 'contract_identifier']);
             }])->get();
     }
 
@@ -109,7 +109,7 @@ class TaskController extends Controller
                     'name' => $backlogTaskData['name'],
                     'deadline' => $request->input('deadline') !== null ? date('y-m-d h:m', strtotime($backlogTaskData['deadline'])) : null,
                     'erp_employee_id' => $request->input('erpEmployee') !== null ? $backlogTaskData['erpEmployee']['id'] : null,
-                    'erp_job_site_id' => $request->input('erpJobSite') !== null ? $backlogTaskData['erpJobSite']['id'] : null,
+                    'erp_contract_id' => $request->input('erpContract') !== null ? $backlogTaskData['erpContract']['id'] : null,
                     'badge_id' => $badge->id,
                     'column_id' => null,
                     'board_id' => $kanban['id'],
@@ -190,7 +190,7 @@ class TaskController extends Controller
                 'name' => $taskCard['name'],
                 'deadline' => $request->input('deadline') !== null ? date('y-m-d h:m', strtotime($taskCard['deadline'])) : null,
                 'erp_employee_id' => $request->input('erpEmployee') !== null ? $taskCard['erpEmployee']['id'] : null,
-                'erp_job_site_id' => $request->input('erpJobSite') !== null ? $taskCard['erpJobSite']['id'] : null,
+                'erp_contract_id' => $request->input('erpContract') !== null ? $taskCard['erpContract']['id'] : null,
                 'badge_id' => $badge->id,
                 'column_id' => $taskCard['selectedColumnId'],
                 'row_id' => $taskCard['selectedRowId'],
@@ -325,7 +325,7 @@ class TaskController extends Controller
                     'status' => $taskCard['status'],
                     'deadline' => $request->input('deadline') !== null ? $dt : null,
                     'erp_employee_id' => $request->input('erp_employee') !== null ? $taskCard['erp_employee']['id'] : null,
-                    'erp_job_site_id' => $request->input('erp_job_site') !== null ? $taskCard['erp_job_site']['id'] : null,
+                    'erp_contract_id' => $request->input('erp_contract') !== null ? $taskCard['erp_contract']['id'] : null,
                     'badge_id' => $badge->id,
                     'column_id' => $taskCard['column_id'] ?? $task->column_id,
                     'row_id' => $taskCard['row_id'] ?? $task->row_id,
@@ -392,8 +392,8 @@ class TaskController extends Controller
             ->with(['reporter' => function ($q) {
                 $q->select(['id', 'first_name', 'last_name']);
             }])
-            ->with(['erpJobSite' => function ($q) {
-                $q->select(['id', 'name']);
+            ->with(['erpContract' => function ($q) {
+                $q->select(['id', 'contract_identifier']);
             }])->orderBy('index')->get();
     }
 

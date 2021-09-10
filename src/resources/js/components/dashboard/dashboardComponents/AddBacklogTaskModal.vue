@@ -158,7 +158,7 @@
                             </div>
 
                             <div class="flex space-x-3"
-                                 v-if="checkedOptions.includes('Deadline') || checkedOptions.includes('ERP Employee') ||checkedOptions.includes('ERP Job Site')">
+                                 v-if="checkedOptions.includes('Deadline') || checkedOptions.includes('ERP Employee') ||checkedOptions.includes('ERP Contract')">
                                 <div class="flex-1" v-if="checkedOptions.includes('Deadline')">
                                     <div class="flex-1 space-y-2">
                                         <span
@@ -195,20 +195,20 @@
                                     </div>
                                 </div>
 
-                                <div class="flex-1" v-if="checkedOptions.includes('ERP Job Site')">
+                                <div class="flex-1" v-if="checkedOptions.includes('ERP Contract')">
                                     <div class="flex-1 space-y-2">
                                         <span
-                                            class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Job Site</span>
-                                        <vSelect :options="erpJobSites"
+                                            class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Contract</span>
+                                        <vSelect :options="erpContracts"
                                                  class="text-gray-400"
-                                                 label="name"
-                                                 placeholder="Select Job Site"
+                                                 label="contract_identifier"
+                                                 placeholder="Select Contract"
                                                  style="margin-top: 7px"
-                                                 @search="onTypeJobsite"
-                                                 v-model="task.erpJobSite">
-                                            <template slot="option" slot-scope="option">
-                                                <p class="inline">{{ option.name }}</p>
-                                            </template>
+                                                 @search="onTypeContract"
+                                                 v-model="task.erpContract">
+<!--                                            <template slot="option" slot-scope="option">-->
+<!--                                                <p class="inline">{{ option.contract_identifier }}</p>-->
+<!--                                            </template>-->
                                             <template #no-options="{ search, searching, loading }">
                                                 No result .
                                             </template>
@@ -297,7 +297,7 @@ export default {
             taskOptions: [
                 {name: 'Deadline',},
                 {name: 'ERP Employee',},
-                {name: 'ERP Job Site',},
+                {name: 'ERP Contract',},
                 {name: 'Group',},
             ],
             checkedOptions: [],
@@ -323,14 +323,14 @@ export default {
                 description: null,
                 selectedKanbans: [],
                 erpEmployee: null,
-                erpJobSite: null,
+                erpContract: null,
                 deadline: null,
                 columnId: null,
                 associatedTask: null,
             },
             badges: [],
             erpEmployees: [],
-            erpJobSites: [],
+            erpContracts: [],
             tasks: [],
             templates: [],
             selectTemplateIsVisible: false,
@@ -346,7 +346,7 @@ export default {
             this.modalOpen = true;
             this.getBadges();
             this.getErpEmployees();
-            this.getJobSites();
+            this.getContracts();
             this.getTasks();
             this.getTemplates();
         });
@@ -379,7 +379,7 @@ export default {
                     description: null,
                     selectedKanbans: [],
                     erpEmployee: null,
-                    erpJobSite: null,
+                    erpContract: null,
                     deadline: null,
                     columnId: null,
                     associatedTask: null,
@@ -406,15 +406,15 @@ export default {
                     loading(false);
                 });
         }, 500),
-        onTypeJobsite(search, loading) {
+        onTypeContract(search, loading) {
             if (search.length) {
                 loading(true);
-                this.typeJobsite(search, loading, this);
+                this.typeContract(search, loading, this);
             }
         },
-        typeJobsite: _.debounce(function (search, loading, vm) {
-            this.asyncGetSomeJobSites(search).then((data) => {
-                this.erpJobSites = data.data;
+        typeContract: _.debounce(function (search, loading, vm) {
+            this.asyncGetSomeContracts(search).then((data) => {
+                this.erpContracts = data.data;
             })
                 .catch(res => {
                     console.log(res)
@@ -440,9 +440,9 @@ export default {
             });
         },
 
-        getJobSites() {
-            this.asyncGetAllJobSites().then((data) => {
-                this.erpJobSites = data.data;
+        getContracts() {
+            this.asyncGetAllContracts().then((data) => {
+                this.erpContracts = data.data;
             }).catch(res => {
                 console.log(res)
             });

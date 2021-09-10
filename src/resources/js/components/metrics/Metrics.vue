@@ -86,10 +86,10 @@
                         </div>
                         <div v-if="showTB" class="flex-auto rounded shadow-lg m-2 bg-white">
                             <pie-chart
-                                v-if="jobsiteData != null"
-                                :series="jobsiteData.hits"
-                                :labels="jobsiteData.names"
-                                :title="'Tickets by JobSite'">
+                                v-if="contractData != null"
+                                :series="contractData.hits"
+                                :labels="contractData.names"
+                                :title="'Tickets by Contract'">
                             </pie-chart>
                         </div>
                         <div v-if="showTE" class="flex-auto rounded shadow-lg m-2 bg-white">
@@ -167,7 +167,7 @@ export default {
             badgeData: null,
             ticketByEmployeeData: null,
             creationByHour: null,
-            jobsiteData: null,
+            contractData: null,
             closedTasksByEmployee: null,
             delayByBadge: null,
             delayByEmployee: null,
@@ -200,7 +200,7 @@ export default {
         reload() {
             if (this.showTB) {
                 this.getBadgeData();
-                this.getJobSiteData();
+                this.getContractData();
             }
             if (this.showTE) {
                 this.getTicketsByEmployee();
@@ -225,7 +225,7 @@ export default {
             this.showHS = false;
             this.showCR = false;
             this.getBadgeData();
-            this.getJobSiteData();
+            this.getContractData();
         },
         showTicketEmployee() {
             this.showTB = false;
@@ -295,9 +295,9 @@ export default {
                 console.log(res)
             });
         },
-        getJobSiteData() {
-            this.asyncGetJobSiteData(this.startTime, this.endTime).then((data) => {
-                this.jobsiteData = data.data;
+        getContractData() {
+            this.asyncGetContractData(this.startTime, this.endTime).then((data) => {
+                this.contractData = data.data;
             }).catch(res => {
                 console.log(res)
             });

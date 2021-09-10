@@ -18,7 +18,7 @@ export const ajaxCalls = {
             return axios.get('get-backlog-data/' + start + '/' + end);
         },
 
-        // Notifications 
+        // Notifications
 
         asyncGetNotificationData(page) {
             return axios.get('get-notif-data?page=' + page);
@@ -46,8 +46,8 @@ export const ajaxCalls = {
             return axios.get('get-creation-by-hour/' + start + '/' + end);
         },
 
-        asyncGetJobSiteData(start, end) {
-            return axios.get('get-jobsite-data/' + start + '/' + end);
+        asyncGetContractData(start, end) {
+            return axios.get('get-contract-data/' + start + '/' + end);
         },
 
         asyncGetClosedTasksByEmployee(start, end) {
@@ -290,17 +290,17 @@ export const ajaxCalls = {
             });
         },
 
-        // Job Sites
+        // Contracts
 
-        asyncGetAllJobSites() {
-            return axios.get('get-all-job-sites');
+        asyncGetAllContracts() {
+            return axios.get('get-all-contracts');
         },
 
-        asyncGetSomeJobSites(searchTerm) {
+        asyncGetSomeContracts(searchTerm) {
             if (searchTerm === '') {
-                return axios.get('get-all-job-sites');
+                return axios.get('get-all-contracts');
             }
-            return axios.get('get-some-job-sites/' + searchTerm);
+            return axios.get('get-some-contracts/' + searchTerm);
         },
 
         // Badges

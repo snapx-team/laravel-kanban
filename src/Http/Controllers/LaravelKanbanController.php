@@ -54,8 +54,8 @@ class LaravelKanbanController extends Controller
                     ->with(['reporter' => function ($q) {
                         $q->select(['id', 'first_name', 'last_name']);
                     }])
-                    ->with(['erpJobSite' => function ($q) {
-                        $q->select(['id', 'name']);
+                    ->with(['erpContract' => function ($q) {
+                        $q->select(['id', 'contract_identifier']);
                     }]);
             }])->with(['members.employee.user' => function ($q) {
                 $q->select(['id', 'first_name', 'last_name']);
@@ -100,8 +100,8 @@ class LaravelKanbanController extends Controller
                 ->with(['erpEmployee' => function ($q) {
                     $q->select(['id', 'first_name', 'last_name']);
                 }])
-                ->with(['erpJobSite' => function ($q) {
-                    $q->select(['id', 'name']);
+                ->with(['erpContract' => function ($q) {
+                    $q->select(['id', 'contract_identifier']);
                 }])
                 ->whereDate('created_at', '>=', new DateTime($start))
                 ->whereDate('created_at', '<=', new DateTime($end))
@@ -122,8 +122,8 @@ class LaravelKanbanController extends Controller
                 ->with(['erpEmployee' => function ($q) {
                     $q->select(['id', 'first_name', 'last_name']);
                 }])
-                ->with(['erpJobSite' => function ($q) {
-                    $q->select(['id', 'name']);
+                ->with(['erpContract' => function ($q) {
+                    $q->select(['id', 'contract_identifier']);
                 }])
                 ->whereDate('created_at', '>=', new DateTime($start))
                 ->whereDate('created_at', '<=', new DateTime($end))
