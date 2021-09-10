@@ -3,7 +3,7 @@
 namespace Xguard\LaravelKanban\Models;
 
 use App\Models\User;
-use App\Models\JobSite;
+use App\Models\Contract;
 use Composer\Package\Package;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -64,9 +64,9 @@ class Task extends Model
         return $this->belongsTo(Row::class);
     }
 
-    public function erpJobSite(): BelongsTo
+    public function erpContract(): BelongsTo
     {
-        return $this->belongsTo(JobSite::class, 'erp_job_site_id');
+        return $this->belongsTo(Contract::class, 'erp_contract_id');
     }
 
     public function assignedTo(): BelongsToMany

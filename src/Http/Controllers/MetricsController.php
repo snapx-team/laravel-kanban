@@ -37,28 +37,28 @@ class MetricsController extends Controller
         ];
     }
 
-    public function getJobSiteData($start, $end): array
+    public function getContractData($start, $end): array
     {
-        $tasks = Task::with('erpJobSite')
+        $tasks = Task::with('erpContract')
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
-            ->orderBy('erp_job_site_id')
+            ->orderBy('erp_contract_id')
             ->get();
 
-        $jobsiteCounts = [];
+        $ContractCounts = [];
         foreach ($tasks as $task) {
-            if ($task->erpJobsite !== null) {
-                if (array_key_exists($task->erpJobsite->name, $jobsiteCounts)) {
-                    $jobsiteCounts[$task->erpJobsite->name] += 1;
+            if ($task->erpContract !== null) {
+                if (array_key_exists($task->erpContract->contract_identifier, $ContractCounts)) {
+                    $ContractCounts[$task->erpContract->contract_identifier] += 1;
                 } else {
-                    $jobsiteCounts[$task->erpJobsite->name] = 1;
+                    $ContractCounts[$task->erpContract->contract_identifier] = 1;
                 }
             }
         }
 
         return [
-            'hits' => array_values($jobsiteCounts),
-            'names' => array_keys($jobsiteCounts),
+            'hits' => array_values($ContractCounts),
+            'names' => array_keys($ContractCounts),
         ];
     }
 

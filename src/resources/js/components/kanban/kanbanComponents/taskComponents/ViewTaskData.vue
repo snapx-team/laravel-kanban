@@ -137,21 +137,23 @@
                             </div>
                             <avatar :name="cardData.erp_employee.full_name" :size="6" :tooltip="true"
                                     class="border border-white max-w-md"></avatar>
-                            <span class="text-xs text-gray-600 px-1"> {{ cardData.erp_employee.full_name }}</span>
+                            <a :href="`/app/users/${cardData.erp_employee.id}/edit`" target="_blank" class="text-xs px-1 text-indigo-500 underline"> {{ cardData.erp_employee.full_name }}</a>
                         </div>
-                        <div v-if="cardData.erp_job_site_id !== null" class="text-sm text-gray-700 flex">
+                        <div v-if="cardData.erp_contract_id !== null" class="text-sm text-gray-700 flex">
                             <div class="w-32 flex items-center">
                                 <i class="fas fa-building mr-2"></i>
-                                <p class=" font-semibold font-sans tracking-wide text-sm">Job Site: </p>
+                                <p class=" font-semibold font-sans tracking-wide text-sm">Contract: </p>
                             </div>
-                            <p class="max-w-md text-xs">{{ cardData.erp_job_site.name }}</p>
+                            <avatar :name="cardData.erp_contract.contract_identifier" :size="6" :tooltip="true"
+                                    class="border border-white max-w-md"></avatar>
+                            <a :href="`/app/contracts/${cardData.erp_contract.id}/edit`" target="_blank" class="text-xs  px-1 text-indigo-500 underline">{{ cardData.erp_contract.contract_identifier }}</a>
                         </div>
                         <div v-if="cardData.deadline !== null" class="text-sm text-gray-700 flex">
                             <div class="w-32 flex items-center">
                                 <i class="fas fa-stopwatch mr-2"></i>
                                 <p class="font-semibold font-sans tracking-wide text-sm">Deadline: </p>
                             </div>
-                            <p class="max-w-md text-xs">{{ cardData.deadline | moment("DD MMM, YYYY") }}</p>
+                            <a class="max-w-md text-xs">{{ cardData.deadline | moment("DD MMM, YYYY") }}</a>
                         </div>
                     </div>
                 </div>

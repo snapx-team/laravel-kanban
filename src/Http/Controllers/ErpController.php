@@ -4,7 +4,7 @@ namespace Xguard\LaravelKanban\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\JobSite;
+use App\Models\Contract;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -27,17 +27,15 @@ class ErpController extends Controller
         })->orderBy('first_name')->take(10)->get();
     }
 
-    public function getAllJobSites()
+    public function getAllContracts()
     {
-        return JobSite::orderBy('name')->take(10)->get();
+        return Contract::orderBy('contract_identifier')->take(10)->get();
     }
 
-    public function getSomeJobSites($search)
+    public function getSomeContracts($search)
     {
-        return JobSite::
-        where(function ($q) use ($search) {
-            $q->where('name', 'like', "%{$search}%");
-        })
-            ->orderBy('name')->take(10)->get();
+        return Contract::where(function ($q) use ($search) {
+            $q->where('contract_identifier', 'like', "%{$search}%");
+        })->orderBy('contract_identifier')->take(10)->get();
     }
 }

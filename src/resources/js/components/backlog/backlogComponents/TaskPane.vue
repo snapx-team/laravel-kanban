@@ -223,16 +223,16 @@
 
             <div class="flex-1 space-y-2">
                 <span
-                    class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Job Site</span>
-                <vSelect :options="erpJobSites"
+                    class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Contract</span>
+                <vSelect :options="erpContracts"
                          class="text-gray-400"
-                         label="name"
-                         placeholder="Select Job Site"
+                         label="contract_identifier"
+                         placeholder="Select Contract"
                          style="margin-top: 7px"
-                         @search="onTypeJobsite"
-                         v-model="task.erp_job_site">
+                         @search="onTypeContract"
+                         v-model="task.erp_contract">
                     <template slot="option" slot-scope="option">
-                        <p class="inline">{{ option.name }}</p>
+                        <p class="inline">{{ option.contract_identifier }}</p>
                     </template>
                     <template #no-options="{ search, searching, loading }">
                         No result .
@@ -355,7 +355,7 @@ export default {
             rows: [],
             columns: [],
             erpEmployees: [],
-            erpJobSites: [],
+            erpContracts: [],
             tasks: [],
             relatedTasks: [],
             kanbanMembers: [],
@@ -414,7 +414,7 @@ export default {
 
     mounted() {
         this.getErpEmployees();
-        this.getJobSites();
+        this.getContracts();
         this.getTasks();
     },
     methods: {
@@ -522,9 +522,9 @@ export default {
                 console.log(res)
             });
         },
-        getJobSites() {
-            this.asyncGetAllJobSites().then((data) => {
-                this.erpJobSites = data.data;
+        getContracts() {
+            this.asyncGetAllContracts().then((data) => {
+                this.erpContracts = data.data;
             }).catch(res => {
                 console.log(res)
             });
@@ -554,15 +554,15 @@ export default {
                     loading(false);
                 });
         }, 500),
-        onTypeJobsite(search, loading) {
+        onTypeContract(search, loading) {
             if (search.length) {
                 loading(true);
-                this.typeJobsite(search, loading, this);
+                this.typeContract(search, loading, this);
             }
         },
-        typeJobsite: _.debounce(function (search, loading) {
-            this.asyncGetSomeJobSites(search).then((data) => {
-                this.erpJobSites = data.data;
+        typeContract: _.debounce(function (search, loading) {
+            this.asyncGetSomeContracts(search).then((data) => {
+                this.erpContracts = data.data;
             })
                 .catch(res => {
                     console.log(res)

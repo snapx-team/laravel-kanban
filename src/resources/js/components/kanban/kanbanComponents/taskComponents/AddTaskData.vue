@@ -90,7 +90,7 @@
                 </div>
 
                 <div class="flex space-x-3"
-                     v-if="checkedOptions.includes('Deadline') || checkedOptions.includes('ERP Employee') ||checkedOptions.includes('ERP Job Site')">
+                     v-if="checkedOptions.includes('Deadline') || checkedOptions.includes('ERP Employee') ||checkedOptions.includes('ERP Contract')">
                     <div class="flex-1" v-if="checkedOptions.includes('Deadline')">
                         <div class="flex-1 space-y-2">
                             <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline</span>
@@ -124,18 +124,18 @@
                         </div>
                     </div>
 
-                    <div class="flex-1" v-if="checkedOptions.includes('ERP Job Site')">
+                    <div class="flex-1" v-if="checkedOptions.includes('ERP Contract')">
                         <div class="flex-1 space-y-2">
-                            <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Job Site</span>
-                            <vSelect :options="erpJobSites"
+                            <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Contract</span>
+                            <vSelect :options="erpContracts"
                                      class="text-gray-400"
-                                     label="name"
-                                     placeholder="Select Job Site"
+                                     label="contract_identifier"
+                                     placeholder="Select Contract"
                                      style="margin-top: 7px"
-                                     @search="onTypeJobsite"
-                                     v-model="cloneCardData.erp_job_site">
+                                     @search="onTypeContract"
+                                     v-model="cloneCardData.erp_contract">
                                 <template slot="option" slot-scope="option">
-                                    <p class="inline">{{ option.name }}</p>
+                                    <p class="inline">{{ option.contract_identifier }}</p>
                                 </template>
                                 <template #no-options="{ search, searching, loading }">
                                     No result .
@@ -189,7 +189,7 @@ export default {
             taskOptions: [
                 {name: 'Deadline',},
                 {name: 'ERP Employee',},
-                {name: 'ERP Job Site',},
+                {name: 'ERP Contract',},
             ],
             checkedOptions: [],
             config: {
@@ -210,7 +210,7 @@ export default {
 
             badges: [],
             erpEmployees: [],
-            erpJobSites: [],
+            erpContracts: [],
             tasks: [],
         };
     },
@@ -222,14 +222,14 @@ export default {
             this.cloneCardData.deadline = new Date(this.cardData.deadline);
             this.checkedOptions.push('Deadline');
         }
-        if (this.cloneCardData.erp_job_site_id)
-            this.checkedOptions.push('ERP Job Site');
+        if (this.cloneCardData.erp_contract_id)
+            this.checkedOptions.push('ERP Contract');
         if (this.cloneCardData.erp_employee_id)
             this.checkedOptions.push('ERP Employee');
 
         this.getErpEmployees();
         this.getBadges();
-        this.getJobSites();
+        this.getContracts();
 
         this.eventHub.$on("update-add-task-data-with-group-data", (cardData) => {
             this.cloneCardData = cardData;
@@ -279,15 +279,15 @@ export default {
                     loading(false);
                 });
         }, 500),
-        onTypeJobsite(search, loading) {
+        onTypeContract(search, loading) {
             if (search.length) {
                 loading(true);
-                this.typeJobsite(search, loading, this);
+                this.typeContract(search, loading, this);
             }
         },
-        typeJobsite: _.debounce(function (search, loading, vm) {
-            this.asyncGetSomeJobSites(search).then((data) => {
-                this.erpJobSites = data.data;
+        typeContract: _.debounce(function (search, loading, vm) {
+            this.asyncGetSomeContracts(search).then((data) => {
+                this.erpContracts = data.data;
             })
                 .catch(res => {
                     console.log(res)
@@ -325,9 +325,9 @@ export default {
             });
         },
 
-        getJobSites() {
-            this.asyncGetAllJobSites().then((data) => {
-                this.erpJobSites = data.data;
+        getContracts() {
+            this.asyncGetAllContracts().then((data) => {
+                this.erpContracts = data.data;
             }).catch(res => {
                 console.log(res)
             });
@@ -349,8 +349,8 @@ export default {
             if (!this.checkedOptions.includes('ERP Employee')) {
                 this.cloneCardData.erp_employee = null
             }
-            if (!this.checkedOptions.includes('ERP Job Site')) {
-                this.cloneCardData.erp_job_site = null
+            if (!this.checkedOptions.includes('ERP Contract')) {
+                this.cloneCardData.erp_contract = null
             }
         },
     },

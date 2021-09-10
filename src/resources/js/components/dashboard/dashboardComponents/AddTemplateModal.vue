@@ -224,7 +224,7 @@ export default {
             taskOptions: [
                 {name: 'Deadline',},
                 {name: 'ERP Employee',},
-                {name: 'ERP Job Site',},
+                {name: 'ERP Contract',},
             ],
 
             badges: [],
