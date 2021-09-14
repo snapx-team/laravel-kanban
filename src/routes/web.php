@@ -55,6 +55,7 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
 
             // Task
             Route::get('/get-all-tasks', 'TaskController@getAllTasks');
+            Route::get('/get-some-tasks/{searchTerm}', 'TaskController@getSomeTasks');
             Route::get('/get-task-data/{id}', 'TaskController@getTaskData');
             Route::get('/get-related-tasks/{id}', 'TaskController@getRelatedTasks');
             Route::get('/get-related-tasks-less-info/{id}', 'TaskController@getRelatedTasksLessInfo');

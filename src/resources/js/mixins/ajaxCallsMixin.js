@@ -123,6 +123,13 @@ export const ajaxCalls = {
             return axios.get('get-related-tasks/' + taskId);
         },
 
+        asyncGetSomeTasks(searchTerm) {
+            if (searchTerm === '') {
+                return axios.get('get-all-tasks');
+            }
+            return axios.get('get-some-tasks/' + searchTerm);
+        },
+
         asyncGetTaskData(taskId) {
             return axios.get('get-task-data/' + taskId);
         },
