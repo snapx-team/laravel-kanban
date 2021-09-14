@@ -23,7 +23,7 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
 
 
             //Notifications
-            Route::get('/get-notif-data', 'LaravelKanbanController@getNotificationData');
+            Route::get('/get-notif-data/{logType}', 'LaravelKanbanController@getNotificationData');
             Route::get('/get-notif-count', 'LaravelKanbanController@getNotificationCount');
             Route::post('/update-notif-count', 'LaravelKanbanController@updateNotificationCount');
 

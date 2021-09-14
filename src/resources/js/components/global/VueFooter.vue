@@ -29,11 +29,6 @@ export default {
             this.parent_name = data.data['parent_name']
             this.year = data.data['year'];
             this.version = data.data['version'];
-
-            console.log('test');
-            console.log(data);
-
-
         }).catch(res => {
             console.log(res);
         });

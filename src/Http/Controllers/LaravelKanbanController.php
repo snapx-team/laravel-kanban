@@ -185,9 +185,21 @@ class LaravelKanbanController extends Controller
         ];
     }
 
-    public function getNotificationData()
+    public function getNotificationData($logType)
     {
-        $employee = Employee::
+        if ($logType !== "null") {
+            $type = (int)$logType;
+            $employee = Employee::
+            where('user_id', '=', Auth::user()->id)
+            ->with('logs.user')
+            ->with(['logs' => function ($q) use ($type) {
+                $q->where('log_type', $type)
+                ->orderBy('created_at', 'desc')
+                ->with('board')
+                ->paginate(10);
+            }])->first();
+        } else {
+            $employee = Employee::
             where('user_id', '=', Auth::user()->id)
             ->with('logs.user')
             ->with(['logs' => function ($q) {
@@ -195,6 +207,7 @@ class LaravelKanbanController extends Controller
                 ->with('board')
                 ->paginate(10);
             }])->first();
+        }
         return $employee->logs;
     }
 
