@@ -278,8 +278,8 @@
             <div v-if="selectGroupIsVisible && $role === 'admin'" class="flex-1 space-y-2">
 
                 <div class="flex justify-between">
-                    <div class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with
-                        task
+                    <div class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">
+                        Group with task
                     </div>
                     <button @click="cancelChangeGroup"
                             class="text-sm text-red-600 hover:text-red-800 transition duration-300 ease-in-out focus:outline-none">
@@ -293,8 +293,9 @@
                          label="name"
                          placeholder="Select task"
                          style="margin-top: 7px"
+                         @search="onTypeTask"
+                         :filter="filterTasks"
                          v-model="task.associatedTask">
-
                     <template slot="selected-option" slot-scope="option">
                         <p>
                             <span class="font-bold">{{ option.task_simple_name }}: </span>
@@ -425,6 +426,9 @@ export default {
             }
             this.loadRowsAndColumns(task.board_id);
             this.getRelatedTasks(task.id);
+        },
+        filterTasks(options, search) {
+            return this.tasks;
         },
         closeTaskView() {
             this.eventHub.$emit("close-task-view");
@@ -563,6 +567,26 @@ export default {
         typeContract: _.debounce(function (search, loading) {
             this.asyncGetSomeContracts(search).then((data) => {
                 this.erpContracts = data.data;
+            })
+                .catch(res => {
+                    console.log(res)
+                })
+                .then(function () {
+                    setTimeout(500);
+                    loading(false);
+                });
+        }, 500),
+        onTypeTask(search, loading) {
+            if (search.length) {
+                loading(true);
+                this.typeTask(search, loading, this);
+            }
+        },
+        typeTask: _.debounce(function (search, loading) {
+            this.asyncGetSomeTasks(search).then((data) => {
+                this.tasks = data.data;
+                console.log(data.data);
+                console.log('abra');
             })
                 .catch(res => {
                     console.log(res)

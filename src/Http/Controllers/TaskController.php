@@ -5,11 +5,9 @@ namespace Xguard\LaravelKanban\Http\Controllers;
 use App\Http\Controllers\Controller;
 use DateTime;
 use DateTimeZone;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Xguard\LaravelKanban\Http\Helper\CheckHasAccessToBoardWithTaskId;
 use Xguard\LaravelKanban\Models\Badge;
-use Xguard\LaravelKanban\Models\Member;
 use Xguard\LaravelKanban\Models\SharedTaskData;
 use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Task;
@@ -21,7 +19,34 @@ class TaskController extends Controller
 {
     public function getAllTasks()
     {
-        return Task::with('board', 'sharedTaskData')->get();
+        return Task::with('board', 'sharedTaskData')->take(5)->get();
+    }
+    
+    public function getSomeTasks($searchTerm)
+    {
+        if(preg_match("/[a-zA-Z]{3}-\d.*/", $searchTerm)) {
+            $listy = Task::with('board')
+            ->whereHas('board', function ($q) use ($searchTerm) {
+                $q->where('name', 'like', substr($searchTerm, 0, 3)."%");
+            })->where('id', 'like', abs(filter_var($searchTerm, FILTER_SANITIZE_NUMBER_INT)))
+            ->orWhere('name', 'like', "%{$searchTerm}%")
+            ->take(5)
+            ->get();
+        } else {
+            $listy = Task::with('board')
+            ->whereHas('board', function ($q) use ($searchTerm) {
+                $q->where('name', 'like', substr($searchTerm, 0, 3)."%");
+            })->where('id', 'like', abs(filter_var($searchTerm, FILTER_SANITIZE_NUMBER_INT)))
+            ->orWhereHas('board', function ($q) use ($searchTerm) {
+                $q->where('name', 'like', substr($searchTerm, 0, 3)."%");
+            })
+            ->orWhere('id', 'like', abs(filter_var($searchTerm, FILTER_SANITIZE_NUMBER_INT)))
+            ->orWhere('name', 'like', "%{$searchTerm}%")
+            ->take(5)
+            ->get();
+        }
+
+        return $listy;
     }
 
     public function getTaskData($id)
