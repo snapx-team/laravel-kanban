@@ -112,7 +112,7 @@
                     </div>
                     <div class="space-y-2">
                         <span v-if=" cardData.assigned_to.length === 0"
-                              class="text-xs text-gray-600 px-1"> unnasigned</span>
+                              class="text-xs text-red-800 px-2 py-1 bg-red-200 rounded"> unnasigned</span>
                         <template v-for="(employee, employeeIndex) in cardData.assigned_to">
                             <div class="flex items-center">
                                 <avatar class="border border-white max-w-md"
@@ -130,24 +130,40 @@
 
                     <div class="py-4 space-y-4">
 
-                        <div v-if="cardData.erp_employee_id !== null" class="text-sm flex  items-center">
+                        <div v-if="cardData.shared_task_data.erp_employees.length" class="text-sm flex items-start">
                             <div class="w-32 flex items-center text-gray-700">
                                 <i class="fas fa-user mr-2"></i>
-                                <p class="font-semibold font-sans tracking-wide text-sm">Employee: </p>
+                                <p class="font-semibold font-sans tracking-wide text-sm">
+                                    <span v-if="cardData.shared_task_data.erp_employees.length > 1">Employees:</span>
+                                    <span v-else>Employee:</span>
+                                </p>
                             </div>
-                            <avatar :name="cardData.erp_employee.full_name" :size="6" :tooltip="true"
-                                    class="border border-white max-w-md"></avatar>
-                            <a :href="`/app/users/${cardData.erp_employee.id}/edit`" target="_blank" class="text-xs px-1 text-indigo-500 underline"> {{ cardData.erp_employee.full_name }}</a>
+                            <div>
+                                <div class="flex" v-for="(employee, index) in cardData.shared_task_data.erp_employees">
+                                    <avatar :name="employee.full_name" :size="6" :tooltip="true"
+                                            class="border border-white max-w-md"></avatar>
+                                    <a :href="`/app/users/${employee.id}/edit`" target="_blank" class="text-xs px-1 text-indigo-500 underline"> {{ employee.full_name }}</a>
+                                </div>
+                            </div>
                         </div>
-                        <div v-if="cardData.erp_contract_id !== null" class="text-sm text-gray-700 flex">
-                            <div class="w-32 flex items-center">
+
+                        <div v-if="cardData.shared_task_data.erp_contracts.length" class="text-sm text-gray-700 flex items-start">
+                            <div class="w-32 flex items-center text-gray-700">
                                 <i class="fas fa-building mr-2"></i>
-                                <p class=" font-semibold font-sans tracking-wide text-sm">Contract: </p>
+                                <p class="font-semibold font-sans tracking-wide text-sm">
+                                    <span v-if="cardData.shared_task_data.erp_contracts.length > 1">Contracts:</span>
+                                    <span v-else>Contracts:</span>
+                                </p>
                             </div>
-                            <avatar :name="cardData.erp_contract.contract_identifier" :size="6" :tooltip="true"
-                                    class="border border-white max-w-md"></avatar>
-                            <a :href="`/app/contracts/${cardData.erp_contract.id}/edit`" target="_blank" class="text-xs  px-1 text-indigo-500 underline">{{ cardData.erp_contract.contract_identifier }}</a>
+                            <div>
+                                <div class="flex" v-for="(contract, index) in cardData.shared_task_data.erp_contracts">
+                                    <avatar :name="contract.contract_identifier" :size="6" :tooltip="true"
+                                            class="border border-white max-w-md"></avatar>
+                                    <a :href="`/app/contracts/${contract.id}/edit`" target="_blank" class="text-xs  px-1 text-indigo-500 underline">{{ contract.contract_identifier }}</a>
+                                </div>
+                            </div>
                         </div>
+
                         <div v-if="cardData.deadline !== null" class="text-sm text-gray-700 flex">
                             <div class="w-32 flex items-center">
                                 <i class="fas fa-stopwatch mr-2"></i>

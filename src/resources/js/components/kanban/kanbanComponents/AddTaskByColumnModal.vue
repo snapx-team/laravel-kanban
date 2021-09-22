@@ -38,7 +38,7 @@
                         </div>
                         <div>
                             <button @click="modalOpen = false"
-                                     class="focus:outline-none flex flex-col items-center text-gray-400 hover:text-gray-500 transition duration-150 ease-in-out pl-8"
+                                    class="focus:outline-none flex flex-col items-center text-gray-400 hover:text-gray-500 transition duration-150 ease-in-out pl-8"
                                     type="button">
                                 <i class="fas fa-times"></i>
                                 <span class="text-xs font-semibold text-center leading-3 uppercase">Esc</span>
@@ -136,7 +136,8 @@
                                                   :options="config"
                                                   output="html"
                                                   v-model="task.description"></quill-editor>
-                                    <p v-else class="text-sm font-medium leading-5 text-red-500">Description will match group description</p>
+                                    <p v-else class="text-sm font-medium leading-5 text-red-500">Description will match
+                                        group description</p>
                                 </div>
                             </div>
 
@@ -166,9 +167,10 @@
                                 </div>
                             </div>
 
-                            <div class="flex space-x-3"
+                            <div class="flex flex-wrap"
                                  v-if="checkedOptions.includes('Deadline') || checkedOptions.includes('ERP Employee') ||checkedOptions.includes('ERP Contract')">
-                                <div class="flex-1" v-if="checkedOptions.includes('Deadline')">
+
+                                <div class="flex-1 pr-2 mb-6" v-if="checkedOptions.includes('Deadline')">
                                     <div class="flex-1 space-y-2">
                                         <span
                                             class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline</span>
@@ -180,17 +182,18 @@
                                     </div>
                                 </div>
 
-                                <div class="flex-1" v-if="checkedOptions.includes('ERP Employee')">
+                                <div class="flex-1 pr-2 mb-6" v-if="checkedOptions.includes('ERP Employee')">
                                     <div class="flex-1 space-y-2">
                                         <span
                                             class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Employee</span>
                                         <vSelect :options="erpEmployees"
+                                                 multiple
                                                  class="text-gray-400"
                                                  label="full_name"
                                                  placeholder="Select Employee"
                                                  style="margin-top: 7px"
                                                  @search="onTypeEmployee"
-                                                 v-model="task.erpEmployee">
+                                                 v-model="task.shared_task_data.erp_employees">
                                             <template slot="option" slot-scope="option">
                                                 <avatar :name="option.full_name"
                                                         :size="4"
@@ -204,17 +207,18 @@
                                     </div>
                                 </div>
 
-                                <div class="flex-1" v-if="checkedOptions.includes('ERP Contract')">
+                                <div class="flex-1 pr-2 mb-6" v-if="checkedOptions.includes('ERP Contract')">
                                     <div class="flex-1 space-y-2">
                                         <span
                                             class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Contract</span>
                                         <vSelect :options="erpContracts"
+                                                 multiple
                                                  class="text-gray-400"
                                                  label="contract_identifier"
                                                  placeholder="Select Contract"
                                                  style="margin-top: 7px"
                                                  @search="onTypeContract"
-                                                 v-model="task.erpContract">
+                                                 v-model="task.shared_task_data.erp_contracts">
                                             <template slot="option" slot-scope="option">
                                                 <p class="inline">{{ option.contract_identifier }}</p>
                                             </template>
@@ -238,13 +242,13 @@
                                              v-model="task.associatedTask">
                                         <template slot="selected-option" slot-scope="option">
                                             <p>
-                                                <span class="font-bold">{{ option.task_simple_name}}: </span>
+                                                <span class="font-bold">{{ option.task_simple_name }}: </span>
                                                 <span class="italic">{{ option.name }}</span>
                                             </p>
                                         </template>
                                         <template slot="option" slot-scope="option">
                                             <p>
-                                                <span class="font-bold">{{ option.task_simple_name}}: </span>
+                                                <span class="font-bold">{{ option.task_simple_name }}: </span>
                                                 <span class="italic">{{ option.name }}</span>
                                             </p>
                                         </template>
@@ -328,8 +332,10 @@ export default {
                 name: null,
                 badge: {},
                 description: null,
-                erpEmployee: null,
-                erpContract: null,
+                shared_task_data: {
+                    erp_employees: [],
+                    erp_contracts: [],
+                },
                 deadline: null,
                 columnId: null,
                 associatedTask: null,
@@ -379,14 +385,13 @@ export default {
 
     methods: {
         saveTask(event) {
-            if(!(!!this.task.name))
+            if (!(!!this.task.name))
                 this.triggerErrorToast('Task name is required');
-            else if(!(!!this.task.description) && !this.checkedOptions.includes('Group'))
+            else if (!(!!this.task.description) && !this.checkedOptions.includes('Group'))
                 this.triggerErrorToast('Task description is required');
-            else if(this.checkedOptions.includes('Group') && !(!!this.task.associatedTask)){
+            else if (this.checkedOptions.includes('Group') && !(!!this.task.associatedTask)) {
                 this.triggerErrorToast('Choose a task to group with, or uncheck group from options list');
-            }
-            else{
+            } else {
                 this.eventHub.$emit("save-task", this.task);
                 this.modalOpen = false;
 
@@ -394,8 +399,10 @@ export default {
                     name: null,
                     badge: {},
                     description: null,
-                    erpEmployee: null,
-                    erpContract: null,
+                    shared_task_data: {
+                        erp_employees: [],
+                        erp_contracts: [],
+                    },
                     deadline: null,
                     columnId: null,
                     associatedTask: null,
@@ -490,13 +497,12 @@ export default {
         },
 
         setTemplate() {
-            if(this.selectedTemplate !== null){
+            if (this.selectedTemplate !== null) {
                 this.task.name = this.selectedTemplate.task_name;
                 this.task.badge = this.selectedTemplate.badge;
                 this.task.description = this.selectedTemplate.description;
                 this.checkedOptions = this.selectedTemplate.unserialized_options;
-            }
-            else{
+            } else {
                 this.task.name = null;
                 this.task.badge = {};
                 this.task.description = null;
@@ -516,15 +522,15 @@ export default {
         },
 
         computedSelectedBadge: {
-            get () {
+            get() {
                 if (_.isEmpty(this.task.badge)) {
                     return null
                 } else {
                     return this.task.badge
                 }
             },
-            set (val) {
-                if( val === null) val = {};
+            set(val) {
+                if (val === null) val = {};
                 this.task.badge = val;
             }
         },

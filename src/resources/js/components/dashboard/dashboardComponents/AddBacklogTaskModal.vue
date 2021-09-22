@@ -157,9 +157,9 @@
                                 </div>
                             </div>
 
-                            <div class="flex space-x-3"
+                            <div class="flex flex-wrap"
                                  v-if="checkedOptions.includes('Deadline') || checkedOptions.includes('ERP Employee') ||checkedOptions.includes('ERP Contract')">
-                                <div class="flex-1" v-if="checkedOptions.includes('Deadline')">
+                                <div class="flex-1 pr-2 mb-6" v-if="checkedOptions.includes('Deadline')">
                                     <div class="flex-1 space-y-2">
                                         <span
                                             class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline</span>
@@ -171,17 +171,18 @@
                                     </div>
                                 </div>
 
-                                <div class="flex-1" v-if="checkedOptions.includes('ERP Employee')">
+                                <div class="flex-1 pr-2 mb-6" v-if="checkedOptions.includes('ERP Employee')">
                                     <div class="flex-1 space-y-2">
                                         <span
                                             class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Employee</span>
                                         <vSelect :options="erpEmployees"
+                                                 multiple
                                                  class="text-gray-400"
                                                  label="full_name"
                                                  placeholder="Select Employee"
                                                  style="margin-top: 7px"
                                                  @search="onTypeEmployee"
-                                                 v-model="task.erpEmployee">
+                                                 v-model="task.shared_task_data.erp_employees">
                                             <template slot="option" slot-scope="option">
                                                 <avatar :name="option.full_name"
                                                         :size="4"
@@ -195,20 +196,21 @@
                                     </div>
                                 </div>
 
-                                <div class="flex-1" v-if="checkedOptions.includes('ERP Contract')">
+                                <div class="flex-1 pr-2 mb-6" v-if="checkedOptions.includes('ERP Contract')">
                                     <div class="flex-1 space-y-2">
                                         <span
                                             class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Contract</span>
                                         <vSelect :options="erpContracts"
+                                                 multiple
                                                  class="text-gray-400"
                                                  label="contract_identifier"
                                                  placeholder="Select Contract"
                                                  style="margin-top: 7px"
                                                  @search="onTypeContract"
-                                                 v-model="task.erpContract">
-<!--                                            <template slot="option" slot-scope="option">-->
-<!--                                                <p class="inline">{{ option.contract_identifier }}</p>-->
-<!--                                            </template>-->
+                                                 v-model="task.shared_task_data.erp_contracts">
+                                            <template slot="option" slot-scope="option">
+                                                <p class="inline">{{ option.contract_identifier }}</p>
+                                            </template>
                                             <template #no-options="{ search, searching, loading }">
                                                 No result .
                                             </template>
@@ -322,11 +324,13 @@ export default {
                 badge: {},
                 description: null,
                 selectedKanbans: [],
-                erpEmployee: null,
-                erpContract: null,
                 deadline: null,
                 columnId: null,
                 associatedTask: null,
+                shared_task_data:{
+                    erp_employees: [],
+                    erp_contracts: [],
+                },
             },
             badges: [],
             erpEmployees: [],
@@ -358,8 +362,6 @@ export default {
 
     methods: {
         saveBacklogTask(event) {
-
-
             if(!(!!this.task.name))
                 this.triggerErrorToast('Task name is required');
             else if(!(!!this.task.description) && !this.checkedOptions.includes('Group'))
@@ -378,11 +380,13 @@ export default {
                     badge: {},
                     description: null,
                     selectedKanbans: [],
-                    erpEmployee: null,
-                    erpContract: null,
                     deadline: null,
                     columnId: null,
                     associatedTask: null,
+                    shared_task_data:{
+                        erp_employees: [],
+                        erp_contracts: [],
+                    },
                 }
                 this.checkedOptions = [];
                 this.selectedTemplate = null;

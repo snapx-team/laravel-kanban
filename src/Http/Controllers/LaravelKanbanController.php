@@ -44,18 +44,19 @@ class LaravelKanbanController extends Controller
         if ($hasBoardAccess) {
             return Board::with(['rows.columns.taskCards' => function ($q) {
                 $q->where('status', 'active')
-                    ->with('badge', 'board', 'row', 'column', 'sharedTaskData')
-                    ->with(['assignedTo.employee.user' => function ($q) {
-                        $q->select(['id', 'first_name', 'last_name']);
+                    ->with('badge', 'board', 'row', 'column')
+                    ->with(['sharedTaskData' => function ($q) {
+                        $q->with(['erpContracts' => function ($q) {
+                            $q->select(['contracts.id', 'contract_identifier']);
+                        }])->with(['erpEmployees' => function ($q) {
+                            $q->select(['users.id', 'first_name', 'last_name']);
+                        }]);
                     }])
-                    ->with(['erpEmployee' => function ($q) {
+                    ->with(['assignedTo.employee.user' => function ($q) {
                         $q->select(['id', 'first_name', 'last_name']);
                     }])
                     ->with(['reporter' => function ($q) {
                         $q->select(['id', 'first_name', 'last_name']);
-                    }])
-                    ->with(['erpContract' => function ($q) {
-                        $q->select(['id', 'contract_identifier']);
                     }]);
             }])->with(['members.employee.user' => function ($q) {
                 $q->select(['id', 'first_name', 'last_name']);
@@ -97,11 +98,12 @@ class LaravelKanbanController extends Controller
                 ->with(['assignedTo.employee.user' => function ($q) {
                     $q->select(['id', 'first_name', 'last_name']);
                 }])
-                ->with(['erpEmployee' => function ($q) {
-                    $q->select(['id', 'first_name', 'last_name']);
-                }])
-                ->with(['erpContract' => function ($q) {
-                    $q->select(['id', 'contract_identifier']);
+                ->with(['sharedTaskData' => function ($q) {
+                    $q->with(['erpContracts' => function ($q) {
+                        $q->select(['contracts.id', 'contract_identifier']);
+                    }])->with(['erpEmployees' => function ($q) {
+                        $q->select(['users.id', 'first_name', 'last_name']);
+                    }]);
                 }])
                 ->whereDate('created_at', '>=', new DateTime($start))
                 ->whereDate('created_at', '<=', new DateTime($end))
@@ -109,7 +111,7 @@ class LaravelKanbanController extends Controller
                 ->get();
             $boards = Board::orderBy('name')->with('members')->get();
         } else {
-            $backlogTasks = Task::with('board', 'badge', 'row', 'column', 'sharedTaskData')
+            $backlogTasks = Task::with('board', 'badge', 'row', 'column')
                 ->whereHas('board.members', function ($q) {
                     $q->where('employee_id', session('employee_id'));
                 })
@@ -119,11 +121,12 @@ class LaravelKanbanController extends Controller
                 ->with(['assignedTo.employee.user' => function ($q) {
                     $q->select(['id', 'first_name', 'last_name']);
                 }])
-                ->with(['erpEmployee' => function ($q) {
-                    $q->select(['id', 'first_name', 'last_name']);
-                }])
-                ->with(['erpContract' => function ($q) {
-                    $q->select(['id', 'contract_identifier']);
+                ->with(['sharedTaskData' => function ($q) {
+                    $q->with(['erpContracts' => function ($q) {
+                        $q->select(['contracts.id', 'contract_identifier']);
+                    }])->with(['erpEmployees' => function ($q) {
+                        $q->select(['users.id', 'first_name', 'last_name']);
+                    }]);
                 }])
                 ->whereDate('created_at', '>=', new DateTime($start))
                 ->whereDate('created_at', '<=', new DateTime($end))

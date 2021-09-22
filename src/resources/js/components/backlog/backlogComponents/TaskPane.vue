@@ -203,12 +203,13 @@
                 <span
                     class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Employee</span>
                 <vSelect :options="erpEmployees"
+                         multiple
                          class="text-gray-400"
                          label="full_name"
                          placeholder="Select Employee"
                          style="margin-top: 7px"
                          @search="onTypeEmployee"
-                         v-model="task.erp_employee">
+                         v-model="task.shared_task_data.erp_employees">
                     <template slot="option" slot-scope="option">
                         <avatar :name="option.full_name"
                                 :size="4"
@@ -225,12 +226,13 @@
                 <span
                     class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Contract</span>
                 <vSelect :options="erpContracts"
+                         multiple
                          class="text-gray-400"
                          label="contract_identifier"
                          placeholder="Select Contract"
                          style="margin-top: 7px"
                          @search="onTypeContract"
-                         v-model="task.erp_contract">
+                         v-model="task.shared_task_data.erp_contracts">
                     <template slot="option" slot-scope="option">
                         <p class="inline">{{ option.contract_identifier }}</p>
                     </template>

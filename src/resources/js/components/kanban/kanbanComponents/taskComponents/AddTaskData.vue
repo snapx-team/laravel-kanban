@@ -89,9 +89,9 @@
                     </div>
                 </div>
 
-                <div class="flex space-x-3"
+                <div class="flex flex-wrap"
                      v-if="checkedOptions.includes('Deadline') || checkedOptions.includes('ERP Employee') ||checkedOptions.includes('ERP Contract')">
-                    <div class="flex-1" v-if="checkedOptions.includes('Deadline')">
+                    <div class="flex-1 pr-2 mb-6" v-if="checkedOptions.includes('Deadline')">
                         <div class="flex-1 space-y-2">
                             <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline</span>
                             <date-picker type="datetime" v-model="cloneCardData.deadline"
@@ -102,16 +102,17 @@
                         </div>
                     </div>
 
-                    <div class="flex-1" v-if="checkedOptions.includes('ERP Employee')">
+                    <div class="flex-1 pr-2 mb-6" v-if="checkedOptions.includes('ERP Employee')">
                         <div class="flex-1 space-y-2">
-                            <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Employee</span>
+                            <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Employees</span>
                             <vSelect :options="erpEmployees"
+                                     multiple
                                      class="text-gray-400"
                                      label="full_name"
-                                     placeholder="Select Employee"
+                                     placeholder="Select Employees"
                                      style="margin-top: 7px"
                                      @search="onTypeEmployee"
-                                     v-model="cloneCardData.erp_employee">
+                                     v-model="cloneCardData.shared_task_data.erp_employees">
                                 <template slot="option" slot-scope="option">
                                     <avatar :name="option.full_name" :size="4"
                                             class="mr-3 m-1 float-left"></avatar>
@@ -124,16 +125,17 @@
                         </div>
                     </div>
 
-                    <div class="flex-1" v-if="checkedOptions.includes('ERP Contract')">
+                    <div class="flex-1 pr-2 mb-6" v-if="checkedOptions.includes('ERP Contract')">
                         <div class="flex-1 space-y-2">
-                            <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Contract</span>
+                            <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Contracts</span>
                             <vSelect :options="erpContracts"
+                                     multiple
                                      class="text-gray-400"
                                      label="contract_identifier"
-                                     placeholder="Select Contract"
+                                     placeholder="Select Contracts"
                                      style="margin-top: 7px"
                                      @search="onTypeContract"
-                                     v-model="cloneCardData.erp_contract">
+                                     v-model="cloneCardData.shared_task_data.erp_contracts">
                                 <template slot="option" slot-scope="option">
                                     <p class="inline">{{ option.contract_identifier }}</p>
                                 </template>
@@ -222,14 +224,14 @@ export default {
             this.cloneCardData.deadline = new Date(this.cardData.deadline);
             this.checkedOptions.push('Deadline');
         }
-        if (this.cloneCardData.erp_contract_id)
+        if (this.cloneCardData.shared_task_data.erp_contracts.length)
             this.checkedOptions.push('ERP Contract');
-        if (this.cloneCardData.erp_employee_id)
+        if (this.cloneCardData.shared_task_data.erp_employees.length)
             this.checkedOptions.push('ERP Employee');
 
         this.getErpEmployees();
-        this.getBadges();
         this.getContracts();
+        this.getBadges();
 
         this.eventHub.$on("update-add-task-data-with-group-data", (cardData) => {
             this.cloneCardData = cardData;

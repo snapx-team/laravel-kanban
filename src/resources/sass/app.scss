@@ -10,6 +10,7 @@
 .vs__dropdown-toggle {
     min-height: 50px;
     margin-top: 8px;
+    flex-flow: wrap;
 }
 
 .vs__selected {
@@ -33,6 +34,7 @@
 
 .mx-input {
     min-height: 50px;
+    min-width: 200px;
 }
 
 // quill overrides

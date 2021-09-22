@@ -4,7 +4,7 @@
          v-if="showCard">
         <div class="flex justify-between">
             <p class="text-gray-700 font-semibold font-sans tracking-wide text-sm mr-3">
-                <span class="font-bold">{{ task_card.task_simple_name}}: </span>
+                <span class="font-bold">{{ task_card.task_simple_name }}: </span>
                 <span class="italic">{{ task_card.name }}</span>
             </p>
 
@@ -31,20 +31,39 @@
             </div>
         </div>
 
-        <div class="py-2">
+        <div class="space-y-1 pt-3 pb-2">
 
-            <p v-if="task_card.erp_employee_id !== null" class="text-xs text-gray-600">
-                <span class="font-bold leading-4 tracking-wide text-gray-600">Employee: </span>
-                {{ task_card.erp_employee.full_name }}
-            </p>
-            <p v-if="task_card.erp_contract_id !== null" class="text-xs text-gray-600">
-                <span class="font-bold leading-4 tracking-wide text-gray-600">Contract: </span>
-                {{ task_card.erp_contract.contract_identifier }}
-            </p>
-            <p v-if="task_card.deadline !== null" class="text-xs text-gray-600">
-                <span class="font-bold leading-4 tracking-wide text-gray-600">Deadline: </span>
-                {{ task_card.deadline | moment("DD MMM, YYYY") }}
-            </p>
+            <div v-if="task_card.shared_task_data.erp_employees.length" class="text-xs text-gray-600 flex space-x-1">
+                <div class="font-bold leading-4 tracking-wide text-gray-600 w-20">
+                    <span v-if="task_card.shared_task_data.erp_employees.length > 1"> Employees: </span>
+                    <span v-else>Employee: </span>
+                </div>
+                <div class="flex flex-wrap flex-1">
+                    <p class="pr-1" v-for="(employee, index) in task_card.shared_task_data.erp_employees">{{ employee.full_name }}
+                        <span v-if="index+1 !== task_card.shared_task_data.erp_employees.length">,</span>
+                    </p>
+                </div>
+            </div>
+            <div v-if="task_card.shared_task_data.erp_contracts.length" class="text-xs text-gray-600 flex space-x-1">
+                <div class="font-bold leading-4 tracking-wide text-gray-600 w-20">
+                    <span v-if="task_card.shared_task_data.erp_contracts.length > 1"> Contracts: </span>
+                    <span v-else>Contract: </span>
+                </div>
+                <div class="flex flex-wrap">
+                    <p class="pr-1" v-for="(contract, index) in task_card.shared_task_data.erp_contracts">{{contract.contract_identifier }}
+                        <span v-if="index+1 !== task_card.shared_task_data.erp_contracts.length">,</span>
+                    </p>
+                </div>
+
+            </div>
+            <div v-if="task_card.deadline !== null" class="text-xs text-gray-600 flex space-x-1">
+                <div class="font-bold leading-4 tracking-wide text-gray-600 w-20">
+                    <span >Deadline: </span>
+                </div>
+                <div>
+                    <p>{{ task_card.deadline | moment("DD MMM, YYYY") }}</p>
+                </div>
+            </div>
         </div>
         <div class="flex mt-2 justify-between items-center">
             <div class="flex flex-wrap items-center">

@@ -20,10 +20,6 @@
                 </div>
                 <div class="border bg-gray-700 pl-3 pr-3 rounded py-2 flex justify-between" v-else>
 
-
-
-
-
                     <div class="flex">
                         <div
                             :class="{ 'transform rotate-90 ' : !collapsedRows.includes(row.id)  }"
@@ -33,11 +29,7 @@
                             <i id="icon " class="fa fa-chevron-right cursor-pointer"></i>
                         </div>
                         <h2 class="text-gray-100 font-medium tracking-wide pl-3">{{ row.name }} </h2>
-
                     </div>
-
-<!--                    <h2 class="text-gray-100 font-medium tracking-wide">{{ row.name }} </h2>-->
-
 
                     <a @click="createRowAndColumns(rowIndex, row.columns, row.id, row.name)"
                        v-if="$role === 'admin'"
@@ -398,7 +390,6 @@ export default {
             this.asyncGetkanbanData(kanbanID).then((data) => {
                 this.kanban = data.data;
                 this.eventHub.$emit("set-loading-state", false);
-
             }).catch(res => {
                 console.log(res)
             });
