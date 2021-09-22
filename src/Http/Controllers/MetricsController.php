@@ -39,19 +39,24 @@ class MetricsController extends Controller
 
     public function getContractData($start, $end): array
     {
-        $tasks = Task::with('erpContract')
-            ->whereDate('created_at', '>=', new DateTime($start))
-            ->whereDate('created_at', '<=', new DateTime($end))
-            ->orderBy('erp_contract_id')
-            ->get();
+        $tasks = Task::with(['sharedTaskData' => function ($q) {
+                $q->with(['erpContracts' => function ($q) {
+                    $q->select(['contracts.id', 'contract_identifier']);
+                }])->with(['erpEmployees' => function ($q) {
+                    $q->select(['users.id', 'first_name', 'last_name']);
+                }]);
+        }])
+        ->whereDate('created_at', '>=', new DateTime($start))
+        ->whereDate('created_at', '<=', new DateTime($end))
+        ->get();
 
         $ContractCounts = [];
         foreach ($tasks as $task) {
-            if ($task->erpContract !== null) {
-                if (array_key_exists($task->erpContract->contract_identifier, $ContractCounts)) {
-                    $ContractCounts[$task->erpContract->contract_identifier] += 1;
+            foreach ($task->sharedTaskData->erpContracts as $contract) {
+                if (array_key_exists($contract->contract_identifier, $ContractCounts)) {
+                    $ContractCounts[$contract->contract_identifier] += 1;
                 } else {
-                    $ContractCounts[$task->erpContract->contract_identifier] = 1;
+                    $ContractCounts[$contract->contract_identifier] = 1;
                 }
             }
         }
@@ -104,7 +109,8 @@ class MetricsController extends Controller
         }
 
         foreach ($tasks as $task) {
-            $date = (new DateTime(($task->created_at)))->modify('-4 hours');;
+            $date = (new DateTime(($task->created_at)))->modify('-4 hours');
+            ;
             $dateString = $date->format('G');
             $arr[$dateString] += 1;
         }
@@ -220,7 +226,7 @@ class MetricsController extends Controller
                     $hours = $diff->h;
                     $hours = $hours + ($diff->days*24);
 
-                    foreach($assignedLog->task->assignedTo as $user){
+                    foreach ($assignedLog->task->assignedTo as $user) {
                         if (array_key_exists($user->employee->user->id, $hits)) {
                             array_push($hits[$user->employee->user->id], $hours);
                             unset($closedLogs[$key]);
@@ -307,5 +313,4 @@ class MetricsController extends Controller
             'categories' => $categories,
         ];
     }
-
 }

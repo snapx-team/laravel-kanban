@@ -21,11 +21,11 @@ class TaskController extends Controller
     {
         return Task::with('board', 'sharedTaskData')->take(5)->get();
     }
-    
+
     public function getSomeTasks($searchTerm)
     {
-        if(preg_match("/[a-zA-Z]{3}-\d.*/", $searchTerm)) {
-            $listy = Task::with('board')
+        if (preg_match("/[a-zA-Z]{3}-\d.*/", $searchTerm)) {
+            $tasks = Task::with('board')
             ->whereHas('board', function ($q) use ($searchTerm) {
                 $q->where('name', 'like', substr($searchTerm, 0, 3)."%");
             })->where('id', 'like', abs(filter_var($searchTerm, FILTER_SANITIZE_NUMBER_INT)))
@@ -33,7 +33,7 @@ class TaskController extends Controller
             ->take(5)
             ->get();
         } else {
-            $listy = Task::with('board')
+            $tasks = Task::with('board')
             ->whereHas('board', function ($q) use ($searchTerm) {
                 $q->where('name', 'like', substr($searchTerm, 0, 3)."%");
             })->where('id', 'like', abs(filter_var($searchTerm, FILTER_SANITIZE_NUMBER_INT)))
@@ -46,7 +46,7 @@ class TaskController extends Controller
             ->get();
         }
 
-        return $listy;
+        return $tasks;
     }
 
     public function getTaskData($id)
@@ -55,14 +55,15 @@ class TaskController extends Controller
             ->with(['assignedTo.employee.user' => function ($q) {
                 $q->select(['id', 'first_name', 'last_name']);
             }])
-            ->with(['erpEmployee' => function ($q) {
-                $q->select(['id', 'first_name', 'last_name']);
-            }])
             ->with(['reporter' => function ($q) {
                 $q->select(['id', 'first_name', 'last_name']);
             }])
-            ->with(['erpContract' => function ($q) {
-                $q->select(['id', 'contract_identifier']);
+            ->with(['sharedTaskData' => function ($q) {
+                $q->with(['erpContracts' => function ($q) {
+                    $q->select(['contracts.id', 'contract_identifier']);
+                }])->with(['erpEmployees' => function ($q) {
+                    $q->select(['users.id', 'first_name', 'last_name']);
+                }]);
             }])->first();
     }
 
@@ -74,14 +75,15 @@ class TaskController extends Controller
             ->with(['assignedTo.employee.user' => function ($q) {
                 $q->select(['id', 'first_name', 'last_name']);
             }])
-            ->with(['erpEmployee' => function ($q) {
-                $q->select(['id', 'first_name', 'last_name']);
-            }])
             ->with(['reporter' => function ($q) {
                 $q->select(['id', 'first_name', 'last_name']);
             }])
-            ->with(['erpContract' => function ($q) {
-                $q->select(['id', 'contract_identifier']);
+            ->with(['sharedTaskData' => function ($q) {
+                $q->with(['erpContracts' => function ($q) {
+                    $q->select(['contracts.id', 'contract_identifier']);
+                }])->with(['erpEmployees' => function ($q) {
+                    $q->select(['users.id', 'first_name', 'last_name']);
+                }]);
             }])->get();
     }
 
@@ -90,7 +92,6 @@ class TaskController extends Controller
         $sharedTaskData = Task::where('id', $id)->first()->shared_task_data_id;
         return Task::where('id', '!=', $id)->where('shared_task_data_id', $sharedTaskData)->with('board', 'sharedTaskData')->get();
     }
-
 
     public function createBacklogTaskCards(Request $request)
     {
@@ -125,6 +126,21 @@ class TaskController extends Controller
             } else {
                 $sharedTaskData = SharedTaskData::create(['description' => $backlogTaskData['description']]);
                 $sharedTaskDataId = $sharedTaskData->id;
+
+                $erpEmployeesArray = [];
+                $erpContractsArray = [];
+
+                foreach ($backlogTaskData['shared_task_data']['erp_employees'] as $erpEmployee) {
+                    $erpEmployeesArray[$erpEmployee['id']] = ['shareable_type' => 'user'];
+                }
+
+
+                foreach ($backlogTaskData['shared_task_data']['erp_contracts'] as $erpContract) {
+                    $erpContractsArray[$erpContract['id']] = ['shareable_type' => 'contract'];
+                }
+
+                $sharedTaskData->erpContracts()->sync($erpContractsArray);
+                $sharedTaskData->erpEmployees()->sync($erpEmployeesArray);
             }
 
             foreach ($backlogTaskData['selectedKanbans'] as $kanban) {
@@ -133,8 +149,6 @@ class TaskController extends Controller
                     'reporter_id' => Auth::user()->id,
                     'name' => $backlogTaskData['name'],
                     'deadline' => $request->input('deadline') !== null ? date('y-m-d h:m', strtotime($backlogTaskData['deadline'])) : null,
-                    'erp_employee_id' => $request->input('erpEmployee') !== null ? $backlogTaskData['erpEmployee']['id'] : null,
-                    'erp_contract_id' => $request->input('erpContract') !== null ? $backlogTaskData['erpContract']['id'] : null,
                     'badge_id' => $badge->id,
                     'column_id' => null,
                     'board_id' => $kanban['id'],
@@ -163,6 +177,8 @@ class TaskController extends Controller
                     null
                 );
             }
+
+
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
@@ -191,12 +207,10 @@ class TaskController extends Controller
             ], 400);
         }
 
-
         $taskCard = $request->all();
 
         try {
             $maxIndex = Task::where('column_id', $taskCard['columnId'])->where('status', 'active')->max('index');
-
             $badge = Badge::firstOrCreate([
                 'name' => count($request->input('badge')) > 0 ? $taskCard['badge']['name'] : '--',
             ]);
@@ -205,6 +219,22 @@ class TaskController extends Controller
                 $sharedTaskDataId = $taskCard['associatedTask']['shared_task_data_id'];
             } else {
                 $sharedTaskData = SharedTaskData::create(['description' => $taskCard['description']]);
+
+                $erpEmployeesArray = [];
+                $erpContractsArray = [];
+
+                foreach ($taskCard['shared_task_data']['erp_employees'] as $erpEmployee) {
+                    $erpEmployeesArray[$erpEmployee['id']] = ['shareable_type' => 'user'];
+                }
+
+
+                foreach ($taskCard['shared_task_data']['erp_contracts'] as $erpContract) {
+                    $erpContractsArray[$erpContract['id']] = ['shareable_type' => 'contract'];
+                }
+
+                $sharedTaskData->erpContracts()->sync($erpContractsArray);
+                $sharedTaskData->erpEmployees()->sync($erpEmployeesArray);
+
                 $sharedTaskDataId = $sharedTaskData->id;
             }
 
@@ -214,8 +244,6 @@ class TaskController extends Controller
                 'reporter_id' => Auth::user()->id,
                 'name' => $taskCard['name'],
                 'deadline' => $request->input('deadline') !== null ? date('y-m-d h:m', strtotime($taskCard['deadline'])) : null,
-                'erp_employee_id' => $request->input('erpEmployee') !== null ? $taskCard['erpEmployee']['id'] : null,
-                'erp_contract_id' => $request->input('erpContract') !== null ? $taskCard['erpContract']['id'] : null,
                 'badge_id' => $badge->id,
                 'column_id' => $taskCard['selectedColumnId'],
                 'row_id' => $taskCard['selectedRowId'],
@@ -273,7 +301,6 @@ class TaskController extends Controller
                 $prevTask = Task::with('board')->find($taskCard['id'])->toArray();
                 $prevGroup = Task::find($taskCard['id'])->shared_task_data_id;
 
-
                 if ($request->input('assigned_to') !== null) {
                     $employeeArray = [];
                     foreach ($taskCard['assigned_to'] as $employee) {
@@ -330,8 +357,25 @@ class TaskController extends Controller
                 $sharedTaskDataId = $taskCard['shared_task_data_id'];
 
                 if ($sharedTaskDataId === $task->shared_task_data_id) {
-                    // update description if group hasn't changed
-                    SharedTaskData::where('id', $sharedTaskDataId)->update(['description' => $taskCard['shared_task_data']['description']]);
+                    // update shared data if group hasn't changed
+
+                    $sharedTaskData = SharedTaskData::where('id', $sharedTaskDataId)->first();
+                    $sharedTaskData->update(['description' => $taskCard['shared_task_data']['description']]);
+
+                    $erpEmployeesArray = [];
+                    $erpContractsArray = [];
+
+                    foreach ($taskCard['shared_task_data']['erp_employees'] as $erpEmployee) {
+                        $erpEmployeesArray[$erpEmployee['id']] = ['shareable_type' => 'user'];
+                    }
+
+
+                    foreach ($taskCard['shared_task_data']['erp_contracts'] as $erpContract) {
+                        $erpContractsArray[$erpContract['id']] = ['shareable_type' => 'contract'];
+                    }
+
+                    $sharedTaskData->erpContracts()->sync($erpContractsArray);
+                    $sharedTaskData->erpEmployees()->sync($erpEmployeesArray);
                 } else {
                     // delete previous group if no other tasks point to it
                     $tasksWithSharedTaskData = Task::where('shared_task_data_id', $prevGroup)->count();
@@ -349,8 +393,6 @@ class TaskController extends Controller
                     'name' => $taskCard['name'],
                     'status' => $taskCard['status'],
                     'deadline' => $request->input('deadline') !== null ? $dt : null,
-                    'erp_employee_id' => $request->input('erp_employee') !== null ? $taskCard['erp_employee']['id'] : null,
-                    'erp_contract_id' => $request->input('erp_contract') !== null ? $taskCard['erp_contract']['id'] : null,
                     'badge_id' => $badge->id,
                     'column_id' => $taskCard['column_id'] ?? $task->column_id,
                     'row_id' => $taskCard['row_id'] ?? $task->row_id,
@@ -358,7 +400,6 @@ class TaskController extends Controller
                 ]);
 
                 $task = Task::find($taskCard['id'])->toArray();
-
 
                 // logic to log what was changed during update
 
@@ -411,14 +452,16 @@ class TaskController extends Controller
             ->with(['assignedTo.employee.user' => function ($q) {
                 $q->select(['id', 'first_name', 'last_name']);
             }])
-            ->with(['erpEmployee' => function ($q) {
-                $q->select(['id', 'first_name', 'last_name']);
-            }])
+
             ->with(['reporter' => function ($q) {
                 $q->select(['id', 'first_name', 'last_name']);
             }])
-            ->with(['erpContract' => function ($q) {
-                $q->select(['id', 'contract_identifier']);
+            ->with(['sharedTaskData' => function ($q) {
+                $q->with(['erpContracts' => function ($q) {
+                    $q->select(['contracts.id', 'contract_identifier']);
+                }])->with(['erpEmployees' => function ($q) {
+                    $q->select(['users.id', 'first_name', 'last_name']);
+                }]);
             }])->orderBy('index')->get();
     }
 
@@ -680,5 +723,4 @@ class TaskController extends Controller
         }
         return response(['success' => 'true'], 200);
     }
-
 }
