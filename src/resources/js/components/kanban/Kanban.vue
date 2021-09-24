@@ -10,7 +10,8 @@
                    :list="kanban.rows"
                    class="h-full list-group"
                    ghost-class="ghost-card"
-                   :disabled="isDraggableDisabled || $role !== 'admin'">
+                   :disabled="isDraggableDisabled || $role !== 'admin'"
+                   :options="draggableOptions">
             <div :key="row.id" class="mx-10 my-3" v-for="(row, rowIndex) in kanban.rows">
 
                 <div class="border bg-gray-700 pl-3 pr-3 rounded py-2 flex justify-between"
@@ -46,7 +47,8 @@
                                    :list="row.columns"
                                    :group="'row-'+ row.id"
                                    :disabled="isDraggableDisabled || $role !== 'admin'"
-                                   @end="getColumnChangeData($event, rowIndex)">
+                                   @end="getColumnChangeData($event, rowIndex)"
+                                   :options="draggableOptions">
                             <div :key="column.id"
                                  class="flex flex-col flex-1 bg-gray-200 px-3 py-3 column-width rounded mr-4 overflow-y-auto overflow-x-hidden"
                                  style="max-height: 800px"
@@ -72,13 +74,15 @@
                                            @change="getTaskChangeData($event, columnIndex, rowIndex)"
                                            class="list-group flex-col flex-1"
                                            ghost-class="ghost-card"
-                                           group="tasks">
+                                           group="tasks"
+                                           @start="start"
+                                           :options="draggableOptions">
                                     <task-card :class="{'opacity-60':isDraggableDisabled}"
                                                :key="task_card.id"
                                                :task_card="task_card"
                                                class="mt-3 cursor-move"
                                                v-for="task_card in column.task_cards"
-                                               v-on:click.native="openTask(task_card)"></task-card>
+                                               v-on:mouseup.native="openTask(task_card)"></task-card>
                                 </draggable>
                             </div>
                         </draggable>
@@ -139,7 +143,8 @@ export default {
             loadingCards: {columnId: null, isLoading: false},
             loadingMembers: {memberId: null, isLoading: false},
             isDraggableDisabled: false,
-            collapsedRows:[]
+            collapsedRows:[],
+            drag: false
         };
     },
 
@@ -195,7 +200,20 @@ export default {
 
     },
 
+    computed:{
+        draggableOptions(){
+            if(this.$device.mobile || this.$device.ios || this.$device.android) {
+                return {delay: 400}
+            }
+        }
+    },
+
     methods: {
+
+        start() {
+            navigator.vibrate(200);
+        },
+
         createTaskCard(rowIndex, columnIndex) {
             let rowName = this.kanban.rows[rowIndex].name;
             let rowId = this.kanban.rows[rowIndex].id;
