@@ -5,6 +5,7 @@ import Dashboard from "../components/dashboard/Dashboard";
 import Notifications from "../components/notifications/Notifications";
 import Backlog from "../components/backlog/Backlog";
 import Metrics from "../components/metrics/Metrics";
+import UserProfile from "../components/users/UserProfile"
 
 Vue.use(Router);
 
@@ -40,6 +41,10 @@ export default new Router({
         {
             path: '*',
             redirect: "kanban/dashboard"
+        },
+        {
+            path: '/kanban/user-profile',
+            component: UserProfile
         }
     ]
 });

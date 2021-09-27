@@ -7,4 +7,8 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Xguard\\LaravelKanban\\' => array($baseDir . '/src'),
+    'Psr\\SimpleCache\\' => array($vendorDir . '/psr/simple-cache/src'),
+    'Psr\\Container\\' => array($vendorDir . '/psr/container/src'),
+    'Lorisleiva\\Actions\\' => array($vendorDir . '/lorisleiva/laravel-actions/src'),
+    'Illuminate\\Contracts\\' => array($vendorDir . '/illuminate/contracts'),
 );

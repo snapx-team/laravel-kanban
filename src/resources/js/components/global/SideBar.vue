@@ -63,7 +63,21 @@
                     </router-link>
                 </template>
             </div>
+
             <hr/>
+
+            <h3 class="mt-8 text-sm font-semibold text-gray-600 uppercase tracking-wide text-left">
+                User </h3>
+
+            <div class=" -mx-3 pb-2">
+                <router-link :to="{ path: '/kanban/user-profile' }"
+                             class="flex justify-between items-center px-3 py-2 hover:bg-gray-200 rounded-lg">
+                    <span class="text-sm font-medium text-gray-900">User Profile</span>
+                </router-link>
+            </div>
+
+            <hr/>
+            
             <div class="space-y-2 mt-8 ">
                 <a href="/"
                    class="text-sm font-medium text-gray-600 hover:text-gray-800 transition duration-300 ease-in-out focus:outline-none">

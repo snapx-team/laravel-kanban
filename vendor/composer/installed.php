@@ -1,24 +1,63 @@
-<?php return array (
-  'root' => 
-  array (
-    'pretty_version' => 'dev-master',
-    'version' => 'dev-master',
-    'aliases' => 
-    array (
+<?php return array(
+    'root' => array(
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
+        'type' => 'library',
+        'install_path' => __DIR__ . '/../../',
+        'aliases' => array(),
+        'reference' => '096b12beff49a192947384bfea121d6ca4e1b389',
+        'name' => 'xguard/laravel-kanban',
+        'dev' => true,
     ),
-    'reference' => '5a837b3fa53f7cbc4d24791811e83c8a55d28038',
-    'name' => 'xguard/laravel-kanban',
-  ),
-  'versions' => 
-  array (
-    'xguard/laravel-kanban' => 
-    array (
-      'pretty_version' => 'dev-master',
-      'version' => 'dev-master',
-      'aliases' => 
-      array (
-      ),
-      'reference' => '5a837b3fa53f7cbc4d24791811e83c8a55d28038',
+    'versions' => array(
+        'illuminate/contracts' => array(
+            'pretty_version' => '8.x-dev',
+            'version' => '8.9999999.9999999.9999999-dev',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../illuminate/contracts',
+            'aliases' => array(),
+            'reference' => 'ab4bb4ec3b36905ccf972c84f9aaa2bdd1153913',
+            'dev_requirement' => false,
+        ),
+        'lorisleiva/laravel-actions' => array(
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../lorisleiva/laravel-actions',
+            'aliases' => array(
+                0 => '9999999-dev',
+            ),
+            'reference' => '6e0aa6ed7cf379c3dd0e8d842a1ce754394152f6',
+            'dev_requirement' => false,
+        ),
+        'psr/container' => array(
+            'pretty_version' => '1.1.x-dev',
+            'version' => '1.1.9999999.9999999-dev',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../psr/container',
+            'aliases' => array(),
+            'reference' => '8622567409010282b7aeebe4bb841fe98b58dcaf',
+            'dev_requirement' => false,
+        ),
+        'psr/simple-cache' => array(
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../psr/simple-cache',
+            'aliases' => array(
+                0 => '1.0.x-dev',
+            ),
+            'reference' => '5a7b96b1dda5d957e01bc1bfe77dcca09c5a7474',
+            'dev_requirement' => false,
+        ),
+        'xguard/laravel-kanban' => array(
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../../',
+            'aliases' => array(),
+            'reference' => '096b12beff49a192947384bfea121d6ca4e1b389',
+            'dev_requirement' => false,
+        ),
     ),
-  ),
 );

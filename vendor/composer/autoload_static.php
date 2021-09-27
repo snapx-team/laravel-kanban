@@ -11,12 +11,41 @@ class ComposerStaticInitb4cb25be913b8798c6598f8e77c1f249
         array (
             'Xguard\\LaravelKanban\\' => 21,
         ),
+        'P' => 
+        array (
+            'Psr\\SimpleCache\\' => 16,
+            'Psr\\Container\\' => 14,
+        ),
+        'L' => 
+        array (
+            'Lorisleiva\\Actions\\' => 19,
+        ),
+        'I' => 
+        array (
+            'Illuminate\\Contracts\\' => 21,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
         'Xguard\\LaravelKanban\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',
+        ),
+        'Psr\\SimpleCache\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/simple-cache/src',
+        ),
+        'Psr\\Container\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/container/src',
+        ),
+        'Lorisleiva\\Actions\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/lorisleiva/laravel-actions/src',
+        ),
+        'Illuminate\\Contracts\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/illuminate/contracts',
         ),
     );
 

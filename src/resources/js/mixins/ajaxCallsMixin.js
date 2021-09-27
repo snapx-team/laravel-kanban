@@ -244,6 +244,10 @@ export const ajaxCalls = {
 
         // Employees
 
+        asyncGetUserProfile() {
+            return axios.get('get-user-profile');
+        },
+
         asyncGetAllUsers() {
             return axios.get('get-all-users');
         },
