@@ -188,10 +188,16 @@
                                     class="cursor-pointer">
                                 </backlog-card>
                             </div>
-                            <div v-else>
+                            <div v-if="filtered.length === 0 && !isLoadingTasks">
                                 <div class="text-2xl text-indigo-800 text-center m-auto font-bold py-10 bg-gray-100" >
                                     <i class="fas fa-search mb-2 animate-bounce"></i>
                                     <p >No Tasks Found</p>
+                                </div>
+                            </div>
+                            <div v-if="isLoadingTasks">
+                                <div class="text-2xl text-indigo-800 text-center m-auto font-bold py-10 bg-gray-100" >
+                                    <i class="fas fa-search mb-2 animate-bounce"></i>
+                                    <p >Loading</p>
                                 </div>
                             </div>
                         </pane>
@@ -233,6 +239,8 @@ export default {
     },
     data() {
         return {
+            pageNumber: 1,
+            isLoadingTasks: false,
             backlogData: null,
             filterText: "",
             filterBadge: [],
@@ -285,6 +293,9 @@ export default {
 
     computed: {
         filtered() {
+
+            return this.backlogData.backlogTasks;
+
             const regex = new RegExp(this.filterText, "i");
             let newArray = [];
             this.filteredWithOptions.forEach(function (value) {
@@ -438,11 +449,21 @@ export default {
             this.showBoardsPane = false;
         },
         getBacklogData() {
-            if(this.start  && this.end){
+            if(this.start && this.end){
                 this.eventHub.$emit("set-loading-state", true);
-                this.asyncGetBacklogData(this.startTime, this.endTime).then((data) => {
+                this.isLoadingTasks =  true;
+
+                this.asyncGetBacklogData(this.startTime, this.endTime, ).then((data) => {
                     this.backlogData = data.data;
                     this.eventHub.$emit("set-loading-state", false);
+
+                    this.asyncGetBacklogTasks(this.startTime, this.endTime, ).then((data) => {
+                        this.backlogData.backlogTasks = data.data;
+                        this.isLoadingTasks =  false;
+                        console.log(this.backlogData);
+                        console.log(data.data);
+                    })
+
                 })
             }
             else{
@@ -450,6 +471,12 @@ export default {
             }
 
         },
+
+        filterBacklogData() {
+            this.pageNumber = 1,
+                this.getBacklogData();
+        },
+
         getOneMonthAgo() {
             let d = new Date()
             return new Date(d.setMonth(d.getMonth() - 1));

@@ -184,7 +184,7 @@ class LaravelKanbanController extends Controller
         return [
             'boards' => $boardArray,
             'allBoards' => $boards,
-            'backlogTasks' => $backlogTasks,
+            'backlogTasks' => [],
             'badges' => $badgeArray,
             'kanbanUsers' => $kanbanUsers,
         ];

@@ -17,6 +17,55 @@ use Illuminate\Support\Facades\Validator;
 
 class TaskController extends Controller
 {
+
+    public function getBacklogTasks($start, $end)
+    {
+        if (session('role') === 'admin') {
+            $backlogTasks = Task::
+            with('badge', 'row', 'column', 'board', 'sharedTaskData')
+                ->with(['reporter' => function ($q) {
+                    $q->select(['id', 'first_name', 'last_name']);
+                }])
+                ->with(['assignedTo.employee.user' => function ($q) {
+                    $q->select(['id', 'first_name', 'last_name']);
+                }])
+                ->with(['sharedTaskData' => function ($q) {
+                    $q->with(['erpContracts' => function ($q) {
+                        $q->select(['contracts.id', 'contract_identifier']);
+                    }])->with(['erpEmployees' => function ($q) {
+                        $q->select(['users.id', 'first_name', 'last_name']);
+                    }]);
+                }])
+                ->whereDate('created_at', '>=', new DateTime($start))
+                ->whereDate('created_at', '<=', new DateTime($end))
+                ->orderBy('deadline')->get();
+
+        } else {
+            $backlogTasks = Task::with('board', 'badge', 'row', 'column')
+                ->whereHas('board.members', function ($q) {
+                    $q->where('employee_id', session('employee_id'));
+                })
+                ->with(['reporter' => function ($q) {
+                    $q->select(['id', 'first_name', 'last_name']);
+                }])
+                ->with(['assignedTo.employee.user' => function ($q) {
+                    $q->select(['id', 'first_name', 'last_name']);
+                }])
+                ->with(['sharedTaskData' => function ($q) {
+                    $q->with(['erpContracts' => function ($q) {
+                        $q->select(['contracts.id', 'contract_identifier']);
+                    }])->with(['erpEmployees' => function ($q) {
+                        $q->select(['users.id', 'first_name', 'last_name']);
+                    }]);
+                }])
+                ->whereDate('created_at', '>=', new DateTime($start))
+                ->whereDate('created_at', '<=', new DateTime($end))
+                ->orderBy('deadline')->get();
+        }
+
+        return $backlogTasks;
+    }
+
     public function getAllTasks()
     {
         return Task::with('board', 'sharedTaskData')->take(5)->get();

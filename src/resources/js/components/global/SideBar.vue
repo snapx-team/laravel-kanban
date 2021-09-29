@@ -46,7 +46,7 @@
                     <h1 class="text-3xl tracking-wide text-indigo-800 font-bold my-0">
                         KANYEBAN </h1>
                     <p class="text-xs text-indigo-800">
-                        The Greatest Kanban Of All Time {{ msg }}</p>
+                        The Greatest Kanban Of All Time</p>
 
                 </div>
             </div>
