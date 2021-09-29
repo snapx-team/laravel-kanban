@@ -3,13 +3,16 @@
 namespace Xguard\LaravelKanban\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Responses\JsonResponse;
 use DateTime;
 use Illuminate\Support\Facades\Auth;
+use Lorisleiva\Actions\Action;
 use Xguard\LaravelKanban\Http\Helper\CheckHasAccessToBoardWithBoardId;
 use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Board;
 use Xguard\LaravelKanban\Models\Template;
 use Xguard\LaravelKanban\Models\Task;
+use Xguard\LaravelKanban\Actions\Users\GetUserProfileAction;
 
 class LaravelKanbanController extends Controller
 {
@@ -139,7 +142,6 @@ class LaravelKanbanController extends Controller
             })->with('members')->get();
         }
 
-
         $kanbanUsers = Employee::with('user')->get();
 
         $boardArray = [];
@@ -247,5 +249,15 @@ class LaravelKanbanController extends Controller
             ], 400);
         }
         return response(['success' => 'true'], 200);
+    }
+
+    public function getUserProfile()
+    {
+        try {
+            $profile = (new GetUserProfileAction)->run();
+            return new JsonResponse($profile);
+        } catch (\Exception $e) {
+            return new JsonResponse(null, 404, 'The user profile couldn\'t be retrieved');
+        }
     }
 }

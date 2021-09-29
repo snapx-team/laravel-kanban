@@ -19,8 +19,7 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             Route::get('/get-dashboard-data', 'LaravelKanbanController@getDashboardData');
             Route::get('/get-backlog-data/{start}/{end}', 'LaravelKanbanController@getBacklogData');
             Route::get('/get-footer-info', 'LaravelKanbanController@getfooterInfo');
-
-
+            Route::get('/get-user-profile', 'LaravelKanbanController@getUserProfile');
 
             //Notifications
             Route::get('/get-notif-data/{logType}', 'LaravelKanbanController@getNotificationData');
