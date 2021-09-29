@@ -3,11 +3,10 @@
 namespace Xguard\LaravelKanban\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Responses\JsonResponse;
 use App\Models\User;
 use App\Models\Contract;
-
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Xguard\LaravelKanban\Actions\Users\GetUserProfileAction;
 
 class ErpController extends Controller
 {

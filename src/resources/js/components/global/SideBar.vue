@@ -94,6 +94,7 @@
                         <div v-else><i class="text-white m-2 fas fa-archive"></i></div>
                     </router-link>
                 </div>
+
                 <div class=" -mx-3 pb-2" v-if="$role === 'admin'">
                     <router-link :to="{ path: '/kanban/metrics' }"
                                  class="flex items-center px-3 py-2 rounded-lg"
@@ -101,6 +102,16 @@
                         <span v-if="isSideBarOpen" class="text-sm font-medium text-gray-900"><i
                             class="mr-2 fas fa-chart-pie"></i>Metics</span>
                         <div v-else><i class="text-white m-2 fas fa-chart-pie"></i></div>
+                    </router-link>
+                </div>
+
+                <div class="-mx-3 pb-2">
+                    <router-link :to="{ path: '/kanban/user-profile' }"
+                                 class="flex items-center px-3 py-2 rounded-lg"
+                                 :class="!isSideBarOpen ? 'mx-6 bg-gray-600 hover:bg-gray-500 justify-center' : 'justify-between hover:bg-gray-200' ">
+                        <span v-if="isSideBarOpen" class="text-sm font-medium text-gray-900"><i
+                            class="mr-2 fas fa-user-cog"></i>User Profile</span>
+                        <div v-else><i class="text-white m-2 fas fa-user-cog"></i></div>
                     </router-link>
                 </div>
 
@@ -125,7 +136,9 @@
                         </router-link>
                     </template>
                 </div>
+
                 <hr/>
+
                 <div class="space-y-2 mt-8 " :class=" !isSideBarOpen ? 'text-center text-xl': 'text-left text-sm' ">
                     <a href="/"
                        class=" font-medium text-gray-600 hover:text-gray-800 transition duration-300 ease-in-out focus:outline-none">
