@@ -15,6 +15,8 @@ import 'quill/dist/quill.core.css'; // import styles
 import 'quill/dist/quill.snow.css'; // for snow theme
 import 'quill/dist/quill.bubble.css';
 import axios from 'axios'; // for bubble theme
+import device from 'vue-device-detector';
+
 
 Vue.config.productionTip = false;
 
@@ -28,6 +30,7 @@ Vue.use(VueQuillEditor, /* { default global options } */);
 Vue.use(VueSweetalert2);
 Vue.use(DatePicker);
 Vue.use(VueMoment);
+Vue.use(device);
 
 let globalData = new Vue({
     data: {$role: 'employee'}

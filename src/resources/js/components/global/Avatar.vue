@@ -5,7 +5,7 @@
              v-if="tooltip">
             <div class="w-3 h-3 -mb-2 rotate-45 bg-gray-800"></div>
             <span
-                class="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-gray-800 rounded shaow-lg">{{
+                class="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-gray-800 rounded shadow-lg">{{
                     name
                 }}</span>
         </div>

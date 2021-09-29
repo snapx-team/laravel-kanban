@@ -49,7 +49,7 @@
                             </div>
                         </div>
                         <div class="flex-1 text-right md:text-center">
-                            <h5 class="font-bold uppercase text-gray-800">Add Xkanban Employee</h5>
+                            <h5 class="font-bold uppercase text-gray-800">Add Kanyeban Employee</h5>
                             <h3 class="text-sm text-gray-600">
                                 {{ employeesLength }} employees total </h3>
                         </div>
