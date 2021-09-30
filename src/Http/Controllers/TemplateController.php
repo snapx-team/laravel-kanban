@@ -67,7 +67,17 @@ class TemplateController extends Controller
                     'description' => $request->input('description'),
                     'options' => serialize($request->input('checkedOptions')),
                 ]);
+
                 $template = Template::find($request->input('id'));
+
+                Log::createLog(
+                    Auth::user()->id,
+                    Log::TYPE_TEMPLATE_UPDATED,
+                    $template->name,
+                    null,
+                    $template->id,
+                    'Xguard\LaravelKanban\Models\Template'
+                );
             } else {
                 $template = Template::create([
                     'name' => $request->input('name'),
@@ -76,6 +86,15 @@ class TemplateController extends Controller
                     'description' => $request->input('description'),
                     'options' => serialize($request->input('checkedOptions')),
                 ]);
+
+                Log::createLog(
+                    Auth::user()->id,
+                    Log::TYPE_TEMPLATE_CREATED,
+                    $template->name,
+                    null,
+                    $template->id,
+                    'Xguard\LaravelKanban\Models\Template'
+                );
             }
 
             if ($request->input('boards') !== null) {
@@ -100,6 +119,15 @@ class TemplateController extends Controller
         try {
             $template = Template::find($id);
             $template->delete();
+
+            Log::createLog(
+                Auth::user()->id,
+                Log::TYPE_TEMPLATE_DELETED,
+                $template->name,
+                null,
+                $template->id,
+                'Xguard\LaravelKanban\Models\Template'
+            );
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',

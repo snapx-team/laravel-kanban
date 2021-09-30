@@ -89,7 +89,7 @@ class CommentController extends Controller
                         null,
                         $comment->id,
                         'Xguard\LaravelKanban\Models\Comment'
-                    );  
+                    );
                 }
             } catch (\Exception $e) {
                 return response([
@@ -123,7 +123,7 @@ class CommentController extends Controller
                 null,
                 $comment->id,
                 'Xguard\LaravelKanban\Models\Comment'
-            ); 
+            );
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',

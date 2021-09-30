@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 class Log extends Model
 {
     use SoftDeletes;
-    
+
     protected $dates = ['deleted_at'];
 
     protected $table = 'kanban_logs';
@@ -37,11 +37,17 @@ class Log extends Model
     const TYPE_CARD_ASSIGNED_TO_USER = 22;
     const TYPE_CARD_UNASSIGNED_TO_USER = 23;
 
+    const TYPE_TEMPLATE_CREATED = 30;
+    const TYPE_TEMPLATE_UPDATED = 31;
+    const TYPE_TEMPLATE_DELETED = 32;
+
+
     const TYPE_KANBAN_MEMBER_CREATED = 40;
     const TYPE_KANBAN_MEMBER_DELETED = 41;
 
     const TYPE_BOARD_CREATED = 60;
     const TYPE_BOARD_DELETED = 61;
+    const TYPE_BOARD_EDITED = 62;
 
     const TYPE_COMMENT_CREATED = 70;
     const TYPE_COMMENT_DELETED = 71;
