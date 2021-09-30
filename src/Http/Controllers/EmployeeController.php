@@ -26,10 +26,9 @@ class EmployeeController extends Controller
                     Auth::user()->id,
                     Log::TYPE_EMPLOYEE_CREATED,
                     'Added employee [' . $employee->user->full_name . ']',
-                    null,
-                    null,
-                    null,
-                    $employee->id
+                    $employee->id,
+                    $employee->id,
+                    'Xguard\LaravelKanban\Models\Employee'
                 );
             }
 
@@ -52,10 +51,9 @@ class EmployeeController extends Controller
                 Auth::user()->id,
                 Log::TYPE_EMPLOYEE_DELETED,
                 'Deleted employee [' . $employee->user->full_name . ']',
-                null,
-                null,
-                null,
-                $employee->id
+                $employee->id,
+                $employee->id,
+                'Xguard\LaravelKanban\Models\Employee'
             );
         } catch (\Exception $e) {
             return response([

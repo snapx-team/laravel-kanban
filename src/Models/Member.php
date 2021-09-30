@@ -4,10 +4,14 @@ namespace Xguard\LaravelKanban\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Member extends Model
 {
+    use SoftDeletes;
+    
+    protected $dates = ['deleted_at'];
+
     protected $table = 'kanban_members';
 
     protected $guarded = [];

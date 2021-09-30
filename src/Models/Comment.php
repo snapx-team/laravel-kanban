@@ -2,11 +2,17 @@
 
 namespace Xguard\LaravelKanban\Models;
 
+use Iatstuti\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Comment extends Model
 {
+    use SoftDeletes, CascadeSoftDeletes;
+
+    protected $dates = ['deleted_at'];
+
     protected $table = 'kanban_comments';
 
     protected $guarded = [];
@@ -19,5 +25,10 @@ class Comment extends Model
     public function employee(): BelongsTo
     {
         return $this->belongsTo(Employee::class);
+    }
+
+    public function logs()
+    {
+        return $this->morphMany(Log::class, 'loggable');
     }
 }

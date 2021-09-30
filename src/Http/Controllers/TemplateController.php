@@ -4,7 +4,6 @@ namespace Xguard\LaravelKanban\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Xguard\LaravelKanban\Models\Badge;
 use Xguard\LaravelKanban\Models\Log;
@@ -54,10 +53,9 @@ class TemplateController extends Controller
                     Auth::user()->id,
                     Log::TYPE_BADGE_CREATED,
                     "The badge [" . $badge->name . "] was created",
+                    null,
                     $badge->id,
-                    null,
-                    null,
-                    null
+                    'Xguard\LaravelKanban\Models\Badge'
                 );
             }
 

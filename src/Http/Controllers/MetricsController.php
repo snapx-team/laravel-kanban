@@ -7,6 +7,7 @@ use DateInterval;
 use DatePeriod;
 use DateTime;
 use Exception;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Log;
 use Xguard\LaravelKanban\Models\Task;
@@ -153,21 +154,23 @@ class MetricsController extends Controller
         $closedLogs = Log::where('log_type', Log::TYPE_CARD_COMPLETED)
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
-            ->orderBy('task_id')->get();
+            ->where('loggable_type', 'Xguard\LaravelKanban\Models\Task')
+            ->orderBy('loggable_id')->get();
         $assignedLogs = Log::with('badge')
             ->where('log_type', Log::TYPE_CARD_ASSIGNED_TO_USER)
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
-            ->orderBy('task_id')
+            ->where('loggable_type', 'Xguard\LaravelKanban\Models\Task')
+            ->orderBy('loggable_id')
             ->latest()
             ->get()
-            ->unique('task_id');
+            ->unique('loggable_id');
 
         $names = [];
         $hits = [];
         foreach ($assignedLogs as $assignedLog) {
             foreach ($closedLogs as $key => $closedLog) {
-                if ($assignedLog->task_id == $closedLog->task_id) {
+                if ($assignedLog->loggable_id == $closedLog->loggable_id) {
                     $beginning = new DateTime($assignedLog->created_at);
                     $end = new DateTime($closedLog->created_at);
                     $hours = ($end->diff($beginning))->h;
@@ -201,25 +204,29 @@ class MetricsController extends Controller
         $closedLogs = Log::where('log_type', Log::TYPE_CARD_COMPLETED)
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
-            ->orderBy('task_id')
+            ->where('loggable_type', 'Xguard\LaravelKanban\Models\Task')
+            ->orderBy('loggable_id')
             ->get();
         $assignedLogs = Log::with('user')
-            ->with(['task.assignedTo.employee.user' => function ($q) {
-                $q->select(['id', 'first_name', 'last_name']);
+            ->with(['loggable' => function (MorphTo $morphTo) {
+                $morphTo->morphWith([
+                    Task::class => ['assignedTo.employee.user'],
+                ]);
             }])
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
             ->where('log_type', Log::TYPE_CARD_ASSIGNED_TO_USER)
-            ->orderBy('task_id')
+            ->where('loggable_type', 'Xguard\LaravelKanban\Models\Task')
+            ->orderBy('loggable_id')
             ->latest()
             ->get()
-            ->unique('task_id');
+            ->unique('loggable_id');
 
         $names = [];
         $hits = [];
         foreach ($assignedLogs as $assignedLog) {
             foreach ($closedLogs as $key => $closedLog) {
-                if ($assignedLog->task_id == $closedLog->task_id) {
+                if ($assignedLog->loggable_id == $closedLog->loggable_id) {
                     $beginning = new DateTime($assignedLog->created_at);
                     $end = new DateTime($closedLog->created_at);
                     $diff = $end->diff($beginning);
@@ -261,13 +268,15 @@ class MetricsController extends Controller
             ->orWhere('log_type', Log::TYPE_CARD_CANCELED)
             ->whereDate('created_at', '>=', $beginning)
             ->whereDate('created_at', '<=', $ending)
-            ->orderBy('task_id')
+            ->where('loggable_type', 'Xguard\LaravelKanban\Models\Task')
+            ->orderBy('loggable_id')
             ->get();
         $createdLogs = Log::with('user')
             ->whereDate('created_at', '>=', $beginning)
             ->whereDate('created_at', '<=', $ending)
             ->where('log_type', Log::TYPE_CARD_CREATED)
-            ->orderBy('task_id')
+            ->where('loggable_type', 'Xguard\LaravelKanban\Models\Task')
+            ->orderBy('loggable_id')
             ->get();
 
         $period = new DatePeriod($beginning, new DateInterval('P1D'), $ending);

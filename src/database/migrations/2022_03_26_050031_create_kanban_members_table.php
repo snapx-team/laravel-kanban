@@ -18,8 +18,9 @@ class CreateKanbanMembersTable extends Migration
             $table->unsignedBigInteger('employee_id');
             $table->unsignedBigInteger('board_id');
             $table->timestamps();
-            $table->foreign('employee_id')->references('id')->on('kanban_employees')->onDelete('cascade');
-            $table->foreign('board_id')->references('id')->on('kanban_boards')->onDelete('cascade');
+            $table->foreign('employee_id')->references('id')->on('kanban_employees');
+            $table->foreign('board_id')->references('id')->on('kanban_boards');
+            $table->softDeletes();
         });
     }
 

@@ -10,6 +10,7 @@ use Xguard\LaravelKanban\Models\Comment;
 use Illuminate\Support\Facades\Auth;
 use Xguard\LaravelKanban\Models\Log;
 use Xguard\LaravelKanban\Models\Task;
+use Xguard\LaravelKanban\Models\TaskVersion;
 
 class CommentController extends Controller
 {
@@ -70,11 +71,9 @@ class CommentController extends Controller
                         Log::TYPE_COMMENT_EDITED,
                         'Edited comment on task [' . $task->task_simple_name . ']',
                         null,
-                        $task->board_id,
-                        $comment->task_id,
-                        null
+                        $comment->id,
+                        'Xguard\LaravelKanban\Models\Comment'
                     );
-
                 } else {
                     $comment = Comment::with('task')->create([
                         'task_id' => $request->input('taskId'),
@@ -88,10 +87,9 @@ class CommentController extends Controller
                         Log::TYPE_COMMENT_CREATED,
                         'Added new comment on task [' . $task->task_simple_name . ']',
                         null,
-                        $task->board_id,
-                        $comment->task_id,
-                        null
-                    );
+                        $comment->id,
+                        'Xguard\LaravelKanban\Models\Comment'
+                    );  
                 }
             } catch (\Exception $e) {
                 return response([
@@ -123,10 +121,9 @@ class CommentController extends Controller
                 Log::TYPE_COMMENT_DELETED,
                 'Deleted comment on task [' . $task->task_simple_name . ']',
                 null,
-                $task->board_id,
-                $comment->task_id,
-                null
-            );
+                $comment->id,
+                'Xguard\LaravelKanban\Models\Comment'
+            ); 
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',

@@ -4,12 +4,13 @@ namespace Xguard\LaravelKanban\Models;
 
 use App\Models\User;
 use App\Models\Contract;
-use Composer\Package\Package;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Xguard\LaravelKanban\Models\Log;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property \Illuminate\Support\Carbon|null $deadline
@@ -20,6 +21,10 @@ use Carbon\Carbon;
 
 class Task extends Model
 {
+    use SoftDeletes;
+    
+    protected $dates = ['deleted_at'];
+
     protected $table = 'kanban_tasks';
 
     protected $guarded = [];
@@ -79,9 +84,9 @@ class Task extends Model
         return $this->HasMany(Comment::class);
     }
 
-    public function logs(): HasMany
+    public function logs()
     {
-        return $this->HasMany(Log::class);
+        return $this->morphMany(Log::class, 'loggable');
     }
 
     public function getHoursToDeadlineAttribute(): ?int

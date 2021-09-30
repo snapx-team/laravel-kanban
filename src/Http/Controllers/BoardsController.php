@@ -47,8 +47,7 @@ class BoardsController extends Controller
                     'Added new board [' . $board->name . ']',
                     null,
                     $board->id,
-                    null,
-                    null
+                    'Xguard\LaravelKanban\Models\Board',
                 );
             }
 
@@ -79,8 +78,7 @@ class BoardsController extends Controller
                 'Deleted board [' . $board->name . ']',
                 null,
                 $board->id,
-                null,
-                null
+                'Xguard\LaravelKanban\Models\Board',
             );
         } catch (\Exception $e) {
             return response([

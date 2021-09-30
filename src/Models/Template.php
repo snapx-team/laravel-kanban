@@ -5,6 +5,7 @@ namespace Xguard\LaravelKanban\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property string|null $options
@@ -12,7 +13,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Template extends Model
 {
+    use SoftDeletes;
+    
+    protected $dates = ['deleted_at'];
+
     protected $table = 'kanban_templates';
+
     protected $guarded = [];
 
     protected $appends = [

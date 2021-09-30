@@ -14,6 +14,7 @@ use Xguard\LaravelKanban\Models\Task;
 use Xguard\LaravelKanban\Models\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Xguard\LaravelKanban\Models\TaskVersion;
 
 class TaskController extends Controller
 {
@@ -267,22 +268,35 @@ class TaskController extends Controller
                         Auth::user()->id,
                         Log::TYPE_BADGE_CREATED,
                         "The badge [" . $badge->name . "] was created",
-                        $badge->id,
                         null,
-                        $task->id,
-                        null
+                        $badge->id,
+                        'Xguard\LaravelKanban\Models\Badge'
                     );
                 }
 
-                Log::createLog(
+                $log = Log::createLog(
                     Auth::user()->id,
                     Log::TYPE_CARD_CREATED,
                     'Created new backlog task [' . $task->task_simple_name . '] in board [' . $task->board->name . '>',
-                    $task->badge_id,
-                    $task->board_id,
+                    null,
                     $task->id,
-                    null
+                    'Xguard\LaravelKanban\Models\Task'
                 );
+
+                TaskVersion::create([
+                    "index" => $task->index,
+                    "name" => $task->name,
+                    "deadline" => $task->deadline,
+                    "shared_task_data_id" =>$task->shared_task_data_id,
+                    "reporter_id" => $task->reporter_id,
+                    "column_id" => $task->column_id,
+                    "row_id" => $task->row_id,
+                    "board_id" => $task->board_id,
+                    "badge_id" => $task->badge_id,
+                    "status" => $task->status ? $task->status : 'active',
+                    "task_id" => $task->id,
+                    "log_id" => $log->id
+                ]);                
             }
         } catch (\Exception $e) {
             return response([
@@ -361,10 +375,9 @@ class TaskController extends Controller
                     Auth::user()->id,
                     Log::TYPE_BADGE_CREATED,
                     "The badge [" . $badge->name . "] was created",
-                    $badge->id,
                     null,
-                    $task->id,
-                    null
+                    $badge->id,
+                    'Xguard\LaravelKanban\Models\Badge'
                 );
             }
 
@@ -376,15 +389,29 @@ class TaskController extends Controller
                 $task->assignedTo()->sync($employeeArray);
             }
 
-            Log::createLog(
+            $log = Log::createLog(
                 Auth::user()->id,
                 Log::TYPE_CARD_CREATED,
                 'Created new task [' . $task->task_simple_name . '] on board [' . $task->board->name . ']',
-                $task->badge_id,
-                $task->board_id,
+                null,
                 $task->id,
-                null
+                'Xguard\LaravelKanban\Models\Task'
             );
+
+            TaskVersion::create([
+                "index" => $task->index,
+                "name" => $task->name,
+                "deadline" => $task->deadline,
+                "shared_task_data_id" =>$task->shared_task_data_id,
+                "reporter_id" => $task->reporter_id,
+                "column_id" => $task->column_id,
+                "row_id" => $task->row_id,
+                "board_id" => $task->board_id,
+                "badge_id" => $task->badge_id,
+                "status" => $task->status ? $task->status : 'active',
+                "task_id" => $task->id,
+                "log_id" => $log->id
+            ]);
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
@@ -418,28 +445,54 @@ class TaskController extends Controller
 
                     foreach ($assignedToResponse['attached'] as $employeeId) {
                         $employee = Employee::with('user')->find($employeeId);
-                        Log::createLog(
+                        $log = Log::createLog(
                             Auth::user()->id,
                             Log::TYPE_CARD_ASSIGNED_TO_USER,
                             'User ' . $employee['employee']['user']['full_name'] . ' has been assigned to task [' . $task->task_simple_name . ']',
-                            $taskCard['badge_id'],
-                            $taskCard['board_id'],
+                            $employee['id'],
                             $taskCard['id'],
-                            $employee['id']
+                            'Xguard\LaravelKanban\Models\Task'
                         );
+                        TaskVersion::create([
+                            "index" => $taskCard['index'],
+                            "name" => $taskCard['name'],
+                            "deadline" => $taskCard['deadline'],
+                            "shared_task_data_id" =>$taskCard['shared_task_data_id'],
+                            "reporter_id" => $taskCard['reporter_id'],
+                            "column_id" => $taskCard['column_id'],
+                            "row_id" => $taskCard['row_id'],
+                            "board_id" => $taskCard['board_id'],
+                            "badge_id" => $taskCard['badge_id'],
+                            "status" =>$taskCard['status'] ? $taskCard['status'] : 'active',
+                            "task_id" => $taskCard['id'],
+                            "log_id" => $log->id
+                        ]);
                     }
 
                     foreach ($assignedToResponse['detached'] as $employeeId) {
                         $employee = Employee::with('user')->find($employeeId);
-                        Log::createLog(
+                        $log = Log::createLog(
                             Auth::user()->id,
                             Log::TYPE_CARD_UNASSIGNED_TO_USER,
                             'User ' . $employee['employee']['user']['full_name'] . ' has been removed from task [' . $task->task_simple_name . ']',
-                            $taskCard['badge_id'],
-                            $taskCard['board_id'],
+                            $employee['id'],
                             $taskCard['id'],
-                            $employee['id']
+                            'Xguard\LaravelKanban\Models\Task'
                         );
+                        TaskVersion::create([
+                            "index" => $taskCard['index'],
+                            "name" => $taskCard['name'],
+                            "deadline" => $taskCard['deadline'],
+                            "shared_task_data_id" =>$taskCard['shared_task_data_id'],
+                            "reporter_id" => $taskCard['reporter_id'],
+                            "column_id" => $taskCard['column_id'],
+                            "row_id" => $taskCard['row_id'],
+                            "board_id" => $taskCard['board_id'],
+                            "badge_id" => $taskCard['badge_id'],
+                            "status" =>$taskCard['status'] ? $taskCard['status'] : 'active',
+                            "task_id" => $taskCard['id'],
+                            "log_id" => $log->id
+                        ]);
                     }
 
                     $badge = Badge::firstOrCreate([
@@ -451,10 +504,9 @@ class TaskController extends Controller
                             Auth::user()->id,
                             Log::TYPE_BADGE_CREATED,
                             "The badge [" . $badge->name . "] was created",
+                            null,
                             $badge->id,
-                            $task->board_id,
-                            $task->id,
-                            null
+                            'Xguard\LaravelKanban\Models\Badge'
                         );
                     }
                 }
@@ -523,15 +575,28 @@ class TaskController extends Controller
                 // end logic to log what was changed during update
 
                 if (count($difference) > 0) {
-                    Log::createLog(
+                    $log = Log::createLog(
                         Auth::user()->id,
                         Log::TYPE_CARD_UPDATED,
                         "[" . implode("','", array_keys($difference)) . "] was updated.",
-                        $task['badge_id'],
-                        $task['board_id'],
+                        null,
                         $task['id'],
-                        null
+                        'Xguard\LaravelKanban\Models\Task'
                     );
+                    TaskVersion::create([
+                        "index" => $task['index'],
+                        "name" => $task['name'],
+                        "deadline" => $task['deadline'],
+                        "shared_task_data_id" =>$task['shared_task_data_id'],
+                        "reporter_id" => $task['reporter_id'],
+                        "column_id" => $task['column_id'],
+                        "row_id" => $task['row_id'],
+                        "board_id" => $task['board_id'],
+                        "badge_id" => $task['badge_id'],
+                        "status" => $task['status'] ? $task['status'] : 'active',
+                        "task_id" => $task['id'],
+                        "log_id" => $log->id
+                    ]);  
                 }
             } catch (\Exception $e) {
                 return response([
@@ -598,15 +663,28 @@ class TaskController extends Controller
             $row = $task->row->name;
             $column = $task->column->name;
 
-            Log::createLog(
+            $log = Log::createLog(
                 Auth::user()->id,
                 Log::TYPE_CARD_MOVED,
                 'Task [' . $task->task_simple_name . '] changed from [' . $prevRow . ':' . $prevColumn . '] to [' . $row . ':' . $column . ']',
                 null,
-                $task->board_id,
                 $task->id,
-                null
+                'Xguard\LaravelKanban\Models\Task'
             );
+            TaskVersion::create([
+                "index" => $task->index,
+                "name" => $task->name,
+                "deadline" => $task->deadline,
+                "shared_task_data_id" =>$task->shared_task_data_id,
+                "reporter_id" => $task->reporter_id,
+                "column_id" => $task->column_id,
+                "row_id" => $task->row_id,
+                "board_id" => $task->board_id,
+                "badge_id" => $task->badge_id,
+                "status" => $task->status ? $task->status : 'active',
+                "task_id" => $task->id,
+                "log_id" => $log->id
+            ]); 
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
@@ -642,25 +720,51 @@ class TaskController extends Controller
                 SharedTaskData::where('id', $taskCard->shared_task_data_id)->update(['description' => $descriptionData['description']]);
 
                 if ($descriptionData['isChecked'] === "true") {
-                    Log::createLog(
+                    $log = Log::createLog(
                         Auth::user()->id,
                         Log::TYPE_CARD_CHECKLIST_ITEM_CHECKED,
                         'Checked -> ' . $descriptionData['checkboxContent'],
-                        $taskCard->badge_id,
-                        $taskCard->board_id,
+                        null,
                         $taskCard->id,
-                        null
+                        'Xguard\LaravelKanban\Models\Task'
                     );
+                    TaskVersion::create([
+                        "index" => $taskCard->index,
+                        "name" => $taskCard->name,
+                        "deadline" => $taskCard->deadline,
+                        "shared_task_data_id" =>$taskCard->shared_task_data_id,
+                        "reporter_id" => $taskCard->reporter_id,
+                        "column_id" => $taskCard->column_id,
+                        "row_id" => $taskCard->row_id,
+                        "board_id" => $taskCard->board_id,
+                        "badge_id" => $taskCard->badge_id,
+                        "status" => $taskCard->status ? $taskCard->status : 'active',
+                        "task_id" => $taskCard->id,
+                        "log_id" => $log->id
+                    ]);
                 } else {
-                    Log::createLog(
+                    $log = Log::createLog(
                         Auth::user()->id,
                         Log::TYPE_CARD_CHECKLIST_ITEM_UNCHECKED,
                         'Unchecked -> ' . $descriptionData['checkboxContent'],
-                        $taskCard->badge_id,
-                        $taskCard->board_id,
+                        null,
                         $taskCard->id,
-                        null
+                        'Xguard\LaravelKanban\Models\Task'
                     );
+                    TaskVersion::create([
+                        "index" => $taskCard->index,
+                        "name" => $taskCard->name,
+                        "deadline" => $taskCard->deadline,
+                        "shared_task_data_id" =>$taskCard->shared_task_data_id,
+                        "reporter_id" => $taskCard->reporter_id,
+                        "column_id" => $taskCard->column_id,
+                        "row_id" => $taskCard->row_id,
+                        "board_id" => $taskCard->board_id,
+                        "badge_id" => $taskCard->badge_id,
+                        "status" => $taskCard->status ? $taskCard->status : 'active',
+                        "task_id" => $taskCard->id,
+                        "log_id" => $log->id
+                    ]);
                 }
             } catch (\Exception $e) {
                 return response([
@@ -697,35 +801,74 @@ class TaskController extends Controller
             }
 
             if ($status === 'completed') {
-                Log::createLog(
+                $log = Log::createLog(
                     Auth::user()->id,
                     Log::TYPE_CARD_COMPLETED,
                     'Task [' . $task->task_simple_name . '] in board [' . $task->board->name . '] set to completed',
-                    $task->badge_id,
-                    $task->board_id,
+                    null,
                     $task->id,
-                    null
+                    'Xguard\LaravelKanban\Models\Task'
                 );
+                TaskVersion::create([
+                    "index" => $task->index,
+                    "name" => $task->name,
+                    "deadline" => $task->deadline,
+                    "shared_task_data_id" =>$task->shared_task_data_id,
+                    "reporter_id" => $task->reporter_id,
+                    "column_id" => $task->column_id,
+                    "row_id" => $task->row_id,
+                    "board_id" => $task->board_id,
+                    "badge_id" => $task->badge_id,
+                    "status" => $task->status ? $task->status : 'active',
+                    "task_id" => $task->id,
+                    "log_id" => $log->id
+                ]); 
             } elseif ($status === 'cancelled') {
-                Log::createLog(
+                $log = Log::createLog(
                     Auth::user()->id,
                     Log::TYPE_CARD_CANCELED,
                     'Task [' . $task->task_simple_name . '] in board [' . $task->board->name . '] set to cancelled',
-                    $task->badge_id,
-                    $task->board_id,
+                    null,
                     $task->id,
-                    null
+                    'Xguard\LaravelKanban\Models\Task'
                 );
+                TaskVersion::create([
+                    "index" => $task->index,
+                    "name" => $task->name,
+                    "deadline" => $task->deadline,
+                    "shared_task_data_id" =>$task->shared_task_data_id,
+                    "reporter_id" => $task->reporter_id,
+                    "column_id" => $task->column_id,
+                    "row_id" => $task->row_id,
+                    "board_id" => $task->board_id,
+                    "badge_id" => $task->badge_id,
+                    "status" => $task->status ? $task->status : 'active',
+                    "task_id" => $task->id,
+                    "log_id" => $log->id
+                ]); 
             } elseif ($status === 'active') {
-                Log::createLog(
+                $log = Log::createLog(
                     Auth::user()->id,
                     Log::TYPE_CARD_CANCELED,
                     'Task [' . $task->task_simple_name . '] in board [' . $task->board->name . '] set to active',
-                    $task->badge_id,
-                    $task->board_id,
+                    null,
                     $task->id,
-                    null
+                    'Xguard\LaravelKanban\Models\Task'
                 );
+                TaskVersion::create([
+                    "index" => $task->index,
+                    "name" => $task->name,
+                    "deadline" => $task->deadline,
+                    "shared_task_data_id" =>$task->shared_task_data_id,
+                    "reporter_id" => $task->reporter_id,
+                    "column_id" => $task->column_id,
+                    "row_id" => $task->row_id,
+                    "board_id" => $task->board_id,
+                    "badge_id" => $task->badge_id,
+                    "status" => $task->status ? $task->status : 'active',
+                    "task_id" => $task->id,
+                    "log_id" => $log->id
+                ]); 
             }
         } catch (\Exception $e) {
             return response([
@@ -746,15 +889,28 @@ class TaskController extends Controller
                 'column_id' => $column_id
             ]);
 
-            Log::createLog(
+            $log = Log::createLog(
                 Auth::user()->id,
                 Log::TYPE_CARD_ASSIGNED_TO_BOARD,
                 'Task [' . $task->task_simple_name . '] assigned to board [' . $task->board->name . '] on [' . $task->row->name . ':' . $task->column->name . ']',
-                $task->badge_id,
-                $task->board_id,
+                null,
                 $task->id,
-                null
+                'Xguard\LaravelKanban\Models\Task'
             );
+            TaskVersion::create([
+                "index" => $task->index,
+                "name" => $task->name,
+                "deadline" => $task->deadline,
+                "shared_task_data_id" =>$task->shared_task_data_id,
+                "reporter_id" => $task->reporter_id,
+                "column_id" => $task->column_id,
+                "row_id" => $task->row_id,
+                "board_id" => $task->board_id,
+                "badge_id" => $task->badge_id,
+                "status" => $task->status ? $task->status : 'active',
+                "task_id" => $task->id,
+                "log_id" => $log->id
+            ]); 
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
@@ -781,15 +937,28 @@ class TaskController extends Controller
                 SharedTaskData::where('id', $prevGroup)->delete();
             }
 
-            Log::createLog(
+            $log = Log::createLog(
                 Auth::user()->id,
                 Log::TYPE_CARD_ASSIGNED_GROUP,
                 'Task [' . $taskCard->task_simple_name . '] changed group',
-                $taskCard->badge_id,
-                $taskCard->board_id,
+                null,
                 $taskCard->id,
-                null
+                'Xguard\LaravelKanban\Models\Task'
             );
+            TaskVersion::create([
+                "index" => $taskCard->index,
+                "name" => $taskCard->name,
+                "deadline" => $taskCard->deadline,
+                "shared_task_data_id" =>$taskCard->shared_task_data_id,
+                "reporter_id" => $taskCard->reporter_id,
+                "column_id" => $taskCard->column_id,
+                "row_id" => $taskCard->row_id,
+                "board_id" => $taskCard->board_id,
+                "badge_id" => $taskCard->badge_id,
+                "status" => $taskCard->status ? $taskCard->status : 'active',
+                "task_id" => $taskCard->id,
+                "log_id" => $log->id
+            ]); 
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
@@ -810,15 +979,29 @@ class TaskController extends Controller
                 'shared_task_data_id' => $sharedTaskData->id,
             ]);
 
-            Log::createLog(
+            $log = Log::createLog(
                 Auth::user()->id,
                 Log::TYPE_CARD_ASSIGNED_GROUP,
                 'Task [' . $taskCard->task_simple_name . '] was removed from group',
                 null,
-                $taskCard->board->id,
                 $taskCard->id,
-                null
+                'Xguard\LaravelKanban\Models\Task'
             );
+
+            TaskVersion::create([
+                "index" => $taskCard->index,
+                "name" => $taskCard->name,
+                "deadline" => $taskCard->deadline,
+                "shared_task_data_id" =>$taskCard->shared_task_data_id,
+                "reporter_id" => $taskCard->reporter_id,
+                "column_id" => $taskCard->column_id,
+                "row_id" => $taskCard->row_id,
+                "board_id" => $taskCard->board_id,
+                "badge_id" => $taskCard->badge_id,
+                "status" => $taskCard->status ? $taskCard->status : 'active',
+                "task_id" => $taskCard->id,
+                "log_id" => $log->id
+            ]);
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
