@@ -4,17 +4,18 @@
          @click="onClick(task)">
         <div class="border-gray-300 border px-3 py-3">
             <div class="flex flex-no-wrap">
+
                 <div class="min-w-0 flex">
-                    <div class="w-auto mr-3 -mt-1">
+                    <div class="w-32 mr-3 -mt-1 flex-none">
                         <badge :name="task.badge.name" class="inline-flex" v-if="task.badge !== []"></badge>
                     </div>
-                    <p class="truncate flex-shrink text-gray-700 font-semibold font-sans tracking-wide text-sm mr-3">
-                        <span class="font-bold">{{ task.task_simple_name}}: </span>
+                    <p class="truncate text-gray-700 font-semibold font-sans tracking-wide text-sm mr-3">
+                        <span class="font-bold">{{ task.task_simple_name }}: </span>
                         <span class="italic">{{ task.name }}</span>
                     </p>
                 </div>
 
-                <div class="flex flex-1 justify-end">
+                <div class="flex-1 justify-end hidden xl:flex">
                     <div class="flex mx-3 -mt-1">
                         <badge :name="task.board.name"></badge>
                     </div>
@@ -23,14 +24,16 @@
                             <div class="flex flex-wrap items-center">
                                 <avatar
                                     class="border border-white"
-                                    :name="task.reporter.full_name"
+                                    :name="task.reporter.user.full_name"
                                     :size="6"
                                     :tooltip="true"></avatar>
-                                <span class="text-sm text-gray-600 px-1">• {{moment(task.created_at).format("MMM Do") }}</span>
+                                <span class="text-sm text-gray-600 px-1">• {{
+                                        moment(task.created_at).format("MMM Do")
+                                    }}</span>
                             </div>
                         </div>
 
-                        <div class="flex w-20">
+                        <div class="flex w-20 items-center">
                             <template v-for="(assignedEmployee, employeeIndex) in task.assigned_to">
                                 <template v-if="employeeIndex < 3">
                                     <avatar
@@ -46,13 +49,48 @@
                             </template>
 
                             <div v-if="task.assigned_to" class="flex">
-                                <span
-                                    v-if="task.assigned_to.length > 3"
-                                    class="z-10 flex items-center justify-center font-semibold text-gray-800 text-xs w-6 h-6 rounded-full bg-gray-300 border-white border -ml-2 pr-1"
-                                >+{{ task.assigned_to.length - 3 }}
+                                <span v-if="task.assigned_to.length > 3"
+                                    class="z-10 flex items-center justify-center font-semibold text-gray-800 text-xs w-6 h-6 rounded-full bg-gray-300 border-white border -ml-2 pr-1">
+                                    +{{ task.assigned_to.length - 3 }}
                                 </span>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pl-2 border-gray-400 border-l-2 my-1"
+                 v-if="task.shared_task_data.erp_employees.length || task.shared_task_data.erp_contracts.length || task.deadline !== null">
+
+                <div v-if="task.shared_task_data.erp_employees.length" class="text-xs text-gray-600 flex space-x-1">
+                    <div class="font-bold leading-4 tracking-wide text-gray-600 w-32 flex-none">
+                        <span v-if="task.shared_task_data.erp_employees.length > 1"> Employees: </span>
+                        <span v-else>Employee: </span>
+                    </div>
+                    <div class="flex flex-wrap flex-1">
+                        <p class="pr-1" v-for="(employee, index) in task.shared_task_data.erp_employees">{{ employee.full_name }}
+                            <span v-if="index+1 !== task.shared_task_data.erp_employees.length">,</span>
+                        </p>
+                    </div>
+                </div>
+                <div v-if="task.shared_task_data.erp_contracts.length" class="text-xs text-gray-600 flex space-x-1">
+                    <div class="font-bold leading-4 tracking-wide text-gray-600 w-32 flex-none">
+                        <span v-if="task.shared_task_data.erp_contracts.length > 1"> Contracts: </span>
+                        <span v-else>Contract: </span>
+                    </div>
+                    <div class="flex flex-wrap">
+                        <p class="pr-1" v-for="(contract, index) in task.shared_task_data.erp_contracts">{{contract.contract_identifier }}
+                            <span v-if="index+1 !== task.shared_task_data.erp_contracts.length">,</span>
+                        </p>
+                    </div>
+
+                </div>
+                <div v-if="task.deadline !== null" class="text-xs text-gray-600 flex space-x-1">
+                    <div class="font-bold leading-4 tracking-wide text-gray-600 w-32 flex-none">
+                        <span >Deadline: </span>
+                    </div>
+                    <div>
+                        <p>{{ task.deadline | moment("DD MMM, YYYY") }}</p>
                     </div>
                 </div>
             </div>

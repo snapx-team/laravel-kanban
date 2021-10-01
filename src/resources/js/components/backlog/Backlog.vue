@@ -1,14 +1,19 @@
 <template>
     <div v-if="backlogData !== null">
-        <backlog-bar :name="'Backlog'"></backlog-bar>
+        <div class="flex flex-wrap p-4 pl-10">
+            <h3 class="text-3xl text-gray-800 font-bold py-1 pr-2">Backlog - </h3>
+            <h3 class="text-3xl text-gray-800 py-1"> Between {{ filters.filterStart | moment("MMM Do YYYY") }} and
+                {{ filters.filterEnd | moment("MMM Do YYYY") }}</h3>
+        </div>
+
         <div class="p-5">
             <div class="flex-column">
 
                 <!-- date filter -->
-                <div class="flex mb">
+                <div class="flex flex-wrap bg-gray-50 p-4 rounded">
                     <div class="flex-column w-72 mr-2">
-                    <span
-                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Start</span>
+                        <span
+                            class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Start</span>
                         <date-picker type="date" v-model="start"
                                      placeholder="YYYY-MM-DD"
                                      format="YYYY-MM-DD"
@@ -22,142 +27,159 @@
                                      format="YYYY-MM-DD"
                         ></date-picker>
                     </div>
-                    <button @click="getBacklogData()"
+                    <button @click="setTimeSpan()"
                             class="px-4 mt-4 h-12 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
                             type="button">
-                        <span>Filter</span>
+                        <span>Set Time Range</span>
                     </button>
                 </div>
 
                 <!-- general search -->
-                <div class="flex">
-                    <div class="flex block relative mt-3">
-                    <span class="absolute inset-y-0 left-0 flex items-center p-2">
-                        <i class="text-gray-400 fas fa-search"></i>
-                    </span>
-                        <input
-                            class="w-72 px-7 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 pr-10 outline-none text-md leading-4"
-                            placeholder="Search by keyword"
-                            type="text"
-                            v-model="filterText"/>
+                <div class="flex flex-wrap bg-gray-50 p-4 mt-3 rounded">
+
+                    <div class="flex flex-wrap">
+                        <div class="flex block relative mt-3">
+                            <span class="absolute inset-y-0 left-0 flex items-center p-2">
+                                <i class="text-gray-400 fas fa-search"></i>
+                            </span>
+                            <input
+                                @change="filterTrigger()"
+                                class="w-72 px-7 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 pr-10 outline-none text-md leading-4"
+                                placeholder="Search by keyword"
+                                type="text"
+                                v-model="filters.filterText"/>
+                        </div>
+
+                        <!-- active, completed, cancelled -->
+                        <div class="flex py-3 h-12 border mt-3 ml-2 bg-white rounded">
+                            <label class="flex mx-3">
+                                <input
+                                    class="mt-2 form-radio text-indigo-600"
+                                    name="task-options"
+                                    type="checkbox"
+                                    value="active"
+                                    @change="filterTrigger()"
+                                    v-model="filters.filterStatus">
+                                <div class="ml-1 text-gray-700 font-medium">
+                                    <p>Active</p>
+                                </div>
+                            </label>
+                            <label class="flex mx-3">
+                                <input
+                                    class="mt-2 form-radio text-indigo-600"
+                                    name="task-options"
+                                    type="checkbox"
+                                    value="completed"
+                                    @change="filterTrigger()"
+                                    v-model="filters.filterStatus">
+                                <div class="ml-1 text-gray-700 font-medium">
+                                    <p>Completed</p>
+                                </div>
+                            </label>
+                            <label class="flex mx-3">
+                                <input
+                                    class="mt-2 form-radio text-indigo-600"
+                                    name="task-options"
+                                    type="checkbox"
+                                    value="cancelled"
+                                    @change="filterTrigger()"
+                                    v-model="filters.filterStatus">
+                                <div class="ml-1 text-gray-700 font-medium">
+                                    <p>cancelled</p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- placed in board, awaiting placement -->
+                        <div class="flex py-3 h-12 border mt-3 mx-2 bg-white rounded">
+                            <label class="flex mx-3">
+                                <input
+                                    class="mt-2 form-radio text-indigo-600"
+                                    name="task-options"
+                                    type="checkbox"
+                                    @change="filterTrigger()"
+                                    v-model="filters.filterPlacedInBoard">
+                                <div class="ml-1 text-gray-700 font-medium">
+                                    <p>Placed In Board</p>
+                                </div>
+                            </label>
+                            <label class="flex mx-3">
+                                <input
+                                    class="mt-2 form-radio text-indigo-600"
+                                    name="task-options"
+                                    type="checkbox"
+                                    @change="filterTrigger()"
+                                    v-model="filters.filterNotPlacedInBoard">
+                                <div class="ml-1 text-gray-700 font-medium">
+                                    <p>Awaiting Placement</p>
+                                </div>
+                            </label>
+                        </div>
                     </div>
 
-                    <!-- active, completed, cancelled -->
-                    <div class="flex py-3 h-12 border mt-3 ml-2">
-                        <label class="flex mx-3">
-                            <input
-                                class="mt-2 form-radio text-indigo-600"
-                                name="task-options"
-                                type="checkbox"
-                                v-model="activeBool">
-                            <div class="ml-1 text-gray-700 font-medium">
-                                <p>Active</p>
-                            </div>
-                        </label>
-                        <label class="flex mx-3">
-                            <input
-                                class="mt-2 form-radio text-indigo-600"
-                                name="task-options"
-                                type="checkbox"
-                                v-model="completedBool">
-                            <div class="ml-1 text-gray-700 font-medium">
-                                <p>Completed</p>
-                            </div>
-                        </label>
-                        <label class="flex mx-3">
-                            <input
-                                class="mt-2 form-radio text-indigo-600"
-                                name="task-options"
-                                type="checkbox"
-                                v-model="cancelledBool">
-                            <div class="ml-1 text-gray-700 font-medium">
-                                <p>cancelled</p>
-                            </div>
-                        </label>
-                    </div>
+                    <!-- select filters -->
+                    <div class="flex flex-wrap mb-3">
+                        <div class="flex block mr-2">
+                            <vSelect
+                                v-model="filters.filterBadge"
+                                multiple
+                                :options="backlogData.badges"
+                                label="name"
+                                placeholder="Filter By Badge"
+                                @input="filterTrigger()"
+                                class="w-72 flex-grow text-gray-400">
+                                <template slot="option" slot-scope="option">
+                                    <p class="inline">{{ option.name }}</p>
+                                </template>
+                                <template #no-options="{ search, searching, loading }">
+                                    No result .
+                                </template>
+                            </vSelect>
+                        </div>
 
-                    <!-- placed in board, awaiting placement -->
-                    <div class="flex py-3 h-12 border mt-3 mx-2">
-                        <label class="flex mx-3">
-                            <input
-                                class="mt-2 form-radio text-indigo-600"
-                                name="task-options"
-                                type="checkbox"
-                                v-model="placedInBoard">
-                            <div class="ml-1 text-gray-700 font-medium">
-                                <p>Placed In Board</p>
-                            </div>
-                        </label>
-                        <label class="flex mx-3">
-                            <input
-                                class="mt-2 form-radio text-indigo-600"
-                                name="task-options"
-                                type="checkbox"
-                                v-model="notPlacedInBoard">
-                            <div class="ml-1 text-gray-700 font-medium">
-                                <p>Awaiting Placement</p>
-                            </div>
-                        </label>
-                    </div>
-                </div>
+                        <!-- assigned to -->
+                        <div class="flex block mr-2">
+                            <vSelect
+                                v-model="filters.filterAssignedTo"
+                                multiple
+                                :options="backlogData.kanbanUsers"
+                                :getOptionLabel="opt => opt.user.full_name"
+                                label="user.full_name"
+                                placeholder="Filter By Assigned Employee"
+                                @input="filterTrigger()"
+                                class="w-72 flex-grow text-gray-400">
+                                <template slot="option" slot-scope="option">
+                                    <avatar :name="option.user.full_name" :size="4"
+                                            class="mr-3 m-1 float-left"></avatar>
+                                    <p class="inline">{{ option.user.full_name }}</p>
+                                </template>
+                                <template #no-options="{ search, searching, loading }">
+                                    No result .
+                                </template>
+                            </vSelect>
+                        </div>
 
-                <!-- badges -->
-                <div class="flex mb-3">
-                    <div class="flex block mr-2">
-                        <vSelect
-                            v-model="filterBadge"
-                            multiple
-                            :options="backlogData.badges"
-                            label="name"
-                            placeholder="Filter By Badge"
-                            class="w-72 flex-grow text-gray-400">
-                            <template slot="option" slot-scope="option">
-                                <p class="inline">{{ option.name }}</p>
-                            </template>
-                            <template #no-options="{ search, searching, loading }">
-                                No result .
-                            </template>
-                        </vSelect>
-                    </div>
-
-                    <!-- assigned to -->
-                    <div class="flex block mr-2">
-                        <vSelect
-                            v-model="filterAssignedTo"
-                            multiple
-                            :options="backlogData.kanbanUsers"
-                            :getOptionLabel="opt => opt.user.full_name"
-                            label="user.full_name"
-                            placeholder="Filter By Assigned Employee"
-                            class="w-72 flex-grow text-gray-400">
-                            <template slot="option" slot-scope="option">
-                                <avatar :name="option.user.full_name" :size="4" class="mr-3 m-1 float-left"></avatar>
-                                <p class="inline">{{ option.user.full_name }}</p>
-                            </template>
-                            <template #no-options="{ search, searching, loading }">
-                                No result .
-                            </template>
-                        </vSelect>
-                    </div>
-
-                    <!-- reporter -->
-                    <div class="flex block">
-                        <vSelect
-                            v-model="filterReporter"
-                            multiple
-                            :options="backlogData.kanbanUsers"
-                            :getOptionLabel="opt => opt.user.full_name"
-                            label="name"
-                            placeholder="Filter By Reporter"
-                            class="w-72 flex-grow text-gray-400">
-                            <template slot="option" slot-scope="option">
-                                <avatar :name="option.user.full_name" :size="4" class="mr-3 m-1 float-left"></avatar>
-                                <p class="inline">{{ option.user.full_name }}</p>
-                            </template>
-                            <template #no-options="{ search, searching, loading }">
-                                No result .
-                            </template>
-                        </vSelect>
+                        <!-- reporter -->
+                        <div class="flex block">
+                            <vSelect
+                                v-model="filters.filterReporter"
+                                multiple
+                                :options="backlogData.kanbanUsers"
+                                :getOptionLabel="opt => opt.user.full_name"
+                                label="name"
+                                placeholder="Filter By Reporter"
+                                @input="filterTrigger()"
+                                class="w-72 flex-grow text-gray-400">
+                                <template slot="option" slot-scope="option">
+                                    <avatar :name="option.user.full_name" :size="4"
+                                            class="mr-3 m-1 float-left"></avatar>
+                                    <p class="inline">{{ option.user.full_name }}</p>
+                                </template>
+                                <template #no-options="{ search, searching, loading }">
+                                    No result .
+                                </template>
+                            </vSelect>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -180,26 +202,43 @@
                             <board-pane :boards="backlogData.boards"></board-pane>
                         </pane>
                         <pane :size="50" class="flex-grow">
-                            <div v-if="filtered.length > 0" class="h-full list-group">
+                            <div v-if="backlogData.backlogTasks.total > 0" class="h-full list-group">
                                 <backlog-card
-                                    v-for="task in filtered"
+                                    v-for="task in backlogTaskList"
                                     :key="task.id"
                                     :task="task"
                                     class="cursor-pointer">
                                 </backlog-card>
                             </div>
-                            <div v-if="filtered.length === 0 && !isLoadingTasks">
-                                <div class="text-2xl text-indigo-800 text-center m-auto font-bold py-10 bg-gray-100" >
-                                    <i class="fas fa-search mb-2 animate-bounce"></i>
-                                    <p >No Tasks Found</p>
+
+
+                            <button v-observe-visibility="visibilityChanged"
+                                    @click="getMoreBacklogTasks"
+                                    class=" text-sm bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded w-full"
+                                    v-if="backlogData.backlogTasks.current_page <= backlogData.backlogTasks.last_page">
+                                <span v-if="!isLoadingTasks">Load More</span>
+                            </button>
+
+                            <div>
+                                <div v-if="backlogData.backlogTasks.total === 0 && !isLoadingTasks">
+                                    <div
+                                        class="text-2xl text-indigo-800 text-center m-auto font-bold py-10 bg-gray-100">
+                                        <i class="fas fa-search mb-2 animate-bounce"></i>
+                                        <p>No Tasks Found</p>
+                                    </div>
                                 </div>
                             </div>
-                            <div v-if="isLoadingTasks">
-                                <div class="text-2xl text-indigo-800 text-center m-auto font-bold py-10 bg-gray-100" >
-                                    <i class="fas fa-search mb-2 animate-bounce"></i>
-                                    <p >Loading</p>
+                            <div>
+                                <div v-if="isLoadingTasks">
+                                    <div
+                                        class="text-2xl text-indigo-800 text-center m-auto font-bold py-10 bg-gray-100">
+                                        <i class="fas fa-circle-notch mb-2 animate-spin"></i>
+                                        <p>Loading</p>
+                                    </div>
                                 </div>
                             </div>
+
+
                         </pane>
                         <pane v-if="showTaskPane">
                             <task-pane :badges="backlogData.badges"
@@ -217,12 +256,19 @@ import draggable from "vuedraggable";
 import BacklogCard from "./backlogComponents/BacklogCard.vue";
 import TaskPane from "./backlogComponents/TaskPane.vue";
 import BoardPane from "./backlogComponents/BoardPane.vue";
-import {Splitpanes, Pane} from "splitpanes";
+import {Pane, Splitpanes} from "splitpanes";
 import "splitpanes/dist/splitpanes.css";
 import BacklogBar from "./backlogComponents/BacklogBar.vue";
 import vSelect from "vue-select";
 import {ajaxCalls} from "../../mixins/ajaxCallsMixin";
 import Avatar from "../global/Avatar.vue";
+import moment from "moment";
+import axios from 'axios';
+import _ from "lodash";
+
+
+const cancellationToken = axios.CancelToken;
+let tokenSource = cancellationToken.source();
 
 export default {
     inject: ["eventHub"],
@@ -237,25 +283,32 @@ export default {
         vSelect,
         Avatar
     },
+
     data() {
         return {
+            requests: [],
+            request: null,
             pageNumber: 1,
+            backlogTaskList: [],
             isLoadingTasks: false,
             backlogData: null,
-            filterText: "",
-            filterBadge: [],
-            filterBoard: [],
-            filterAssignedTo: [],
-            filterReporter: [],
+
+            filters: {
+                filterText: "",
+                filterBadge: [],
+                filterBoard: [],
+                filterAssignedTo: [],
+                filterReporter: [],
+                filterStatus: ['active'],
+                filterPlacedInBoard: false,
+                filterNotPlacedInBoard: true,
+                filterStart: this.getOneMonthAgo(),
+                filterEnd: new Date(),
+            },
             start: this.getOneMonthAgo(),
             end: new Date(),
             showBoardsPane: true,
             showTaskPane: false,
-            activeBool: true,
-            cancelledBool: false,
-            completedBool: false,
-            placedInBoard: false,
-            notPlacedInBoard: true,
         };
     },
 
@@ -266,6 +319,8 @@ export default {
     },
 
     created() {
+        this.moment = moment;
+
         this.eventHub.$on("open-task-view", (task) => {
             this.setSideInfo(task);
         });
@@ -292,150 +347,82 @@ export default {
     },
 
     computed: {
-        filtered() {
 
-            return this.backlogData.backlogTasks;
-
-            const regex = new RegExp(this.filterText, "i");
-            let newArray = [];
-            this.filteredWithOptions.forEach(function (value) {
-                if (
-                    (value.task_simple_name).match(regex) ||
-                    value.name.match(regex) ||
-                    value.badge.name.match(regex) ||
-                    value.board.name.match(regex)
-                ) {
-                    newArray.push(value);
-                }
-            });
-            return newArray;
-        },
-
-        filteredWithOptions() {
-            if (this.backlogData != null) {
-                let regex = new RegExp("", "i");
-                return this.backlogData.backlogTasks.filter((t) => {
-                    let badgeMatch = this.isBadgeMatch(t, regex);
-                    let boardMatch = this.isBoardMatch(t, regex);
-                    let statusMatch = this.isStatusMatch(t);
-                    let assignedMatch = this.isPlacedInBoardMatch(t);
-                    let assignedToMatch = this.isAssignedToEmployeeMatch(t);
-                    let reporterMatch = this.isReporterMatch(t);
-
-                    return badgeMatch && boardMatch && statusMatch && assignedMatch && assignedToMatch && reporterMatch;
-                });
-            } else {
-                return [];
-            }
-        },
         startTime() {
-            return this.start.toISOString().slice(0, 10);
+            return this.filters.filterStart.toISOString().slice(0, 10);
         },
         endTime() {
-            return this.end.toISOString().slice(0, 10);
+            return this.filters.filterEnd.toISOString().slice(0, 10);
         }
     },
     methods: {
-        isBadgeMatch(t, regex) {
-            let badgeMatch = false;
-            if (this.filterBadge.length > 0) {
-                this.filterBadge.every(function (value1) {
-                    regex = new RegExp(value1, "i");
-                    if (t.badge.name.match(regex)) {
-                        badgeMatch = true;
-                        return false;
-                    }
-                    return true;
-                });
+
+        getBacklogData() {
+            if (this.start && this.end) {
+                this.eventHub.$emit("set-loading-state", true);
+                this.isLoadingTasks = true;
+                this.pageNumber = 1;
+
+
+                this.asyncGetBacklogData(this.startTime, this.endTime,).then((data) => {
+                    this.backlogData = data.data;
+                    this.eventHub.$emit("set-loading-state", false);
+
+                    this.getMoreBacklogTasks();
+                })
             } else {
-                badgeMatch = true;
+                this.triggerErrorToast('select a start and end time')
             }
-            return badgeMatch;
+
         },
-        isBoardMatch(t, regex) {
-            let boardMatch = false;
-            if (this.filterBoard.length > 0) {
-                this.filterBoard.every(function (value2) {
-                    regex = new RegExp(value2, "i");
-                    if (t.board.name.match(regex)) {
-                        boardMatch = true;
-                        return false;
-                    }
-                    return true;
-                });
-            } else {
-                boardMatch = true;
+
+        getMoreBacklogTasks() {
+
+            if (this.isLoadingTasks) {
+                tokenSource.cancel();
             }
-            return boardMatch;
+            this.isLoadingTasks = true;
+
+
+            tokenSource = cancellationToken.source();
+            this.asyncGetBacklogTasks(this.pageNumber, this.filters, tokenSource.token).then((data) => {
+                this.pageNumber++;
+                this.backlogData.backlogTasks = data.data;
+                this.backlogTaskList = this.backlogTaskList.concat(this.backlogData.backlogTasks.data);
+                this.isLoadingTasks = false;
+            }).catch((error) => {
+                console.log(error);
+            });
         },
+
+        visibilityChanged(isVisible, entry) {
+            if (isVisible) {
+                this.getMoreBacklogTasks();
+            }
+        },
+
         filterByBoard(board) {
-            if (this.filterBoard.includes(board)) {
-                // remove it from array
-                let newArray = this.filterBoard.filter((t) => {
-                    return t !== board;
-                });
-                this.filterBoard = newArray;
-            } else {
-                // add to array
-                this.filterBoard.push(board);
-            }
-        },
-        isAssignedToEmployeeMatch(t) {
-            let isMatch = false;
-            if (this.filterAssignedTo.length > 0) {
-                this.filterAssignedTo.every(function (value1) {
-                    t.assigned_to.every(function (value2) {
-                        if (value1.id === value2.id) {
-                            isMatch = true;
-                            return false;
-                        }
-                        return true;
-                    });
+
+            let contains = this.filters.filterBoard.some(elem => {
+                return board.id === elem.id;
+            });
+            if (contains) {
+                this.filters.filterBoard = this.filters.filterBoard.filter((t) => {
+                    return t.id !== board.id;
                 });
             } else {
-                isMatch = true;
+                this.filters.filterBoard.push(board);
             }
-            return isMatch;
+            this.filterTrigger();
         },
-        isReporterMatch(t) {
-            let isMatch = false;
-            if (this.filterReporter.length > 0) {
-                this.filterReporter.every(function (value1) {
-                    if (value1.id === t.reporter_id) {
-                        isMatch = true;
-                        return false;
-                    }
-                    return true;
-                });
-            } else {
-                isMatch = true;
-            }
-            return isMatch;
+
+
+        filterTrigger() {
+            this.pageNumber = 1;
+            this.backlogTaskList = [];
+            this.getMoreBacklogTasks();
         },
-        isStatusMatch(t) {
-            if (this.activeBool && t.status === "active") {
-                return true;
-            }
-            if (this.cancelledBool && t.status === "cancelled") {
-                return true;
-            }
-            if (this.completedBool && t.status === "completed") {
-                return true;
-            }
-            return false;
-        },
-        isPlacedInBoardMatch(t) {
-            if (this.placedInBoard && t.column_id != null) {
-                return true;
-            }
-            if (this.notPlacedInBoard && t.column_id == null && t.status === "active") {
-                return true;
-            }
-            if (!this.notPlacedInBoard && !this.placedInBoard) {
-                return true;
-            }
-            return false;
-        },
+
         setSideInfo(task) {
             this.showTaskPane = true;
             setTimeout(() => {
@@ -448,41 +435,20 @@ export default {
         closeBoardView() {
             this.showBoardsPane = false;
         },
-        getBacklogData() {
-            if(this.start && this.end){
-                this.eventHub.$emit("set-loading-state", true);
-                this.isLoadingTasks =  true;
 
-                this.asyncGetBacklogData(this.startTime, this.endTime, ).then((data) => {
-                    this.backlogData = data.data;
-                    this.eventHub.$emit("set-loading-state", false);
-
-                    this.asyncGetBacklogTasks(this.startTime, this.endTime, ).then((data) => {
-                        this.backlogData.backlogTasks = data.data;
-                        this.isLoadingTasks =  false;
-                        console.log(this.backlogData);
-                        console.log(data.data);
-                    })
-
-                })
-            }
-            else{
-                this.triggerErrorToast('select a start and end time')
-            }
-
-        },
-
-        filterBacklogData() {
-            this.pageNumber = 1,
-                this.getBacklogData();
+        setTimeSpan() {
+            this.filters.filterStart = this.start;
+            this.filters.filterEnd = this.end;
+            this.getBacklogData();
         },
 
         getOneMonthAgo() {
             let d = new Date()
             return new Date(d.setMonth(d.getMonth() - 1));
         },
-    },
-};
+    }
+}
+;
 </script>
 
 <style scoped>

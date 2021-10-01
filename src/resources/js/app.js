@@ -13,10 +13,10 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 import VueQuillEditor from 'vue-quill-editor';
 import 'quill/dist/quill.core.css'; // import styles
 import 'quill/dist/quill.snow.css'; // for snow theme
-import 'quill/dist/quill.bubble.css';
-import axios from 'axios'; // for bubble theme
+import 'quill/dist/quill.bubble.css';// for bubble theme
+import axios from 'axios';
 import device from 'vue-device-detector';
-
+import VueObserveVisibility from 'vue-observe-visibility';
 
 Vue.config.productionTip = false;
 
@@ -31,6 +31,7 @@ Vue.use(VueSweetalert2);
 Vue.use(DatePicker);
 Vue.use(VueMoment);
 Vue.use(device);
+Vue.use(VueObserveVisibility);
 
 let globalData = new Vue({
     data: {$role: 'employee'}

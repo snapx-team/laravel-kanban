@@ -115,8 +115,10 @@ export const ajaxCalls = {
 
         // Tasks
 
-        asyncGetBacklogTasks(start, end) {
-            return axios.get('get-backlog-tasks/' + start + '/' + end);
+        asyncGetBacklogTasks(page, filters, cancelToken) {
+            return axios.post('get-backlog-tasks?page='+page, filters, {cancelToken: cancelToken}).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         asyncGetAllTasks() {

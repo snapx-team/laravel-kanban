@@ -18,52 +18,107 @@ use Illuminate\Support\Facades\Validator;
 class TaskController extends Controller
 {
 
-    public function getBacklogTasks($start, $end)
+    public function getBacklogTasks(Request $request)
     {
-        if (session('role') === 'admin') {
-            $backlogTasks = Task::
-            with('badge', 'row', 'column', 'board', 'sharedTaskData')
-                ->with(['reporter' => function ($q) {
-                    $q->select(['id', 'first_name', 'last_name']);
-                }])
-                ->with(['assignedTo.employee.user' => function ($q) {
-                    $q->select(['id', 'first_name', 'last_name']);
-                }])
-                ->with(['sharedTaskData' => function ($q) {
-                    $q->with(['erpContracts' => function ($q) {
-                        $q->select(['contracts.id', 'contract_identifier']);
-                    }])->with(['erpEmployees' => function ($q) {
-                        $q->select(['users.id', 'first_name', 'last_name']);
-                    }]);
-                }])
-                ->whereDate('created_at', '>=', new DateTime($start))
-                ->whereDate('created_at', '<=', new DateTime($end))
-                ->orderBy('deadline')->get();
+        $filters = $request->all();
 
-        } else {
-            $backlogTasks = Task::with('board', 'badge', 'row', 'column')
-                ->whereHas('board.members', function ($q) {
-                    $q->where('employee_id', session('employee_id'));
-                })
-                ->with(['reporter' => function ($q) {
-                    $q->select(['id', 'first_name', 'last_name']);
-                }])
-                ->with(['assignedTo.employee.user' => function ($q) {
-                    $q->select(['id', 'first_name', 'last_name']);
-                }])
-                ->with(['sharedTaskData' => function ($q) {
-                    $q->with(['erpContracts' => function ($q) {
-                        $q->select(['contracts.id', 'contract_identifier']);
-                    }])->with(['erpEmployees' => function ($q) {
-                        $q->select(['users.id', 'first_name', 'last_name']);
-                    }]);
-                }])
-                ->whereDate('created_at', '>=', new DateTime($start))
-                ->whereDate('created_at', '<=', new DateTime($end))
-                ->orderBy('deadline')->get();
+
+        $query = Task::with('badge', 'row', 'column', 'board', 'sharedTaskData')
+            ->with(['reporter.user' => function ($q) {
+                $q->select(['id', 'first_name', 'last_name']);
+            }])
+            ->with(['assignedTo.employee.user' => function ($q) {
+                $q->select(['id', 'first_name', 'last_name']);
+            }])
+            ->with(['sharedTaskData' => function ($q) {
+                $q->with(['erpContracts' => function ($q) {
+                    $q->select(['contracts.id', 'contract_identifier']);
+                }])->with(['erpEmployees' => function ($q) {
+                    $q->select(['users.id', 'first_name', 'last_name']);
+                }]);
+            }])
+            ->orderBy('deadline')
+            ->whereDate('created_at', '>=', new DateTime($filters['filterStart']))
+            ->whereDate('created_at', '<=', new DateTime($filters['filterEnd']))
+            ->whereIn('status', $filters['filterStatus']);
+
+
+        if (session('role') === 'employee') {
+            $query->whereHas('board.members', function ($q) {
+                $q->where('employee_id', session('employee_id'));
+            });
         }
 
-        return $backlogTasks;
+
+        if (!$filters['filterPlacedInBoard']) {
+            $query->whereNull('column_id');
+        }
+        if (!$filters['filterNotPlacedInBoard']) {
+            $query->whereNotNull('column_id');
+        }
+
+        if ($filters['filterText']) {
+            $searchTerm = $filters['filterText'];
+
+            $extractedLetters = preg_replace("/[^a-zA-Z]/", "", $searchTerm);
+            $extractedNumbers = abs(filter_var($searchTerm, FILTER_SANITIZE_NUMBER_INT));
+
+            if (preg_match("/[a-zA-Z]{1,3}-\d{1,7}/", $searchTerm)) {
+                $query->whereHas('board', function ($q) use ($extractedLetters) {
+                    $q->where('name', 'like', $extractedLetters . "%");
+                })->where('id', 'like', $extractedNumbers . "%")
+                    ->orWhere('name', 'like', "%{$searchTerm}%");
+            } elseif ($extractedLetters != "") {
+                $query
+                    ->whereHas('board', function ($q) use ($extractedLetters) {
+                        if ($extractedLetters != "") {
+                            $q->where('name', 'like', $extractedLetters . "%");
+                        }
+                    })
+                    ->orWhere('name', 'like', "%{$searchTerm}%");
+            } elseif ($extractedNumbers != 0) {
+                $query
+                    ->where('id', 'like', $extractedNumbers . "%")
+                    ->orWhere('name', 'like', "%{$searchTerm}%");
+            }
+        }
+
+        if (!empty($filters['filterBadge'])) {
+            $badges = $filters['filterBadge'];
+            $badgeIds = array_column($badges, 'id');
+
+            $query->whereHas('badge', function ($q) use ($badgeIds) {
+                $q->whereIn('id', $badgeIds);
+            });
+        }
+
+        if (!empty($filters['filterBoard'])) {
+            $boards = $filters['filterBoard'];
+            $boardIds = array_column($boards, 'id');
+
+            $query->whereHas('board', function ($q) use ($boardIds) {
+                $q->whereIn('id', $boardIds);
+            });
+        }
+
+
+        if (!empty($filters['filterAssignedTo'])) {
+            $assignedTo = $filters['filterAssignedTo'];
+            $assignedToIds = array_column($assignedTo, 'id');
+
+            $query->whereHas('assignedTo', function ($q) use ($assignedToIds) {
+                $q->whereIn('employee_id', $assignedToIds);
+            });
+        }
+
+        if (!empty($filters['filterReporter'])) {
+            $reporters = $filters['filterReporter'];
+            $reporterIds = array_column($reporters, 'id');
+
+            $query->whereIn('reporter_id', $reporterIds);
+        }
+
+        return $query->paginate(15);
     }
 
     public function getAllTasks()
@@ -73,29 +128,32 @@ class TaskController extends Controller
 
     public function getSomeTasks($searchTerm)
     {
-        if (preg_match("/[a-zA-Z]{3}-\d.*/", $searchTerm)) {
-            $tasks = Task::with('board')
-            ->whereHas('board', function ($q) use ($searchTerm) {
-                $q->where('name', 'like', substr($searchTerm, 0, 3)."%");
-            })->where('id', 'like', abs(filter_var($searchTerm, FILTER_SANITIZE_NUMBER_INT)))
-            ->orWhere('name', 'like', "%{$searchTerm}%")
-            ->take(5)
-            ->get();
-        } else {
-            $tasks = Task::with('board')
-            ->whereHas('board', function ($q) use ($searchTerm) {
-                $q->where('name', 'like', substr($searchTerm, 0, 3)."%");
-            })->where('id', 'like', abs(filter_var($searchTerm, FILTER_SANITIZE_NUMBER_INT)))
-            ->orWhereHas('board', function ($q) use ($searchTerm) {
-                $q->where('name', 'like', substr($searchTerm, 0, 3)."%");
-            })
-            ->orWhere('id', 'like', abs(filter_var($searchTerm, FILTER_SANITIZE_NUMBER_INT)))
-            ->orWhere('name', 'like', "%{$searchTerm}%")
-            ->take(5)
-            ->get();
+
+        $query = Task::with('board');
+
+        $extractedLetters = preg_replace("/[^a-zA-Z]/", "", $searchTerm);
+        $extractedNumbers = abs(filter_var($searchTerm, FILTER_SANITIZE_NUMBER_INT));
+
+        if (preg_match("/[a-zA-Z]{1,3}-\d{1,7}/", $searchTerm)) {
+            $query->whereHas('board', function ($q) use ($extractedLetters) {
+                $q->where('name', 'like', $extractedLetters . "%");
+            })->where('id', 'like', $extractedNumbers . "%")
+                ->orWhere('name', 'like', "%{$searchTerm}%");
+        } elseif ($extractedLetters != "") {
+            $query
+                ->whereHas('board', function ($q) use ($extractedLetters) {
+                    if ($extractedLetters != "") {
+                        $q->where('name', 'like', $extractedLetters . "%");
+                    }
+                })
+                ->orWhere('name', 'like', "%{$searchTerm}%");
+        } elseif ($extractedNumbers != 0) {
+            $query
+                ->where('id', 'like', $extractedNumbers . "%")
+                ->orWhere('name', 'like', "%{$searchTerm}%");
         }
 
-        return $tasks;
+        return $query->take(10)->get();
     }
 
     public function getTaskData($id)
@@ -104,7 +162,7 @@ class TaskController extends Controller
             ->with(['assignedTo.employee.user' => function ($q) {
                 $q->select(['id', 'first_name', 'last_name']);
             }])
-            ->with(['reporter' => function ($q) {
+            ->with(['reporter.user' => function ($q) {
                 $q->select(['id', 'first_name', 'last_name']);
             }])
             ->with(['sharedTaskData' => function ($q) {
@@ -124,7 +182,7 @@ class TaskController extends Controller
             ->with(['assignedTo.employee.user' => function ($q) {
                 $q->select(['id', 'first_name', 'last_name']);
             }])
-            ->with(['reporter' => function ($q) {
+            ->with(['reporter.user' => function ($q) {
                 $q->select(['id', 'first_name', 'last_name']);
             }])
             ->with(['sharedTaskData' => function ($q) {
@@ -226,8 +284,6 @@ class TaskController extends Controller
                     null
                 );
             }
-
-
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
@@ -501,8 +557,7 @@ class TaskController extends Controller
             ->with(['assignedTo.employee.user' => function ($q) {
                 $q->select(['id', 'first_name', 'last_name']);
             }])
-
-            ->with(['reporter' => function ($q) {
+            ->with(['reporter.user' => function ($q) {
                 $q->select(['id', 'first_name', 'last_name']);
             }])
             ->with(['sharedTaskData' => function ($q) {

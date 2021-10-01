@@ -38,6 +38,8 @@
             </div>
         </div>
 
+        <hr/>
+
         <div class="py-4 transition duration-150 ease-in-out mt-3"
              :class=" !isSideBarOpen ? 'px-0': 'px-8' ">
             <div class="text-center">

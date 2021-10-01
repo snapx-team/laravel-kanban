@@ -5,6 +5,7 @@ namespace Xguard\LaravelKanban;
 use Illuminate\Support\ServiceProvider;
 use Xguard\LaravelKanban\Commands\CreateAdmin;
 use Xguard\LaravelKanban\Commands\MoveErpDataInTaskToErpShareables;
+use Xguard\LaravelKanban\Commands\ReplaceAllReporterIdsFromUserToEmployee;
 use Xguard\LaravelKanban\Http\Middleware\CheckHasAccess;
 
 class LaravelKanbanServiceProvider extends ServiceProvider
@@ -33,7 +34,7 @@ class LaravelKanbanServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
         $this->loadMigrationsFrom(__DIR__ . '/database/seeds');
 
-        $this->commands([CreateAdmin::class, MoveErpDataInTaskToErpShareables::class]);
+        $this->commands([CreateAdmin::class, MoveErpDataInTaskToErpShareables::class, ReplaceAllReporterIdsFromUserToEmployee::class]);
 
 
         include __DIR__ . '/routes/web.php';
