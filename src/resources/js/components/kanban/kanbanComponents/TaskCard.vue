@@ -67,7 +67,7 @@
         </div>
         <div class="flex mt-2 justify-between items-center">
             <div class="flex flex-wrap items-center">
-                <avatar :name="task_card.reporter.full_name" :size="6" :tooltip="true"
+                <avatar :name="task_card.reporter.user.full_name" :size="6" :tooltip="true"
                         class="border border-white"></avatar>
                 <span class="text-xs text-gray-600 px-1"> • {{ task_card.created_at | moment("DD MMM, YYYY") }}</span>
             </div>

@@ -100,9 +100,9 @@
                         <i class="fas fa-bullhorn mr-2"></i>
                         <p class="font-semibold font-sans tracking-wide text-sm"> Reporter: </p>
                     </div>
-                    <avatar :name="cardData.reporter.full_name" :size="6" :tooltip="true"
+                    <avatar :name="cardData.reporter.user.full_name" :size="6" :tooltip="true"
                             class="border border-white max-w-md"></avatar>
-                    <span class="text-xs text-gray-600 px-1"> {{ cardData.reporter.full_name }}</span>
+                    <span class="text-xs text-gray-600 px-1"> {{ cardData.reporter.user.full_name }}</span>
                 </div>
 
                 <div class="flex">

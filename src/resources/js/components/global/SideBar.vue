@@ -38,6 +38,8 @@
             </div>
         </div>
 
+        <hr/>
+
         <div class="py-4 transition duration-150 ease-in-out mt-3"
              :class=" !isSideBarOpen ? 'px-0': 'px-8' ">
             <div class="text-center">
@@ -46,7 +48,7 @@
                     <h1 class="text-3xl tracking-wide text-indigo-800 font-bold my-0">
                         KANYEBAN </h1>
                     <p class="text-xs text-indigo-800">
-                        The Greatest Kanban Of All Time {{ msg }}</p>
+                        The Greatest Kanban Of All Time</p>
 
                 </div>
             </div>

@@ -96,7 +96,7 @@
                             <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline</span>
                             <date-picker type="datetime" v-model="cloneCardData.deadline"
                                          placeholder="YYYY-MM-DD HH:mm"
-                                         :popup-style="{ position: 'fixed' }" format="YYYY-MM-DD HH:mm"
+                                         format="YYYY-MM-DD HH:mm"
                             ></date-picker>
 
                         </div>

@@ -36,7 +36,7 @@ class Task extends Model
 
     public function reporter(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'reporter_id');
+        return $this->belongsTo(Employee::class, 'reporter_id');
     }
 
     public function badge(): BelongsTo

@@ -8,6 +8,7 @@ use DateTime;
 use Illuminate\Support\Facades\Auth;
 use Lorisleiva\Actions\Action;
 use Xguard\LaravelKanban\Http\Helper\CheckHasAccessToBoardWithBoardId;
+use Xguard\LaravelKanban\Models\Badge;
 use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Board;
 use Xguard\LaravelKanban\Models\Template;
@@ -58,7 +59,7 @@ class LaravelKanbanController extends Controller
                     ->with(['assignedTo.employee.user' => function ($q) {
                         $q->select(['id', 'first_name', 'last_name']);
                     }])
-                    ->with(['reporter' => function ($q) {
+                    ->with(['reporter.user' => function ($q) {
                         $q->select(['id', 'first_name', 'last_name']);
                     }]);
             }])->with(['members.employee.user' => function ($q) {
@@ -95,7 +96,7 @@ class LaravelKanbanController extends Controller
         if (session('role') === 'admin') {
             $backlogTasks = Task::
             with('badge', 'row', 'column', 'board', 'sharedTaskData')
-                ->with(['reporter' => function ($q) {
+                ->with(['reporter.user' => function ($q) {
                     $q->select(['id', 'first_name', 'last_name']);
                 }])
                 ->with(['assignedTo.employee.user' => function ($q) {
@@ -118,7 +119,7 @@ class LaravelKanbanController extends Controller
                 ->whereHas('board.members', function ($q) {
                     $q->where('employee_id', session('employee_id'));
                 })
-                ->with(['reporter' => function ($q) {
+                ->with(['reporter.user' => function ($q) {
                     $q->select(['id', 'first_name', 'last_name']);
                 }])
                 ->with(['assignedTo.employee.user' => function ($q) {
@@ -145,8 +146,9 @@ class LaravelKanbanController extends Controller
         $kanbanUsers = Employee::with('user')->get();
 
         $boardArray = [];
-        foreach ($boards as $board) {
+        foreach ($boards as $key => $board) {
             $boardArray[$board->id] = (object)[
+                'id' => $board->id,
                 'name' => $board->name,
                 'percent' => 0,
                 'total' => 0,
@@ -157,11 +159,7 @@ class LaravelKanbanController extends Controller
             ];
         }
 
-        $badgeArray = [];
         foreach ($backlogTasks as $task) {
-            if (!in_array($task->badge->name, $badgeArray)) {
-                array_push($badgeArray, $task->badge->name);
-            }
             if ($task->status === "active" && $task->row_id !== null) {
                 $boardArray[$task->board_id]->active += 1;
                 if (count($task->assignedTo) > 0) {
@@ -181,10 +179,12 @@ class LaravelKanbanController extends Controller
             }
         }
 
+        $badgeArray = Badge::all();
+
         return [
             'boards' => $boardArray,
             'allBoards' => $boards,
-            'backlogTasks' => $backlogTasks,
+            'backlogTasks' => [],
             'badges' => $badgeArray,
             'kanbanUsers' => $kanbanUsers,
         ];

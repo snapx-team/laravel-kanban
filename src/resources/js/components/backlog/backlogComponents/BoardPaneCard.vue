@@ -1,7 +1,7 @@
 <template>
     <div
         class="border-gray-300 border px-2 pt-2"
-        @click="onClick()"
+        @click="filterByBoard()"
         :class="clicked ? 'unclick-theme' : 'click-theme'">
         <div class="flex">
             <div
@@ -77,8 +77,8 @@ export default {
         expandPanel() {
             this.showMore = !this.showMore;
         },
-        onClick() {
-            this.eventHub.$emit("filter-by-board", this.board.name);
+        filterByBoard() {
+            this.eventHub.$emit("filter-by-board", this.board);
             this.clicked = !this.clicked;
         },
     },
