@@ -170,8 +170,15 @@ export default {
             loadingBoard: false,
             notifNumber: 0,
             isSideBarOpen: true,
-            subdomain: null,
             isErpLinksOpen: false,
+            subdomain: null,
+            erpVersion:{
+                color: 'red',
+                subdomain: 'none',
+                name: 'Xguard Default',
+                shortNmae: 'XD',
+                url: '/kanban'
+            },
             erpVersions: [
                 {
                     color: 'gray',
@@ -208,7 +215,7 @@ export default {
     }, mounted() {
         this.getBoards();
         this.getNotificationCount();
-        this.getSubDomain();
+        this.setVersion();
 
         if(this.$device.mobile || this.$device.ios || this.$device.android || window.innerWidth < 1200){
             this.isSideBarOpen = false;
@@ -246,28 +253,14 @@ export default {
             this.isSideBarOpen = !this.isSideBarOpen;
         },
 
-        getSubDomain() {
-            let host = window.location.host
-            this.subdomain = host.split('.')[0]
-        }
-    },
-
-    computed: {
-        erpVersion() {
+        setVersion() {
+            this.subdomain = window.location.host.split('.')[0]
 
             this.erpVersions.forEach(version => {
                 if (version.subdomain === this.subdomain) {
-                    return version;
+                    this.erpVersion =  version;
                 }
             });
-
-            return {
-                color: 'red',
-                subdomain: 'none',
-                name: 'Xguard Default',
-                shortNmae: 'XD',
-                url: '/kanban'
-            }
         }
     }
 };

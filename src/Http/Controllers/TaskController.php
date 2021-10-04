@@ -253,7 +253,7 @@ class TaskController extends Controller
             foreach ($backlogTaskData['selectedKanbans'] as $kanban) {
                 $task = Task::with('board')->create([
                     'index' => null,
-                    'reporter_id' => Auth::user()->id,
+                    'reporter_id' => session('employee_id'),
                     'name' => $backlogTaskData['name'],
                     'deadline' => $request->input('deadline') !== null ? date('y-m-d h:m', strtotime($backlogTaskData['deadline'])) : null,
                     'badge_id' => $badge->id,
@@ -346,7 +346,7 @@ class TaskController extends Controller
             $maxIndex++;
             $task = Task::with('board')->create([
                 'index' => $maxIndex,
-                'reporter_id' => Auth::user()->id,
+                'reporter_id' => session('employee_id'),
                 'name' => $taskCard['name'],
                 'deadline' => $request->input('deadline') !== null ? date('y-m-d h:m', strtotime($taskCard['deadline'])) : null,
                 'badge_id' => $badge->id,
