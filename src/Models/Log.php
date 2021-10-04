@@ -69,8 +69,8 @@ class Log extends Model
             $task = Task::find($taskId);
 
             //notify reporter
-            if (Auth::user()->id !== $task->reporter_id) {
-                $employee = Employee::where('user_id', '=', $task->reporter_id)->first();
+            if (session('employee_id') !== $task->reporter_id) {
+                $employee = Employee::find($task->reporter_id);
                 array_push($employeeArray, $employee->id);
             }
             //notify assigned to users
