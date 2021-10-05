@@ -26,9 +26,10 @@ export default new Router({
             component: Notifications
         },
         {
+            name: 'board',
             path: "/kanban/board",
             component: Kanban,
-            props: (route) => ({id: Number(route.query.id)})
+            props: (route) => ({id: Number(route.query.id), task: Number(route.query.task)})
         },
         {
             path: "/kanban/backlog",

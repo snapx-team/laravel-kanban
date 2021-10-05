@@ -27,7 +27,13 @@
 
                             <div>
                                 <h1 class="text-2xl text-white pb-2">Task ID:
-                                    [{{ cardData.task_simple_name }}]</h1>
+                                    [{{ cardData.task_simple_name }}]
+                                    <span @click="copyToClipboard()"
+                                          title="Copy To Clipoboard"
+                                          class="cursor-pointer px-2 text-gray-400 hover:text-gray-200 transition duration-300 ease-in-out focus:outline-none">
+                                        <i class="fas fa-link"></i>
+                                    </span>
+                                </h1>
                                 <p class="text-sm font-medium leading-5 text-gray-500">
                                     View and/or update task information </p>
                             </div>
@@ -121,6 +127,7 @@ export default {
 
     props: {
         kanbanData: Object,
+        taskId: Number,
     },
 
     data() {
@@ -128,20 +135,37 @@ export default {
             openTab: 1,
             cardData: Object,
             modalOpen: false,
-
         };
     },
 
-    methods: {
-        toggleTabs: function (tabNumber) {
-            this.openTab = tabNumber
+    mounted() {
+        if (!isNaN(this.taskId)) {
+            this.setCardData(this.taskId);
         }
     },
 
     created() {
         this.eventHub.$on("update-kanban-task-cards", (task) => {
+            this.$router.replace({name: "board", query: {id: this.kanbanData.id, task: task.id}})
+            this.setCardData(task.id);
+        });
 
-            this.asyncGetTaskData(task.id).then((data) => {
+        this.eventHub.$on("close-task-modal", () => {
+            this.modalOpen = false;
+        });
+    },
+
+    beforeDestroy() {
+        this.eventHub.$off('update-kanban-task-cards');
+        this.eventHub.$off('close-task-modal');
+    },
+
+    methods: {
+        toggleTabs: function (tabNumber) {
+            this.openTab = tabNumber
+        },
+        setCardData(taskId) {
+            this.asyncGetTaskData(taskId).then((data) => {
                 if (this.modalOpen) {
                     this.modalOpen = false;
                     setTimeout(() => {
@@ -156,16 +180,20 @@ export default {
             }).catch(res => {
                 console.log(res)
             });
-        });
+        },
 
-        this.eventHub.$on("close-task-modal", () => {
-            this.modalOpen = false;
-        });
-    },
+        copyToClipboard() {
+            let temp = document.createElement('input'),
+                text = window.location.href;
 
-    beforeDestroy() {
-        this.eventHub.$off('update-kanban-task-cards');
-        this.eventHub.$off('close-task-modal');
+            document.body.appendChild(temp);
+            temp.value = text;
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+
+            this.triggerSuccessToast('Link copied to clipboard!');
+        }
     },
 };
 </script>
