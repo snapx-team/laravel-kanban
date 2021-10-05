@@ -100,7 +100,7 @@
             <i class="pl-2 fas fa-plus"></i>
         </button>
 
-        <kanban-task-modal :kanbanData="kanban"></kanban-task-modal>
+        <kanban-task-modal :taskId="task" :kanbanData="kanban"></kanban-task-modal>
         <add-member-modal :kanbanData="kanban"></add-member-modal>
         <add-row-and-columns-modal :kanbanData="kanban"></add-row-and-columns-modal>
         <add-task-by-column-modal :kanbanData="kanban"></add-task-by-column-modal>
@@ -134,7 +134,10 @@ export default {
 
     mixins: [ajaxCalls],
 
-    props: {'id': Number},
+    props: {
+        id: Number,
+        task: Number
+    },
 
     data() {
         return {
@@ -152,7 +155,7 @@ export default {
         this.getKanban(this.id);
         if (localStorage.collapsedRows) {
             this.collapsedRows = localStorage.collapsedRows.split(',').map(Number);
-        }
+        };
     },
 
     watch: {
