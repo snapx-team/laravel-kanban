@@ -16,7 +16,7 @@
              :class=" isErpLinksOpen ? '': '-translate-y-44' "
              style="width: inherit;">
             <div v-for="version in erpVersions"
-                 v-if="version.subdomain !== subdomain && version.subdomain !== 'schedule-qa'"
+                 v-if="version.subdomain !== subdomain"
                  class="text-center text-white font-semibold flex justify-between items-center"
                  :class="`bg-${version.color}-700`">
                 <p v-if="isSideBarOpen" class="px-8"> {{ version.name }}</p>
