@@ -102,7 +102,7 @@
                                  class="flex items-center px-3 py-2 rounded-lg"
                                  :class="!isSideBarOpen ? 'mx-6 bg-gray-600 hover:bg-gray-500 justify-center' : 'justify-between hover:bg-gray-200' ">
                         <span v-if="isSideBarOpen" class="text-sm font-medium text-gray-900"><i
-                            class="mr-2 fas fa-chart-pie"></i>Metics</span>
+                            class="mr-2 fas fa-chart-pie"></i>Metrics</span>
                         <div v-else><i class="text-white m-2 fas fa-chart-pie"></i></div>
                     </router-link>
                 </div>
