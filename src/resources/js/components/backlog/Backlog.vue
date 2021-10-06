@@ -362,7 +362,7 @@ export default {
                 this.eventHub.$emit("set-loading-state", true);
                 this.isLoadingTasks = true;
                 this.pageNumber = 1;
-
+                this.backlogTaskList = [];
 
                 this.asyncGetBacklogData(this.startTime, this.endTime,).then((data) => {
                     this.backlogData = data.data;
@@ -373,7 +373,6 @@ export default {
             } else {
                 this.triggerErrorToast('select a start and end time')
             }
-
         },
 
         getMoreBacklogTasks() {

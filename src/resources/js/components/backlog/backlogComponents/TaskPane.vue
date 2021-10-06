@@ -129,6 +129,7 @@
                             No result .
                         </template>
                     </vSelect>
+
                 </div>
 
                 <label class="flex-grow space-y-2">
@@ -397,8 +398,8 @@ export default {
         computedBadges() {
             return this.badges.map(badge => {
                 let computedBadges = {};
-                computedBadges.name = badge;
-                computedBadges.hue = this.generateHslColorWithText(badge);
+                computedBadges.name = badge.name;
+                computedBadges.hue = this.generateHslColorWithText(badge.name);
                 return computedBadges;
             })
         },
