@@ -69,13 +69,12 @@ class MetricsController extends Controller
 
     public function getTicketsByEmployee($start, $end): array
     {
-        $tasks = Task::with('reporter.user')
+        $tasks = Task::with('reporter')
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
-            ->orderBy('reporter_id')
             ->get();
 
-        $employees = Employee::with('user')->orderBy('id')->get();
+        $employees = Employee::with('user')->get();
 
         $reporters = [];
         $assArray = array();
@@ -87,7 +86,7 @@ class MetricsController extends Controller
                 }
             }
             foreach ($tasks as $task) {
-                $assArray[$task->reporter->user->email] += 1;
+                $assArray[$task->reporter->email] += 1;
             }
         }
 
@@ -110,7 +109,6 @@ class MetricsController extends Controller
 
         foreach ($tasks as $task) {
             $date = (new DateTime(($task->created_at)))->modify('-4 hours');
-            ;
             $dateString = $date->format('G');
             $arr[$dateString] += 1;
         }
@@ -124,20 +122,22 @@ class MetricsController extends Controller
 
     public function getClosedTasksByEmployee($start, $end): array
     {
-        $logs = Log::with('user')->where('log_type', Log::TYPE_CARD_COMPLETED)
+        $logs = Log::where('log_type', Log::TYPE_CARD_COMPLETED)
+            ->with('task.assignedTo.employee.user')
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
-            ->orderBy('user_id')
             ->get();
 
         $names = [];
         $hits = [];
         foreach ($logs as $log) {
-            if (array_key_exists($log->user->email, $hits)) {
-                $hits[$log->user->email] += 1;
-            } else {
-                $hits[$log->user->email] = 1;
-                array_push($names, $log->user->full_name);
+            foreach ($log->task->assignedTo as $employee) {
+                if (array_key_exists($employee['employee']['user']['email'], $hits)) {
+                    $hits[ $employee['employee']['user']['email']] += 1;
+                } else {
+                    $hits[ $employee['employee']['user']['email']] = 1;
+                    array_push($names,  $employee['employee']['user']['full_name']);
+                }
             }
         }
 
