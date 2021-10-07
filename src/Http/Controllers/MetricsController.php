@@ -70,7 +70,7 @@ class MetricsController extends Controller
 
     public function getTicketsByEmployee($start, $end): array
     {
-        $tasks = Task::with('reporter')
+        $tasks = Task::with('reporter.user')
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
             ->get();
@@ -87,7 +87,7 @@ class MetricsController extends Controller
                 }
             }
             foreach ($tasks as $task) {
-                $assArray[$task->reporter->email] += 1;
+                $assArray[$task->reporter->user->email] += 1;
             }
         }
 
