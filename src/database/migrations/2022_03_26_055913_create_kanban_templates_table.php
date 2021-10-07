@@ -21,6 +21,7 @@ class CreateKanbanTemplatesTable extends Migration
             $table->text('options')->nullable();
             $table->unsignedBigInteger('badge_id')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

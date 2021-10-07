@@ -16,23 +16,31 @@ class EmployeeController extends Controller
 
         try {
             foreach ($employeeData['selectedUsers'] as $user) {
-
                 $employee = Employee::with('user')->updateOrCreate(
                     ['user_id' => $user['id']],
                     ['role' => $employeeData['role'],]
                 );
 
-                Log::createLog(
-                    Auth::user()->id,
-                    Log::TYPE_EMPLOYEE_CREATED,
-                    'Added employee [' . $employee->user->full_name . ']',
-                    null,
-                    null,
-                    null,
-                    $employee->id
-                );
+                if ($employee->wasRecentlyCreated) {
+                    Log::createLog(
+                        Auth::user()->id,
+                        Log::TYPE_EMPLOYEE_CREATED,
+                        'Added employee [' . $employee->user->full_name . ']',
+                        $employee->id,
+                        $employee->id,
+                        'Xguard\LaravelKanban\Models\Employee'
+                    );
+                } else {
+                    Log::createLog(
+                        Auth::user()->id,
+                        Log::TYPE_EMPLOYEE_UPDATED,
+                        'Updated employee [' . $employee->user->full_name . ']',
+                        $employee->id,
+                        $employee->id,
+                        'Xguard\LaravelKanban\Models\Employee'
+                    );
+                }
             }
-
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
@@ -52,10 +60,9 @@ class EmployeeController extends Controller
                 Auth::user()->id,
                 Log::TYPE_EMPLOYEE_DELETED,
                 'Deleted employee [' . $employee->user->full_name . ']',
-                null,
-                null,
-                null,
-                $employee->id
+                $employee->id,
+                $employee->id,
+                'Xguard\LaravelKanban\Models\Employee'
             );
         } catch (\Exception $e) {
             return response([
@@ -70,5 +77,4 @@ class EmployeeController extends Controller
     {
         return Employee::with('user')->get();
     }
-
 }

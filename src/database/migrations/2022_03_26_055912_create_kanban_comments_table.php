@@ -19,7 +19,8 @@ class CreateKanbanCommentsTable extends Migration
             $table->unsignedBigInteger('employee_id');
             $table->text('comment');
             $table->timestamps();
-            $table->foreign('task_id')->references('id')->on('kanban_tasks')->onDelete('cascade');
+            $table->foreign('task_id')->references('id')->on('kanban_tasks');
+            $table->softDeletes();
         });
     }
 

@@ -2,15 +2,29 @@
 
 namespace Xguard\LaravelKanban\Models;
 
+use Iatstuti\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Xguard\LaravelKanban\Models\Log;
 
 class Column extends Model
 {
+    use SoftDeletes, CascadeSoftDeletes;
+    
+    protected $dates = ['deleted_at'];
+
     protected $table = 'kanban_columns';
 
+    protected $cascadeDeletes = ['taskCards'];
+
     protected $guarded = [];
+
+    public function logs()
+    {
+        return $this->morphMany(Log::class, 'loggable');
+    }
 
     public function row(): BelongsTo
     {

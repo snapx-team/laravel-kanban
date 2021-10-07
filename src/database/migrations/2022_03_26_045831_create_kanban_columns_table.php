@@ -19,7 +19,8 @@ class CreateKanbanColumnsTable extends Migration
             $table->string('name');
             $table->integer('index');
             $table->timestamps();
-            $table->foreign('row_id')->references('id')->on('kanban_rows')->onDelete('cascade');
+            $table->foreign('row_id')->references('id')->on('kanban_rows');
+            $table->softDeletes();
         });
     }
 

@@ -9,7 +9,9 @@
         }
     ],
     "minimum-stability": "dev",
-    "require": {},
+    "require": {
+        "dyrynda/laravel-cascade-soft-deletes": "dev-main"
+    },
     "autoload": {
         "psr-4": {
             "Xguard\\LaravelKanban\\": "src/"
