@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateKanbanTasksTable extends Migration
+class CreateKanbanTasksVersions extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateKanbanTasksTable extends Migration
      */
     public function up()
     {
-        Schema::create('kanban_tasks', function (Blueprint $table) {
+        Schema::create('kanban_tasks_versions', function (Blueprint $table) {
             $table->id();
             $table->integer('index')->nullable();
             $table->string('name');
@@ -24,6 +24,8 @@ class CreateKanbanTasksTable extends Migration
             $table->unsignedBigInteger('row_id')->nullable();
             $table->unsignedBigInteger('board_id')->nullable();
             $table->unsignedBigInteger('badge_id')->nullable();
+            $table->unsignedBigInteger('task_id')->nullable();
+            $table->unsignedBigInteger('log_id')->nullable();
             $table->string('status')->default('active');
             $table->timestamps();
             $table->softDeletes();
@@ -37,6 +39,6 @@ class CreateKanbanTasksTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('kanban_tasks');
+        Schema::dropIfExists('kanban_tasks_versions');
     }
 }

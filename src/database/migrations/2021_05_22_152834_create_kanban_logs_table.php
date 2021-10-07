@@ -18,11 +18,11 @@ class CreateKanbanLogsTable extends Migration
             $table->unsignedInteger('user_id')->nullable();
             $table->unsignedInteger('log_type');
             $table->longText('description')->nullable();
-            $table->unsignedInteger('badge_id')->nullable();
-            $table->unsignedInteger('board_id')->nullable();
-            $table->unsignedInteger('task_id')->nullable();
+            $table->unsignedBigInteger('loggable_id');
+            $table->string('loggable_type');
             $table->unsignedInteger('targeted_employee_id')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
