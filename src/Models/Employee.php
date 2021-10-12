@@ -3,13 +3,23 @@
 namespace Xguard\LaravelKanban\Models;
 
 use App\Models\User;
+use Iatstuti\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Xguard\LaravelKanban\Models\Log;
 
 class Employee extends Model
 {
+    use SoftDeletes, CascadeSoftDeletes;
+    
+    protected $dates = ['deleted_at'];
+
     protected $table = 'kanban_employees';
+
+    protected $cascadeDeletes = ['members', 'tasks', 'logs'];
 
     protected $guarded = [];
 
@@ -37,5 +47,10 @@ class Employee extends Model
     public function logs(): BelongsToMany
     {
         return $this->belongsToMany(Log::class, 'kanban_employee_log', 'employee_id', 'log_id')->withTimestamps();
+    }
+
+    public function kanban_logs()
+    {
+        return $this->morphMany(Log::class, 'loggable');
     }
 }

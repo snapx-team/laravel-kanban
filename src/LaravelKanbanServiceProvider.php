@@ -2,10 +2,13 @@
 
 namespace Xguard\LaravelKanban;
 
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
 use Xguard\LaravelKanban\Commands\CreateAdmin;
+use Xguard\LaravelKanban\Commands\DeleteKanbanEmployeesWithDeletedUsers;
 use Xguard\LaravelKanban\Commands\MoveErpDataInTaskToErpShareables;
 use Xguard\LaravelKanban\Commands\ReplaceAllReporterIdsFromUserToEmployee;
+use Xguard\LaravelKanban\Commands\SetLoggableTypeAndLoggableIdOnExistingLogs;
 use Xguard\LaravelKanban\Http\Middleware\CheckHasAccess;
 
 class LaravelKanbanServiceProvider extends ServiceProvider
@@ -34,7 +37,7 @@ class LaravelKanbanServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
         $this->loadMigrationsFrom(__DIR__ . '/database/seeds');
 
-        $this->commands([CreateAdmin::class, MoveErpDataInTaskToErpShareables::class, ReplaceAllReporterIdsFromUserToEmployee::class]);
+        $this->commands([CreateAdmin::class, MoveErpDataInTaskToErpShareables::class, ReplaceAllReporterIdsFromUserToEmployee::class, DeleteKanbanEmployeesWithDeletedUsers::class, SetLoggableTypeAndLoggableIdOnExistingLogs::class]);
 
 
         include __DIR__ . '/routes/web.php';
@@ -42,5 +45,10 @@ class LaravelKanbanServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../public' => public_path('vendor/laravel-kanban'),
         ], 'laravel-kanban-assets');
+
+        $this->app->booted(function (){
+            $schedule = $this->app->make(Schedule::class);
+            $schedule->command(DeleteKanbanEmployeesWithDeletedUsers::class)->daily();
+        });
     }
 }

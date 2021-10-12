@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Responses\JsonResponse;
 use DateTime;
 use Illuminate\Support\Facades\Auth;
-use Lorisleiva\Actions\Action;
 use Xguard\LaravelKanban\Http\Helper\CheckHasAccessToBoardWithBoardId;
 use Xguard\LaravelKanban\Models\Badge;
 use Xguard\LaravelKanban\Models\Employee;

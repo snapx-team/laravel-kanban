@@ -17,6 +17,7 @@ class CreateKanbanSharedTaskDataTable extends Migration
             $table->id();
             $table->text('description');
             $table->timestamps();
+            $table->softDeletes();
 
         });
     }

@@ -25,10 +25,9 @@ class MemberController extends Controller
                         Auth::user()->id,
                         Log::TYPE_KANBAN_MEMBER_CREATED,
                         'Added a new member [' . $member->employee->user->full_name . '] to board [' . $member->board->name . ']',
-                        null, 
+                        $member->employee_id,
                         $member->board_id,
-                        null,
-                        $member->employee_id
+                        'Xguard\LaravelKanban\Models\Board'
                     );
                 }
             }
@@ -51,10 +50,9 @@ class MemberController extends Controller
                 Auth::user()->id,
                 Log::TYPE_KANBAN_MEMBER_DELETED,
                 'Deleted member [' . $member->employee->user->full_name . '] from board [' . $member->board->name . ']',
-                null,
+                $member->employee_id,
                 $member->board_id,
-                null,
-                $member->$member->employee_id
+                'Xguard\LaravelKanban\Models\Board'
             );
 
         } catch (\Exception $e) {

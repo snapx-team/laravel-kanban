@@ -15,7 +15,6 @@ class CreateKanbanBoardTemplateTable extends Migration
     {
         Schema::create('kanban_board_template', function (Blueprint $table) {
             $table->id();
-
             $table->unsignedBigInteger('board_id');
             $table->unsignedBigInteger('template_id');
             $table->timestamps();

@@ -33,9 +33,17 @@ class BoardsController extends Controller
 
         try {
             if ($request->filled('id')) {
-                $board = Board::where('id', $request->input('id'))->update([
-                    'name' => $request->input('name'),
-                ]);
+                $board = Board::where('id', $request->input('id'))->first();
+                $board->update(['name' => $request->input('name')]);
+
+                Log::createLog(
+                    Auth::user()->id,
+                    Log::TYPE_BOARD_EDITED,
+                    'Edited board [' . $board->name . ']',
+                    null,
+                    $board->id,
+                    'Xguard\LaravelKanban\Models\Board'
+                );
             } else {
                 $board = Board::create([
                     'name' => $request->input('name'),
@@ -47,11 +55,9 @@ class BoardsController extends Controller
                     'Added new board [' . $board->name . ']',
                     null,
                     $board->id,
-                    null,
-                    null
+                    'Xguard\LaravelKanban\Models\Board'
                 );
             }
-
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
@@ -79,8 +85,7 @@ class BoardsController extends Controller
                 'Deleted board [' . $board->name . ']',
                 null,
                 $board->id,
-                null,
-                null
+                'Xguard\LaravelKanban\Models\Board',
             );
         } catch (\Exception $e) {
             return response([
