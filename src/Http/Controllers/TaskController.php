@@ -225,9 +225,22 @@ class TaskController extends Controller
         $backlogTaskData = $request->all();
 
         try {
-            $badge = Badge::firstOrCreate([
-                'name' => count($request->input('badge')) > 0 ? $backlogTaskData['badge']['name'] : '--',
-            ]);
+            $badge = null;
+            
+            if (count($request->input('badge'))) {
+                $badge = Badge::where('name', $backlogTaskData['badge']['name'])->first();
+            } else {
+                $badge = Badge::where('name', '--')->first();
+            }
+
+            if (!$badge) {
+                if (session('role') !== 'admin') {
+                    throw new \Exception("Only admins can create badges");
+                }
+                $badge = Badge::create([
+                    'name' => count($request->input('badge')) > 0 ? $backlogTaskData['badge']['name'] : '--',  
+                ]);
+            }
 
             if ($backlogTaskData['associatedTask'] !== null) {
                 $sharedTaskDataId = $backlogTaskData['associatedTask']['shared_task_data_id'];
@@ -330,9 +343,22 @@ class TaskController extends Controller
 
         try {
             $maxIndex = Task::where('column_id', $taskCard['columnId'])->where('status', 'active')->max('index');
-            $badge = Badge::firstOrCreate([
-                'name' => count($request->input('badge')) > 0 ? $taskCard['badge']['name'] : '--',
-            ]);
+            $badge = null;
+            
+            if (count($request->input('badge'))) {
+                $badge = Badge::where('name', $taskCard['badge']['name'])->first();
+            } else {
+                $badge = Badge::where('name', '--')->first();
+            }
+
+            if (!$badge) {
+                if (session('role') !== 'admin') {
+                    throw new \Exception("Only admins can create badges");
+                }
+                $badge = Badge::create([
+                    'name' => count($request->input('badge')) > 0 ? $taskCard['badge']['name'] : '--',  
+                ]);
+            }
 
             if ($taskCard['associatedTask'] !== null) {
                 $sharedTaskDataId = $taskCard['associatedTask']['shared_task_data_id'];
@@ -467,9 +493,22 @@ class TaskController extends Controller
                         );
                     }
 
-                    $badge = Badge::firstOrCreate([
-                        'name' => count($request->input('badge')) > 0 ? $taskCard['badge']['name'] : '--'
-                    ]);
+                    $badge = null;
+            
+                    if (count($request->input('badge'))) {
+                        $badge = Badge::where('name', $taskCard['badge']['name'])->first();
+                    } else {
+                        $badge = Badge::where('name', '--')->first();
+                    }
+
+                    if (!$badge) {
+                        if (session('role') !== 'admin') {
+                            throw new \Exception("Only admins can create badges");
+                        }
+                        $badge = Badge::create([
+                            'name' => count($request->input('badge')) > 0 ? $taskCard['badge']['name'] : '--',  
+                        ]);
+                    }
 
                     if ($badge->wasRecentlyCreated) {
                         Log::createLog(

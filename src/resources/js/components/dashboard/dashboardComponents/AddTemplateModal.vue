@@ -88,7 +88,7 @@
                                     <div>
                                         <span
                                             class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Badge</span>
-                                        <vSelect :create-option="option => ({name: option.toLowerCase()})"
+                                        <vSelect :create-option="$role === 'admin'? option => ({name: option.toLowerCase()}): false"
                                                  :options="computedBadges"
                                                  class="text-gray-700"
                                                  label="name"

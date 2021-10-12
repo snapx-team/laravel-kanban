@@ -43,10 +43,22 @@ class TemplateController extends Controller
 
         try {
             $templateData = $request->all();
+            $badge = null;
+            
+            if (count($request->input('badge'))) {
+                $badge = Badge::where('name', $templateData['badge']['name'])->first();
+            } else {
+                $badge = Badge::where('name', '--')->first();
+            }
 
-            $badge = Badge::firstOrCreate([
-                'name' => count($request->input('badge')) > 0 ? $templateData['badge']['name']: '--',
-            ]);
+            if (!$badge) {
+                if (session('role') !== 'admin') {
+                    throw new \Exception("Only admins can create badges");
+                }
+                $badge = Badge::create([
+                    'name' => count($request->input('badge')) > 0 ? $templateData['badge']['name'] : '--',  
+                ]);
+            }
 
             if ($badge->wasRecentlyCreated) {
                 Log::createLog(
