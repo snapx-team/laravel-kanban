@@ -88,13 +88,13 @@
                                     <div>
                                         <span
                                             class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Badge</span>
-                                        <vSelect :create-option="$role === 'admin'? option => ({name: option.toLowerCase()}): false"
+                                        <vSelect :create-option="option => ({name: option.toLowerCase()})"
                                                  :options="computedBadges"
                                                  class="text-gray-700"
                                                  label="name"
                                                  placeholder="Choose or Create"
                                                  style="margin-top: 7px"
-                                                 taggable
+                                                 :taggable ="$role === 'admin'"
                                                  v-model="computedSelectedBadge">
                                             <template slot="option" slot-scope="option">
                                             <span :style="`color: hsl( ${option.hue} , 45%, 90%);`"

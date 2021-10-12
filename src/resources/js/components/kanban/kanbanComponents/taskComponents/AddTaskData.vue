@@ -32,8 +32,8 @@
                             label="name"
                             placeholder="Choose or Create"
                             style="margin-top: 7px"
-                            taggable
-                            :create-option="$role === 'admin'? option => ({name: option.toLowerCase()}): false">
+                            :create-option="option => ({name: option.toLowerCase()})"
+                            :taggable ="$role === 'admin'">
                             class="text-gray-700">
                             <template slot="option" slot-scope="option">
                                     <span :style="`color: hsl(${option.hue}, 50%, 45%);`"
