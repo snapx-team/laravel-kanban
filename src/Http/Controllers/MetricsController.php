@@ -123,22 +123,58 @@ class MetricsController extends Controller
 
     public function getClosedTasksByEmployee($start, $end): array
     {
-        $logs = Log::where('log_type', Log::TYPE_CARD_COMPLETED)
-            ->with('task.assignedTo.employee.user')
+        $logs = Log::with(['user', 'loggable' => function (MorphTo $morphTo) {
+                $morphTo->morphWith([Task::class => ['assignedTo.employee.user']]);
+            }])
+            ->where('log_type', Log::TYPE_CARD_COMPLETED)
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
-            ->get();
+            ->where('loggable_type', 'Xguard\LaravelKanban\Models\Task')
+            ->orderBy('loggable_id')
+            ->latest()
+            ->get()
+            ->unique('loggable_id');
 
         $names = [];
         $hits = [];
         foreach ($logs as $log) {
-            foreach ($log->task->assignedTo as $employee) {
+            foreach ($log->loggable->assignedTo as $employee) {
                 if (array_key_exists($employee['employee']['user']['email'], $hits)) {
                     $hits[ $employee['employee']['user']['email']] += 1;
                 } else {
                     $hits[ $employee['employee']['user']['email']] = 1;
                     array_push($names,  $employee['employee']['user']['full_name']);
                 }
+            }
+        }
+
+        return [
+            'hits' => array_values($hits),
+            'names' => $names,
+        ];
+    }
+
+
+    public function getClosedTasksByAdmin($start, $end): array
+    {
+        $logs = Log::with('user')
+            ->where('log_type', Log::TYPE_CARD_COMPLETED)
+            ->whereDate('created_at', '>=', new DateTime($start))
+            ->whereDate('created_at', '<=', new DateTime($end))
+            ->where('loggable_type', 'Xguard\LaravelKanban\Models\Task')
+            ->orderBy('loggable_id')
+            ->latest()
+            ->get()
+            ->unique('loggable_id');
+
+        $names = [];
+        $hits = [];
+        foreach ($logs as $log) {
+            if (array_key_exists($log->user['email'], $hits)) {
+                $hits[$log->user['email']] += 1;
+            } else {
+                $hits[$log->user['email']] = 1;
+                array_push($names, $log->user['full_name']);
             }
         }
 

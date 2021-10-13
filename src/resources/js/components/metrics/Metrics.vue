@@ -97,7 +97,15 @@
                                 v-if="closedTasksByEmployee != null"
                                 :series="closedTasksByEmployee.hits"
                                 :labels="closedTasksByEmployee.names"
-                                :title="'Tickets Closed by Employee'">
+                                :title="'Tickets Closed by Assigned Employee'">
+                            </pie-chart>
+                        </div>
+                        <div v-if="showTE" class="flex-auto rounded shadow-lg m-2 bg-white">
+                            <pie-chart
+                                v-if="closedTasksByAdmin != null"
+                                :series="closedTasksByAdmin.hits"
+                                :labels="closedTasksByAdmin.names"
+                                :title="'Tickets Closed by Admin'">
                             </pie-chart>
                         </div>
                         <div v-if="showTS" class="flex-auto rounded shadow-lg m-2 bg-white">
@@ -169,6 +177,7 @@ export default {
             creationByHour: null,
             contractData: null,
             closedTasksByEmployee: null,
+            closedTasksByAdmin: null,
             delayByBadge: null,
             delayByEmployee: null,
             createdVsResolved: null,
@@ -205,6 +214,7 @@ export default {
             if (this.showTE) {
                 this.getTicketsByEmployee();
                 this.getClosedTasksByEmployee();
+                this.getClosedTasksByAdmin();
             }
             if (this.showTS) {
                 this.getCreationByHour();
@@ -235,6 +245,7 @@ export default {
             this.showCR = false;
             this.getTicketsByEmployee();
             this.getClosedTasksByEmployee();
+            this.getClosedTasksByAdmin();
         },
         showTicketStats() {
             this.showTB = false;
@@ -305,6 +316,13 @@ export default {
         getClosedTasksByEmployee() {
             this.asyncGetClosedTasksByEmployee(this.startTime, this.endTime).then((data) => {
                 this.closedTasksByEmployee = data.data;
+            }).catch(res => {
+                console.log(res)
+            });
+        },
+        getClosedTasksByAdmin() {
+            this.asyncGetClosedTasksByAdmin(this.startTime, this.endTime).then((data) => {
+                this.closedTasksByAdmin = data.data;
             }).catch(res => {
                 console.log(res)
             });

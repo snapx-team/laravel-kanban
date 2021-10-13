@@ -33,6 +33,7 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             Route::get('/get-creation-by-hour/{start}/{end}', 'MetricsController@getCreationByHour');
             Route::get('/get-contract-data/{start}/{end}', 'MetricsController@getContractData');
             Route::get('/get-closed-by-employee/{start}/{end}', 'MetricsController@getClosedTasksByEmployee');
+            Route::get('/get-closed-by-admin/{start}/{end}', 'MetricsController@getClosedTasksByAdmin');
             Route::get('/get-delay-by-badge/{start}/{end}', 'MetricsController@getDelayByBadge');
             Route::get('/get-delay-by-employee/{start}/{end}', 'MetricsController@getDelayByEmployee');
             Route::get('/get-created-vs-resolved/{start}/{end}', 'MetricsController@getCreatedVsResolved');
