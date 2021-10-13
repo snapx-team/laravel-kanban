@@ -181,6 +181,55 @@
                             </vSelect>
                         </div>
                     </div>
+
+                    <div class="flex flex-wrap">
+
+                         <!-- erp employee -->
+                        <div class="flex block  mr-2">
+                            <vSelect
+                                v-model="filters.filterErpEmployee"
+                                multiple
+                                :options="erpEmployees"
+                                :getOptionLabel="opt => opt.full_name"
+                                label="full_name"
+                                placeholder="Filter By ERP Employees"
+                                @search="onTypeEmployee"
+                                @input="filterTrigger()"
+                                class="w-72 flex-grow text-gray-400">
+                                <template slot="option" slot-scope="option">
+                                    <avatar :name="option.full_name" :size="4"
+                                            class="mr-3 m-1 float-left"></avatar>
+                                    <p class="inline">{{ option.full_name }}</p>
+                                </template>
+                                <template #no-options="{ search, searching, loading }">
+                                    No result .
+                                </template>
+                            </vSelect>
+                        </div>
+
+                         <!-- erp contract -->
+                        <div class="flex block  mr-2">
+                            <vSelect
+                                v-model="filters.filterErpContract"
+                                multiple
+                                :options="erpContracts"
+                                :getOptionLabel="opt => opt.contract_identifier"
+                                label="full_name"
+                                placeholder="Filter By ERP Contracts"
+                                @search="onTypeContract"
+                                @input="filterTrigger()"
+                                class="w-72 flex-grow text-gray-400">
+                                <template slot="option" slot-scope="option">
+                                    <avatar :name="option.contract_identifier" :size="4"
+                                            class="mr-3 m-1 float-left"></avatar>
+                                    <p class="inline">{{ option.contract_identifier }}</p>
+                                </template>
+                                <template #no-options="{ search, searching, loading }">
+                                    No result .
+                                </template>
+                            </vSelect>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -292,6 +341,8 @@ export default {
             backlogTaskList: [],
             isLoadingTasks: false,
             backlogData: null,
+            erpEmployees: [],
+            erpContracts: [],
 
             filters: {
                 filterText: "",
@@ -299,6 +350,8 @@ export default {
                 filterBoard: [],
                 filterAssignedTo: [],
                 filterReporter: [],
+                filterErpEmployee: [],
+                filterErpContract: [],
                 filterStatus: ['active'],
                 filterPlacedInBoard: false,
                 filterNotPlacedInBoard: true,
@@ -316,6 +369,8 @@ export default {
 
     mounted() {
         this.getBacklogData();
+        this.getErpEmployees();
+        this.getContracts();
     },
 
     created() {
@@ -445,6 +500,56 @@ export default {
             let d = new Date()
             return new Date(d.setMonth(d.getMonth() - 1));
         },
+        getErpEmployees() {
+            this.asyncGetAllUsers().then((data) => {
+                this.erpEmployees = data.data;
+            }).catch(res => {
+                console.log(res)
+            });
+        },
+        getContracts() {
+            this.asyncGetAllContracts().then((data) => {
+                this.erpContracts = data.data;
+            }).catch(res => {
+                console.log(res)
+            });
+        },
+        onTypeEmployee(search, loading) {
+            if (search.length) {
+                loading(true);
+                this.typeEmployee(search, loading, this);
+            }
+        },
+        typeEmployee: _.debounce(function (search, loading) {
+            this.asyncGetSomeUsers(search).then((data) => {
+                this.erpEmployees = data.data;
+            })
+                .catch(res => {
+                    console.log(res)
+                })
+                .then(function () {
+                    setTimeout(500);
+                    loading(false);
+                });
+        }, 500),
+        onTypeContract(search, loading) {
+            if (search.length) {
+                loading(true);
+                this.typeContract(search, loading, this);
+            }
+        },
+        typeContract: _.debounce(function (search, loading) {
+            this.asyncGetSomeContracts(search).then((data) => {
+                this.erpContracts = data.data;
+            })
+                .catch(res => {
+                    console.log(res)
+                })
+                .then(function () {
+                    setTimeout(500);
+                    loading(false);
+                });
+        }, 500),
     }
 }
 ;

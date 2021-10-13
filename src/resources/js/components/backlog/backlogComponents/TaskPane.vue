@@ -598,8 +598,6 @@ export default {
         typeTask: _.debounce(function (search, loading) {
             this.asyncGetSomeTasks(search).then((data) => {
                 this.tasks = data.data;
-                console.log(data.data);
-                console.log('abra');
             })
                 .catch(res => {
                     console.log(res)
