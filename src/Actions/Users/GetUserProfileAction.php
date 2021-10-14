@@ -2,7 +2,6 @@
 
 namespace Xguard\LaravelKanban\Actions\Users;
 
-use Illuminate\Support\Facades\Auth;
 use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Member;
 use Xguard\LaravelKanban\Models\Task;

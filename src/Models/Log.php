@@ -63,6 +63,8 @@ class Log extends Model
     const TYPE_COLUMN_UPDATED = 85;
 
     const TYPE_BADGE_CREATED = 90;
+    const TYPE_BADGE_EDITED = 91;
+    const TYPE_BADGE_DELETED = 92;
 
     const TYPE_KANBAN_COLUMNS_CREATED_OR_UPDATED = 100;
 
