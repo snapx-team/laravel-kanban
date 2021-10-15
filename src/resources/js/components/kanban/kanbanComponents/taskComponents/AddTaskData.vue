@@ -30,7 +30,7 @@
                             v-model="computedSelectedBadge"
                             :options="computedBadges"
                             label="name"
-                            placeholder="Choose or Create"
+                            :placeholder="$role === 'admin'?'Choose or Create' : 'Choose'"
                             style="margin-top: 7px"
                             :create-option="option => ({name: option.toLowerCase()})"
                             :taggable ="$role === 'admin'">
@@ -49,7 +49,7 @@
 
                     <label class="flex-grow space-y-2">
                         <span
-                            class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Task Name </span>
+                            class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Task Name* </span>
                         <input
                             class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
                             placeholder="Task Name"
@@ -60,7 +60,7 @@
 
                 <div>
                     <div class="flex-grow space-y-2">
-                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Description</span>
+                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Description*</span>
                         <quill-editor v-model="cloneCardData.shared_task_data.description" :options="config"
                                       output="html"></quill-editor>
                     </div>
@@ -301,9 +301,17 @@ export default {
         }, 500),
 
         updateTaskData(event) {
-            event.target.disabled = true;
-            this.eventHub.$emit("update-task-card-data", this.cloneCardData);
-            this.eventHub.$emit("close-task-modal");
+            if(!(!!this.cloneCardData.name))
+                this.triggerErrorToast('Task name is required');
+            else if(!(!!this.cloneCardData.shared_task_data.description))
+                this.triggerErrorToast('Task description is required');
+            else if ( this.cloneCardData.badge.name && this.cloneCardData.badge.name.trim().length == 0) {
+                this.triggerErrorToast('The badge name must contain atleast one character');
+            } else {
+                event.target.disabled = true;
+                this.eventHub.$emit("update-task-card-data", this.cloneCardData);
+                this.eventHub.$emit("close-task-modal");
+            }
         },
 
         cancel(event) {

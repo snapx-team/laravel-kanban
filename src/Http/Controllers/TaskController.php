@@ -226,19 +226,20 @@ class TaskController extends Controller
 
         try {
             $badge = null;
-            
-            if (count($request->input('badge'))) {
-                $badge = Badge::where('name', $backlogTaskData['badge']['name'])->first();
-            } else {
-                $badge = Badge::where('name', '--')->first();
+            $badgeName = count($request->input('badge')) > 0 ? trim($backlogTaskData['badge']['name']) : '--';
+
+            if (strlen($badgeName) == 0) {
+                throw new \Exception("The name of the badge has to contain at least one character");
             }
+            
+            $badge = Badge::where('name', $badgeName)->first();
 
             if (!$badge) {
                 if (session('role') !== 'admin') {
                     throw new \Exception("Only admins can create badges");
                 }
                 $badge = Badge::create([
-                    'name' => count($request->input('badge')) > 0 ? $backlogTaskData['badge']['name'] : '--',  
+                    'name' => $badgeName,  
                 ]);
             }
 
@@ -344,19 +345,20 @@ class TaskController extends Controller
         try {
             $maxIndex = Task::where('column_id', $taskCard['columnId'])->where('status', 'active')->max('index');
             $badge = null;
-            
-            if (count($request->input('badge'))) {
-                $badge = Badge::where('name', $taskCard['badge']['name'])->first();
-            } else {
-                $badge = Badge::where('name', '--')->first();
+            $badgeName = count($request->input('badge')) > 0 ? trim($taskCard['badge']['name']) : '--';
+
+            if (strlen($badgeName) == 0) {
+                throw new \Exception("The name of the badge has to contain at least one character");
             }
+            
+            $badge = Badge::where('name', $badgeName)->first();
 
             if (!$badge) {
                 if (session('role') !== 'admin') {
                     throw new \Exception("Only admins can create badges");
                 }
                 $badge = Badge::create([
-                    'name' => count($request->input('badge')) > 0 ? $taskCard['badge']['name'] : '--',  
+                    'name' => $badgeName,  
                 ]);
             }
 
@@ -494,19 +496,20 @@ class TaskController extends Controller
                     }
 
                     $badge = null;
-            
-                    if (count($request->input('badge'))) {
-                        $badge = Badge::where('name', $taskCard['badge']['name'])->first();
-                    } else {
-                        $badge = Badge::where('name', '--')->first();
+                    $badgeName = count($request->input('badge')) > 0 ? trim($taskCard['badge']['name']) : '--';
+
+                    if (strlen($badgeName) == 0) {
+                        throw new \Exception("The name of the badge has to contain at least one character");
                     }
+                    
+                    $badge = Badge::where('name', $badgeName)->first();
 
                     if (!$badge) {
                         if (session('role') !== 'admin') {
                             throw new \Exception("Only admins can create badges");
                         }
                         $badge = Badge::create([
-                            'name' => count($request->input('badge')) > 0 ? $taskCard['badge']['name'] : '--',  
+                            'name' => $badgeName,  
                         ]);
                     }
 

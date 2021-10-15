@@ -95,7 +95,7 @@
                                              :options="computedBadges"
                                              class="text-gray-700"
                                              label="name"
-                                             placeholder="Choose or Create"
+                                             :placeholder="$role === 'admin'?'Choose or Create' : 'Choose'"
                                              style="margin-top: 7px"
                                              :taggable ="$role === 'admin'"
                                              v-model="computedSelectedBadge">
@@ -369,6 +369,9 @@ export default {
                 this.triggerErrorToast('At least 1 kanban needs to be selected');
             else if(this.checkedOptions.includes('Group') && !(!!this.task.associatedTask)){
                 this.triggerErrorToast('Choose a task to group with, or uncheck group from options list');
+            }
+            else if ( this.task.badge.name && this.task.badge.name.trim().length == 0) {
+                this.triggerErrorToast('The badge name must contain atleast one character');
             }
             else{
                 this.eventHub.$emit("save-backlog-task", this.task);

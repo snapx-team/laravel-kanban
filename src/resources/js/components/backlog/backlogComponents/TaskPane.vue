@@ -116,7 +116,7 @@
                              :options="computedBadges"
                              class="text-gray-700"
                              label="name"
-                             placeholder="Choose or Create"
+                             :placeholder="$role === 'admin'?'Choose or Create' : 'Choose'"
                              style="margin-top: 7px"
                              :taggable ="$role === 'admin'"
                              v-model="task.badge">
@@ -475,6 +475,16 @@ export default {
             });
         },
         updateBacklogTask() {
+            if(!(!!this.task.name))
+                this.triggerErrorToast('Task name is required');
+            else if(!(!!this.task.description) && !this.checkedOptions.includes('Group'))
+                this.triggerErrorToast('Task description is required');
+            else if(this.checkedOptions.includes('Group') && !(!!this.task.associatedTask)){
+                this.triggerErrorToast('Choose a task to group with, or uncheck group from options list');
+            }
+            else if ( this.task.badge.name && this.task.badge.name.trim().length == 0) {
+                this.triggerErrorToast('The badge name must contain atleast one character');
+            }
             if (this.task.associatedTask) {
                 this.task.shared_task_data_id = this.task.associatedTask.shared_task_data_id
             }

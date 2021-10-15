@@ -44,19 +44,20 @@ class TemplateController extends Controller
         try {
             $templateData = $request->all();
             $badge = null;
-            
-            if (count($request->input('badge'))) {
-                $badge = Badge::where('name', $templateData['badge']['name'])->first();
-            } else {
-                $badge = Badge::where('name', '--')->first();
+            $badgeName = count($request->input('badge')) > 0 ? trim($templateData['badge']['name']) : '--';
+
+            if (strlen($badgeName) == 0) {
+                throw new \Exception("The name of the badge has to contain at least one character");
             }
+            
+            $badge = Badge::where('name', $badgeName)->first();
 
             if (!$badge) {
                 if (session('role') !== 'admin') {
                     throw new \Exception("Only admins can create badges");
                 }
                 $badge = Badge::create([
-                    'name' => count($request->input('badge')) > 0 ? $templateData['badge']['name'] : '--',  
+                    'name' => $badgeName,  
                 ]);
             }
 
