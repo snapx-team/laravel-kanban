@@ -48,7 +48,7 @@
                         <div class="space-x-3">
 
                             <label class="flex-1 space-y-2">
-                                <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Template Name </span>
+                                <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Template Name* </span>
                                 <input
                                     class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
                                     placeholder="Name to identify template"
@@ -77,7 +77,7 @@
                                 <div class="pl-6 py-2 space-y-4">
 
                                     <label class="flex-1 space-y-2">
-                                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Task Name</span>
+                                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Task Name*</span>
                                         <input
                                             class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
                                             placeholder="This will prefill task name"
@@ -92,7 +92,7 @@
                                                  :options="computedBadges"
                                                  class="text-gray-700"
                                                  label="name"
-                                                 placeholder="Choose or Create"
+                                                 :placeholder="$role === 'admin'?'Choose or Create' : 'Choose'"
                                                  style="margin-top: 7px"
                                                  :taggable ="$role === 'admin'"
                                                  v-model="computedSelectedBadge">
@@ -264,9 +264,17 @@ export default {
 
     methods: {
         saveTemplate(event) {
-            event.target.disabled = true;
-            this.eventHub.$emit("save-template", this.templateData);
-            this.modalOpen = false;
+            if(!(!!this.templateData.name))
+                this.triggerErrorToast('Template name is required');
+            else if(!(!!this.templateData.task_name))
+                this.triggerErrorToast('Task name is required');
+            else if ( this.templateData.badge.name && this.templateData.badge.name.trim().length == 0) {
+                this.triggerErrorToast('The badge name must contain atleast one character');
+            } else {
+                event.target.disabled = true;
+                this.eventHub.$emit("save-template", this.templateData);
+                this.modalOpen = false;
+            }
         },
 
         deleteTemplate(event) {
