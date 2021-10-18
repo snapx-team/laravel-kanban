@@ -118,7 +118,7 @@
                     </div>
 
                     <!-- select filters -->
-                    <div class="flex flex-wrap mb-3">
+                    <div class="flex flex-wrap">
                         <div class="flex block mr-2">
                             <vSelect
                                 v-model="filters.filterBadge"
