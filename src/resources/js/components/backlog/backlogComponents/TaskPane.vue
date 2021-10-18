@@ -477,24 +477,27 @@ export default {
         updateBacklogTask() {
             if(!(!!this.task.name))
                 this.triggerErrorToast('Task name is required');
-            else if(!(!!this.task.description) && !this.checkedOptions.includes('Group'))
+            else if(!(!!this.task.description) && !this.selectGroupIsVisible)
                 this.triggerErrorToast('Task description is required');
-            else if(this.checkedOptions.includes('Group') && !(!!this.task.associatedTask)){
+            else if(this.selectGroupIsVisible && !(!!this.task.associatedTask)){
                 this.triggerErrorToast('Choose a task to group with, or uncheck group from options list');
             }
-            else if ( this.task.badge.name && this.task.badge.name.trim().length == 0) {
-                this.triggerErrorToast('The badge name must contain atleast one character');
+            else if ( this.task.badge.name && this.task.badge.name.trim().length === 0) {
+                this.triggerErrorToast('The badge name must contain at least one character');
             }
-            if (this.task.associatedTask) {
-                this.task.shared_task_data_id = this.task.associatedTask.shared_task_data_id
-            }
-            this.asyncUpdateTask(this.task).then(() => {
-                window.scrollTo({top: 0, behavior: 'smooth'});
-                this.eventHub.$emit("reload-backlog-data");
+            else{
                 if (this.task.associatedTask) {
-                    this.getRelatedTasks(this.task.id);
+                    this.task.shared_task_data_id = this.task.associatedTask.shared_task_data_id
                 }
-            });
+
+                this.asyncUpdateTask(this.task).then(() => {
+                    window.scrollTo({top: 0, behavior: 'smooth'});
+                    this.eventHub.$emit("reload-backlog-data");
+                    if (this.task.associatedTask) {
+                        this.getRelatedTasks(this.task.id);
+                    }
+                });
+            }
         },
         removeGroup() {
 
