@@ -288,7 +288,7 @@ class TaskController extends Controller
             }
 
             foreach ($backlogTaskData['selectedKanbans'] as $kanban) {
-                $task = Task::with('board')->create([
+                $task = Task::create([
                     'index' => null,
                     'reporter_id' => session('employee_id'),
                     'name' => $backlogTaskData['name'],
@@ -408,7 +408,7 @@ class TaskController extends Controller
             }
 
             $maxIndex++;
-            $task = Task::with('board')->create([
+            $task = Task::create([
                 'index' => $maxIndex,
                 'reporter_id' => session('employee_id'),
                 'name' => $taskCard['name'],
@@ -419,6 +419,8 @@ class TaskController extends Controller
                 'board_id' => $taskCard['boardId'],
                 'shared_task_data_id' => $sharedTaskDataId
             ]);
+
+
 
             if ($badge->wasRecentlyCreated) {
                 Log::createLog(

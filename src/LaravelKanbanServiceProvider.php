@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use Xguard\LaravelKanban\Commands\CreateAdmin;
 use Xguard\LaravelKanban\Commands\DeleteKanbanEmployeesWithDeletedUsers;
 use Xguard\LaravelKanban\Commands\MoveErpDataInTaskToErpShareables;
+use Xguard\LaravelKanban\Commands\NotifyOfTasksWithDeadlineInNext24;
 use Xguard\LaravelKanban\Commands\ReplaceAllReporterIdsFromUserToEmployee;
 use Xguard\LaravelKanban\Commands\SetLoggableTypeAndLoggableIdOnExistingLogs;
 use Xguard\LaravelKanban\Http\Middleware\CheckHasAccess;
@@ -37,7 +38,11 @@ class LaravelKanbanServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
         $this->loadMigrationsFrom(__DIR__ . '/database/seeds');
 
-        $this->commands([CreateAdmin::class, MoveErpDataInTaskToErpShareables::class, ReplaceAllReporterIdsFromUserToEmployee::class, DeleteKanbanEmployeesWithDeletedUsers::class, SetLoggableTypeAndLoggableIdOnExistingLogs::class]);
+        $this->commands([
+            CreateAdmin::class, MoveErpDataInTaskToErpShareables::class,
+            ReplaceAllReporterIdsFromUserToEmployee::class, DeleteKanbanEmployeesWithDeletedUsers::class,
+            SetLoggableTypeAndLoggableIdOnExistingLogs::class, NotifyOfTasksWithDeadlineInNext24::class
+        ]);
 
 
         include __DIR__ . '/routes/web.php';
@@ -49,6 +54,7 @@ class LaravelKanbanServiceProvider extends ServiceProvider
         $this->app->booted(function (){
             $schedule = $this->app->make(Schedule::class);
             $schedule->command(DeleteKanbanEmployeesWithDeletedUsers::class)->daily();
+            $schedule->command(NotifyOfTasksWithDeadlineInNext24::class)->hourly();
         });
     }
 }
