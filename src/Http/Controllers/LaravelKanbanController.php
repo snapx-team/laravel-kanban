@@ -5,12 +5,15 @@ namespace Xguard\LaravelKanban\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Responses\JsonResponse;
 use DateTime;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Auth;
 use Xguard\LaravelKanban\Actions\Badge\ListBadgesWithCountAction;
 use Xguard\LaravelKanban\Http\Helper\CheckHasAccessToBoardWithBoardId;
 use Xguard\LaravelKanban\Models\Badge;
+use Xguard\LaravelKanban\Models\Comment;
 use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Board;
+use Xguard\LaravelKanban\Models\Member;
 use Xguard\LaravelKanban\Models\Template;
 use Xguard\LaravelKanban\Models\Task;
 use Xguard\LaravelKanban\Actions\Users\GetUserProfileAction;
@@ -198,44 +201,47 @@ class LaravelKanbanController extends Controller
             $type = (int)$logType;
             $employee = Employee::
             where('user_id', '=', Auth::user()->id)
-            ->with('logs.user')
-            ->with(['logs' => function ($q) use ($type) {
-                $q->where('log_type', $type)
-                ->orderBy('created_at', 'desc')
-                ->with('board')
-                ->paginate(10);
-            }])->first();
+                ->with('notifications.user')
+                ->with(['notifications' => function ($q) use ($type) {
+                    $q->where('log_type', $type)
+                        ->orderBy('created_at', 'desc')
+                        ->with(['loggable' => function (MorphTo $morphTo) {
+                            $morphTo->morphWith([Task::class, Comment::class => ['task.board'], Board::class]);
+                        }])->paginate(10);
+                }])->first();
         } else {
             $employee = Employee::
             where('user_id', '=', Auth::user()->id)
-            ->with('logs.user')
-            ->with(['logs' => function ($q) {
-                $q->orderBy('created_at', 'desc')
-                ->with('board')
-                ->paginate(10);
-            }])->first();
+                ->with('notifications.user')
+                ->with(['notifications' => function ($q) {
+                    $q->orderBy('created_at', 'desc')
+                        ->with(['loggable' => function (MorphTo $morphTo) {
+                            $morphTo->morphWith([Task::class, Comment::class => ['task.board'], Board::class]);
+                        }])
+                        ->paginate(10);
+                }])->first();
         }
-        return $employee->logs;
+        return $employee->notifications;
     }
 
     public function getNotificationCount()
     {
         $employee = Employee::
-            where('user_id', '=', Auth::user()->id)
+        where('user_id', '=', Auth::user()->id)
             ->first();
         $startDate = $employee->last_notif_check;
         if ($startDate !== null) {
             $employee = Employee::
             where('user_id', '=', Auth::user()->id)
-            ->with(['logs' => function ($q) use ($startDate) {
-                $q->where('kanban_logs.created_at', '>=', new DateTime($startDate));
-            }])
-            ->first();
+                ->with(['notifications' => function ($q) use ($startDate) {
+                    $q->where('kanban_logs.created_at', '>=', new DateTime($startDate));
+                }])
+                ->first();
         }
         if ($employee == null) {
             return 0;
         }
-        return count($employee->logs);
+        return count($employee->notifications);
     }
 
     public function updateNotificationCount()

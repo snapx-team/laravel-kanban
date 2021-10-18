@@ -103,6 +103,8 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             Route::post('/create-members/{id}', 'MemberController@createMembers');
             Route::post('/delete-member/{id}', 'MemberController@deleteMember');
             Route::get('/get-members/{id}', 'MemberController@getMembers');
+            Route::get('/get-members-formatted-for-quill/{id}', 'MemberController@getMembersFormattedForQuill');
+
 
             // Badges
             Route::get('/get-all-badges', 'BadgeController@getAllBadges');

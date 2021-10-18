@@ -64,7 +64,7 @@ class SetLoggableTypeAndLoggableIdOnExistingLogs extends Command
                         $employee = Employee::whereHas('user', function ($query) use ($name_parts) {
                             $query->where('first_name', 'like', $name_parts[0].'%')->where('last_name', 'like', '%'.$name_parts[count($name_parts)-1].'%');
                         })->first();
-    
+
                         if ($employee) {
                             $log->update([
                                 'loggable_type' => 'Xguard\LaravelKanban\Models\Employee',

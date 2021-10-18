@@ -5,7 +5,7 @@
             <div class="flex-grow space-y-2">
 
                 <div v-if="!isCommentFocus">
-                    <input ref="myQuillEditortest" @click="displayQuill" placeholder="Write Comment" type="text"
+                    <input @click="displayQuill" placeholder="Write Comment" type="text"
                            class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full outline-none text-md leading-4">
                 </div>
 
@@ -68,7 +68,9 @@
                                 <div class="ml-3">
                                     <p class="text-gray-800 font-semibold">
                                         {{ comment.employee.user.full_name }} </p>
-                                    <small class="whitespace-nowrap">{{ comment.created_at | moment("DD MMM, YYYY") }}</small>
+                                    <small class="whitespace-nowrap">{{
+                                        comment.created_at | moment("DD MMM, YYYY")
+                                        }}</small>
                                 </div>
                             </div>
                         </div>
@@ -78,7 +80,8 @@
                                 <div class="inline-flex space-x-2 rounded border px-2 py-1">
                                     <small>Origin: </small>
                                     <avatar :name="comment.task.board.name" :size="5" :tooltip="true"></avatar>
-                                    <p class="text-gray-800 text-sm font-semibold whitespace-nowrap">[{{ comment.task.task_simple_name }}]</p>
+                                    <p class="text-gray-800 text-sm font-semibold whitespace-nowrap">
+                                        [{{ comment.task.task_simple_name }}]</p>
                                 </div>
                             </div>
                         </div>
@@ -90,7 +93,9 @@
                 class="p-3 border-t flex flex-col xs:flex-row items-center xs:justify-between">
                 <div class="text-xs xs:text-sm text-gray-900">
                     Showing {{ Number(paginationIndex) + 1 }} to
-                    <span v-if="paginationIndex + paginationStep <= filtered.length"> {{ Number(paginationIndex) + Number(paginationStep) }} </span>
+                    <span v-if="paginationIndex + paginationStep <= filtered.length"> {{
+                            Number(paginationIndex) + Number(paginationStep)
+                        }} </span>
                     <span v-else>{{ filtered.length }} </span> of {{ filtered.length }} Entries
                 </div>
                 <div class="inline-flex mt-2 xs:mt-0">
@@ -115,7 +120,6 @@ import vSelect from "vue-select";
 import Avatar from "../../../global/Avatar.vue";
 import {ajaxCalls} from "../../../../mixins/ajaxCallsMixin";
 
-
 export default {
     inject: ["eventHub"],
     components: {
@@ -127,6 +131,7 @@ export default {
     props: {
         cardData: Object,
     },
+
     data() {
         return {
             loadingComments: false,
@@ -135,7 +140,8 @@ export default {
             filter: "",
             paginationIndex: 0,
             paginationStep: 5,
-            commentData: {id: null, comment: null, taskId: null},
+            commentData: {id: null, comment: null, taskId: null, mentions: []},
+            boardMembers: [],
             config: {
                 readOnly: false,
                 placeholder: 'Describe your task in greater detail',
@@ -145,13 +151,28 @@ export default {
                         ['code-block'],
                         [{'list': 'ordered'}, {'list': 'bullet'}],
                         [{'script': 'sub'}, {'script': 'super'}],
-                    ]
+                    ],
+                    mention: {
+                        allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
+                        mentionDenotationChars: ["@"],
+                        selectKeys: [13],
+                        source: (searchTerm, renderList) => {
+
+                            if (searchTerm.length === 0) {
+                                renderList(this.boardMembers, searchTerm);
+                            } else {
+                                const matches = [];
+                                for (let i = 0; i < this.boardMembers.length; i++)
+                                    if (~this.boardMembers[i].value.toLowerCase().indexOf(searchTerm.toLowerCase()))
+                                        matches.push(this.boardMembers[i]);
+                                renderList(matches, searchTerm);
+                            }
+                        }
+                    }
                 }
             },
-
         };
     },
-
 
     computed: {
         filtered() {
@@ -160,14 +181,20 @@ export default {
                 this.paginationIndex = 0;
                 return !this.filter || e.employee.user.full_name.match(regex) || e.comment.match(regex);
             });
-        },
+        }
     },
     mounted() {
         this.commentData.taskId = this.cardData.id;
+        this.getMembers();
         this.getComments();
     },
     methods: {
 
+        getMembers() {
+            this.asyncGetMembersFormattedForQuill(this.cardData.board_id).then((members) => {
+                this.boardMembers = members.data;
+            });
+        },
         getComments() {
             this.loadingComments = true;
 
@@ -181,6 +208,18 @@ export default {
 
         saveComment() {
             this.loadingComments = true;
+            this.commentData.mentions = [];
+
+            let parser = new DOMParser();
+            let doc = parser.parseFromString(this.commentData.comment, 'text/html');
+            let matches = doc.getElementsByClassName('mention');
+
+            for (let i=0; i<matches.length; i++) {
+
+                let dataAttribute = matches[i].getAttribute('data-id');
+                this.commentData.mentions.push(dataAttribute);
+            }
+
             this.asyncCreateComment(this.commentData).then(res => {
                 this.commentData.comment = null;
                 this.getComments();
