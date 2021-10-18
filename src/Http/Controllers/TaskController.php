@@ -310,7 +310,7 @@ class TaskController extends Controller
                     "status" => $task->status ? $task->status : 'active',
                     "task_id" => $task->id,
                     "log_id" => $log->id
-                ]);                
+                ]);
             }
         } catch (\Exception $e) {
             return response([
@@ -610,7 +610,7 @@ class TaskController extends Controller
                         "status" => $task['status'] ? $task['status'] : 'active',
                         "task_id" => $task['id'],
                         "log_id" => $log->id
-                    ]);  
+                    ]);
                 }
             } catch (\Exception $e) {
                 return response([
@@ -698,7 +698,7 @@ class TaskController extends Controller
                 "status" => $task->status ? $task->status : 'active',
                 "task_id" => $task->id,
                 "log_id" => $log->id
-            ]); 
+            ]);
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
@@ -836,7 +836,7 @@ class TaskController extends Controller
                     "status" => $task->status ? $task->status : 'active',
                     "task_id" => $task->id,
                     "log_id" => $log->id
-                ]); 
+                ]);
             } elseif ($status === 'cancelled') {
                 $log = Log::createLog(
                     Auth::user()->id,
@@ -859,7 +859,7 @@ class TaskController extends Controller
                     "status" => $task->status ? $task->status : 'active',
                     "task_id" => $task->id,
                     "log_id" => $log->id
-                ]); 
+                ]);
             } elseif ($status === 'active') {
                 $log = Log::createLog(
                     Auth::user()->id,
@@ -882,7 +882,7 @@ class TaskController extends Controller
                     "status" => $task->status ? $task->status : 'active',
                     "task_id" => $task->id,
                     "log_id" => $log->id
-                ]); 
+                ]);
             }
         } catch (\Exception $e) {
             return response([
@@ -924,7 +924,7 @@ class TaskController extends Controller
                 "status" => $task->status ? $task->status : 'active',
                 "task_id" => $task->id,
                 "log_id" => $log->id
-            ]); 
+            ]);
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
@@ -972,7 +972,7 @@ class TaskController extends Controller
                 "status" => $taskCard->status ? $taskCard->status : 'active',
                 "task_id" => $taskCard->id,
                 "log_id" => $log->id
-            ]); 
+            ]);
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',

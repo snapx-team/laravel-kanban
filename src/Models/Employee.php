@@ -8,13 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Xguard\LaravelKanban\Models\Log;
 
 class Employee extends Model
 {
     use SoftDeletes, CascadeSoftDeletes;
-    
+
     protected $dates = ['deleted_at'];
 
     protected $table = 'kanban_employees';
@@ -44,12 +45,12 @@ class Employee extends Model
         return $this->belongsToMany(Task::class, 'kanban_employee_task', 'employee_id', 'task_id');
     }
 
-    public function logs(): BelongsToMany
+    public function notifications(): BelongsToMany
     {
         return $this->belongsToMany(Log::class, 'kanban_employee_log', 'employee_id', 'log_id')->withTimestamps();
     }
 
-    public function kanban_logs()
+    public function logs(): MorphMany
     {
         return $this->morphMany(Log::class, 'loggable');
     }

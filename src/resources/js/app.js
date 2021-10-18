@@ -5,12 +5,13 @@ import 'vue-select/dist/vue-select.css';
 import '@fortawesome/fontawesome-free/js/all.js';
 import Toast from 'vue-toastification';
 import 'vue-toastification/dist/index.css';
-import VueQuill from 'vue-quill';
 import DatePicker from 'vue2-datepicker';
 import VueMoment from 'vue-moment';
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import VueQuillEditor from 'vue-quill-editor';
+import 'quill-mention';
+import 'quill-mention/dist/quill.mention.min.css';
 import 'quill/dist/quill.core.css'; // import styles
 import 'quill/dist/quill.snow.css'; // for snow theme
 import 'quill/dist/quill.bubble.css';// for bubble theme
@@ -25,7 +26,6 @@ Vue.use(Toast, {
     maxToasts: 20,
     newestOnTop: true
 });
-Vue.use(VueQuill);
 Vue.use(VueQuillEditor, /* { default global options } */);
 Vue.use(VueSweetalert2);
 Vue.use(DatePicker);

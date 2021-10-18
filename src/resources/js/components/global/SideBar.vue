@@ -55,7 +55,7 @@
 
             <nav class="mt-8">
                 <h3 class="font-semibold text-gray-600 uppercase tracking-wide"
-                    :class=" !isSideBarOpen ? 'text-center text-xs': 'text-left text-sm' ">General </h3>
+                    :class=" !isSideBarOpen ? 'text-center text-xs': 'text-left text-sm' ">General</h3>
                 <div class="mt-2 -mx-3 pb-2">
                     <router-link :to="{ path: '/kanban' }"
                                  class="flex items-center px-3 py-2 rounded-lg"

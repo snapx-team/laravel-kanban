@@ -116,7 +116,7 @@ export const ajaxCalls = {
         // Tasks
 
         asyncGetBacklogTasks(page, filters, cancelToken) {
-            return axios.post('get-backlog-tasks?page='+page, filters, {cancelToken: cancelToken}).catch((error) => {
+            return axios.post('get-backlog-tasks?page=' + page, filters, {cancelToken: cancelToken}).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
@@ -334,7 +334,7 @@ export const ajaxCalls = {
             return axios.post('create-badge', badgeData).then(() => {
                 this.triggerSuccessToast('Badge Created!');
             }).catch((error) => {
-                this.triggerErrorToast(error.response.data.errors.name.toString());
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -356,6 +356,10 @@ export const ajaxCalls = {
 
         asyncGetMembers(boardId) {
             return axios.get('get-members/' + boardId);
+        },
+
+        asyncGetMembersFormattedForQuill(boardId) {
+            return axios.get('get-members-formatted-for-quill/' + boardId);
         },
 
         asyncAddMembers(memberData, boardId) {
@@ -382,8 +386,9 @@ export const ajaxCalls = {
         },
 
         asyncCreateComment(commentData) {
+
             return axios.post('create-task-comment', commentData).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -392,7 +397,6 @@ export const ajaxCalls = {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
-
 
         // Triggers
 
@@ -445,6 +449,22 @@ export const ajaxCalls = {
                 icon: true,
                 rtl: false
             });
+        },
+
+        // Loop all errors
+
+        loopAllErrorsAsTriggerErrorToast(errorResponse) {
+            if ('response' in errorResponse && 'errors' in errorResponse.response.data) {
+
+                let errors = [];
+                Object.values(errorResponse.response.data.errors).map(error => {
+                    errors = errors.concat(error);
+                });
+                errors.forEach(error => this.triggerErrorToast(error));
+            }
+            else{
+                this.triggerErrorToast(errorResponse.response.data.message);
+            }
         }
     }
 };

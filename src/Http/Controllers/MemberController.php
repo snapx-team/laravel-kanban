@@ -20,7 +20,7 @@ class MemberController extends Controller
                     'board_id' => $boardId,
                 ]);
 
-                if($member->wasRecentlyCreated) {
+                if ($member->wasRecentlyCreated) {
                     Log::createLog(
                         Auth::user()->id,
                         Log::TYPE_KANBAN_MEMBER_CREATED,
@@ -54,7 +54,6 @@ class MemberController extends Controller
                 $member->board_id,
                 'Xguard\LaravelKanban\Models\Board'
             );
-
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
@@ -70,5 +69,21 @@ class MemberController extends Controller
             ->with(['employee.user' => function ($q) {
                 $q->select(['id', 'first_name', 'last_name']);
             }])->get();
+    }
+
+    public function getMembersFormattedForQuill($id)
+    {
+        $members = Member::where('board_id', $id)
+            ->with(['employee.user' => function ($q) {
+                $q->select(['id', 'first_name', 'last_name']);
+            }])->get();
+
+        $formattedBoardMembers= [];
+        foreach ($members as $member) {
+            array_push($formattedBoardMembers, ['id' => $member->employee->id, 'value' => $member->employee->user->full_name]);
+
+        }
+
+        return $formattedBoardMembers;
     }
 }

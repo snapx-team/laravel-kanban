@@ -20,8 +20,14 @@
                     <p class="text-gray-700 text-xs mt-1">{{ moment(log.created_at).format("MMMM Do h:mm a") }}</p>
                 </div>
             </div>
-            <div v-if="log.board">
-                <badge :name="log.board.name"></badge>
+            <div v-if="log.loggable && log.loggable.board">
+                <badge :name="log.loggable.board.name"></badge>
+            </div>
+            <div v-else-if="log.loggable && log.loggable_type === 'Xguard\\LaravelKanban\\Models\\Board'">
+                <badge :name="log.loggable.name"></badge>
+            </div>
+            <div v-else-if="log.loggable && log.loggable_type === 'Xguard\\LaravelKanban\\Models\\Comment'">
+                <badge :name="log.loggable.task.board.name"></badge>
             </div>
         </div>
     </div>
@@ -129,11 +135,44 @@ export default {
                         "icon": "fa-user-minus",
                         "color": "red",
                     };
+
+                case 40:
+                    return {
+                        "type": "added kanban board member",
+                        "icon": "fa-user-plus",
+                        "color": "green",
+                    };
+
+                case 41:
+                    return {
+                        "type": "removed kanban board member",
+                        "icon": "fa-user-minus",
+                        "color": "red",
+                    };
+
                 case 70:
                     return {
                         "type": "wrote a comment",
                         "icon": "fa-comment",
                         "color": "blue",
+                    };
+                case 71:
+                    return {
+                        "type": "deleted a comment",
+                        "icon": "comment-slash",
+                        "color": "red",
+                    };
+                case 72:
+                    return {
+                        "type": "edited a comment",
+                        "icon": "fa-comment",
+                        "color": "yellow",
+                    };
+                case 73:
+                    return {
+                        "type": "mentioned you in a comment",
+                        "icon": "fa-comment",
+                        "color": "purple",
                     };
                 case 90:
                     return {

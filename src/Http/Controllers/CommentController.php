@@ -5,9 +5,14 @@ namespace Xguard\LaravelKanban\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Lorisleiva\Actions\Action;
+use Xguard\LaravelKanban\Actions\Comments\CreateTaskCommentAction;
+use Xguard\LaravelKanban\Actions\Comments\EditTaskCommentAction;
+use Xguard\LaravelKanban\Actions\Comments\GetAllTaskCommentsAction;
 use Xguard\LaravelKanban\Http\Helper\CheckHasAccessToBoardWithTaskId;
 use Xguard\LaravelKanban\Models\Comment;
 use Illuminate\Support\Facades\Auth;
+use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Log;
 use Xguard\LaravelKanban\Models\Task;
 
@@ -21,88 +26,16 @@ class CommentController extends Controller
 
     public function getAllTaskComments($taskId)
     {
-        // this will also get all comments of related tasks
-        $sharedTaskDataId = Task::find($taskId)->shared_task_data_id;
-        $allAssociatedTasks = Task::where('shared_task_data_id', '=', $sharedTaskDataId)->pluck('id')->toArray();
-        return Comment::whereIn('task_id', $allAssociatedTasks)
-            ->with('employee.user')
-            ->with(['task' => function ($q) {
-                $q->with('board');
-            }])
-            ->orderBy('created_at', 'desc')->get();
+        return (new GetAllTaskCommentsAction(['task_id' => $taskId]))->run();
     }
 
     public function createOrUpdateTaskComment(Request $request)
     {
-
-        $rules = [
-            'comment' => 'required'
-        ];
-
-        $customMessages = [
-            'comment.required' => 'Comment cannot be empty',
-        ];
-
-        $validator = Validator::make($request->all(), $rules, $customMessages);
-
-        if ($validator->fails()) {
-            return response([
-                'success' => 'false',
-                'message' => implode(', ', $validator->messages()->all()),
-            ], 400);
-        }
-
-        $taskId = $request->input('taskId');
-        $hasBoardAccess = (new CheckHasAccessToBoardWithTaskId())->returnBool($taskId);
-
-        if ($hasBoardAccess) {
-            try {
-                if ($request->filled('id')) {
-                    $comment = Comment::where('id', $request->input('id'))->update([
-                        'comment' => $request->input('comment'),
-                    ]);
-
-                    $task = Task::with('board')->get()->find($comment->task_id);
-                    Log::createLog(
-                        Auth::user()->id,
-                        Log::TYPE_COMMENT_EDITED,
-                        'Edited comment on task [' . $task->task_simple_name . ']',
-                        null,
-                        $comment->id,
-                        'Xguard\LaravelKanban\Models\Comment'
-                    );
-                } else {
-                    $comment = Comment::with('task')->create([
-                        'task_id' => $request->input('taskId'),
-                        'comment' => $request->input('comment'),
-                        'employee_id' => session('employee_id'),
-                    ]);
-
-                    $task = Task::with('board')->get()->find($comment->task_id);
-                    Log::createLog(
-                        Auth::user()->id,
-                        Log::TYPE_COMMENT_CREATED,
-                        'Added new comment on task [' . $task->task_simple_name . ']',
-                        null,
-                        $comment->id,
-                        'Xguard\LaravelKanban\Models\Comment'
-                    );
-                }
-            } catch (\Exception $e) {
-                return response([
-                    'success' => 'false',
-                    'message' => $e->getMessage(),
-                ], 400);
-            }
+        if ($request->filled('id')) {
+            return (new EditTaskCommentAction(['comment_data' => $request->all()]))->run();
         } else {
-            return response([
-                'success' => 'false',
-                'message' => 'You don\'t have access to this board',
-            ], 400);
+            return (new CreateTaskCommentAction(['comment_data' => $request->all()]))->run();
         }
-
-
-        return response(['success' => 'true'], 200);
     }
 
     public function deleteTaskComment($id)
