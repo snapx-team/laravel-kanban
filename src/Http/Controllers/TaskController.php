@@ -119,6 +119,28 @@ class TaskController extends Controller
             $query->whereIn('reporter_id', $reporterIds);
         }
 
+        if (!empty($filters['filterErpEmployee'])) {
+            $erpEmployees = $filters['filterErpEmployee'];
+            $erpEmployeeIds = array_column($erpEmployees, 'id');
+
+            $query->whereHas('sharedTaskData', function ($q) use ($erpEmployeeIds) {
+                $q->whereHas('erpEmployees', function ($q) use ($erpEmployeeIds) {
+                    $q->whereIn('users.id', $erpEmployeeIds);
+                });
+            });
+        }
+
+        if (!empty($filters['filterErpContract'])) {
+            $erpContracts = $filters['filterErpContract'];
+            $erpContractsIds = array_column($erpContracts, 'id');
+
+            $query->whereHas('sharedTaskData', function ($q) use ($erpContractsIds) {
+                $q->whereHas('erpContracts', function ($q) use ($erpContractsIds) {
+                    $q->whereIn('contracts.id', $erpContractsIds);
+                });
+            });
+        }
+
         return $query->paginate(15);
     }
 

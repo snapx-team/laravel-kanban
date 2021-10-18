@@ -234,12 +234,9 @@ export default {
     created() {
         this.eventHub.$on("create-template", (template) => {
             if (template !== undefined) {
-
-                console.log(template);
                 this.templateData = {...template};
                 this.templateData.checkedOptions = template.unserialized_options;
                 // this.templateData.boards = template.boards;
-
                 this.isEdit = true;
             } else {
                 this.isEdit = false;
