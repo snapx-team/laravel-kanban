@@ -131,7 +131,7 @@ export default {
             const regex = new RegExp(this.filter, "i");
             return this.badges.filter((e) => {
                 this.paginationIndex = 0;
-                return !this.filter || e.name.match(regex) || e.badge.name.match(regex);
+                return !this.filter || e.name.match(regex);
             });
         },
     },

@@ -48,10 +48,11 @@
                         <div class="flex space-x-3">
                             <label class="flex-1 space-y-2">
                                 <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Name </span>
-                                <input class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
-                                       placeholder="Badge Name"
-                                       type="text"
-                                       v-model="kanbanData.name"/>
+                                <input
+                                    class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
+                                    placeholder="Badge Name"
+                                    type="text"
+                                    v-model="kanbanData.name"/>
                             </label>
 
                         </div>
@@ -86,78 +87,68 @@
 </template>
 <script>
 
-    import vSelect from "vue-select";
-    import {ajaxCalls} from "../../../mixins/ajaxCallsMixin";
+import vSelect from "vue-select";
+import {ajaxCalls} from "../../../mixins/ajaxCallsMixin";
 
-    export default {
-        inject: ["eventHub"],
+export default {
+    inject: ["eventHub"],
 
-        components: {
-            vSelect,
+    components: {
+        vSelect,
+    },
+
+    mixins: [ajaxCalls],
+
+    data() {
+        return {
+            isEdit: false,
+
+            kanbanData: {
+                id: null,
+                name: null,
+            },
+            modalOpen: false,
+        };
+    },
+
+    created() {
+        this.eventHub.$on("create-badge", (badge) => {
+            if (badge !== undefined) {
+                this.kanbanData = {...badge};
+                this.isEdit = true;
+            } else {
+                this.isEdit = false;
+            }
+            this.modalOpen = true;
+        });
+    },
+
+    beforeDestroy() {
+        this.eventHub.$off('create-badge');
+    },
+
+    methods: {
+        saveBadge(event) {
+            event.target.disabled = true;
+            this.eventHub.$emit("save-badge", this.kanbanData);
+            this.modalOpen = false;
         },
 
-        mixins: [ajaxCalls],
-
-        data() {
-            return {
-                isEdit: false,
-
-                kanbanData: {
-                    id: null,
-                    name: null,
-                },
-                modalOpen: false,
-            };
-        },
-
-        created() {
-            this.eventHub.$on("create-badge", (badge) => {
-                if (badge !== undefined) {
-                    this.kanbanData = {...badge};
-                    this.isEdit = true;
+        deleteBadge(event) {
+            this.$swal({
+                icon: 'info',
+                title: 'Delete ' + this.kanbanData.name + '?',
+                text: 'This will permanently delete the badge.',
+                showCancelButton: true,
+                confirmButtonText: `Continue`,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    event.target.disabled = true;
+                    this.eventHub.$emit("delete-badge", this.kanbanData.id);
+                    this.modalOpen = false;
                 }
-                else {
-                    this.isEdit = false;
-                }
-                this.modalOpen = true;
             });
         },
-
-        beforeDestroy(){
-            this.eventHub.$off('create-badge');
-        },
-
-        methods: {
-            saveBadge(event) {
-                event.target.disabled = true;
-                this.eventHub.$emit("save-badge", this.kanbanData);
-                this.modalOpen = false;
-            },
-
-            deleteBadge(event) {
-                this.$swal({
-                    icon: 'info',
-                    title: 'Delete ' + this.kanbanData.name + '?',
-                    text: 'This will permanently delete the badge.To continue, type the name of the board below.',
-                    input: 'text',
-                    showCancelButton: true,
-                    confirmButtonText: `Continue`,
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        if (result.value === this.kanbanData.name) {
-                            event.target.disabled = true;
-                            this.eventHub.$emit("delete-badge", this.kanbanData.id);
-                            this.modalOpen = false;
-                        } else {
-                            this.$swal({
-                                title: 'Incorrect value',
-                                text: 'Badge not deleted.',
-                            })
-                        }
-                    }
-                });
-            },
-
-        },
-    };
+    },
+};
 </script>
