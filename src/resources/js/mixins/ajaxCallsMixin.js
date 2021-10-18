@@ -326,6 +326,26 @@ export const ajaxCalls = {
             return axios.get('get-all-badges');
         },
 
+        asyncListBadgesWithCount() {
+            return axios.get('list-badges-with-count');
+        },
+
+        asyncCreateBadge(badgeData) {
+            return axios.post('create-badge', badgeData).then(() => {
+                this.triggerSuccessToast('Badge Created!');
+            }).catch((error) => {
+                this.triggerErrorToast(error.response.data.errors.name.toString());
+            });
+        },
+
+        asyncDeleteBadge($badgeId) {
+            return axios.delete('delete-badge/' + $badgeId).then(() => {
+                this.triggerSuccessToast('Badge Deleted!');
+            }).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });;
+        },
+
         // Logs
 
         asyncGetLogs(taskId) {

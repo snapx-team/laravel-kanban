@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Responses\JsonResponse;
 use DateTime;
 use Illuminate\Support\Facades\Auth;
+use Xguard\LaravelKanban\Actions\Badge\ListBadgesWithCountAction;
 use Xguard\LaravelKanban\Http\Helper\CheckHasAccessToBoardWithBoardId;
 use Xguard\LaravelKanban\Models\Badge;
 use Xguard\LaravelKanban\Models\Employee;
@@ -81,11 +82,13 @@ class LaravelKanbanController extends Controller
         }
         $employees = Employee::with('user')->get();
         $templates = Template::orderBy('name')->with('badge', 'boards')->get();
+        $badges = app(ListBadgesWithCountAction::class)->run();
 
         return [
             'employees' => $employees,
             'boards' => $boards,
-            'templates' => $templates
+            'templates' => $templates,
+            'badges' => $badges
         ];
     }
 

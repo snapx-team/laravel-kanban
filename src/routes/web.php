@@ -106,6 +106,9 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
 
             // Badges
             Route::get('/get-all-badges', 'BadgeController@getAllBadges');
+            Route::get('/list-badges-with-count', 'BadgeController@listBadgesWithCount');
+            Route::post('/create-badge', 'BadgeController@createOrUpdateBadge');
+            Route::delete('/delete-badge/{id}', 'BadgeController@deleteBadge');
 
             // Logs
 

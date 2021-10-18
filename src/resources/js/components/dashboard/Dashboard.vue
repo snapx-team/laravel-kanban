@@ -17,8 +17,12 @@
 
             <template-list :class="{ 'animate-pulse': loadingTemplates }"
                            :templates="dashboardData.templates"></template-list>
+
+            <badge-list :class="{ 'animate-pulse': loadingBadges }"
+                        :badges="dashboardData.badges"></badge-list>
             <add-or-edit-employee-modal></add-or-edit-employee-modal>
             <add-or-edit-board-modal></add-or-edit-board-modal>
+            <add-or-edit-badge-modal></add-or-edit-badge-modal>
             <add-backlog-task-modal :boards="dashboardData.boards"></add-backlog-task-modal>
             <add-template-modal :boards="dashboardData.boards" :templates="dashboardData.templates"></add-template-modal>
         </div>
@@ -29,8 +33,10 @@
 import EmployeeList from "./dashboardComponents/EmployeeList.vue";
 import BoardList from "./dashboardComponents/BoardList.vue";
 import TemplateList from "./dashboardComponents/TemplateList";
+import BadgeList from "./dashboardComponents/BadgeList";
 import Actions from "./dashboardComponents/Actions.vue";
 import AddOrEditEmployeeModal from "./dashboardComponents/AddOrEditEmployeeModal.vue";
+import AddOrEditBadgeModal from "./dashboardComponents/AddOrEditBadgeModal.vue";
 import AddOrEditBoardModal from "./dashboardComponents/AddOrEditBoardModal.vue";
 import AddBacklogTaskModal from "./dashboardComponents/AddBacklogTaskModal";
 import {ajaxCalls} from "../../mixins/ajaxCallsMixin";
@@ -43,8 +49,10 @@ export default {
         EmployeeList,
         BoardList,
         TemplateList,
+        BadgeList,
         Actions,
         AddOrEditEmployeeModal,
+        AddOrEditBadgeModal,
         AddOrEditBoardModal,
         AddBacklogTaskModal
     },
@@ -64,7 +72,8 @@ export default {
             loadingBoard: false,
             loadingEmployee: false,
             loadingBacklogTask: false,
-            loadingTemplates: false
+            loadingTemplates: false,
+            loadingBadges: false
         };
     },
 
@@ -90,6 +99,12 @@ export default {
         this.eventHub.$on("delete-template", (templateId) => {
             this.deleteTemplate(templateId);
         });
+        this.eventHub.$on("save-badge", (badgeData) => {
+            this.saveBadge(badgeData);
+        });
+        this.eventHub.$on("delete-badge", (badgeId) => {
+            this.deleteBadge(badgeId);
+        });
     },
 
     beforeDestroy() {
@@ -100,6 +115,8 @@ export default {
         this.eventHub.$off('save-backlog-task');
         this.eventHub.$off('save-template');
         this.eventHub.$off('delete-template');
+        this.eventHub.$off('save-badge');
+        this.eventHub.$off('delete-badge');
     },
 
     methods: {
@@ -187,12 +204,36 @@ export default {
             });
         },
 
+        saveBadge(badgeData) {
+            this.loadingBadges = true
+            const cloneBadgeData = {...badgeData};
+            this.asyncCreateBadge(cloneBadgeData).then(res => {
+                this.asyncListBadgesWithCount().then((data) => {
+                    this.dashboardData.badges = data.data.data;
+                    this.loadingBadges = false;
+                }).catch(res => {
+                    console.log(res)
+                });
+            });
+        },
+
+        deleteBadge(badgeId) {
+            this.loadingBadges = true
+            this.asyncDeleteBadge(badgeId).then(res => {
+                this.asyncListBadgesWithCount().then((data) => {
+                    this.dashboardData.badges = data.data.data;
+                    this.loadingBadges = false;
+                }).catch(res => {
+                    console.log(res)
+                });
+            });
+        },
+
         getDashboardData() {
             this.eventHub.$emit("set-loading-state", true);
             this.asyncGetDashboardData().then((data) => {
                 this.dashboardData = data.data;
                 this.eventHub.$emit("set-loading-state", false);
-
             }).catch(res => {
                 console.log(res)
             });

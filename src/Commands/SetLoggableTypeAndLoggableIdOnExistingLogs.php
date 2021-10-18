@@ -54,7 +54,7 @@ class SetLoggableTypeAndLoggableIdOnExistingLogs extends Command
             } else if ($log->badge_id) {
                 $log->update([
                     'loggable_type' => 'Xguard\LaravelKanban\Models\Badge',
-                    'loggable_id' => $log->task_id
+                    'loggable_id' => $log->badge_id
                 ]);
             } else {
                 if ($log->log_type == 1 || $log->log_type == 3) {
