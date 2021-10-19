@@ -454,40 +454,29 @@ export default {
                         ul[i].addEventListener("click", el => {
 
                             this.clickedCheckboxEl = el.currentTarget;
-                            let title = this.clickedCheckboxEl.getAttribute("data-checked") === 'false' ? "Confirm Checklist Item Completed" : "Confirm Checklist Item Incomplete";
 
-                            this.$swal({
-                                icon: 'info',
-                                title: title,
-                                text: 'Ticking this checkbox will notify all members assigned to this task and all related tasks',
-                                showCancelButton: true,
-                                confirmButtonText: `Continue`,
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    let toggle = this.clickedCheckboxEl.getAttribute("data-checked") === 'true' ? "false" : "true";
-                                    this.clickedCheckboxEl.setAttribute('data-checked', toggle);
-                                    this.cardData.shared_task_data.description = (document.getElementById('task-description').innerHTML);
+                            let toggle = this.clickedCheckboxEl.getAttribute("data-checked") === 'true' ? "false" : "true";
+                            this.clickedCheckboxEl.setAttribute('data-checked', toggle);
+                            this.cardData.shared_task_data.description = (document.getElementById('task-description').innerHTML);
 
-                                    let done = document.querySelectorAll('#task-description ul[data-checked="true"] li');
-                                    let total = document.querySelectorAll('#task-description ul[data-checked] li');
+                            let done = document.querySelectorAll('#task-description ul[data-checked="true"] li');
+                            let total = document.querySelectorAll('#task-description ul[data-checked] li');
 
-                                    this.checklistData.done = done.length;
-                                    this.checklistData.total = total.length;
+                            this.checklistData.done = done.length;
+                            this.checklistData.total = total.length;
 
-                                    this.asyncUpdateDescription({
-                                        'description': this.cardData.shared_task_data.description,
-                                        'id': this.cardData.id,
-                                        'isChecked': this.clickedCheckboxEl.getAttribute("data-checked"),
-                                        'checkboxContent': this.clickedCheckboxEl.querySelector('li').innerHTML
-                                    }).then(() => {
-                                        this.asyncGetTaskData(this.cardData.id).then((data) => {
-                                            this.cloneCardData = data.data;
-                                            this.eventHub.$emit("update-add-task-data-with-group-data", data.data);
-                                        }).catch(res => {
-                                            console.log(res)
-                                        });
-                                    })
-                                }
+                            this.asyncUpdateDescription({
+                                'description': this.cardData.shared_task_data.description,
+                                'id': this.cardData.id,
+                                'isChecked': this.clickedCheckboxEl.getAttribute("data-checked"),
+                                'checkboxContent': this.clickedCheckboxEl.querySelector('li').innerHTML
+                            }).then(() => {
+                                this.asyncGetTaskData(this.cardData.id).then((data) => {
+                                    this.cloneCardData = data.data;
+                                    this.eventHub.$emit("update-add-task-data-with-group-data", data.data);
+                                }).catch(res => {
+                                    console.log(res)
+                                });
                             })
 
                         }, true);
