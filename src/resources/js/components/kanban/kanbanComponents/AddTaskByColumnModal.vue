@@ -135,7 +135,7 @@
                                     <quill-editor v-if="!checkedOptions.includes('Group')"
                                                   :options="config"
                                                   output="html"
-                                                  v-model="task.description"></quill-editor>
+                                                  v-model="task.shared_task_data.description"></quill-editor>
                                     <p v-else class="text-sm font-medium leading-5 text-red-500">Description will match
                                         group description</p>
                                 </div>
@@ -167,19 +167,16 @@
                                 </div>
                             </div>
 
-                            <div class="flex flex-wrap"
-                                 v-if="checkedOptions.includes('Deadline') || checkedOptions.includes('ERP Employee') ||checkedOptions.includes('ERP Contract')">
+                            <div class="flex-1 space-y-2">
+                                <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline *</span>
+                                <date-picker format="YYYY-MM-DD HH:mm"
+                                             placeholder="YYYY-MM-DD HH:mm"
+                                             type="datetime"
+                                             v-model="task.deadline"></date-picker>
+                            </div>
 
-                                <div class="flex-1 pr-2 mb-6" v-if="checkedOptions.includes('Deadline')">
-                                    <div class="flex-1 space-y-2">
-                                        <span
-                                            class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline</span>
-                                        <date-picker format="YYYY-MM-DD HH:mm"
-                                                     placeholder="YYYY-MM-DD HH:mm"
-                                                     type="datetime"
-                                                     v-model="task.deadline"></date-picker>
-                                    </div>
-                                </div>
+                            <div class="flex flex-wrap"
+                                 v-if="checkedOptions.includes('ERP Employee') ||checkedOptions.includes('ERP Contract')">
 
                                 <div class="flex-1 pr-2 mb-6" v-if="checkedOptions.includes('ERP Employee')">
                                     <div class="flex-1 space-y-2">
@@ -305,7 +302,6 @@ export default {
         return {
             modalOpen: false,
             taskOptions: [
-                {name: 'Deadline',},
                 {name: 'ERP Employee',},
                 {name: 'ERP Contract',},
                 {name: 'Group',},
@@ -330,8 +326,8 @@ export default {
             task: {
                 name: null,
                 badge: {},
-                description: null,
                 shared_task_data: {
+                    description: null,
                     erp_employees: [],
                     erp_contracts: [],
                 },
@@ -384,24 +380,18 @@ export default {
 
     methods: {
         saveTask(event) {
-            if (!(!!this.task.name))
-                this.triggerErrorToast('Task name is required');
-            else if (!(!!this.task.description) && !this.checkedOptions.includes('Group'))
-                this.triggerErrorToast('Task description is required');
-            else if (this.checkedOptions.includes('Group') && !(!!this.task.associatedTask)) {
-                this.triggerErrorToast('Choose a task to group with, or uncheck group from options list');
-            }
-            else if ( this.task.badge.name && this.task.badge.name.trim().length == 0) {
-                this.triggerErrorToast('The badge name must contain atleast one character');
-            } else {
+
+            let isValid = this.validateCreateOrUpdateTaskEvent(this.task, this.checkedOptions)
+
+            if (isValid) {
                 this.eventHub.$emit("save-task", this.task);
                 this.modalOpen = false;
 
                 this.task = {
                     name: null,
                     badge: {},
-                    description: null,
                     shared_task_data: {
+                        description: null,
                         erp_employees: [],
                         erp_contracts: [],
                     },

@@ -253,7 +253,7 @@ class TaskController extends Controller
             if (strlen($badgeName) == 0) {
                 throw new \Exception("The name of the badge has to contain at least one character");
             }
-            
+
             $badge = Badge::where('name', $badgeName)->first();
 
             if (!$badge) {
@@ -261,14 +261,14 @@ class TaskController extends Controller
                     throw new \Exception("Only admins can create badges");
                 }
                 $badge = Badge::create([
-                    'name' => $badgeName,  
+                    'name' => $badgeName,
                 ]);
             }
 
             if ($backlogTaskData['associatedTask'] !== null) {
                 $sharedTaskDataId = $backlogTaskData['associatedTask']['shared_task_data_id'];
             } else {
-                $sharedTaskData = SharedTaskData::create(['description' => $backlogTaskData['description']]);
+                $sharedTaskData = SharedTaskData::create(['description' => $backlogTaskData['shared_task_data']['description']]);
                 $sharedTaskDataId = $sharedTaskData->id;
 
                 $erpEmployeesArray = [];
@@ -372,7 +372,7 @@ class TaskController extends Controller
             if (strlen($badgeName) == 0) {
                 throw new \Exception("The name of the badge has to contain at least one character");
             }
-            
+
             $badge = Badge::where('name', $badgeName)->first();
 
             if (!$badge) {
@@ -380,14 +380,14 @@ class TaskController extends Controller
                     throw new \Exception("Only admins can create badges");
                 }
                 $badge = Badge::create([
-                    'name' => $badgeName,  
+                    'name' => $badgeName,
                 ]);
             }
 
             if ($taskCard['associatedTask'] !== null) {
                 $sharedTaskDataId = $taskCard['associatedTask']['shared_task_data_id'];
             } else {
-                $sharedTaskData = SharedTaskData::create(['description' => $taskCard['description']]);
+                $sharedTaskData = SharedTaskData::create(['description' => $taskCard['shared_task_data']['description']]);
 
                 $erpEmployeesArray = [];
                 $erpContractsArray = [];
@@ -525,7 +525,7 @@ class TaskController extends Controller
                     if (strlen($badgeName) == 0) {
                         throw new \Exception("The name of the badge has to contain at least one character");
                     }
-                    
+
                     $badge = Badge::where('name', $badgeName)->first();
 
                     if (!$badge) {
@@ -533,7 +533,7 @@ class TaskController extends Controller
                             throw new \Exception("Only admins can create badges");
                         }
                         $badge = Badge::create([
-                            'name' => $badgeName,  
+                            'name' => $badgeName,
                         ]);
                     }
 

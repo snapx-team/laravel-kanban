@@ -118,7 +118,7 @@
                              label="name"
                              :placeholder="$role === 'admin'?'Choose or Create' : 'Choose'"
                              style="margin-top: 7px"
-                             :taggable ="$role === 'admin'"
+                             :taggable="$role === 'admin'"
                              v-model="task.badge">
                         <template slot="option" slot-scope="option">
                                 <span :style="`color: hsl( ${option.hue} , 45%, 90%);`"
@@ -134,7 +134,7 @@
 
                 <label class="flex-grow space-y-2">
                     <span
-                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Task Name </span>
+                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Task Name *</span>
                     <input
                         class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full pr-10 outline-none text-md leading-4"
                         placeholder="Task Name"
@@ -171,11 +171,13 @@
             <div class="flex">
                 <div class="flex-grow space-y-2">
                     <span
-                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Description</span>
+                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Description *</span>
 
                     <div class="space-y-5">
-                        <div class="rounded border p-5 cursor-text" @click="descriptionIsEditable = true" v-if="!descriptionIsEditable">
-                            <div class="ql-editor h-auto" id="task-description" v-html="task.shared_task_data.description"></div>
+                        <div class="rounded border p-5 cursor-text" @click="descriptionIsEditable = true"
+                             v-if="!descriptionIsEditable">
+                            <div class="ql-editor h-auto" id="task-description"
+                                 v-html="task.shared_task_data.description"></div>
                         </div>
                     </div>
 
@@ -185,14 +187,12 @@
                                   scrollingContainer="html"
                                   v-model="task.shared_task_data.description"
                                   @blur="descriptionIsEditable = false"></quill-editor>
-                    <p v-if="selectGroupIsVisible" class="text-sm font-medium leading-5 text-red-500">Description will match group
-                        description</p>
-
+                    <p v-if="selectGroupIsVisible" class="text-sm font-medium leading-5 text-red-500">Description will match group description</p>
                 </div>
             </div>
 
             <div class="flex-1 space-y-2">
-                <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline</span>
+                <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline *</span>
                 <date-picker format="YYYY-MM-DD HH:mm:ss"
                              placeholder="YYYY-MM-DD HH:mm:ss"
                              type="datetime"
@@ -475,17 +475,12 @@ export default {
             });
         },
         updateBacklogTask() {
-            if(!(!!this.task.name))
-                this.triggerErrorToast('Task name is required');
-            else if(!(!!this.task.description) && !this.selectGroupIsVisible)
-                this.triggerErrorToast('Task description is required');
-            else if(this.selectGroupIsVisible && !(!!this.task.associatedTask)){
-                this.triggerErrorToast('Choose a task to group with, or uncheck group from options list');
-            }
-            else if ( this.task.badge.name && this.task.badge.name.trim().length === 0) {
-                this.triggerErrorToast('The badge name must contain at least one character');
-            }
-            else{
+
+            this.task['selectGroupIsVisible'] = this.selectGroupIsVisible;
+
+            let isValid = this.validateCreateOrUpdateTaskEvent(this.task, [])
+
+            if (isValid) {
                 if (this.task.associatedTask) {
                     this.task.shared_task_data_id = this.task.associatedTask.shared_task_data_id
                 }
@@ -498,6 +493,8 @@ export default {
                     }
                 });
             }
+
+
         },
         removeGroup() {
 

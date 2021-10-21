@@ -184,7 +184,7 @@
 
                     <div class="flex flex-wrap">
 
-                         <!-- erp employee -->
+                        <!-- erp employee -->
                         <div class="flex block  mr-2">
                             <vSelect
                                 v-model="filters.filterErpEmployee"
@@ -207,7 +207,7 @@
                             </vSelect>
                         </div>
 
-                         <!-- erp contract -->
+                        <!-- erp contract -->
                         <div class="flex block  mr-2">
                             <vSelect
                                 v-model="filters.filterErpContract"
@@ -256,10 +256,10 @@
                                     v-for="task in backlogTaskList"
                                     :key="task.id"
                                     :task="task"
-                                    class="cursor-pointer">
+                                    class="cursor-pointer"
+                                    v-on:click.native="updateSelectedTaskInUrl(task)">
                                 </backlog-card>
                             </div>
-
 
                             <button v-observe-visibility="visibilityChanged"
                                     @click="getMoreBacklogTasks"
@@ -333,8 +333,13 @@ export default {
         Avatar
     },
 
+    props: {
+        taskId: Number
+    },
+
     data() {
         return {
+            task: null,
             requests: [],
             request: null,
             pageNumber: 1,
@@ -367,10 +372,11 @@ export default {
 
     mixins: [ajaxCalls],
 
-    mounted() {
-        this.getBacklogData();
+    async mounted() {
+        await this.getBacklogData();
         this.getErpEmployees();
         this.getContracts();
+        this.getTaskFromUrl();
     },
 
     created() {
@@ -412,17 +418,16 @@ export default {
     },
     methods: {
 
-        getBacklogData() {
+        async getBacklogData() {
             if (this.start && this.end) {
                 this.eventHub.$emit("set-loading-state", true);
                 this.isLoadingTasks = true;
                 this.pageNumber = 1;
                 this.backlogTaskList = [];
 
-                this.asyncGetBacklogData(this.startTime, this.endTime,).then((data) => {
+                await this.asyncGetBacklogData(this.startTime, this.endTime,).then((data) => {
                     this.backlogData = data.data;
                     this.eventHub.$emit("set-loading-state", false);
-
                     this.getMoreBacklogTasks();
                 })
             } else {
@@ -514,6 +519,21 @@ export default {
                 console.log(res)
             });
         },
+
+        getTaskFromUrl() {
+            if (!isNaN(this.taskId)) {
+                this.asyncGetTaskData(this.taskId).then((data) => {
+                    this.setSideInfo(data.data);
+                });
+            }
+        },
+
+        updateSelectedTaskInUrl(task) {
+            console.log('test');
+            this.$router.replace({name: "backlog", query: {task: task.id}})
+            this.task = task;
+        },
+
         onTypeEmployee(search, loading) {
             if (search.length) {
                 loading(true);
