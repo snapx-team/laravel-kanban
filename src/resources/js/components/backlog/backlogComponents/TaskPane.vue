@@ -2,6 +2,11 @@
     <div class="border-gray-300 border-2">
         <div class="flex justify-between p-2 bg-indigo-800 border-b">
             <h1 class="text-white">Task: <span class="font-medium">{{ task.task_simple_name }}</span>
+                <span @click="copyToClipboard()"
+                      title="Copy To Clipoboard"
+                      class="cursor-pointer px-2 text-gray-400 hover:text-gray-200 transition duration-300 ease-in-out focus:outline-none">
+                    <i class="fas fa-link"></i>
+                </span>
             </h1>
             <div>
                 <button @click="closeTaskView()"
@@ -602,6 +607,19 @@ export default {
                     loading(false);
                 });
         }, 500),
+
+        copyToClipboard() {
+            let temp = document.createElement('input'),
+                text = window.location.href;
+
+            document.body.appendChild(temp);
+            temp.value = text;
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+
+            this.triggerSuccessToast('Link copied to clipboard!');
+        }
     },
 };
 </script>

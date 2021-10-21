@@ -56,6 +56,7 @@ export const helperFunctions = {
                 }
                 if(task.selectedKanbans && task.selectedKanbans.length === 0){
                     this.triggerErrorToast('At least 1 kanban needs to be selected');
+                    errorCount++;
                 }
             }
             return errorCount <= 0;

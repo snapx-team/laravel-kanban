@@ -528,7 +528,6 @@ export default {
         },
 
         updateSelectedTaskInUrl(task) {
-            console.log('test');
             this.$router.replace({name: "backlog", query: {task: task.id}})
             this.task = task;
         },
