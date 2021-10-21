@@ -33,7 +33,7 @@ class NotifyOfTasksWithDeadlineInNext24Action extends Action
                 ->get();
 
         if ($tasks->count() > 0) {
-            \Notification::route('slack', config('services.slack.webhooks.' . (app()->environment() === 'production' ? 'task-deadline-24h' : 'dev')))
+            \Notification::route('slack', env('SLACK_WEBHOOK_KANYEBAN_DEADLINE-24H'))
                 ->notify(new TasksWithIncomingDeadline($tasks));
         }
     }
