@@ -403,7 +403,7 @@ export const ajaxCalls = {
         triggerSuccessToast(message) {
             this.$toast.success(message, {
                 position: 'bottom-right',
-                timeout: 4000,
+                timeout: 5000,
                 closeOnClick: true,
                 pauseOnFocusLoss: true,
                 pauseOnHover: true,
@@ -420,7 +420,7 @@ export const ajaxCalls = {
         triggerErrorToast(message) {
             this.$toast.error(message, {
                 position: 'bottom-right',
-                timeout: 4000,
+                timeout: 5000,
                 closeOnClick: true,
                 pauseOnFocusLoss: true,
                 pauseOnHover: true,
@@ -437,7 +437,7 @@ export const ajaxCalls = {
         triggerInfoToast(message) {
             this.$toast.info(message, {
                 position: 'bottom-right',
-                timeout: 4000,
+                timeout: 5000,
                 closeOnClick: true,
                 pauseOnFocusLoss: true,
                 pauseOnHover: true,

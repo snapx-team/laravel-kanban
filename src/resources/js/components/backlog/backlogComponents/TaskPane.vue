@@ -77,7 +77,6 @@
                     </vSelect>
                 </div>
             </div>
-
             <button @click="assignTask($event)"
                     class="px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
                     type="button">
@@ -129,7 +128,6 @@
                             No result .
                         </template>
                     </vSelect>
-
                 </div>
 
                 <label class="flex-grow space-y-2">
@@ -141,7 +139,6 @@
                         type="text"
                         v-model="task.name"/>
                 </label>
-
             </div>
 
             <div class="flex space-x-3">
@@ -493,8 +490,6 @@ export default {
                     }
                 });
             }
-
-
         },
         removeGroup() {
 

@@ -315,7 +315,6 @@ import moment from "moment";
 import axios from 'axios';
 import _ from "lodash";
 
-
 const cancellationToken = axios.CancelToken;
 let tokenSource = cancellationToken.source();
 

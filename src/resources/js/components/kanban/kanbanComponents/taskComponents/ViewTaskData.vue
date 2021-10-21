@@ -418,9 +418,6 @@ export default {
                 for (let x = 0; x < uls[i].childNodes.length; x++) {
                     let ul = document.createElement('ul');
                     let li = document.createElement('li');
-                    li.onclick = () => {
-                        alert(x);
-                    };
 
                     ul.setAttribute('data-checked', uls[i].attributes[0].value);
                     li.innerHTML = (uls[i].childNodes[x].innerText);
