@@ -222,7 +222,6 @@ export default {
             modalOpen: false,
 
             taskOptions: [
-                {name: 'Deadline',},
                 {name: 'ERP Employee',},
                 {name: 'ERP Contract',},
             ],
@@ -265,8 +264,8 @@ export default {
                 this.triggerErrorToast('Template name is required');
             else if(!(!!this.templateData.task_name))
                 this.triggerErrorToast('Task name is required');
-            else if ( this.templateData.badge.name && this.templateData.badge.name.trim().length == 0) {
-                this.triggerErrorToast('The badge name must contain atleast one character');
+            else if ( this.templateData.badge.name && this.templateData.badge.name.trim().length === 0) {
+                this.triggerErrorToast('The badge name must contain at least one character');
             } else {
                 event.target.disabled = true;
                 this.eventHub.$emit("save-template", this.templateData);

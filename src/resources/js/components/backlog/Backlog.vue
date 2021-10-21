@@ -184,7 +184,7 @@
 
                     <div class="flex flex-wrap">
 
-                         <!-- erp employee -->
+                        <!-- erp employee -->
                         <div class="flex block  mr-2">
                             <vSelect
                                 v-model="filters.filterErpEmployee"
@@ -207,7 +207,7 @@
                             </vSelect>
                         </div>
 
-                         <!-- erp contract -->
+                        <!-- erp contract -->
                         <div class="flex block  mr-2">
                             <vSelect
                                 v-model="filters.filterErpContract"
@@ -256,10 +256,10 @@
                                     v-for="task in backlogTaskList"
                                     :key="task.id"
                                     :task="task"
-                                    class="cursor-pointer">
+                                    class="cursor-pointer"
+                                    v-on:click.native="updateSelectedTaskInUrl(task)">
                                 </backlog-card>
                             </div>
-
 
                             <button v-observe-visibility="visibilityChanged"
                                     @click="getMoreBacklogTasks"
@@ -333,8 +333,13 @@ export default {
         Avatar
     },
 
+    props: {
+        taskId: Number
+    },
+
     data() {
         return {
+            task: null,
             requests: [],
             request: null,
             pageNumber: 1,
@@ -371,6 +376,7 @@ export default {
         this.getBacklogData();
         this.getErpEmployees();
         this.getContracts();
+        this.getTaskFromUrl();
     },
 
     created() {
@@ -422,8 +428,10 @@ export default {
                 this.asyncGetBacklogData(this.startTime, this.endTime,).then((data) => {
                     this.backlogData = data.data;
                     this.eventHub.$emit("set-loading-state", false);
-
                     this.getMoreBacklogTasks();
+                    if (this.task) {
+                        this.setSideInfo(this.task);
+                    }
                 })
             } else {
                 this.triggerErrorToast('select a start and end time')
@@ -514,6 +522,23 @@ export default {
                 console.log(res)
             });
         },
+
+        getTaskFromUrl() {
+            if (!isNaN(this.taskId)) {
+                this.asyncGetTaskData(this.taskId).then((data) => {
+                    this.task = data.data;
+                }).catch(res => {
+                    console.log(res)
+                });
+            }
+        },
+
+        updateSelectedTaskInUrl(task){
+            console.log('test');
+            this.$router.replace({name: "backlog", query: {task: task.id}})
+            this.task = task;
+        },
+
         onTypeEmployee(search, loading) {
             if (search.length) {
                 loading(true);

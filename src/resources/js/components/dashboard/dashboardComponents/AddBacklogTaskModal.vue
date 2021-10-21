@@ -97,7 +97,7 @@
                                              label="name"
                                              :placeholder="$role === 'admin'?'Choose or Create' : 'Choose'"
                                              style="margin-top: 7px"
-                                             :taggable ="$role === 'admin'"
+                                             :taggable="$role === 'admin'"
                                              v-model="computedSelectedBadge">
                                         <template slot="option" slot-scope="option">
                                             <span :style="`color: hsl(${option.hue}, 50%, 45%);`"
@@ -125,11 +125,12 @@
                                 <div class="flex-grow space-y-2">
                                     <span
                                         class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600"> Description *</span>
-                                    <quill-editor  v-if="!checkedOptions.includes('Group')"
-                                                   :options="config"
+                                    <quill-editor v-if="!checkedOptions.includes('Group')"
+                                                  :options="config"
                                                   output="html"
-                                                  v-model="task.description"></quill-editor>
-                                    <p v-else class="text-sm font-medium leading-5 text-red-500">Description will match group description</p>
+                                                  v-model="task.shared_task_data.description"></quill-editor>
+                                    <p v-else class="text-sm font-medium leading-5 text-red-500">Description will match
+                                        group description</p>
 
                                 </div>
                             </div>
@@ -157,18 +158,16 @@
                                 </div>
                             </div>
 
+                            <div class="flex-1 space-y-2">
+                                <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline *</span>
+                                <date-picker format="YYYY-MM-DD HH:mm"
+                                             placeholder="YYYY-MM-DD HH:mm"
+                                             type="datetime"
+                                             v-model="task.deadline"></date-picker>
+                            </div>
+
                             <div class="flex flex-wrap"
-                                 v-if="checkedOptions.includes('Deadline') || checkedOptions.includes('ERP Employee') ||checkedOptions.includes('ERP Contract')">
-                                <div class="flex-1 pr-2 mb-6" v-if="checkedOptions.includes('Deadline')">
-                                    <div class="flex-1 space-y-2">
-                                        <span
-                                            class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline</span>
-                                        <date-picker format="YYYY-MM-DD HH:mm"
-                                                     placeholder="YYYY-MM-DD HH:mm"
-                                                     type="datetime"
-                                                     v-model="task.deadline"></date-picker>
-                                    </div>
-                                </div>
+                                 v-if="checkedOptions.includes('ERP Employee') ||checkedOptions.includes('ERP Contract')">
 
                                 <div class="flex-1 pr-2 mb-6" v-if="checkedOptions.includes('ERP Employee')">
                                     <div class="flex-1 space-y-2">
@@ -231,13 +230,13 @@
                                              v-model="task.associatedTask">
                                         <template slot="selected-option" slot-scope="option">
                                             <p>
-                                                <span class="font-bold">{{ option.task_simple_name}}: </span>
+                                                <span class="font-bold">{{ option.task_simple_name }}: </span>
                                                 <span class="italic">{{ option.name }}</span>
                                             </p>
                                         </template>
                                         <template slot="option" slot-scope="option">
                                             <p>
-                                                <span class="font-bold">{{ option.task_simple_name}}: </span>
+                                                <span class="font-bold">{{ option.task_simple_name }}: </span>
                                                 <span class="italic">{{ option.name }}</span>
                                             </p>
                                         </template>
@@ -296,7 +295,6 @@ export default {
     data() {
         return {
             taskOptions: [
-                {name: 'Deadline',},
                 {name: 'ERP Employee',},
                 {name: 'ERP Contract',},
                 {name: 'Group',},
@@ -321,12 +319,12 @@ export default {
             task: {
                 name: null,
                 badge: {},
-                description: null,
                 selectedKanbans: [],
                 deadline: null,
                 columnId: null,
                 associatedTask: null,
-                shared_task_data:{
+                shared_task_data: {
+                    description: null,
                     erp_employees: [],
                     erp_contracts: [],
                 },
@@ -361,31 +359,23 @@ export default {
 
     methods: {
         saveBacklogTask(event) {
-            if(!(!!this.task.name))
-                this.triggerErrorToast('Task name is required');
-            else if(!(!!this.task.description) && !this.checkedOptions.includes('Group'))
-                this.triggerErrorToast('Task description is required');
-            else if(this.task.selectedKanbans.length === 0)
-                this.triggerErrorToast('At least 1 kanban needs to be selected');
-            else if(this.checkedOptions.includes('Group') && !(!!this.task.associatedTask)){
-                this.triggerErrorToast('Choose a task to group with, or uncheck group from options list');
-            }
-            else if ( this.task.badge.name && this.task.badge.name.trim().length == 0) {
-                this.triggerErrorToast('The badge name must contain atleast one character');
-            }
-            else{
+
+            let isValid = this.validateCreateOrUpdateTaskEvent(this.task, this.checkedOptions)
+
+            if (isValid) {
+
                 this.eventHub.$emit("save-backlog-task", this.task);
                 this.modalOpen = false;
 
                 this.task = {
                     name: null,
                     badge: {},
-                    description: null,
                     selectedKanbans: [],
                     deadline: null,
                     columnId: null,
                     associatedTask: null,
-                    shared_task_data:{
+                    shared_task_data: {
+                        description: null,
                         erp_employees: [],
                         erp_contracts: [],
                     },
@@ -471,14 +461,13 @@ export default {
         },
 
         setTemplate() {
-            if(this.selectedTemplate !== null){
+            if (this.selectedTemplate !== null) {
                 this.task.name = this.selectedTemplate.task_name;
                 this.task.badge = this.selectedTemplate.badge;
                 this.task.description = this.selectedTemplate.description;
                 this.task.selectedKanbans = this.selectedTemplate.boards;
                 this.checkedOptions = this.selectedTemplate.unserialized_options;
-            }
-            else{
+            } else {
                 this.task.name = null;
                 this.task.badge = {};
                 this.task.description = null;
@@ -499,15 +488,15 @@ export default {
         },
 
         computedSelectedBadge: {
-            get () {
+            get() {
                 if (_.isEmpty(this.task.badge)) {
                     return null
                 } else {
                     return this.task.badge
                 }
             },
-            set (val) {
-                if( val === null) val = {};
+            set(val) {
+                if (val === null) val = {};
                 this.task.badge = val;
             }
         },

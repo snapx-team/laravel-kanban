@@ -33,7 +33,7 @@
                             :placeholder="$role === 'admin'?'Choose or Create' : 'Choose'"
                             style="margin-top: 7px"
                             :create-option="option => ({name: option.toLowerCase()})"
-                            :taggable ="$role === 'admin'">
+                            :taggable="$role === 'admin'">
                             class="text-gray-700">
                             <template slot="option" slot-scope="option">
                                     <span :style="`color: hsl(${option.hue}, 50%, 45%);`"
@@ -89,19 +89,16 @@
                     </div>
                 </div>
 
+                <div class="flex-1 space-y-2">
+                    <span
+                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline *</span>
+                    <date-picker type="datetime" v-model="cloneCardData.deadline"
+                                 placeholder="YYYY-MM-DD HH:mm"
+                                 format="YYYY-MM-DD HH:mm"></date-picker>
+                </div>
+
                 <div class="flex flex-wrap"
-                     v-if="checkedOptions.includes('Deadline') || checkedOptions.includes('ERP Employee') ||checkedOptions.includes('ERP Contract')">
-                    <div class="flex-1 pr-2 mb-6" v-if="checkedOptions.includes('Deadline')">
-                        <div class="flex-1 space-y-2">
-                            <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline</span>
-                            <date-picker type="datetime" v-model="cloneCardData.deadline"
-                                         placeholder="YYYY-MM-DD HH:mm"
-                                         format="YYYY-MM-DD HH:mm"
-                            ></date-picker>
-
-                        </div>
-                    </div>
-
+                     v-if="checkedOptions.includes('ERP Employee') ||checkedOptions.includes('ERP Contract')">
                     <div class="flex-1 pr-2 mb-6" v-if="checkedOptions.includes('ERP Employee')">
                         <div class="flex-1 space-y-2">
                             <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">ERP Employees</span>
@@ -189,7 +186,6 @@ export default {
         return {
             cloneCardData: {},
             taskOptions: [
-                {name: 'Deadline',},
                 {name: 'ERP Employee',},
                 {name: 'ERP Contract',},
             ],
@@ -249,15 +245,15 @@ export default {
         },
 
         computedSelectedBadge: {
-            get () {
+            get() {
                 if (_.isEmpty(this.cloneCardData.badge)) {
                     return null
                 } else {
                     return this.cloneCardData.badge
                 }
             },
-            set (val) {
-                if( val === null) val = {};
+            set(val) {
+                if (val === null) val = {};
                 this.cloneCardData.badge = val;
             }
         },
@@ -301,13 +297,9 @@ export default {
         }, 500),
 
         updateTaskData(event) {
-            if(!(!!this.cloneCardData.name))
-                this.triggerErrorToast('Task name is required');
-            else if(!(!!this.cloneCardData.shared_task_data.description))
-                this.triggerErrorToast('Task description is required');
-            else if ( this.cloneCardData.badge.name && this.cloneCardData.badge.name.trim().length == 0) {
-                this.triggerErrorToast('The badge name must contain atleast one character');
-            } else {
+            let isValid = this.validateCreateOrUpdateTaskEvent(this.cloneCardData, this.checkedOptions)
+
+            if (isValid) {
                 event.target.disabled = true;
                 this.eventHub.$emit("update-task-card-data", this.cloneCardData);
                 this.eventHub.$emit("close-task-modal");
