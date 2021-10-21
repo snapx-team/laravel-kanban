@@ -372,8 +372,8 @@ export default {
 
     mixins: [ajaxCalls],
 
-    mounted() {
-        this.getBacklogData();
+    async mounted() {
+        await this.getBacklogData();
         this.getErpEmployees();
         this.getContracts();
         this.getTaskFromUrl();
@@ -418,20 +418,17 @@ export default {
     },
     methods: {
 
-        getBacklogData() {
+        async getBacklogData() {
             if (this.start && this.end) {
                 this.eventHub.$emit("set-loading-state", true);
                 this.isLoadingTasks = true;
                 this.pageNumber = 1;
                 this.backlogTaskList = [];
 
-                this.asyncGetBacklogData(this.startTime, this.endTime,).then((data) => {
+                await this.asyncGetBacklogData(this.startTime, this.endTime,).then((data) => {
                     this.backlogData = data.data;
                     this.eventHub.$emit("set-loading-state", false);
                     this.getMoreBacklogTasks();
-                    if (this.task) {
-                        this.setSideInfo(this.task);
-                    }
                 })
             } else {
                 this.triggerErrorToast('select a start and end time')
@@ -526,14 +523,12 @@ export default {
         getTaskFromUrl() {
             if (!isNaN(this.taskId)) {
                 this.asyncGetTaskData(this.taskId).then((data) => {
-                    this.task = data.data;
-                }).catch(res => {
-                    console.log(res)
+                    this.setSideInfo(data.data);
                 });
             }
         },
 
-        updateSelectedTaskInUrl(task){
+        updateSelectedTaskInUrl(task) {
             console.log('test');
             this.$router.replace({name: "backlog", query: {task: task.id}})
             this.task = task;
