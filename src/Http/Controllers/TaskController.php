@@ -549,6 +549,35 @@ class TaskController extends Controller
                     }
                 }
 
+                if ($request->input('status') === "completed") {
+                    $log = Log::createLog(
+                        Auth::user()->id,
+                        Log::TYPE_CARD_COMPLETED,
+                        'Task [' . $task->task_simple_name . '] in board [' . $task->board->name . '] set to completed',
+                        null,
+                        $task->id,
+                        'Xguard\LaravelKanban\Models\Task'
+                    );
+                } elseif ($request->input('status') === 'cancelled') {
+                    $log = Log::createLog(
+                        Auth::user()->id,
+                        Log::TYPE_CARD_CANCELED,
+                        'Task [' . $task->task_simple_name . '] in board [' . $task->board->name . '] set to cancelled',
+                        null,
+                        $task->id,
+                        'Xguard\LaravelKanban\Models\Task'
+                    );
+                } elseif ($request->input('status') === 'active') {
+                    $log = Log::createLog(
+                        Auth::user()->id,
+                        Log::TYPE_CARD_ACTIVE,
+                        'Task [' . $task->task_simple_name . '] in board [' . $task->board->name . '] set to active',
+                        null,
+                        $task->id,
+                        'Xguard\LaravelKanban\Models\Task'
+                    );   
+                }
+
                 $sharedTaskDataId = $taskCard['shared_task_data_id'];
 
                 if ($sharedTaskDataId === $task->shared_task_data_id) {
@@ -887,7 +916,7 @@ class TaskController extends Controller
             } elseif ($status === 'active') {
                 $log = Log::createLog(
                     Auth::user()->id,
-                    Log::TYPE_CARD_CANCELED,
+                    Log::TYPE_CARD_ACTIVE,
                     'Task [' . $task->task_simple_name . '] in board [' . $task->board->name . '] set to active',
                     null,
                     $task->id,
