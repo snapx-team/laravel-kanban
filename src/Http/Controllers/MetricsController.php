@@ -73,10 +73,9 @@ class MetricsController extends Controller
         $tasks = Task::with('reporter.user')
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
-            ->orderBy('reporter_id')
             ->get();
 
-        $employees = Employee::with('user')->orderBy('id')->get();
+        $employees = Employee::with('user')->get();
 
         $reporters = [];
         $assArray = array();
@@ -111,7 +110,6 @@ class MetricsController extends Controller
 
         foreach ($tasks as $task) {
             $date = (new DateTime(($task->created_at)))->modify('-4 hours');
-            ;
             $dateString = $date->format('G');
             $arr[$dateString] += 1;
         }
@@ -125,20 +123,58 @@ class MetricsController extends Controller
 
     public function getClosedTasksByEmployee($start, $end): array
     {
-        $logs = Log::with('user')->where('log_type', Log::TYPE_CARD_COMPLETED)
+        $logs = Log::with(['user', 'loggable' => function (MorphTo $morphTo) {
+                $morphTo->morphWith([Task::class => ['assignedTo.employee.user']]);
+            }])
+            ->where('log_type', Log::TYPE_CARD_COMPLETED)
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
-            ->orderBy('user_id')
-            ->get();
+            ->where('loggable_type', 'Xguard\LaravelKanban\Models\Task')
+            ->orderBy('loggable_id')
+            ->latest()
+            ->get()
+            ->unique('loggable_id');
 
         $names = [];
         $hits = [];
         foreach ($logs as $log) {
-            if (array_key_exists($log->user->email, $hits)) {
-                $hits[$log->user->email] += 1;
+            foreach ($log->loggable->assignedTo as $employee) {
+                if (array_key_exists($employee['employee']['user']['email'], $hits)) {
+                    $hits[ $employee['employee']['user']['email']] += 1;
+                } else {
+                    $hits[ $employee['employee']['user']['email']] = 1;
+                    array_push($names,  $employee['employee']['user']['full_name']);
+                }
+            }
+        }
+
+        return [
+            'hits' => array_values($hits),
+            'names' => $names,
+        ];
+    }
+
+
+    public function getClosedTasksByAdmin($start, $end): array
+    {
+        $logs = Log::with('user')
+            ->where('log_type', Log::TYPE_CARD_COMPLETED)
+            ->whereDate('created_at', '>=', new DateTime($start))
+            ->whereDate('created_at', '<=', new DateTime($end))
+            ->where('loggable_type', 'Xguard\LaravelKanban\Models\Task')
+            ->orderBy('loggable_id')
+            ->latest()
+            ->get()
+            ->unique('loggable_id');
+
+        $names = [];
+        $hits = [];
+        foreach ($logs as $log) {
+            if (array_key_exists($log->user['email'], $hits)) {
+                $hits[$log->user['email']] += 1;
             } else {
-                $hits[$log->user->email] = 1;
-                array_push($names, $log->user->full_name);
+                $hits[$log->user['email']] = 1;
+                array_push($names, $log->user['full_name']);
             }
         }
 

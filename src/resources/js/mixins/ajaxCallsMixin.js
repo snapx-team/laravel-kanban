@@ -54,6 +54,10 @@ export const ajaxCalls = {
             return axios.get('get-closed-by-employee/' + start + '/' + end);
         },
 
+        asyncGetClosedTasksByAdmin(start, end) {
+            return axios.get('get-closed-by-admin/' + start + '/' + end);
+        },
+
         asyncGetDelayByBadge(start, end) {
             return axios.get('get-delay-by-badge/' + start + '/' + end);
         },

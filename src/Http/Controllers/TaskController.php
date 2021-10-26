@@ -313,7 +313,7 @@ class TaskController extends Controller
                 $log = Log::createLog(
                     Auth::user()->id,
                     Log::TYPE_CARD_CREATED,
-                    'Created new backlog task [' . $task->task_simple_name . '] in board [' . $task->board->name . '>',
+                    'Created new backlog task [' . $task->task_simple_name . '] in board [' . $task->board->name . ']',
                     null,
                     $task->id,
                     'Xguard\LaravelKanban\Models\Task'
