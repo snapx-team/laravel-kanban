@@ -30,6 +30,7 @@ class Log extends Model
     const TYPE_CARD_CREATED = 10;
     const TYPE_CARD_CANCELED = 11;
     const TYPE_CARD_COMPLETED = 12;
+    const TYPE_CARD_ACTIVE = 13;
     const TYPE_CARD_MOVED = 14;
     const TYPE_CARD_ASSIGNED_TO_BOARD = 15;
     const TYPE_CARD_UPDATED = 16;
