@@ -36,10 +36,12 @@ class Log extends Model
     const TYPE_CARD_UPDATED = 16;
     const TYPE_CARD_ASSIGNED_GROUP = 17;
     const TYPE_CARD_CHANGED_INDEX = 18;
+    const TYPE_CARD_ACTIVATED = 19;
     const TYPE_CARD_CHECKLIST_ITEM_CHECKED = 20;
     const TYPE_CARD_CHECKLIST_ITEM_UNCHECKED = 21;
     const TYPE_CARD_ASSIGNED_TO_USER = 22;
     const TYPE_CARD_UNASSIGNED_TO_USER = 23;
+    const TYPE_CARD_REMOVED_FROM_GROUP = 24;
 
     const TYPE_TEMPLATE_CREATED = 30;
     const TYPE_TEMPLATE_UPDATED = 31;
@@ -85,14 +87,16 @@ class Log extends Model
             if (session('employee_id') !== $task->reporter_id) {
                 $employee = Employee::find($task->reporter_id);
                 array_push($employeeArray, $employee->id);
-            }
-            //notify assigned-to users
-            foreach ($task->assignedTo as $employee) {
-                array_push($employeeArray, $employee['employee']['id']);
-            }
-            //notify targeted employee
-            if ($targetedEmployeeId !== null) {
-                array_push($employeeArray, $targetedEmployeeId);
+
+                //notify assigned-to users
+                foreach ($task->assignedTo as $employee) {
+                    array_push($employeeArray, $employee['employee']['id']);
+                }
+
+                //notify assigned-to users
+                foreach ($task->assignedTo as $employee) {
+                    array_push($employeeArray, $employee['employee']['id']);
+                }
             }
         }
 

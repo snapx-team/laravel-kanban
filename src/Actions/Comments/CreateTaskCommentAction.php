@@ -3,7 +3,7 @@
 namespace Xguard\LaravelKanban\Actions\Comments;
 
 use Illuminate\Support\Facades\Auth;
-use Xguard\LaravelKanban\Http\Helper\CheckHasAccessToBoardWithTaskId;
+use Xguard\LaravelKanban\Http\Helper\AccessManager;
 use Xguard\LaravelKanban\Models\Comment;
 use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Log;
@@ -12,7 +12,6 @@ use Lorisleiva\Actions\Action;
 
 class CreateTaskCommentAction extends Action
 {
-
     /**
      * Get the validation rules that apply to the action.
      *
@@ -39,8 +38,7 @@ class CreateTaskCommentAction extends Action
      */
     public function handle()
     {
-
-        $hasBoardAccess = (new CheckHasAccessToBoardWithTaskId())->returnBool($this->comment_data['taskId']);
+        $hasBoardAccess = AccessManager::canAccessBoardUsingTaskId($this->comment_data['taskId']);
 
         if ($hasBoardAccess) {
             try {

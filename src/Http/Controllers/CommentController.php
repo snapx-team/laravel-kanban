@@ -4,15 +4,11 @@ namespace Xguard\LaravelKanban\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Lorisleiva\Actions\Action;
 use Xguard\LaravelKanban\Actions\Comments\CreateTaskCommentAction;
 use Xguard\LaravelKanban\Actions\Comments\EditTaskCommentAction;
 use Xguard\LaravelKanban\Actions\Comments\GetAllTaskCommentsAction;
-use Xguard\LaravelKanban\Http\Helper\CheckHasAccessToBoardWithTaskId;
 use Xguard\LaravelKanban\Models\Comment;
 use Illuminate\Support\Facades\Auth;
-use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Log;
 use Xguard\LaravelKanban\Models\Task;
 

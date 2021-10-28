@@ -7,13 +7,12 @@ use App\Http\Responses\JsonResponse;
 use DateTime;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Auth;
-use Xguard\LaravelKanban\Actions\Badge\ListBadgesWithCountAction;
-use Xguard\LaravelKanban\Http\Helper\CheckHasAccessToBoardWithBoardId;
+use Xguard\LaravelKanban\Actions\Badges\ListBadgesWithCountAction;
+use Xguard\LaravelKanban\Http\Helper\AccessManager;
 use Xguard\LaravelKanban\Models\Badge;
 use Xguard\LaravelKanban\Models\Comment;
 use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Board;
-use Xguard\LaravelKanban\Models\Member;
 use Xguard\LaravelKanban\Models\Template;
 use Xguard\LaravelKanban\Models\Task;
 use Xguard\LaravelKanban\Actions\Users\GetUserProfileAction;
@@ -46,7 +45,7 @@ class LaravelKanbanController extends Controller
 
     public function getkanbanData($id)
     {
-        $hasBoardAccess = (new CheckHasAccessToBoardWithBoardId())->returnBool($id);
+        $hasBoardAccess = AccessManager::canAccessBoard($id);
 
         if ($hasBoardAccess) {
             return Board::with(['rows.columns.taskCards' => function ($q) {

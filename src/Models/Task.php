@@ -12,6 +12,7 @@ use Xguard\LaravelKanban\Models\Log;
 use Carbon\Carbon;
 use Iatstuti\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Xguard\LaravelKanban\QueryBuilders\TasksQueryBuilder;
 
 /**
  * @property \Illuminate\Support\Carbon|null $deadline
@@ -36,6 +37,11 @@ class Task extends Model
         'hours_to_deadline',
         'task_simple_name'
     ];
+
+    public function newEloquentBuilder($query): TasksQueryBuilder
+    {
+        return new TasksQueryBuilder($query);
+    }
 
     public function sharedTaskData(): BelongsTo
     {
