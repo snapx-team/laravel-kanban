@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Xguard\LaravelKanban\Actions\Notifications\NotifyEmployeesAction;
 use Xguard\LaravelKanban\Models\Task;
 
 class Log extends Model
@@ -78,52 +79,6 @@ class Log extends Model
         int $loggableId,
         string $loggableType
     ) {
-        $employeeArray = [];
-
-        if ($loggableType == 'Xguard\LaravelKanban\Models\Task') {
-            $task = Task::find($loggableId);
-
-            //notify reporter unless reporter performed the action
-            if (session('employee_id') !== $task->reporter_id) {
-                $employee = Employee::find($task->reporter_id);
-                array_push($employeeArray, $employee->id);
-
-                //notify assigned-to users
-                foreach ($task->assignedTo as $employee) {
-                    array_push($employeeArray, $employee['employee']['id']);
-                }
-
-                //notify assigned-to users
-                foreach ($task->assignedTo as $employee) {
-                    array_push($employeeArray, $employee['employee']['id']);
-                }
-            }
-        }
-
-        if ($loggableType == 'Xguard\LaravelKanban\Models\Comment') {
-            $comment = Comment::with('task')->find($loggableId);
-
-            //notify reporter unless reporter performed the action
-            if (session('employee_id') !== $comment->task->reporter_id) {
-                $employee = Employee::find($comment->task->reporter_id);
-                array_push($employeeArray, $employee->id);
-            }
-            //notify assigned-to users
-            foreach ($comment->task->assignedTo as $employee) {
-                array_push($employeeArray, $employee['employee']['id']);
-            }
-            //notify targeted employee
-            if ($targetedEmployeeId !== null) {
-                array_push($employeeArray, $targetedEmployeeId);
-            }
-        }
-
-        if ($loggableType == 'Xguard\LaravelKanban\Models\Board') {
-            //notify targeted employee (added/deleted members)
-            if ($targetedEmployeeId !== null) {
-                array_push($employeeArray, $targetedEmployeeId);
-            }
-        }
 
         $log = Log::create([
             'user_id' => $userId,
@@ -134,7 +89,7 @@ class Log extends Model
             'loggable_type' => $loggableType,
         ]);
 
-        $log->notifications()->sync($employeeArray);
+        (new NotifyEmployeesAction(['log' => $log]))->run();
 
         return $log;
     }
