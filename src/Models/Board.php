@@ -6,13 +6,14 @@ use Iatstuti\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Xguard\LaravelKanban\Models\Log;
 
 class Board extends Model
 {
     use SoftDeletes, CascadeSoftDeletes;
-    
+
     protected $dates = ['deleted_at'];
 
     protected $cascadeDeletes = ['members', 'rows', 'templates'];
@@ -20,7 +21,7 @@ class Board extends Model
     protected $table = 'kanban_boards';
 
     protected $guarded = [];
-    
+
     public function logs()
     {
         return $this->morphMany(Log::class, 'loggable');
@@ -39,5 +40,10 @@ class Board extends Model
     public function templates(): BelongsToMany
     {
         return $this->belongsToMany(Template::class, 'kanban_board_template', 'board_id', 'template_id');
+    }
+
+    public function employeeBoardNotificationSetting(): hasMany
+    {
+        return $this->hasMany(EmployeeBoardNotificationSetting::class);
     }
 }
