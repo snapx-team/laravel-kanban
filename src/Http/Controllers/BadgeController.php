@@ -3,10 +3,10 @@
 namespace Xguard\LaravelKanban\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Xguard\LaravelKanban\Actions\Badge\CreateBadgeAction;
-use Xguard\LaravelKanban\Actions\Badge\EditBadgeAction;
-use Xguard\LaravelKanban\Actions\Badge\DeleteBadgeAction;
-use Xguard\LaravelKanban\Actions\Badge\ListBadgesWithCountAction;
+use Xguard\LaravelKanban\Actions\Badges\CreateBadgeAction;
+use Xguard\LaravelKanban\Actions\Badges\EditBadgeAction;
+use Xguard\LaravelKanban\Actions\Badges\DeleteBadgeAction;
+use Xguard\LaravelKanban\Actions\Badges\ListBadgesWithCountAction;
 use Xguard\LaravelKanban\Models\Badge;
 use Illuminate\Http\Request;
 

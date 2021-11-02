@@ -189,7 +189,8 @@
                                   scrollingContainer="html"
                                   v-model="task.shared_task_data.description"
                                   @blur="descriptionIsEditable = false"></quill-editor>
-                    <p v-if="selectGroupIsVisible" class="text-sm font-medium leading-5 text-red-500">Description will match group description</p>
+                    <p v-if="selectGroupIsVisible" class="text-sm font-medium leading-5 text-red-500">Description will
+                        match group description</p>
                 </div>
             </div>
 
@@ -451,6 +452,7 @@ export default {
             })
         },
         loadColumns(option) {
+            this.task.column = null;
             this.asyncGetColumns(option.id).then((data) => {
                 this.columns = data.data;
             }).catch(res => {
@@ -488,6 +490,9 @@ export default {
                 }
 
                 this.asyncUpdateTask(this.task).then(() => {
+                    this.asyncGetTaskData(this.task.id).then((data) => {
+                        this.task = data.data;
+                    })
                     window.scrollTo({top: 0, behavior: 'smooth'});
                     this.eventHub.$emit("reload-backlog-data");
                     if (this.task.associatedTask) {
@@ -509,6 +514,9 @@ export default {
                     window.scrollTo({top: 0, behavior: 'smooth'});
                     this.eventHub.$emit("reload-backlog-data");
                     this.asyncRemoveGroup(this.task.id).then(() => {
+                        this.asyncGetTaskData(this.task.id).then((data) => {
+                            this.task = data.data;
+                        })
                         this.getRelatedTasks(this.task.id);
                     }).catch(res => {
                         console.log(res)
@@ -525,6 +533,9 @@ export default {
                 this.triggerErrorToast('row and column need to be selected!');
             } else {
                 this.asyncAssignTaskToBoard(this.task.id, this.task.row.id, this.task.column.id, this.task.board.id).then(() => {
+                    this.asyncGetTaskData(this.task.id).then((data) => {
+                        this.task = data.data;
+                    })
                     window.scrollTo({top: 0, behavior: 'smooth'});
                     this.eventHub.$emit("reload-backlog-data");
                 }).catch(res => {
