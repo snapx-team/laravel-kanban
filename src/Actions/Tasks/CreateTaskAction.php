@@ -17,7 +17,7 @@ class CreateTaskAction extends Action
     public function authorize()
     {
         foreach ($this->selectedKanbans as $kanban) {
-            if (!AccessManager::canAccessBoard($kanban['id'])){
+            if (!AccessManager::canAccessBoard($kanban['id'])) {
                 return false;
             }
         }
@@ -71,7 +71,7 @@ class CreateTaskAction extends Action
             if ($this->associatedTask !== null) {
                 $sharedTaskDataId = $this->associatedTask['shared_task_data_id'];
             } else {
-            $sharedTaskDataId = (app(CreateErpShareablesAction::class)->fill([
+                $sharedTaskDataId = (app(CreateErpShareablesAction::class)->fill([
                     "description" => $this->description,
                     "erpEmployees" => $this->erpEmployees,
                     "erpContracts" => $this->erpContracts,
@@ -93,18 +93,12 @@ class CreateTaskAction extends Action
                     'shared_task_data_id' => $sharedTaskDataId
                 ]);
 
-                if ($this->assignedTo) {
-                    $employeeArray = [];
-                    foreach ($this->assignedTo as $employee) {
-                        array_push($employeeArray, $employee['employee_id']);
-                    }
-                    $task->assignedTo()->sync($employeeArray);
-                } 
+                app(SyncAssignedEmployeesToTaskAction::class)->fill(["assignedTo" => $this->assignedTo, "task"=> $task])->run();
 
                 $log = Log::createLog(
                     Auth::user()->id,
                     Log::TYPE_CARD_CREATED,
-                    'Created new backlog task [' . $task->task_simple_name . '] in board [' . $task->board->name . '>',
+                    'Created new task [' . $task->task_simple_name . '] in board [' . $task->board->name . ']',
                     null,
                     $task->id,
                     'Xguard\LaravelKanban\Models\Task'
@@ -129,6 +123,6 @@ class CreateTaskAction extends Action
         } catch (\Exception $e) {
             \DB::rollBack();
             throw $e;
-        }  
+        }
     }
 }

@@ -28,7 +28,7 @@ class UpdateTaskColumnAndRowAction extends Action
             'taskId' => ['required', 'integer', 'gt:0'],
         ];
     }
-    
+
     /**
      * Execute the action and return a result.
      *
@@ -45,7 +45,7 @@ class UpdateTaskColumnAndRowAction extends Action
             $log = Log::createLog(
                 Auth::user()->id,
                 Log::TYPE_CARD_MOVED,
-                'Task [' . $task->task_simple_name . '] changed from [' . $prevTask->row->name . ':' .  $prevTask->column->name . '] to [' . $task->row->name . ':' . $task->column->name . ']',
+                'Task [' . $task->task_simple_name . '] moved from [' . $prevTask->row->name . ':' .  $prevTask->column->name . '] to [' . $task->row->name . ':' . $task->column->name . ']',
                 null,
                 $task->id,
                 'Xguard\LaravelKanban\Models\Task'

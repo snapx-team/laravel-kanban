@@ -53,7 +53,7 @@ class CreateTaskCommentAction extends Action
                 Log::createLog(
                     Auth::user()->id,
                     Log::TYPE_COMMENT_CREATED,
-                    'Added new comment on task [' . $task->task_simple_name . ']',
+                    $comment->comment,
                     null,
                     $comment->id,
                     'Xguard\LaravelKanban\Models\Comment'

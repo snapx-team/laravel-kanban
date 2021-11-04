@@ -52,7 +52,7 @@ class BoardsController extends Controller
                 Log::createLog(
                     Auth::user()->id,
                     Log::TYPE_BOARD_CREATED,
-                    'Added new board [' . $board->name . ']',
+                    'Created new board [' . $board->name . ']',
                     null,
                     $board->id,
                     'Xguard\LaravelKanban\Models\Board'

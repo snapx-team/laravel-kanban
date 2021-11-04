@@ -22,12 +22,11 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             Route::get('/get-user-profile', 'LaravelKanbanController@getUserProfile');
 
             //Notifications
-            Route::get('/get-notif-data/{logType}', 'LaravelKanbanController@getNotificationData');
-            Route::get('/get-notif-count', 'LaravelKanbanController@getNotificationCount');
-            Route::post('/update-notif-count', 'LaravelKanbanController@updateNotificationCount');
+            Route::get('/get-notif-data/{logType}', 'NotificationController@getNotificationData');
+            Route::get('/get-notif-count', 'NotificationController@getNotificationCount');
+            Route::post('/update-notif-count', 'NotificationController@updateNotificationCount');
 
             // Metrics
-
             Route::get('/get-badge-data/{start}/{end}', 'MetricsController@getBadgeData');
             Route::get('/get-tickets-by-employee/{start}/{end}', 'MetricsController@getTicketsByEmployee');
             Route::get('/get-creation-by-hour/{start}/{end}', 'MetricsController@getCreationByHour');
@@ -52,6 +51,8 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             // Rows
             Route::get('/get-rows/{board_id}', 'RowAndColumnsController@getRows');
             Route::post('/delete-row/{id}', 'RowAndColumnsController@deleteRow');
+            Route::post('/update-column-indexes', 'RowAndColumnsController@updateColumnIndexes');
+            Route::post('/update-row-indexes', 'RowAndColumnsController@updateRowIndexes');
 
             // Task
             Route::post('/get-backlog-tasks', 'TaskController@getBacklogTasks');
@@ -60,23 +61,14 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             Route::get('/get-task-data/{id}', 'TaskController@getTaskData');
             Route::get('/get-related-tasks/{id}', 'TaskController@getRelatedTasks');
             Route::get('/get-related-tasks-less-info/{id}', 'TaskController@getRelatedTasksLessInfo');
-
-
             Route::post('/create-task', 'TaskController@createTaskCard');
             Route::post('/update-task', 'TaskController@updateTaskCard');
-
             Route::post('/create-backlog-tasks', 'TaskController@createBacklogTaskCards');
-
             Route::post('/get-task-cards-by-column/{id}', 'TaskController@getTaskCardsByColumn');
             Route::post('/update-task-card-indexes', 'TaskController@updateTaskCardIndexes');
-            Route::post('/update-column-indexes', 'RowAndColumnsController@updateColumnIndexes');
-            Route::post('/update-row-indexes', 'RowAndColumnsController@updateRowIndexes');
-
             Route::post('/update-task-card-row-and-column/{columnId}/{rowId}/{taskCardId}', 'TaskController@updateTaskCardRowAndColumnId');
-
             Route::post('/delete-kanban-task-card/{id}', 'TaskController@deleteTaskCard');
             Route::post('/update-task-description', 'TaskController@updateDescription');
-
             Route::post('/set-status/{taskCardId}/{status}', 'TaskController@setStatus');
             Route::post('/assign-task-to-board/{taskId}/{row_id}/{column_id}/{board_id}', 'TaskController@assignTaskToBoard');
             Route::post('/update-group/{taskId}/{group}', 'TaskController@updateGroup');
@@ -84,13 +76,11 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
 
 
             // Comments
-
             Route::get('/get-task-comments/{taskId}', 'CommentController@getAllTaskComments');
             Route::post('/create-task-comment', 'CommentController@createOrUpdateTaskComment');
-            Route::post('/delete-task-comment/{taskCommentId}', 'Templ@deleteTaskComment');
+            Route::post('/delete-task-comment/{taskCommentId}', 'CommentController@deleteTaskComment');
 
             // Templates
-
             Route::get('/get-templates', 'TemplateController@getAllTemplates');
             Route::post('/create-template', 'TemplateController@createOrUpdateTemplate');
             Route::post('/delete-template/{templateId}', 'TemplateController@deleteTemplate');
@@ -114,7 +104,6 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             Route::delete('/delete-badge/{id}', 'BadgeController@deleteBadge');
 
             // Logs
-
             Route::get('/get-logs/{id}', 'LogController@getLogs');
 
             //ERP Data

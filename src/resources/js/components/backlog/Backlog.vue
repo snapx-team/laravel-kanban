@@ -528,7 +528,8 @@ export default {
         },
 
         updateSelectedTaskInUrl(task) {
-            this.$router.replace({name: "backlog", query: {task: task.id}})
+            this.$router.replace({name: "backlog", query: {task: task.id}}).catch(() => {
+            });
             this.task = task;
         },
 
@@ -569,8 +570,7 @@ export default {
                 });
         }, 500),
     }
-}
-;
+};
 </script>
 
 <style scoped>

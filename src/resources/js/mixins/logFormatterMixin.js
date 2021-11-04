@@ -3,6 +3,9 @@
  * @property {number} log_type
  * @property {Object} loggable
  * @property {string} simple_task_name
+ * @property {Object} target_employee
+ * @property {Object} previous_task_version
+ * @property {Object} task_version
  *
  */
 
@@ -15,9 +18,7 @@ export const formattedLog = {
 
             switch (log.log_type) {
             case 10:
-
-                desc = log.user.full_name + ' create a new task [' + log.loggable.simple_task_name + '] in board [' + log.loggable.board.name + ']';
-
+                desc = log.user.full_name + ' created a new task [' + log.loggable.task_simple_name + '] in board [' + log.loggable.board.name + ']';
                 return {
                     'type': 'created a task',
                     'icon': 'fa-tasks',
@@ -25,151 +26,158 @@ export const formattedLog = {
                     'desc': desc
                 };
             case 11:
+                desc = log.user.full_name + ' set task status of [' + log.loggable.task_simple_name + '] to cancelled';
                 return {
-                    'type': 'cancelled a task',
+                    'type': 'set task status to cancelled',
                     'icon': 'fa-tasks',
                     'color': 'red',
-                    'desc': 'desc'
+                    'desc': desc
                 };
             case 12:
+                desc = log.user.full_name + ' set task status of [' + log.loggable.task_simple_name + '] to completed';
                 return {
-                    'type': 'closed a task',
+                    'type': 'set task status to completed',
                     'icon': 'fa-archive',
                     'color': 'green',
-                    'desc': 'desc'
+                    'desc': desc
                 };
             case 13:
+                desc = log.user.full_name + ' set task status of [' + log.loggable.task_simple_name + '] to active';
                 return {
-                    'type': 'assigned a task a user',
-                    'icon': 'fa-people-arrows',
-                    'color': 'purple',
-                    'desc': 'desc'
+                    'type': 'set task status to active',
+                    'icon': 'fa-archive',
+                    'color': 'green',
+                    'desc': desc
                 };
             case 14:
+                desc = log.user.full_name + ' moved task [' + log.loggable.task_simple_name + '] from ['
+                    + log.task_version.previous_task_version.row.name + ':' + log.task_version.previous_task_version.column.name + '] to ['
+                    + log.task_version.row.name + ':' + log.task_version.column.name+']';
                 return {
                     'type': 'moved a task',
                     'icon': 'fa-arrows-alt',
                     'color': 'indigo',
-                    'desc': 'desc'
+                    'desc': desc
                 };
             case 15:
+                desc = log.user.full_name + ' assigned task [' + log.loggable.task_simple_name + '] to board [' + log.loggable.board.name + '] in [' + log.loggable.row.name + ':' + log.loggable.column.name + ']';
                 return {
-                    'type': 'assigned a task to a row and column',
+                    'type': 'assigned a task to a board',
                     'icon': 'fa-vote-yea',
                     'color': 'purple',
-                    'desc': 'desc'
+                    'desc': desc
                 };
             case 16:
+                desc = log.user.full_name + ' updated task [' + log.loggable.task_simple_name + ']';
                 return {
                     'type': 'updated a task',
                     'icon': 'fa-tasks',
                     'color': 'yellow',
-                    'desc': 'desc'
-
+                    'desc': desc
                 };
             case 17:
+                desc = log.user.full_name + ' updated group for task [' + log.loggable.task_simple_name + ']';
                 return {
                     'type': 'updated group',
                     'icon': 'fa-layer-group',
                     'color': 'purple',
-                    'desc': 'desc'
-                };
-            case 19:
-                return {
-                    'type': 'updated assignees',
-                    'icon': 'fa-people-arrows',
-                    'color': 'yellow',
-                    'desc': 'desc'
+                    'desc': desc
                 };
             case 20:
+                desc = log.user.full_name + ' checked -> [' + log.description + ']';
                 return {
                     'type': 'checked a checklist item',
                     'icon': 'fa-check-square',
                     'color': 'green',
-                    'desc': 'desc'
+                    'desc': desc
                 };
             case 21:
+                desc = log.user.full_name + ' unchecked -> [' + log.description + ']';
                 return {
                     'type': 'unchecked a checklist item',
                     'icon': 'fa-square',
                     'color': 'yellow',
-                    'desc': 'desc'
+                    'desc': desc
                 };
             case 22:
+                desc = log.user.full_name + ' assigned task [' + log.loggable.task_simple_name + '] to ' + log.target_employee.user.full_name;
                 return {
-                    'type': 'assigned card to new user',
+                    'type': 'assigned a task to an employee',
                     'icon': 'fa-user-plus',
                     'color': 'green',
-                    'desc': 'desc'
+                    'desc': desc
                 };
             case 23:
+                desc = log.user.full_name + ' unassigned task [' + log.loggable.task_simple_name + '] from ' + log.target_employee.user.full_name;
                 return {
-                    'type': 'unassigned card from a user',
+                    'type': 'unassigned a task to an employee',
                     'icon': 'fa-user-minus',
                     'color': 'red',
-                    'desc': 'desc'
+                    'desc': desc
                 };
-
             case 40:
+                desc = log.user.full_name + ' added '+ log.target_employee.user.full_name + ' to board [' + log.loggable.name + ']' ;
                 return {
                     'type': 'added kanban board member',
                     'icon': 'fa-user-plus',
                     'color': 'green',
-                    'desc': 'desc'
+                    'desc': desc
                 };
-
             case 41:
+                desc = log.user.full_name + ' removed '+ log.target_employee.user.full_name + ' to board [' + log.loggable.name + ']' ;
                 return {
                     'type': 'removed kanban board member',
                     'icon': 'fa-user-minus',
                     'color': 'red',
-                    'desc': 'desc'
+                    'desc': desc
                 };
-
             case 70:
-
-                desc = log.user.full_name + ' create a new task [' + log.loggable.simple_task_name + '] in board [' + log.loggable.board.name + ']';
-
+                desc = log.user.full_name + ' wrote a comment on task ['+ log.loggable.task.task_simple_name + ']' ;
                 return {
                     'type': 'wrote a comment',
                     'icon': 'fa-comment',
                     'color': 'blue',
-                    'desc': 'desc'
+                    'desc': desc
                 };
             case 71:
+                desc = log.user.full_name + ' deleted a comment on task ['+ log.loggable.task.task_simple_name + ']';
                 return {
                     'type': 'deleted a comment',
                     'icon': 'comment-slash',
                     'color': 'red',
-                    'desc': 'desc'
+                    'desc': desc
                 };
             case 72:
+                desc = log.user.full_name + ' edited a comment on task ['+ log.loggable.task.task_simple_name + ']';
                 return {
                     'type': 'edited a comment',
                     'icon': 'fa-comment',
                     'color': 'yellow',
-                    'desc': 'desc'
+                    'desc': desc
                 };
             case 73:
+                desc = log.user.full_name + ' mentioned ' + log.target_employee.user.full_name + ' in a comment on task ['+ log.loggable.task.task_simple_name + ']';
                 return {
-                    'type': 'mentioned you in a comment',
+                    'type': 'mentioned an employee',
                     'icon': 'fa-comment',
                     'color': 'purple',
-                    'desc': 'desc'
+                    'desc': desc
                 };
             case 90:
+                desc = log.user.full_name + ' created a new badge ['+ log.loggable.name +']';
                 return {
                     'type': 'created a new badge',
                     'icon': 'fa-award',
                     'color': 'purple',
-                    'desc': 'desc'
+                    'desc': desc
                 };
             default:
+                desc = log.user.full_name + 'performed log type: ' + log.log_type;
                 return {
-                    'type': 'undefined',
+                    'type': 'Log not defined',
                     'icon': 'fa-award',
                     'color': 'gray',
-                    'desc': 'desc'
+                    'desc': 'Log Not Defined'
                 };
             }
         },

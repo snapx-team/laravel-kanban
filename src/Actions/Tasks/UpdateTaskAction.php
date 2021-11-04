@@ -4,12 +4,12 @@ namespace Xguard\LaravelKanban\Actions\Tasks;
 
 use Illuminate\Support\Facades\Auth;
 use Lorisleiva\Actions\Action;
+use Xguard\LaravelKanban\Actions\Badges\CreateBadgeAction;
 use Xguard\LaravelKanban\Actions\ErpShareables\UpdateErpShareablesDescriptionAction;
 use Xguard\LaravelKanban\Models\Badge;
 use Xguard\LaravelKanban\Models\Log;
 use Xguard\LaravelKanban\Models\Task;
 use Xguard\LaravelKanban\Http\Helper\AccessManager;
-use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\SharedTaskData;
 use Xguard\LaravelKanban\Repositories\TasksRepository;
 
@@ -69,39 +69,7 @@ class UpdateTaskAction extends Action
                 $badge = app(CreateBadgeAction::class)->fill(["name" => $badgeName])->run();
             }
 
-            //change who's assigned to the task if necessary
-            if ($this->assignedTo !== null) {
-                $employeeArray = [];
-                foreach ($this->assignedTo as $employee) {
-                    array_push($employeeArray, $employee['employee']['id']);
-                }
-
-                $assignedToResponse = $task->assignedTo()->sync($employeeArray);
-
-                foreach ($assignedToResponse['attached'] as $employeeId) {
-                    $employee = Employee::find($employeeId);
-                    $log = Log::createLog(
-                        Auth::user()->id,
-                        Log::TYPE_CARD_ASSIGNED_TO_USER,
-                        'User ' . $employee->user->full_name . ' has been assigned to task [' . $task->task_simple_name . ']',
-                        $employee->id,
-                        $task->id,
-                        'Xguard\LaravelKanban\Models\Task'
-                    );
-                }
-
-                foreach ($assignedToResponse['detached'] as $employeeId) {
-                    $employee = Employee::find($employeeId);
-                    $log = Log::createLog(
-                        Auth::user()->id,
-                        Log::TYPE_CARD_UNASSIGNED_TO_USER,
-                        'User ' . $employee->user->full_name . ' has been removed from task [' . $task->task_simple_name . ']',
-                        $employee->id,
-                        $task->id,
-                        'Xguard\LaravelKanban\Models\Task'
-                    );
-                }
-            }
+            app(SyncAssignedEmployeesToTaskAction::class)->fill(["assignedTo" => $this->assignedTo, "task"=> $task])->run();
 
             if ($this->sharedTaskDataId === $prevGroup) {
                 // update shared data if group hasn't changed
