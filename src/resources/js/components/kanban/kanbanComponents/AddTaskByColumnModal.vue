@@ -492,7 +492,7 @@ export default {
             if (this.selectedTemplate !== null) {
                 this.task.name = this.selectedTemplate.task_name;
                 this.task.badge = this.selectedTemplate.badge;
-                this.task.description = this.selectedTemplate.description;
+                this.task.shared_task_data.description = this.selectedTemplate.description;
                 this.checkedOptions = this.selectedTemplate.unserialized_options;
             } else {
                 this.task.name = null;

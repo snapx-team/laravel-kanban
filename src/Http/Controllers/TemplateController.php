@@ -49,7 +49,7 @@ class TemplateController extends Controller
             if (strlen($badgeName) == 0) {
                 throw new \Exception("The name of the badge has to contain at least one character");
             }
-            
+
             $badge = Badge::where('name', $badgeName)->first();
 
             if (!$badge) {
@@ -57,7 +57,7 @@ class TemplateController extends Controller
                     throw new \Exception("Only admins can create badges");
                 }
                 $badge = Badge::create([
-                    'name' => $badgeName,  
+                    'name' => $badgeName,
                 ]);
             }
 
@@ -86,7 +86,7 @@ class TemplateController extends Controller
                 Log::createLog(
                     Auth::user()->id,
                     Log::TYPE_TEMPLATE_UPDATED,
-                    $template->name,
+                    'Updated template [' .$template->name. ']',
                     null,
                     $template->id,
                     'Xguard\LaravelKanban\Models\Template'
@@ -103,7 +103,7 @@ class TemplateController extends Controller
                 Log::createLog(
                     Auth::user()->id,
                     Log::TYPE_TEMPLATE_CREATED,
-                    $template->name,
+                    'Created template [' .$template->name. ']',
                     null,
                     $template->id,
                     'Xguard\LaravelKanban\Models\Template'
@@ -117,7 +117,6 @@ class TemplateController extends Controller
                 }
                 $template->boards()->sync($kanbanArray);
             }
-
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
@@ -136,7 +135,7 @@ class TemplateController extends Controller
             Log::createLog(
                 Auth::user()->id,
                 Log::TYPE_TEMPLATE_DELETED,
-                $template->name,
+                'Deleted template [' .$template->name. ']',
                 null,
                 $template->id,
                 'Xguard\LaravelKanban\Models\Template'
@@ -149,5 +148,4 @@ class TemplateController extends Controller
         }
         return response(['success' => 'true'], 200);
     }
-
 }

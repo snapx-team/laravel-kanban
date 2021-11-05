@@ -7,10 +7,16 @@ use Iatstuti\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Xguard\LaravelKanban\Actions\Notifications\NotifyEmployeesAction;
 use Xguard\LaravelKanban\Models\Task;
+
+/**
+ * @property int $task_id
+ * @property int $id
+ */
 
 class Log extends Model
 {
@@ -31,13 +37,12 @@ class Log extends Model
     const TYPE_CARD_CREATED = 10;
     const TYPE_CARD_CANCELED = 11;
     const TYPE_CARD_COMPLETED = 12;
-    const TYPE_CARD_ACTIVE = 13;
+    const TYPE_CARD_ACTIVATED = 13;
     const TYPE_CARD_MOVED = 14;
     const TYPE_CARD_ASSIGNED_TO_BOARD = 15;
     const TYPE_CARD_UPDATED = 16;
     const TYPE_CARD_ASSIGNED_GROUP = 17;
     const TYPE_CARD_CHANGED_INDEX = 18;
-    const TYPE_CARD_ACTIVATED = 19;
     const TYPE_CARD_CHECKLIST_ITEM_CHECKED = 20;
     const TYPE_CARD_CHECKLIST_ITEM_UNCHECKED = 21;
     const TYPE_CARD_ASSIGNED_TO_USER = 22;
@@ -97,6 +102,11 @@ class Log extends Model
     public function loggable(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    public function taskVersion(): HasOne
+    {
+        return $this->hasOne(TaskVersion::class);
     }
 
     public function targetEmployee(): BelongsTo

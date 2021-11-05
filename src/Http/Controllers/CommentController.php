@@ -38,18 +38,18 @@ class CommentController extends Controller
     {
         try {
             $comment = Comment::find($id);
-            $comment->delete();
-
-            $task = Task::with('board')->get()->find($comment->task_id);
 
             Log::createLog(
                 Auth::user()->id,
                 Log::TYPE_COMMENT_DELETED,
-                'Deleted comment on task [' . $task->task_simple_name . ']',
+                $comment->comment,
                 null,
                 $comment->id,
                 'Xguard\LaravelKanban\Models\Comment'
             );
+
+            $comment->delete();
+
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',

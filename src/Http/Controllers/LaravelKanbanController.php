@@ -94,53 +94,37 @@ class LaravelKanbanController extends Controller
         ];
     }
 
-    public function getBacklogData($start, $end)
+    public function getBacklogData($start, $end): array
     {
 
+        $backlogTasks = Task::with('badge', 'row', 'column', 'board');
+
         if (session('role') === 'admin') {
-            $backlogTasks = Task::
-            with('badge', 'row', 'column', 'board', 'sharedTaskData')
-                ->with(['reporter.user' => function ($q) {
-                    $q->select(['id', 'first_name', 'last_name']);
-                }])
-                ->with(['assignedTo.employee.user' => function ($q) {
-                    $q->select(['id', 'first_name', 'last_name']);
-                }])
-                ->with(['sharedTaskData' => function ($q) {
-                    $q->with(['erpContracts' => function ($q) {
-                        $q->select(['contracts.id', 'contract_identifier']);
-                    }])->with(['erpEmployees' => function ($q) {
-                        $q->select(['users.id', 'first_name', 'last_name']);
-                    }]);
-                }])
-                ->whereDate('created_at', '>=', new DateTime($start))
-                ->whereDate('created_at', '<=', new DateTime($end))
-                ->orderBy('deadline')
-                ->get();
+            $backlogTasks->whereHas('board.members', function ($q) {
+                $q->where('employee_id', session('employee_id'));
+            });
+        }
+        $backlogTasks->with(['reporter.user' => function ($q) {
+            $q->select(['id', 'first_name', 'last_name']);
+        }])
+            ->with(['assignedTo.employee.user' => function ($q) {
+                $q->select(['id', 'first_name', 'last_name']);
+            }])
+            ->with(['sharedTaskData' => function ($q) {
+                $q->with(['erpContracts' => function ($q) {
+                    $q->select(['contracts.id', 'contract_identifier']);
+                }])->with(['erpEmployees' => function ($q) {
+                    $q->select(['users.id', 'first_name', 'last_name']);
+                }]);
+            }])
+            ->whereDate('created_at', '>=', new DateTime($start))
+            ->whereDate('created_at', '<=', new DateTime($end))
+            ->orderBy('deadline')
+            ->get();
+
+        if (session('role') === 'admin') {
             $boards = Board::orderBy('name')->with('members')->get();
         } else {
-            $backlogTasks = Task::with('board', 'badge', 'row', 'column')
-                ->whereHas('board.members', function ($q) {
-                    $q->where('employee_id', session('employee_id'));
-                })
-                ->with(['reporter.user' => function ($q) {
-                    $q->select(['id', 'first_name', 'last_name']);
-                }])
-                ->with(['assignedTo.employee.user' => function ($q) {
-                    $q->select(['id', 'first_name', 'last_name']);
-                }])
-                ->with(['sharedTaskData' => function ($q) {
-                    $q->with(['erpContracts' => function ($q) {
-                        $q->select(['contracts.id', 'contract_identifier']);
-                    }])->with(['erpEmployees' => function ($q) {
-                        $q->select(['users.id', 'first_name', 'last_name']);
-                    }]);
-                }])
-                ->whereDate('created_at', '>=', new DateTime($start))
-                ->whereDate('created_at', '<=', new DateTime($end))
-                ->orderBy('deadline')
-                ->get();
-
             $boards = Board::orderBy('name')->
             whereHas('members', function ($q) {
                 $q->where('employee_id', session('employee_id'));
@@ -192,70 +176,6 @@ class LaravelKanbanController extends Controller
             'badges' => $badgeArray,
             'kanbanUsers' => $kanbanUsers,
         ];
-    }
-
-    public function getNotificationData($logType)
-    {
-        if ($logType !== "null") {
-            $type = (int)$logType;
-            $employee = Employee::
-            where('user_id', '=', Auth::user()->id)
-                ->with('notifications.user')
-                ->with(['notifications' => function ($q) use ($type) {
-                    $q->where('log_type', $type)
-                        ->orderBy('created_at', 'desc')
-                        ->with(['loggable' => function (MorphTo $morphTo) {
-                            $morphTo->morphWith([Task::class, Comment::class => ['task.board'], Board::class]);
-                        }])->paginate(10);
-                }])->first();
-        } else {
-            $employee = Employee::
-            where('user_id', '=', Auth::user()->id)
-                ->with('notifications.user')
-                ->with(['notifications' => function ($q) {
-                    $q->orderBy('created_at', 'desc')
-                        ->with(['loggable' => function (MorphTo $morphTo) {
-                            $morphTo->morphWith([Task::class, Comment::class => ['task.board'], Board::class]);
-                        }])
-                        ->paginate(10);
-                }])->first();
-        }
-        return $employee->notifications;
-    }
-
-    public function getNotificationCount()
-    {
-        $employee = Employee::
-        where('user_id', '=', Auth::user()->id)
-            ->first();
-        $startDate = $employee->last_notif_check;
-        if ($startDate !== null) {
-            $employee = Employee::
-            where('user_id', '=', Auth::user()->id)
-                ->with(['notifications' => function ($q) use ($startDate) {
-                    $q->where('kanban_logs.created_at', '>=', new DateTime($startDate));
-                }])
-                ->first();
-        }
-        if ($employee == null) {
-            return 0;
-        }
-        return count($employee->notifications);
-    }
-
-    public function updateNotificationCount()
-    {
-        try {
-            Employee::where('user_id', '=', Auth::user()->id)->update([
-                'last_notif_check' => new DateTime('NOW')
-            ]);
-        } catch (\Exception $e) {
-            return response([
-                'success' => 'false',
-                'message' => $e->getMessage(),
-            ], 400);
-        }
-        return response(['success' => 'true'], 200);
     }
 
     public function getUserProfile()

@@ -46,7 +46,7 @@ class UpdateTaskDescriptionAction extends Action
                 Log::createLog(
                     Auth::user()->id,
                     Log::TYPE_CARD_CHECKLIST_ITEM_CHECKED,
-                    'Checked -> ' . $this->checkboxContent,
+                    $this->checkboxContent,
                     null,
                     $task->id,
                     'Xguard\LaravelKanban\Models\Task'
@@ -55,7 +55,7 @@ class UpdateTaskDescriptionAction extends Action
                 Log::createLog(
                     Auth::user()->id,
                     Log::TYPE_CARD_CHECKLIST_ITEM_UNCHECKED,
-                    'Unchecked -> ' . $this->checkboxContent,
+                    $this->checkboxContent,
                     null,
                     $task->id,
                     'Xguard\LaravelKanban\Models\Task'

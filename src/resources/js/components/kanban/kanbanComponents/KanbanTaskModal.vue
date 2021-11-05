@@ -17,7 +17,7 @@
 
             <div class="fixed inset-0 z-40 flex items-start justify-center" v-if="modalOpen">
                 <!-- Close when clicked outside -->
-                <div @click="modalOpen = false" class="overflow-auto fixed h-full w-full"></div>
+                <div @click="closeTaskModal()" class="overflow-auto fixed h-full w-full"></div>
                 <div class="flex flex-col overflow-auto z-50 w-100 bg-white rounded-md shadow-2xl m-10"
                      style="width: 1000px; min-height: 300px; max-height: 80%">
 
@@ -41,7 +41,7 @@
                         <div>
                             <button
                                 class="focus:outline-none flex flex-col items-center text-gray-400 hover:text-gray-500 transition duration-150 ease-in-out pl-8"
-                                type="button" @click="modalOpen = false">
+                                type="button" @click="closeTaskModal()">
                                 <i class="fas fa-times"></i>
                                 <span class="text-xs font-semibold text-center leading-3 uppercase">Esc</span>
                             </button>
@@ -146,12 +146,12 @@ export default {
 
     created() {
         this.eventHub.$on("update-kanban-task-cards", (task) => {
-            this.$router.replace({name: "board", query: {id: this.kanbanData.id, task: task.id}})
+            this.$router.replace({name: "board", query: {id: this.kanbanData.id, task: task.id}}).catch(()=>{});
             this.setCardData(task.id);
         });
 
         this.eventHub.$on("close-task-modal", () => {
-            this.modalOpen = false;
+            this.closeTaskModal();
         });
     },
 
@@ -167,7 +167,7 @@ export default {
         setCardData(taskId) {
             this.asyncGetTaskData(taskId).then((data) => {
                 if (this.modalOpen) {
-                    this.modalOpen = false;
+                    this.closeTaskModal();
                     setTimeout(() => {
                         this.cardData = data.data;
                         this.modalOpen = true;
@@ -180,6 +180,11 @@ export default {
             }).catch(res => {
                 console.log(res)
             });
+        },
+
+        closeTaskModal(){
+            this.$router.replace({name: "board",query: {id: this.kanbanData.id}}).catch(()=>{});
+            this.modalOpen = false;
         },
 
         copyToClipboard() {

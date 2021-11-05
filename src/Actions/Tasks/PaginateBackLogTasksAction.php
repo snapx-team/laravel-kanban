@@ -3,6 +3,7 @@
 namespace Xguard\LaravelKanban\Actions\Tasks;
 
 use App\Actions\Traits\Pagination;
+use Exception;
 use Lorisleiva\Actions\Action;
 use Xguard\LaravelKanban\Models\Task;
 use DateTime;
@@ -37,6 +38,7 @@ class PaginateBackLogTasksAction extends Action
      * Execute the action and return a result.
      *
      * @return mixed
+     * @throws Exception
      */
     public function handle()
     {

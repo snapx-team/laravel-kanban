@@ -1,11 +1,6 @@
-
-
 <template>
-
     <div class="py-3 px-4 mb-2 border-l-4 bg-gray-50 shadow-sm" :class="`border-${formattedLog.color}-400 `">
-
         <div class="flex justify-between">
-
             <div class="flex">
                 <div class="pr-5 flex items-center">
                     <div
@@ -18,7 +13,7 @@
                         <span class="font-bold text-l">{{ log.user.full_name }}</span>
                         <span> {{ formattedLog.type }} </span>
                     </p>
-                    <p class="text-gray-600">{{ log.description }}</p>
+                    <p class="text-gray-600">{{ formattedLog.desc }}</p>
                     <p class="text-gray-700 text-xs mt-1">{{ moment(log.created_at).format("MMMM Do h:mm a") }}</p>
                 </div>
             </div>
@@ -33,7 +28,6 @@
                         <i class="fas fa-arrow-right"></i>
                     </h2>
                 </router-link>
-
             </div>
             <div v-else-if="log.loggable && log.loggable_type === 'Xguard\\LaravelKanban\\Models\\Board'" class="flex flex-col justify-between items-end">
                 <router-link :to="{ name: 'board', query: { id: log.loggable.id} }">
@@ -65,7 +59,6 @@
  *
  */
 
-
 import moment from 'moment'
 import Badge from "../../../global/Badge.vue";
 import {formattedLog} from "../../../../mixins/logFormatterMixin";
@@ -80,19 +73,16 @@ export default {
     },
     created: function () {
         this.moment = moment;
+        this.formattedLog = this.getFormattedLog(this.log);
+
     },
     props: {
         log: {},
-        formattedLog:{}
     },
     data() {
         return {
-            title: '',
-            subtitle: '',
+            formattedLog:null
         }
-    },
-    mounted() {
-        this.formattedLog = this.getFormattedLog(this.log);
     },
 };
 </script>
