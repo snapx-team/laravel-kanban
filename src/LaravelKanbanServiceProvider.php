@@ -51,7 +51,7 @@ class LaravelKanbanServiceProvider extends ServiceProvider
             __DIR__ . '/../public' => public_path('vendor/laravel-kanban'),
         ], 'laravel-kanban-assets');
 
-        $this->app->booted(function (){
+        $this->app->booted(function () {
             $schedule = $this->app->make(Schedule::class);
             $schedule->command(DeleteKanbanEmployeesWithDeletedUsers::class)->daily();
             $schedule->command(NotifyOfTasksWithDeadlineInNext24::class)->hourly();
