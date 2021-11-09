@@ -6,7 +6,7 @@
                     <div class="flex-1 text-gray-100 font-semibold py-1">
                         Copyright © {{year}}
                         <a href="/" class="text-white hover:text-gray-400 text-sm font-semibold py-1">{{ parent_name }}</a>
-                        • {{ version }}
+                        • v.{{ version }}
                     </div>
             </div>
         </div>
