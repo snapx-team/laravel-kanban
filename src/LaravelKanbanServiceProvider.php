@@ -37,6 +37,8 @@ class LaravelKanbanServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__ . '/Http/Middleware');
         $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
         $this->loadMigrationsFrom(__DIR__ . '/database/seeds');
+        $this->loadFactoriesFrom(__DIR__ . '/database/factories');
+
 
         $this->commands([
             CreateAdmin::class, MoveErpDataInTaskToErpShareables::class,
@@ -51,7 +53,7 @@ class LaravelKanbanServiceProvider extends ServiceProvider
             __DIR__ . '/../public' => public_path('vendor/laravel-kanban'),
         ], 'laravel-kanban-assets');
 
-        $this->app->booted(function (){
+        $this->app->booted(function () {
             $schedule = $this->app->make(Schedule::class);
             $schedule->command(DeleteKanbanEmployeesWithDeletedUsers::class)->daily();
             $schedule->command(NotifyOfTasksWithDeadlineInNext24::class)->hourly();

@@ -86,7 +86,7 @@ export default {
             } else {
                 this.selected.push(option.employee_id);
             }
-            this.eventHub.$emit("show-employee-tasks", this.selected); //user id, not erp id
+            this.eventHub.$emit("show-employee-tasks", this.selected);
         }
     },
     computed: {

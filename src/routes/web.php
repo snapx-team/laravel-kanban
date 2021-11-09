@@ -77,8 +77,8 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
 
             // Comments
             Route::get('/get-task-comments/{taskId}', 'CommentController@getAllTaskComments');
-            Route::post('/create-task-comment', 'CommentController@createOrUpdateTaskComment');
-            Route::post('/delete-task-comment/{taskCommentId}', 'CommentController@deleteTaskComment');
+            Route::post('/create-or-update-task-comment', 'CommentController@createOrUpdateTaskComment');
+            Route::post('/delete-task-comment', 'CommentController@deleteTaskComment');
 
             // Templates
             Route::get('/get-templates', 'TemplateController@getAllTemplates');
