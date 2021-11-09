@@ -5,6 +5,7 @@ namespace Xguard\LaravelKanban\Actions\Tasks;
 use Illuminate\Support\Facades\Auth;
 use Lorisleiva\Actions\Action;
 use Xguard\LaravelKanban\Actions\Badges\CreateBadgeAction;
+use Xguard\LaravelKanban\Actions\Tasks\UpdateTaskStatusAction;
 use Xguard\LaravelKanban\Actions\ErpShareables\UpdateErpShareablesDescriptionAction;
 use Xguard\LaravelKanban\Models\Badge;
 use Xguard\LaravelKanban\Models\Log;
@@ -89,13 +90,17 @@ class UpdateTaskAction extends Action
 
             $task->update([
                 'name' => $this->name,
-                'status' => $this->status,
                 'deadline' => date('y-m-d h:m', strtotime($this->deadline)),
                 'badge_id' => $badge->id,
                 'column_id' => $this->columnId,
                 'row_id' => $this->rowId,
                 'shared_task_data_id' => $this->sharedTaskDataId
             ]);
+
+            app(UpdateTaskStatusAction::class)->fill([
+                'taskId' => $task->id,
+                'newStatus' => $this->status
+            ])->run();
 
             // logic to log what was changed during update
 
