@@ -32,16 +32,16 @@ class CreateNotificationActionTest extends TestCase
         Employee::create(['user_id' => $user->id, 'role' => 'admin']);
         Task::create(['name' => 'test task', 'board_id' => 1, 'reporter_id' => 1, 'shared_task_data_id' => 1]);
         Comment::create(['task_id' => 1, 'employee_id' => 1, 'comment' => 'test']);
-        session(['role' => 'admin', 'employee_id' => '1']);
+        session(['role' => 'admin', 'employee_id' => 1]);
     }
 
     public function testANotificationIsCreatedWhenLogWithNotifiableEmployeeIsCreated()
     {
         $log = Log::create([
-            'user_id' => 1,
+            'user_id' => session('employee_id'),
             'log_type' => Log::TYPE_COMMENT_CREATED,
             'description' => 'test',
-            'targeted_employee_id' => 1,
+            'targeted_employee_id' => session('employee_id'),
             'loggable_id' => 1,
             'loggable_type' => 'Xguard\LaravelKanban\Models\Comment'
         ]);

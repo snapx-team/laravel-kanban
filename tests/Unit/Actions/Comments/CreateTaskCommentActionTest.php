@@ -25,25 +25,23 @@ class CreateTaskCommentActionTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->seed();
         $user = factory(User::class)->create();
         Auth::setUser($user);
 
-        Board::create(['name' => 'test board']);
-        Employee::create(['user_id' => $user->id, 'role' => 'admin']);
-        Employee::create(['user_id' => '1', 'role' => 'admin']);
-        Employee::create(['user_id' => '2', 'role' => 'admin']);
-        Employee::create(['user_id' => '3', 'role' => 'admin']);
-        Member::create(['employee_id' => '1', 'board_id' => 1]);
-        Task::create(['name' => 'test task', 'board_id'=> 1, 'reporter_id' => 1]);
-        session(['role' => 'admin', 'employee_id' => '1']);
+        $employee = factory(Employee::class)->states('admin')->create(['user_id' => $user->id,]);
+        $board = factory(Board::class)->create();
+        factory(Task::class)->create(['id'=>1, 'reporter_id' => $employee->id, 'board_id' => $board->id]);
+        factory(Member::class)->create(['employee_id' => $employee->id, 'board_id' => $board->id]);
+        factory(Employee::class, 3)->create();
+
+        session(['role' => 'admin', 'employee_id' => $employee->id]);
     }
 
     public function testAUserCanWriteCommentOnTaskIfTheyHaveBoardAccess()
     {
 
         $commentData = array(
-            'taskId' => 1,
+            'task_id' => 1,
             'comment' => 'comment test',
             'mentions' => array(
                 '0' => 1,
@@ -52,7 +50,7 @@ class CreateTaskCommentActionTest extends TestCase
             )
         );
 
-        (new CreateTaskCommentAction(['comment_data' => $commentData]))->run();
+        app(CreateTaskCommentAction::class)->fill(['comment_data' => $commentData])->run();
 
         $this->assertCount(1, Comment::all());
     }
@@ -60,12 +58,12 @@ class CreateTaskCommentActionTest extends TestCase
     public function testCommentCreatesLog()
     {
         $commentData = array(
-            'taskId' => 1,
+            'task_id' => 1,
             'comment' => 'comment test',
             'mentions' => array()
         );
 
-        (new CreateTaskCommentAction(['comment_data' => $commentData]))->run();
+        app(CreateTaskCommentAction::class)->fill(['comment_data' => $commentData])->run();
 
         $this->assertCount(1, Log::all());
     }
@@ -73,7 +71,7 @@ class CreateTaskCommentActionTest extends TestCase
     public function testCommentWithMentionsCreatesLogs()
     {
         $commentData = array(
-            'taskId' => 1,
+            'task_id' => 1,
             'comment' => 'comment test',
             'mentions' => array(
                 '0' => 1,
@@ -82,7 +80,7 @@ class CreateTaskCommentActionTest extends TestCase
             )
         );
 
-        (new CreateTaskCommentAction(['comment_data' => $commentData]))->run();
+        app(CreateTaskCommentAction::class)->fill(['comment_data' => $commentData])->run();
 
         $this->assertCount(4, Log::all());
     }
@@ -90,7 +88,7 @@ class CreateTaskCommentActionTest extends TestCase
     public function testMentionsCreatesNotifications()
     {
         $commentData = array(
-            'taskId' => 1,
+            'task_id' => 1,
             'comment' => 'comment test',
             'mentions' => array(
                 '0' => 1,
@@ -99,7 +97,7 @@ class CreateTaskCommentActionTest extends TestCase
             )
         );
 
-        (new CreateTaskCommentAction(['comment_data' => $commentData]))->run();
+        app(CreateTaskCommentAction::class)->fill(['comment_data' => $commentData])->run();
 
         $this->assertCount(3, DB::table('kanban_employee_log')->get());
     }

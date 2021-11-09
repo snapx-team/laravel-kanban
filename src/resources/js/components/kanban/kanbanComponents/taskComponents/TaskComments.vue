@@ -9,23 +9,49 @@
                            class="px-3 py-3 placeholder-gray-400 text-gray-700 rounded border border-gray-400 w-full outline-none text-md leading-4">
                 </div>
 
-
                 <div :class="{'absolute h-0 opacity-0 overflow-hidden': !isCommentFocus}">
                     <quill-editor
                         ref="myQuillEditor"
                         v-model="commentData.comment"
                         :options="config"
                         output="html"
-                        @blur="isCommentFocus = false"
+                        @blur="clickOutsideQuill()"
                     ></quill-editor>
 
-                    <button
-                        @click="saveComment()"
-                        class="w-full bg-indigo-500 text-white active:bg-indigo-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                        type="button"
-                    ><span v-if="loadingComments">submitting</span><span v-else>submit</span> comment <i
-                        class="fa fa-paper-plane ml-1"></i>
-                    </button>
+                    <div v-if="isEditingComment.visible" class="flex">
+                        <button
+                            @click="saveComment()"
+                            class="w-full bg-yellow-500 text-white active:bg-yellow-600 font-bold uppercase text-xs px-4
+                            py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear
+                            transition-all duration-150"
+                            type="button">
+                            <span v-if="loadingComments">loading...</span>
+                            <span v-else>edit comment</span>
+                            <i class="fa fa-paper-plane ml-1"></i>
+                        </button>
+                        <button
+                            @click="cancelEditComment()"
+                            class="w-full bg-red-500 text-white active:bg-red-600 font-bold uppercase text-xs px-4
+                            py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear
+                            transition-all duration-150"
+                            type="button">
+                            <span>cancel</span>
+                            <i class="fa fa-paper-plane ml-1"></i>
+                        </button>
+                    </div>
+
+                    <div v-else>
+                        <button
+                            @click="saveComment()"
+                            class="w-full bg-indigo-500 text-white active:bg-indigo-600 font-bold uppercase text-xs px-4
+                        py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear
+                        transition-all duration-150"
+                            type="button">
+                            <span v-if="loadingComments">loading...</span>
+                            <span v-else>submit comment</span>
+                            <i class="fa fa-paper-plane ml-1"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -54,12 +80,12 @@
             </div>
         </div>
 
-
         <div class="inline-block min-w-full bg-gray-50 rounded-lg overflow-hidden">
 
             <template v-for="(comment, commentIndex) in filtered">
                 <template v-if="commentIndex >= paginationIndex &&commentIndex < paginationIndex + paginationStep">
-                    <div class="flex border-b" :key="commentIndex">
+                    <div class="flex border-b group" :key="commentIndex"
+                         :class=" isEditingComment.id === comment.id ? 'bg-yellow-200': '' ">
                         <div class="p-3 text-sm">
                             <div class="flex items-center w-38">
                                 <div>
@@ -68,14 +94,16 @@
                                 <div class="ml-3">
                                     <p class="text-gray-800 font-semibold">
                                         {{ comment.employee.user.full_name }} </p>
-                                    <small class="whitespace-nowrap">{{
-                                        comment.created_at | moment("DD MMM, YYYY")
-                                        }}</small>
+                                    <small class="whitespace-nowrap">
+                                        {{ comment.created_at | moment("DD MMM, YYYY") }}
+                                    </small>
                                 </div>
                             </div>
                         </div>
                         <div class="p-3 text-sm w-full">
                             <p class="text-gray-800" v-html="comment.comment"></p>
+                            <small class="text-gray-500" v-if="comment.created_at !== comment.updated_at">(edited)</small>
+
                             <div class=" mt-2" v-if="cardData.id !== comment.task_id">
                                 <div class="inline-flex space-x-2 rounded border px-2 py-1">
                                     <small>Origin: </small>
@@ -85,6 +113,19 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="flex flex-col justify-around text-sm opacity-0 group-hover:opacity-100 transition duration-300 ease-in-out">
+                            <a v-if="comment.employee_id === $employeeIdSession"
+                               @click="editComment(comment)"
+                               class="cursor-pointer px-2 text-gray-400 hover:text-gray-600 transition duration-300 ease-in-out focus:outline-none">
+                                <i class="fas fa-edit"></i>
+                            </a>
+
+                            <a v-if="comment.employee_id === $employeeIdSession"
+                               @click="deleteComment(comment)"
+                               class="cursor-pointer px-2 text-gray-400 hover:text-red-600 transition duration-300 ease-in-out focus:outline-none">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
                     </div>
                 </template>
             </template>
@@ -93,9 +134,9 @@
                 class="p-3 border-t flex flex-col xs:flex-row items-center xs:justify-between">
                 <div class="text-xs xs:text-sm text-gray-900">
                     Showing {{ Number(paginationIndex) + 1 }} to
-                    <span v-if="paginationIndex + paginationStep <= filtered.length"> {{
-                            Number(paginationIndex) + Number(paginationStep)
-                        }} </span>
+                    <span v-if="paginationIndex + paginationStep <= filtered.length">
+                        {{ Number(paginationIndex) + Number(paginationStep) }}
+                    </span>
                     <span v-else>{{ filtered.length }} </span> of {{ filtered.length }} Entries
                 </div>
                 <div class="inline-flex mt-2 xs:mt-0">
@@ -135,12 +176,19 @@ export default {
     data() {
         return {
             loadingComments: false,
+            isEditingComment: {visible: false, id: null},
             isCommentFocus: false,
             comments: [],
             filter: "",
             paginationIndex: 0,
             paginationStep: 5,
-            commentData: {id: null, comment: null, taskId: null, mentions: []},
+            commentData: {
+                id: null,
+                comment: null,
+                task_id: null,
+                employee_id: null,
+                mentions: [],
+            },
             boardMembers: [],
             config: {
                 readOnly: false,
@@ -184,7 +232,7 @@ export default {
         }
     },
     mounted() {
-        this.commentData.taskId = this.cardData.id;
+        this.commentData.task_id = this.cardData.id;
         this.getMembers();
         this.getComments();
     },
@@ -198,7 +246,7 @@ export default {
         getComments() {
             this.loadingComments = true;
 
-            this.asyncGetComments(this.commentData.taskId).then((data) => {
+            this.asyncGetComments(this.cardData.id).then((data) => {
                 this.comments = data.data;
                 this.loadingComments = false;
             }).catch(res => {
@@ -214,17 +262,60 @@ export default {
             let doc = parser.parseFromString(this.commentData.comment, 'text/html');
             let matches = doc.getElementsByClassName('mention');
 
-            for (let i=0; i<matches.length; i++) {
+            for (let i = 0; i < matches.length; i++) {
 
                 let dataAttribute = matches[i].getAttribute('data-id');
                 this.commentData.mentions.push(dataAttribute);
             }
 
-            this.asyncCreateComment(this.commentData).then(res => {
+            this.asyncCreateOrEditComment(this.commentData).then(res => {
                 this.commentData.comment = null;
+                this.isEditingComment = {visible: false, id: null};
                 this.getComments();
                 this.eventHub.$emit("reload-logs");
             });
+        },
+
+        editComment(commentData) {
+            this.isEditingComment = {visible: true, id: commentData.id};
+            this.isCommentFocus = true;
+            this.commentData = Object.assign({}, this.commentData, commentData);
+        },
+
+        cancelEditComment() {
+            this.isEditingComment = {visible: false, id: null};
+            this.commentData = {
+                id: null,
+                comment: null,
+                task_id: null,
+                employee_id: null,
+                mentions: [],
+            }
+        },
+
+        deleteComment(commentData) {
+
+
+            this.$swal({
+                icon: 'warning',
+                title: 'Confirm Delete Comment',
+                text: 'Are you sure you want to delete this comment?',
+                showCancelButton: true,
+                confirmButtonText: `Yes, delete it`,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.loadingComments = true;
+                    this.asyncDeleteComment(commentData).then(() => {
+                        this.getComments();
+                        this.eventHub.$emit("reload-logs");
+                    });
+                }
+            })
+        },
+
+        clickOutsideQuill(){
+            this.isCommentFocus = false;
+            this.cancelEditComment();
         },
 
         updatePaginationIndex(newIndex) {

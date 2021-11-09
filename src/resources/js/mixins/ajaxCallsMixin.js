@@ -389,15 +389,15 @@ export const ajaxCalls = {
             return axios.get('get-task-comments/' + taskId);
         },
 
-        asyncCreateComment(commentData) {
+        asyncCreateOrEditComment(commentData) {
 
-            return axios.post('create-task-comment', commentData).catch((error) => {
+            return axios.post('create-or-update-task-comment', commentData).catch((error) => {
                 this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
-        asyncDeleteComment(commentId) {
-            return axios.post('delete-task-comment/' + commentId).catch((error) => {
+        asyncDeleteComment(commentData) {
+            return axios.post('delete-task-comment', commentData).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
