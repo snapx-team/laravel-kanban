@@ -300,7 +300,7 @@ class MetricsController extends Controller
         $beginning = new DateTime($start);
         $ending = new DateTime($end);
         $resolvedLogs = Log::where('log_type', Log::TYPE_CARD_COMPLETED)
-            ->orWhere('log_type', Log::TYPE_CARD_CANCELED)
+            ->orWhere('log_type', Log::TYPE_CARD_CANCELLED)
             ->whereDate('created_at', '>=', $beginning)
             ->whereDate('created_at', '<=', $ending)
             ->where('loggable_type', 'Xguard\LaravelKanban\Models\Task')

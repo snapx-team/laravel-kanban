@@ -36,8 +36,8 @@
                     <td>{{ board.completed }}</td>
                 </tr>
                 <tr>
-                    <td class="pb-2">Canceled</td>
-                    <td>{{ board.canceled }}</td>
+                    <td class="pb-2">Cancelled</td>
+                    <td>{{ board.cancelled }}</td>
                 </tr>
                 <tr>
                     <td class="pb-2">Assigned</td>

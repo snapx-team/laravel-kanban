@@ -142,7 +142,7 @@ class LaravelKanbanController extends Controller
                 'total' => 0,
                 'active' => 0,
                 'completed' => 0,
-                'canceled' => 0,
+                'cancelled' => 0,
                 'unassigned' => 0,
             ];
         }
@@ -163,7 +163,7 @@ class LaravelKanbanController extends Controller
                 $boardArray[$task->board_id]->completed += 1;
             }
             if ($task->status === "cancelled") {
-                $boardArray[$task->board_id]->canceled += 1;
+                $boardArray[$task->board_id]->cancelled += 1;
             }
         }
 

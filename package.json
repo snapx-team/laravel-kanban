@@ -31,6 +31,7 @@
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "^5.15.3",
+        "@hscmap/vue-menu": "^2.10.0",
         "apexcharts": "^3.27.2",
         "quill-mention": "^3.0.4",
         "splitpanes": "^2.3.6",

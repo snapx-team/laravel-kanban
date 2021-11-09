@@ -85,7 +85,7 @@
                                     @change="filterTrigger()"
                                     v-model="filters.filterStatus">
                                 <div class="ml-1 text-gray-700 font-medium">
-                                    <p>cancelled</p>
+                                    <p>Cancelled</p>
                                 </div>
                             </label>
                         </div>

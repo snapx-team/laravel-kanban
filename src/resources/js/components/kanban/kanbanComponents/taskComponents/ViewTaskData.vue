@@ -373,7 +373,6 @@ export default {
             });
         },
         setStatus() {
-
             if(this.selectedStatus.name !==  this.cardData.status){
                 this.$swal({
                     icon: 'info',
@@ -398,8 +397,6 @@ export default {
             else{
                 this.triggerInfoToast('You current status is already set to \'' + this.selectedStatus.name + '\'');
             }
-
-
         },
         handleChecklist() {
 
