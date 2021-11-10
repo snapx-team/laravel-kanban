@@ -143,7 +143,7 @@ export const formattedLog = {
                 desc = log.user.full_name + ' deleted a comment on task ['+ log.loggable.task.task_simple_name + ']';
                 return {
                     'type': 'deleted a comment',
-                    'icon': 'comment-slash',
+                    'icon': 'fa-comment-slash',
                     'color': 'red',
                     'desc': desc
                 };

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Responses\JsonResponse;
 use DateTime;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 use Xguard\LaravelKanban\Actions\Badges\ListBadgesWithCountAction;
 use Xguard\LaravelKanban\Http\Helper\AccessManager;
@@ -20,7 +21,7 @@ use Xguard\LaravelKanban\Actions\Users\GetUserProfileAction;
 class NotificationController extends Controller
 {
     public function getNotificationData($logType)
-{
+    {
         $employee = Employee::where('user_id', '=', Auth::user()->id)
             ->with('notifications.user')
             ->with(['notifications' => function ($q) use ($logType) {
@@ -33,7 +34,11 @@ class NotificationController extends Controller
                     }])
                     ->orderBy('created_at', 'desc')
                     ->with(['loggable' => function (MorphTo $morphTo) {
-                        $morphTo->morphWith([Task::class => ['board', 'row', 'column'], Comment::class => ['task.board', 'task.row', 'task.column'], Board::class]);
+                        $morphTo->withoutGlobalScope(SoftDeletingScope::class)
+                            ->morphWith([
+                                Task::class => ['board', 'row', 'column'],
+                                Comment::class => ['task.board', 'task.row', 'task.column'],
+                                Board::class]);
                     }])->distinct()->paginate(10);
             }])->first();
 

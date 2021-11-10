@@ -18,11 +18,11 @@
                 </div>
             </div>
             <div  v-if="log.loggable && log.loggable_type === 'Xguard\\LaravelKanban\\Models\\Task'"  class="flex flex-col justify-between items-end">
-                <router-link :to="{ name: 'board', query: { id: log.loggable.board.id } }">
+                <router-link v-if="!log.loggable.board.deleted_at" :to="{ name: 'board', query: { id: log.loggable.board.id } }">
                     <badge class="cursor-pointer" :name="log.loggable.board.name"></badge>
                 </router-link>
 
-                <router-link :to="{ name: 'board', query: { id: log.loggable.board.id, task: log.loggable.id} }">
+                <router-link v-if="!log.loggable.deleted_at"  :to="{ name: 'board', query: { name: 'board', id: log.loggable.board.id, task: log.loggable.id} }">
                     <h2 class="cursor-pointer text-gray-500 hover:text-gray-700 transition duration-300 ease-in-out focus:outline-none">
                         <span class="ml-1 font-bold">{{ log.loggable.task_simple_name }}</span>
                         <i class="fas fa-arrow-right"></i>
@@ -30,16 +30,16 @@
                 </router-link>
             </div>
             <div v-else-if="log.loggable && log.loggable_type === 'Xguard\\LaravelKanban\\Models\\Board'" class="flex flex-col justify-between items-end">
-                <router-link :to="{ name: 'board', query: { id: log.loggable.id} }">
+                <router-link v-if="!log.loggable.deleted_at" :to="{ name: 'board', query: { id: log.loggable.id} }">
                     <badge class="cursor-pointer" :name="log.loggable.name"></badge>
                 </router-link>
             </div>
             <div v-else-if="log.loggable && log.loggable_type === 'Xguard\\LaravelKanban\\Models\\Comment'" class="flex flex-col justify-between items-end" >
-                <router-link :to="{ name: 'board', query: { id: log.loggable.task.board.id} }">
+                <router-link v-if="!log.loggable.task.board.deleted_at" :to="{ name: 'board', query: { id: log.loggable.task.board.id} }">
                     <badge class="cursor-pointer inline-flex" :name="log.loggable.task.board.name"></badge>
                 </router-link>
 
-                <router-link :to="{ name: 'board', query: { id: log.loggable.task.board.id, task: log.loggable.task.id} }">
+                <router-link v-if="!log.loggable.task.deleted_at" :to="{ name: 'board', query: { id: log.loggable.task.board.id, task: log.loggable.task.id} }">
                     <h2 class="cursor-pointer text-gray-500 hover:text-gray-700 transition duration-300 ease-in-out focus:outline-none">
                         <span class="ml-1 font-bold">{{ log.loggable.task.task_simple_name }}</span>
                         <i class="fas fa-arrow-right"></i>
@@ -56,7 +56,7 @@
  * @property {string} loggable_type
  * @property {date} created_at
  * @property {string} task_simple_name
- *
+ * @property {string} deleted_at
  */
 
 import moment from 'moment'
