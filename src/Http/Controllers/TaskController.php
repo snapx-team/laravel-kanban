@@ -113,6 +113,7 @@ class TaskController extends Controller
     public function updateTaskCard(Request $request)
     {
         $taskCard = $request->all();
+
         try {
             app(UpdateTaskAction::class)->fill([
                 'assignedTo' => $taskCard['assigned_to'],
