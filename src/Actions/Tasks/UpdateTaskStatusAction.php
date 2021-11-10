@@ -55,7 +55,7 @@ class UpdateTaskStatusAction extends Action
                 $logType = Log::TYPE_CARD_COMPLETED;
                 $logDescription =  'Task [' . $task->task_simple_name . '] in board [' . $task->board->name . '] set to completed';
             } elseif ($this->newStatus === 'cancelled') {
-                $logType = Log::TYPE_CARD_CANCELED;
+                $logType = Log::TYPE_CARD_CANCELLED;
                 $logDescription = 'Task [' . $task->task_simple_name . '] in board [' . $task->board->name . '] set to cancelled';
             } elseif ($this->newStatus === 'active') {
                 $logType = Log::TYPE_CARD_ACTIVATED;

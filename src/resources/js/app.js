@@ -18,6 +18,7 @@ import 'quill/dist/quill.bubble.css';// for bubble theme
 import axios from 'axios';
 import device from 'vue-device-detector';
 import VueObserveVisibility from 'vue-observe-visibility';
+import * as VueMenu from '@hscmap/vue-menu'
 
 Vue.config.productionTip = false;
 
@@ -32,6 +33,7 @@ Vue.use(DatePicker);
 Vue.use(VueMoment);
 Vue.use(device);
 Vue.use(VueObserveVisibility);
+Vue.use(VueMenu);
 
 let globalData = new Vue({
     data: {$role: 'employee'}

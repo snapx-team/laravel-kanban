@@ -35,7 +35,7 @@ class Log extends Model
     const TYPE_EMPLOYEE_DELETED = 3;
 
     const TYPE_CARD_CREATED = 10;
-    const TYPE_CARD_CANCELED = 11;
+    const TYPE_CARD_CANCELLED = 11;
     const TYPE_CARD_COMPLETED = 12;
     const TYPE_CARD_ACTIVATED = 13;
     const TYPE_CARD_MOVED = 14;
