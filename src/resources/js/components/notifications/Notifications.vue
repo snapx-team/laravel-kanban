@@ -2,6 +2,11 @@
     <div>
         <backlog-bar :name="'Notifications'"></backlog-bar>
 
+<!--        <a @click="updateNotificationSettings()"-->
+<!--           class="px-2 text-gray-500 hover:text-gray-400 transition duration-300 ease-in-out focus:outline-none">-->
+<!--            <i class="fas fa-edit"></i>-->
+<!--        </a>-->
+
         <div class="bg-gray-100 w-full h-64 absolute top-0 rounded-b-lg" style="z-index: -1"></div>
 
         <div class="mx-10 my-10 space-y-5 shadow-xl p-5 bg-white">
@@ -41,6 +46,9 @@
                 <span v-else class="animate-pulse">Loading...</span>
             </button>
         </div>
+
+        <notification-settings-modal></notification-settings-modal>
+
     </div>
 </template>
 
@@ -48,6 +56,7 @@
 import {ajaxCalls} from "../../mixins/ajaxCallsMixin";
 import BacklogBar from "../backlog/backlogComponents/BacklogBar.vue";
 import LogCard from "../kanban/kanbanComponents/taskComponents/LogCard.vue";
+import NotificationSettingsModal from "./notificationsComponents/NotificationSettingsModal";
 import vSelect from "vue-select";
 
 export default {
@@ -56,7 +65,10 @@ export default {
         BacklogBar,
         LogCard,
         vSelect,
+        NotificationSettingsModal
     },
+
+    mixins: [ajaxCalls],
 
     data() {
         return {
@@ -89,7 +101,12 @@ export default {
         };
     },
 
-    mixins: [ajaxCalls],
+    created() {
+        this.eventHub.$on("save-notification-settings", (notificationSettings) => {
+            this.saveNotificationSettings(notificationSettings);
+        });
+    },
+
 
     mounted() {
         this.getNotificationData();
@@ -117,6 +134,18 @@ export default {
             }).catch(res => {
                 console.log(res)
             });
+        },
+
+        getNotificationSettings() {
+            // get user notification settings for all
+        },
+
+        updateNotificationSettings() {
+            this.eventHub.$emit("update-notification-settings");
+        },
+
+        saveNotificationSettings() {
+            //do the thing
         },
         filterLogs() {
             this.notifList = [];

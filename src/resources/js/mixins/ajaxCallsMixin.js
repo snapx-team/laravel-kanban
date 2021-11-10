@@ -32,6 +32,10 @@ export const ajaxCalls = {
             return axios.post('update-notif-count');
         },
 
+        asyncGetAllEmployeeBoardNotificationSettings(){
+            return axios.get('get-all-employee-board-notification-settings');
+        },
+
         // Metrics
 
         asyncGetBadgeData(start, end) {
