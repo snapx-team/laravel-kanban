@@ -48,7 +48,7 @@ class AssignTaskToBoardAction extends Action
 
             $log = Log::createLog(
                 Auth::user()->id,
-                Log::TYPE_CARD_ASSIGNED_TO_BOARD,
+                Log::TYPE_CARD_PLACED,
                 'Task [' . $task->task_simple_name . '] assigned to board [' . $task->board->name . '] on [' . $task->row->name . ':' . $task->column->name . ']',
                 null,
                 $task->id,

@@ -30,7 +30,7 @@
                                 Edit or Delete row and columns. Deleting Row will delete all subsequent columns. Any
                                 column deleted will also delete tasks associated to them. </p>
 
-                            <p class="text-sm font-medium leading-5 text-gray-500" v-else>
+                            <p class="text-sm font-medium leading-5 text-gray-400" v-else>
                                 Create new row and add any column you want associated to it </p>
                         </div>
                         <div>

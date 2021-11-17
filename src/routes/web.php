@@ -25,6 +25,8 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
             Route::get('/get-notif-data/{logType}', 'NotificationController@getNotificationData');
             Route::get('/get-notif-count', 'NotificationController@getNotificationCount');
             Route::post('/update-notif-count', 'NotificationController@updateNotificationCount');
+            Route::get('/get-boards-with-employee-notification-settings', 'NotificationController@getBoardsWithEmployeeNotificationSettings');
+            Route::post('/first-or-create-employee-notification-settings', 'NotificationController@firstOrCreateEmployeeNotificationSettings');
 
             // Metrics
             Route::get('/get-badge-data/{start}/{end}', 'MetricsController@getBadgeData');

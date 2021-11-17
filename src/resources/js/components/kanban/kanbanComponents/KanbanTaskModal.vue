@@ -34,7 +34,7 @@
                                         <i class="fas fa-link"></i>
                                     </span>
                                 </h1>
-                                <p class="text-sm font-medium leading-5 text-gray-500">
+                                <p class="text-sm font-medium leading-5 text-gray-400">
                                     View and/or update task information </p>
                             </div>
                         </div>

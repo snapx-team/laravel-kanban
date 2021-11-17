@@ -25,12 +25,12 @@
                         <div class="space-y-1">
                             <div v-if="isEdit">
                                 <h1 class="text-2xl text-white pb-2">Edit Template</h1>
-                                <p class="text-sm font-medium leading-5 text-gray-500">
+                                <p class="text-sm font-medium leading-5 text-gray-400">
                                     Editing an existing template </p>
                             </div>
                             <div v-else>
                                 <h1 class="text-2xl text-white pb-2">Create Template</h1>
-                                <p class="text-sm font-medium leading-5 text-gray-500">
+                                <p class="text-sm font-medium leading-5 text-gray-400">
                                     Creating a new template</p>
                             </div>
                         </div>

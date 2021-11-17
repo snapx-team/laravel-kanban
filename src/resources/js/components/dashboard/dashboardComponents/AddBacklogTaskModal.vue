@@ -26,7 +26,7 @@
 
                             <div>
                                 <h1 class="text-2xl text-white pb-2">Create Backlog Task</h1>
-                                <p class="text-sm font-medium leading-5 text-gray-500">
+                                <p class="text-sm font-medium leading-5 text-gray-400">
                                     Create tasks and assign it to a single or several Kanban boards </p>
                             </div>
                         </div>

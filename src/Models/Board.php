@@ -42,8 +42,8 @@ class Board extends Model
         return $this->belongsToMany(Template::class, 'kanban_board_template', 'board_id', 'template_id');
     }
 
-    public function employeeBoardNotificationSetting(): hasMany
+    public function employeeNotificationSettings(): HasOne
     {
-        return $this->hasMany(EmployeeBoardNotificationSetting::class);
+        return $this->HasOne(EmployeeBoardNotificationSetting::class)->where('employee_id', session('employee_id'));
     }
 }
