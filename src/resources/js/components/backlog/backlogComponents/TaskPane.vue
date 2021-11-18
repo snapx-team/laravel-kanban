@@ -294,14 +294,15 @@
                     </button>
                 </div>
 
-                <vSelect :options="tasks"
+                <vSelect @search="onTypeTask"
+                         :options="tasks"
                          class="text-gray-400"
                          label="name"
                          placeholder="Select task"
                          style="margin-top: 7px"
-                         @search="onTypeTask"
                          :filter="filterTasks"
                          v-model="task.associatedTask">
+
                     <template slot="selected-option" slot-scope="option">
                         <p>
                             <span class="font-bold">{{ option.task_simple_name }}: </span>
@@ -432,9 +433,6 @@ export default {
             }
             this.loadRowsAndColumns(task.board_id);
             this.getRelatedTasks(task.id);
-        },
-        filterTasks(options, search) {
-            return this.tasks;
         },
         closeTaskView() {
             this.eventHub.$emit("close-task-view");
@@ -618,7 +616,9 @@ export default {
                     loading(false);
                 });
         }, 500),
-
+        filterTasks(options, search) {
+            return this.tasks;
+        },
         copyToClipboard() {
             let temp = document.createElement('input'),
                 text = window.location.href;

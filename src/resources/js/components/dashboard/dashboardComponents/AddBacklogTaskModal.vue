@@ -222,11 +222,13 @@
                                 <div class="flex-1 space-y-2">
                                     <span
                                         class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Group with task *</span>
-                                    <vSelect :options="tasks"
+                                    <vSelect @search="onTypeTask"
+                                             :options="tasks"
                                              class="text-gray-400"
                                              label="name"
                                              placeholder="Select task"
                                              style="margin-top: 7px"
+                                             :filter="filterTasks"
                                              v-model="task.associatedTask">
                                         <template slot="selected-option" slot-scope="option">
                                             <p>
@@ -420,6 +422,27 @@ export default {
                     loading(false);
                 });
         }, 500),
+        onTypeTask(search, loading) {
+            if (search.length) {
+                loading(true);
+                this.typeTask(search, loading, this);
+            }
+        },
+        typeTask: _.debounce(function (search, loading) {
+            this.asyncGetSomeTasks(search).then((data) => {
+                this.tasks = data.data;
+            })
+                .catch(res => {
+                    console.log(res)
+                })
+                .then(function () {
+                    setTimeout(500);
+                    loading(false);
+                });
+        }, 500),
+        filterTasks(options, search) {
+            return this.tasks;
+        },
         getBadges() {
             this.asyncGetBadges().then((data) => {
                 this.badges = data.data;
