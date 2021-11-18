@@ -1,24 +1,23 @@
-<?php return array (
-  'root' => 
-  array (
-    'pretty_version' => 'dev-master',
-    'version' => 'dev-master',
-    'aliases' => 
-    array (
+<?php return array(
+    'root' => array(
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
+        'type' => 'library',
+        'install_path' => __DIR__ . '/../../',
+        'aliases' => array(),
+        'reference' => 'cdab9dcc28f1343b597d6b33783713d2f20b6389',
+        'name' => 'xguard/laravel-kanban',
+        'dev' => true,
     ),
-    'reference' => '5a837b3fa53f7cbc4d24791811e83c8a55d28038',
-    'name' => 'xguard/laravel-kanban',
-  ),
-  'versions' => 
-  array (
-    'xguard/laravel-kanban' => 
-    array (
-      'pretty_version' => 'dev-master',
-      'version' => 'dev-master',
-      'aliases' => 
-      array (
-      ),
-      'reference' => '5a837b3fa53f7cbc4d24791811e83c8a55d28038',
+    'versions' => array(
+        'xguard/laravel-kanban' => array(
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../../',
+            'aliases' => array(),
+            'reference' => 'cdab9dcc28f1343b597d6b33783713d2f20b6389',
+            'dev_requirement' => false,
+        ),
     ),
-  ),
 );
