@@ -8630,7 +8630,7 @@ var render = function() {
                                     "p",
                                     {
                                       staticClass:
-                                        "text-sm font-medium leading-5 text-gray-500"
+                                        "text-sm font-medium leading-5 text-gray-400"
                                     },
                                     [
                                       _vm._v(
@@ -8650,7 +8650,7 @@ var render = function() {
                                     "p",
                                     {
                                       staticClass:
-                                        "text-sm font-medium leading-5 text-gray-500"
+                                        "text-sm font-medium leading-5 text-gray-400"
                                     },
                                     [
                                       _vm._v(
@@ -10208,7 +10208,7 @@ var render = function() {
                               "p",
                               {
                                 staticClass:
-                                  "text-sm font-medium leading-5 text-gray-500"
+                                  "text-sm font-medium leading-5 text-gray-400"
                               },
                               [
                                 _vm._v(
@@ -10524,7 +10524,7 @@ var render = function() {
                               "p",
                               {
                                 staticClass:
-                                  "text-sm font-medium leading-5 text-gray-500"
+                                  "text-sm font-medium leading-5 text-gray-400"
                               },
                               [
                                 _c("em", [
@@ -10955,7 +10955,7 @@ var render = function() {
                               "p",
                               {
                                 staticClass:
-                                  "text-sm font-medium leading-5 text-gray-500"
+                                  "text-sm font-medium leading-5 text-gray-400"
                               },
                               [
                                 _vm._v(

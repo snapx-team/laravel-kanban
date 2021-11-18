@@ -231,12 +231,12 @@ class TaskController extends Controller
     public function assignTaskToBoard($task_id, $row_id, $column_id, $board_id)
     {
         try {
-           app(AssignTaskToBoardAction::class)->fill([
+            app(AssignTaskToBoardAction::class)->fill([
             'taskId' => $task_id,
             'boardId' => $board_id,
             'rowId' => $row_id,
-            'columnId' => $column_id, 
-           ])->run();
+            'columnId' => $column_id,
+            ])->run();
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',

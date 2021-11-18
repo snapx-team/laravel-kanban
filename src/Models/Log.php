@@ -17,7 +17,6 @@ use Xguard\LaravelKanban\Models\Task;
  * @property int $task_id
  * @property int $id
  */
-
 class Log extends Model
 {
     use SoftDeletes, CascadeSoftDeletes;
@@ -39,7 +38,7 @@ class Log extends Model
     const TYPE_CARD_COMPLETED = 12;
     const TYPE_CARD_ACTIVATED = 13;
     const TYPE_CARD_MOVED = 14;
-    const TYPE_CARD_ASSIGNED_TO_BOARD = 15;
+    const TYPE_CARD_PLACED = 15;
     const TYPE_CARD_UPDATED = 16;
     const TYPE_CARD_ASSIGNED_GROUP = 17;
     const TYPE_CARD_CHANGED_INDEX = 18;
@@ -76,6 +75,9 @@ class Log extends Model
     const TYPE_BADGE_EDITED = 91;
     const TYPE_BADGE_DELETED = 92;
 
+    const TYPE_EMPLOYEE_BOARD_NOTIFICATION_SETTINGS_UPDATED = 100;
+    const TYPE_EMPLOYEE_BOARD_NOTIFICATION_SETTINGS_CREATED = 101;
+
     public static function createLog(
         ?int $userId,
         int $logId,
@@ -89,7 +91,7 @@ class Log extends Model
             'user_id' => $userId,
             'log_type' => $logId,
             'description' => $description,
-            'targeted_employee_id' =>  $targetedEmployeeId,
+            'targeted_employee_id' => $targetedEmployeeId,
             'loggable_id' => $loggableId,
             'loggable_type' => $loggableType,
         ]);
@@ -97,6 +99,68 @@ class Log extends Model
         (new NotifyEmployeesAction(['log' => $log]))->run();
 
         return $log;
+    }
+
+    public static function returnLogGroup(string $logGroup): array
+    {
+
+        switch ($logGroup) {
+            case 'EMPLOYEE_GROUP':
+                return [
+                    Log::TYPE_EMPLOYEE_CREATED,
+                    Log::TYPE_EMPLOYEE_UPDATED,
+                    Log::TYPE_EMPLOYEE_DELETED,
+                ];
+
+            case 'TASK_STATUS_GROUP':
+                return [
+                    Log::TYPE_CARD_UPDATED,
+                    Log::TYPE_CARD_ACTIVATED,
+                    Log::TYPE_CARD_CANCELLED,
+                ];
+
+            case 'TASK_MOVEMENT_GROUP':
+                return [
+                    Log::TYPE_CARD_PLACED,
+                    Log::TYPE_CARD_MOVED,
+                ];
+
+            case 'TASK_INFORMATION_UPDATE_GROUP':
+                return [
+                    Log::TYPE_CARD_UPDATED,
+                    Log::TYPE_CARD_ASSIGNED_GROUP
+                ];
+
+            case 'TASK_CHECKLIST_GROUP':
+                return [
+                    Log::TYPE_CARD_CHECKLIST_ITEM_CHECKED,
+                    Log::TYPE_CARD_CHECKLIST_ITEM_UNCHECKED
+                ];
+
+            case 'TASK_ASSIGNATION_TO_USER_GROUP':
+                return [
+                    Log::TYPE_CARD_ASSIGNED_TO_USER,
+                    Log::TYPE_CARD_UNASSIGNED_TO_USER
+                ];
+
+            case 'BOARD_MEMBER_GROUP':
+                return [
+                    Log::TYPE_KANBAN_MEMBER_CREATED,
+                    Log::TYPE_KANBAN_MEMBER_DELETED
+                ];
+
+            case 'COMMENT_GROUP':
+                return [
+                    Log::TYPE_COMMENT_EDITED,
+                    Log::TYPE_COMMENT_CREATED,
+                    LOG::TYPE_COLUMN_DELETED
+                ];
+
+            case 'MENTIONS_GROUP':
+                return [
+                    Log::TYPE_COMMENT_MENTION_CREATED
+                ];
+        }
     }
 
     public function loggable(): MorphTo

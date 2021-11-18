@@ -32,6 +32,18 @@ export const ajaxCalls = {
             return axios.post('update-notif-count');
         },
 
+        asyncGetBoardsWithEmployeeNotificationSettings(){
+            return axios.get('get-boards-with-employee-notification-settings');
+        },
+
+        asyncFirstOrCreateNotificationSettings(notificationSettings){
+            return axios.post('first-or-create-employee-notification-settings', notificationSettings).then(() => {
+                this.triggerSuccessToast('Notification Settings Updated!');
+            }).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
+        },
+
         // Metrics
 
         asyncGetBadgeData(start, end) {

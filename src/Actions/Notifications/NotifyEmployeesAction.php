@@ -46,7 +46,6 @@ class NotifyEmployeesAction extends Action
 
         if ($this->log->loggable_type == 'Xguard\LaravelKanban\Models\Comment') {
             //notify reporter unless reporter performed the action
-
             if (intval(session('employee_id')) !== intval($this->log->loggable->task->reporter_id)) {
                 $this->attachNotificationIfAllowed($this->log, $this->log->loggable->task->board->id, $this->log->loggable->task->reporter->id);
             }
@@ -81,7 +80,12 @@ class NotifyEmployeesAction extends Action
         if (!$employeeBoardNotificationSettings) {
             $log->notifications()->attach($employeeId);
         } else {
-            if (!in_array($log->log_type, $employeeBoardNotificationSettings->getUnserializedOptionsAttribute())) {
+            $logsToIgnore = [];
+            foreach ($employeeBoardNotificationSettings->getUnserializedOptionsAttribute() as $logGroup) {
+                $logGroupArray = Log::returnLogGroup($logGroup);
+                $logsToIgnore =array_merge($logsToIgnore, $logGroupArray);
+            }
+            if (!in_array($log->log_type, $logsToIgnore)) {
                 $log->notifications()->attach($employeeId);
             }
         }

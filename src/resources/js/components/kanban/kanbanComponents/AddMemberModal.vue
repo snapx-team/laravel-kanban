@@ -24,7 +24,7 @@
                     <div class="flex justify-between p-5 bg-indigo-800 border-b">
                         <div class="space-y-1">
                             <h1 class="text-2xl text-white pb-2">Add Members</h1>
-                            <p class="text-sm font-medium leading-5 text-gray-500">
+                            <p class="text-sm font-medium leading-5 text-gray-400">
                                 Adding employees to this phone line </p>
                         </div>
                         <div>

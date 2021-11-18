@@ -43,7 +43,6 @@ class CreateErpShareablesAction extends Action
             $erpEmployeesArray[$erpEmployee['id']] = ['shareable_type' => 'user'];
         }
 
-
         foreach ($this->erpContracts as $erpContract) {
             $erpContractsArray[$erpContract['id']] = ['shareable_type' => 'contract'];
         }
