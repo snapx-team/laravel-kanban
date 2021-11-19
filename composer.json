@@ -10,7 +10,6 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "dyrynda/laravel-cascade-soft-deletes": "^3.0"
     },
     "autoload": {
         "psr-4": {
