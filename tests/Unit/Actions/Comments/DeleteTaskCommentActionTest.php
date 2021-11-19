@@ -10,11 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 use Xguard\LaravelKanban\Actions\Comments\DeleteTaskCommentAction;
 use Xguard\LaravelKanban\Actions\Comments\EditTaskCommentAction;
-use Xguard\LaravelKanban\Models\Board;
 use Xguard\LaravelKanban\Models\Comment;
 use Xguard\LaravelKanban\Models\Employee;
-use Xguard\LaravelKanban\Models\Member;
-use Xguard\LaravelKanban\Models\Task;
 
 class DeleteTaskCommentActionTest extends TestCase
 {
@@ -48,7 +45,7 @@ class DeleteTaskCommentActionTest extends TestCase
         ]);
     }
 
-    public function testAUserCannotEditCommentTheyDidntCreated()
+    public function testAUserCannotDeleteCommentTheyDidntCreated()
     {
         $this->expectException(AuthorizationException::class);
         $comment = factory(Comment::class)->create([
@@ -60,7 +57,7 @@ class DeleteTaskCommentActionTest extends TestCase
             'comment' => 'test comment',
         ]);
 
-        app(EditTaskCommentAction::class)->fill(['comment_data' => $comment])->run();
+        app(DeleteTaskCommentAction::class)->fill(['comment_data' => $comment])->run();
 
         $this->assertDatabaseMissing('kanban_comments', [
             'comment' => 'test comment',

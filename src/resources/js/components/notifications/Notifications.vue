@@ -151,12 +151,6 @@ export default {
         };
     },
 
-    created() {
-        this.eventHub.$on("save-notification-settings", (notificationSettings) => {
-            this.saveNotificationSettings(notificationSettings);
-        });
-    },
-
     computed: {
         computedNotificationListData() {
             return this.notificationTypeList.map(o => o.data).flat();
