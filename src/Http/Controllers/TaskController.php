@@ -5,7 +5,7 @@ namespace Xguard\LaravelKanban\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Xguard\LaravelKanban\Models\Task;
-use Xguard\LaravelKanban\Actions\Tasks\AssignTaskToBoardAction;
+use Xguard\LaravelKanban\Actions\Tasks\PlaceTaskAction;
 use Xguard\LaravelKanban\Actions\Tasks\CreateTaskAction;
 use Xguard\LaravelKanban\Actions\Tasks\PaginateBackLogTasksAction;
 use Xguard\LaravelKanban\Actions\Tasks\RemoveTaskFromGroupAction;
@@ -60,7 +60,7 @@ class TaskController extends Controller
         try {
             $backlogTaskData = $request->all();
             app(CreateTaskAction::class)->fill([
-                'assinedTo' => null,
+                'assignedTo' => null,
                 'associatedTask' => $backlogTaskData['associatedTask'],
                 'badge' => $backlogTaskData['badge'],
                 'columnId' => null,
@@ -228,10 +228,10 @@ class TaskController extends Controller
         return response(['success' => 'true'], 200);
     }
 
-    public function assignTaskToBoard($task_id, $row_id, $column_id, $board_id)
+    public function placeTask($task_id, $row_id, $column_id, $board_id)
     {
         try {
-            app(AssignTaskToBoardAction::class)->fill([
+            app(PlaceTaskAction::class)->fill([
             'taskId' => $task_id,
             'boardId' => $board_id,
             'rowId' => $row_id,
