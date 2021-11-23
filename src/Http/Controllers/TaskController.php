@@ -60,7 +60,7 @@ class TaskController extends Controller
         try {
             $backlogTaskData = $request->all();
             app(CreateTaskAction::class)->fill([
-                'assinedTo' => null,
+                'assignedTo' => null,
                 'associatedTask' => $backlogTaskData['associatedTask'],
                 'badge' => $backlogTaskData['badge'],
                 'columnId' => null,
@@ -71,6 +71,7 @@ class TaskController extends Controller
                 'name' => $backlogTaskData['name'],
                 'rowId' => null,
                 'selectedKanbans' => $backlogTaskData['selectedKanbans'],
+                'timeEstimate' =>  $backlogTaskData['time_estimate'],
             ])->run();
         } catch (\Exception $e) {
             return response([
@@ -100,6 +101,7 @@ class TaskController extends Controller
                 'name' => $taskCard['name'],
                 'rowId' => $taskCard['selectedRowId'],
                 'selectedKanbans' => $selectedKanban,
+                'timeEstimate' =>  $taskCard['time_estimate'],
             ])->run();
         } catch (\Exception $e) {
             return response([
@@ -128,6 +130,7 @@ class TaskController extends Controller
                 'status' => $taskCard['status'],
                 'taskId' => $taskCard['id'],
                 'sharedTaskDataId' => $taskCard['shared_task_data_id'],
+                'timeEstimate' =>  $taskCard['time_estimate'],
             ])->run();
         } catch (\Exception $e) {
             return response([

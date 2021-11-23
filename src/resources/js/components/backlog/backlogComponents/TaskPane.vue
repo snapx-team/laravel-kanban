@@ -194,14 +194,25 @@
                 </div>
             </div>
 
-            <div class="flex-1 space-y-2">
-                <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline *</span>
-                <date-picker format="YYYY-MM-DD HH:mm:ss"
-                             placeholder="YYYY-MM-DD HH:mm:ss"
-                             type="datetime"
-                             v-model="task.deadline">
-                </date-picker>
+            <div class="flex flex-wrap">
+
+                <div class="flex-1 space-y-2 pr-4">
+                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline *</span>
+                    <date-picker format="YYYY-MM-DD HH:mm:ss"
+                                 placeholder="YYYY-MM-DD HH:mm:ss"
+                                 type="datetime"
+                                 v-model="task.deadline">
+                    </date-picker>
+                </div>
+
+
+                <div class="space-y-2">
+                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Time Estimate</span>
+                    <counter v-model="task.time_estimate"></counter>
+                </div>
+
             </div>
+
 
             <div class="flex-1 space-y-2">
                 <span
@@ -338,12 +349,14 @@ import Avatar from "../../global/Avatar.vue";
 import vSelect from "vue-select";
 import {helperFunctions} from "../../../mixins/helperFunctionsMixin";
 import {ajaxCalls} from "../../../mixins/ajaxCallsMixin";
+import Counter from "../../global/Counter";
 
 export default {
     inject: ["eventHub"],
     components: {
         Avatar,
-        vSelect
+        vSelect,
+        Counter
     },
     mixins: [helperFunctions, ajaxCalls],
     data() {

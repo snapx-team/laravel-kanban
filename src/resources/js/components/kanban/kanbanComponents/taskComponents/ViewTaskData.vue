@@ -171,6 +171,14 @@
                             </div>
                             <a class="max-w-md text-xs">{{ cardData.deadline | moment("DD MMM, YYYY") }}</a>
                         </div>
+
+                        <div class="text-sm text-gray-700 flex">
+                            <div class="w-32 flex items-center">
+                                <i class="fas fa-clock mr-2"></i>
+                                <p class="font-semibold font-sans tracking-wide text-sm">Estimate: </p>
+                            </div>
+                            <a class="max-w-md text-sm"> {{ cardData.time_estimate }} hours </a>
+                        </div>
                     </div>
                 </div>
 
@@ -256,7 +264,6 @@ import {ajaxCalls} from "../../../../mixins/ajaxCallsMixin";
 import TaskComments from "./TaskComments";
 import TaskCard from "../TaskCard";
 import vSelect from "vue-select";
-
 
 export default {
     inject: ["eventHub"],

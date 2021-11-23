@@ -94,7 +94,8 @@ class UpdateTaskAction extends Action
                 'badge_id' => $badge->id,
                 'column_id' => $this->columnId,
                 'row_id' => $this->rowId,
-                'shared_task_data_id' => $this->sharedTaskDataId
+                'shared_task_data_id' => $this->sharedTaskDataId,
+                'time_estimate' => $this->timeEstimate
             ]);
 
             app(UpdateTaskStatusAction::class)->fill([
@@ -139,7 +140,8 @@ class UpdateTaskAction extends Action
                     "badge_id" => $task->badge_id,
                     "status" => $task->status ? $task->status : 'active',
                     "task_id" => $task->id,
-                    "log_id" => $log->id
+                    "log_id" => $log->id,
+                    'time_estimate' => $this->timeEstimate
                 ]);
             }
             \DB::commit();

@@ -158,13 +158,21 @@
                                 </div>
                             </div>
 
-                            <div class="flex-1 space-y-2">
-                                <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline *</span>
-                                <date-picker format="YYYY-MM-DD HH:mm"
-                                             placeholder="YYYY-MM-DD HH:mm"
-                                             type="datetime"
-                                             v-model="task.deadline"></date-picker>
+                            <div class="flex flex-wrap">
+                                <div class="flex-1 space-y-2 pr-2">
+                                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline *</span>
+                                    <date-picker format="YYYY-MM-DD HH:mm"
+                                                 placeholder="YYYY-MM-DD HH:mm"
+                                                 type="datetime"
+                                                 v-model="task.deadline"></date-picker>
+                                </div>
+
+                                <div class="space-y-2">
+                                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Time Estimate</span>
+                                    <counter v-model="task.time_estimate"></counter>
+                                </div>
                             </div>
+
 
                             <div class="flex flex-wrap"
                                  v-if="checkedOptions.includes('ERP Employee') ||checkedOptions.includes('ERP Contract')">
@@ -276,11 +284,13 @@ import _ from 'lodash';
 
 import {ajaxCalls} from "../../../mixins/ajaxCallsMixin";
 import {helperFunctions} from "../../../mixins/helperFunctionsMixin";
+import Counter from "../../global/Counter";
 
 export default {
     inject: ["eventHub"],
 
     components: {
+        Counter,
         vSelect,
         Avatar
     },
@@ -330,6 +340,7 @@ export default {
                     erp_employees: [],
                     erp_contracts: [],
                 },
+                time_estimate: 0,
             },
             badges: [],
             erpEmployees: [],

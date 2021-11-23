@@ -89,12 +89,19 @@
                     </div>
                 </div>
 
-                <div class="flex-1 space-y-2">
-                    <span
-                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline *</span>
-                    <date-picker type="datetime" v-model="cloneCardData.deadline"
-                                 placeholder="YYYY-MM-DD HH:mm"
-                                 format="YYYY-MM-DD HH:mm"></date-picker>
+                <div class="flex flex-wrap">
+
+                    <div class="flex-1 space-y-2 pr-2">
+                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline *</span>
+                        <date-picker type="datetime" v-model="cloneCardData.deadline"
+                                     placeholder="YYYY-MM-DD HH:mm"
+                                     format="YYYY-MM-DD HH:mm"></date-picker>
+                    </div>
+
+                    <div class="space-y-2">
+                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Time Estimate</span>
+                        <counter v-model="cloneCardData.time_estimate"></counter>
+                    </div>
                 </div>
 
                 <div class="flex flex-wrap"
@@ -169,6 +176,7 @@ import Avatar from "../../../global/Avatar.vue";
 import {ajaxCalls} from "../../../../mixins/ajaxCallsMixin";
 import {helperFunctions} from "../../../../mixins/helperFunctionsMixin";
 import _ from 'lodash';
+import Counter from "../../../global/Counter";
 
 export default {
     mixins: [ajaxCalls, helperFunctions],
@@ -177,6 +185,7 @@ export default {
     components: {
         vSelect,
         Avatar,
+        Counter
     },
     props: {
         kanbanData: Object,
