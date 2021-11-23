@@ -63,7 +63,7 @@
                     </div>
 
                     <div class="pl-2 border-gray-400 border-l-2 my-1"
-                         v-if="task.shared_task_data.erp_employees.length || task.shared_task_data.erp_contracts.length || task.deadline !== null">
+                         v-if="task.shared_task_data.erp_employees.length || task.shared_task_data.erp_contracts.length || task.deadline !== null || task.time_estimate > 0">
 
                         <div v-if="task.shared_task_data.erp_employees.length"
                              class="text-xs text-gray-600 flex space-x-1">
@@ -98,6 +98,16 @@
                             </div>
                             <div>
                                 <p>{{ task.deadline | moment("DD MMM, YYYY") }}</p>
+                            </div>
+                        </div>
+
+
+                        <div v-if="task.time_estimate > 0" class="text-xs text-gray-600 flex space-x-1">
+                            <div class="font-bold leading-4 tracking-wide text-gray-600 w-32 flex-none">
+                                <span >Estimate: </span>
+                            </div>
+                            <div>
+                                <p>{{ task.time_estimate }} hours</p>
                             </div>
                         </div>
                     </div>

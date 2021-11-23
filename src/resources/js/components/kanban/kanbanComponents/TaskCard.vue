@@ -64,6 +64,15 @@
                     <p>{{ task_card.deadline | moment("DD MMM, YYYY") }}</p>
                 </div>
             </div>
+
+            <div v-if="task_card.time_estimate > 0" class="text-xs text-gray-600 flex space-x-1">
+                <div class="font-bold leading-4 tracking-wide text-gray-600 w-20">
+                    <span >Estimate: </span>
+                </div>
+                <div>
+                    <p>{{ task_card.time_estimate }} hours</p>
+                </div>
+            </div>
         </div>
         <div class="flex mt-2 justify-between items-center">
             <div class="flex flex-wrap items-center">

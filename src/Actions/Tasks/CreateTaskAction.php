@@ -23,6 +23,7 @@ class CreateTaskAction extends Action
         }
         return true;
     }
+
     /**
      * Get the validation rules that apply to the action.
      *
@@ -34,14 +35,16 @@ class CreateTaskAction extends Action
             'assignedTo' => ['nullable', 'array'],
             'associatedTask' => ['nullable', 'array'],
             'badge' => ['present', 'array'],
-            'columnId' => ['nullable', 'integer','gt:0'],
+            'columnId' => ['nullable', 'integer', 'gt:0'],
             'deadline' => ['required', 'string'],
             'description' => ['required', 'string'],
             'erpContracts' => ['present', 'array'],
             'erpEmployees' => ['present', 'array'],
             'name' => ['required', 'string'],
-            'rowId' => ['nullable', 'integer','gt:0'],
-            'selectedKanbans' => ['required', 'array', "min:1"]
+            'rowId' => ['nullable', 'integer', 'gt:0'],
+            'selectedKanbans' => ['required', 'array', "min:1"],
+            'timeEstimate' => ['present', 'integer', 'gt:0'],
+
         ];
     }
 
@@ -52,6 +55,7 @@ class CreateTaskAction extends Action
             'name.required' => 'Name is required',
         ];
     }
+
     /**
      * Execute the action and return a result.
      *
@@ -75,7 +79,7 @@ class CreateTaskAction extends Action
                     "description" => $this->description,
                     "erpEmployees" => $this->erpEmployees,
                     "erpContracts" => $this->erpContracts,
-                    ])->run())->id;
+                ])->run())->id;
             }
 
             $maxIndex = $this->columnId ? Task::where('column_id', $this->columnId)->where('status', 'active')->max('index') + 1 : null;
@@ -90,10 +94,11 @@ class CreateTaskAction extends Action
                     'column_id' => $this->columnId ? $this->columnId : null,
                     'row_id' => $this->rowId ? $this->rowId : null,
                     'board_id' => $kanban['id'],
-                    'shared_task_data_id' => $sharedTaskDataId
+                    'shared_task_data_id' => $sharedTaskDataId,
+                    'time_estimate' => $this->timeEstimate
                 ]);
 
-                app(SyncAssignedEmployeesToTaskAction::class)->fill(["assignedTo" => $this->assignedTo, "task"=> $task])->run();
+                app(SyncAssignedEmployeesToTaskAction::class)->fill(["assignedTo" => $this->assignedTo, "task" => $task])->run();
 
                 $log = Log::createLog(
                     Auth::user()->id,
@@ -116,7 +121,8 @@ class CreateTaskAction extends Action
                     "badge_id" => $task->badge_id,
                     "status" => $task->status ? $task->status : 'active',
                     "task_id" => $task->id,
-                    "log_id" => $log->id
+                    "log_id" => $log->id,
+                    'time_estimate' => $this->timeEstimate
                 ]);
             }
             \DB::commit();
