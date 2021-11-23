@@ -1,11 +1,11 @@
 <template>
     <div>
         <div v-if="this.series.length > 0" id="chart">
-            <vue-apex-charts type="pie" width="400" height="400" :options="computedChartOptions"
+            <vue-apex-charts :options="computedChartOptions"
                              :series="this.series"></vue-apex-charts>
         </div>
-        <div v-if="this.series.length === 0">
-            No Data for {{ this.title }}
+        <div class="text-lg font-light leading-relaxed p-3" v-if="this.series.length === 0">
+            No Data For <b>{{ this.title }}</b>
         </div>
     </div>
 </template>
@@ -22,29 +22,28 @@ export default {
         return {
             chartOptions: {
                 chart: {
-                    width: 380,
                     type: 'pie',
                 },
                 labels: [],
                 legend: {
-                    formatter: function (val) {
-                        const n = 12
-                        if (val) {
-                            return val.length > n ? val.substr(0, n - 1) + '...' : val
-                        }
-                        return val;
-                    }
+                    offsetY: 40,
+                    width: 500,
                 },
                 responsive: [{
-                    breakpoint: 480,
+                    breakpoint: 1300,
                     options: {
-                        chart: {
-                            width: 200
-                        },
                         legend: {
-                            position: 'bottom',
-                        }
-                    }
+                            width: 200,
+                        },
+                    },
+                },
+                    {
+                    breakpoint: 1600,
+                    options: {
+                        legend: {
+                            width: 300,
+                        },
+                    },
                 }]
             },
         }
@@ -68,12 +67,12 @@ export default {
                     title: {
                         text: this.title,
                         align: 'center',
-                        margin: 10,
+                        margin: 40,
                         offsetX: 0,
                         offsetY: 0,
                         floating: false,
                         style: {
-                            fontSize: '14px',
+                            fontSize: '20px',
                             fontWeight: 'bold',
                             fontFamily: undefined,
                             color: '#263238'

@@ -69,8 +69,6 @@
                                     </div>
                                 </div>
                             </div>
-
-
                         </div>
 
                         <div class="space-y-3 overflow-auto px-8 py-6 flex-1 mt-5 mb-5">
@@ -198,7 +196,6 @@ export default {
     beforeDestroy() {
         this.eventHub.$off('update-notification-settings');
     },
-
 
     methods: {
 
