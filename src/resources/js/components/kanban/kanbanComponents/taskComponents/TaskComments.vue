@@ -232,7 +232,6 @@ export default {
         }
     },
     mounted() {
-        this.commentData.task_id = this.cardData.id;
         this.getMembers();
         this.getComments();
     },
@@ -256,6 +255,7 @@ export default {
 
         saveComment() {
             this.loadingComments = true;
+            this.commentData.task_id = this.cardData.id;
             this.commentData.mentions = [];
 
             let parser = new DOMParser();
