@@ -114,9 +114,9 @@ class Log extends Model
 
             case 'TASK_STATUS_GROUP':
                 return [
-                    Log::TYPE_CARD_UPDATED,
                     Log::TYPE_CARD_ACTIVATED,
                     Log::TYPE_CARD_CANCELLED,
+                    Log::TYPE_CARD_COMPLETED
                 ];
 
             case 'TASK_MOVEMENT_GROUP':
