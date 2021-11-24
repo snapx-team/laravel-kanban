@@ -30,14 +30,16 @@ Route::group(['middleware' => ['web', 'laravel_kanban_role_check']], function ()
 
             // Metrics
             Route::get('/get-badge-data/{start}/{end}', 'MetricsController@getBadgeData');
-            Route::get('/get-tickets-by-employee/{start}/{end}', 'MetricsController@getTicketsByEmployee');
-            Route::get('/get-creation-by-hour/{start}/{end}', 'MetricsController@getCreationByHour');
+            Route::get('/get-tasks-created-by-employee/{start}/{end}', 'MetricsController@getTasksCreatedByEmployee');
+            Route::get('/get-peak-hours-tasks-created/{start}/{end}', 'MetricsController@getPeakHoursTasksCreated');
             Route::get('/get-contract-data/{start}/{end}', 'MetricsController@getContractData');
-            Route::get('/get-closed-by-employee/{start}/{end}', 'MetricsController@getClosedTasksByEmployee');
+            Route::get('/get-closed-by-employee/{start}/{end}', 'MetricsController@getClosedTasksByAssignedTo');
             Route::get('/get-closed-by-admin/{start}/{end}', 'MetricsController@getClosedTasksByAdmin');
-            Route::get('/get-delay-by-badge/{start}/{end}', 'MetricsController@getDelayByBadge');
-            Route::get('/get-delay-by-employee/{start}/{end}', 'MetricsController@getDelayByEmployee');
+            Route::get('/get-average-time-to-completion-by-badge/{start}/{end}', 'MetricsController@getAverageTimeToCompletionByBadge');
+            Route::get('/get-average-time-to-completion-by-employee/{start}/{end}', 'MetricsController@getAverageTimeToCompletionByEmployee');
             Route::get('/get-created-vs-resolved/{start}/{end}', 'MetricsController@getCreatedVsResolved');
+            Route::get('/get-estimated-completed-by-employee/{start}/{end}', 'MetricsController@getEstimatedHoursCompletedByEmployees');
+
 
 
             // Board

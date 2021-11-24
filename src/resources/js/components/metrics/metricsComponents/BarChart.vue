@@ -82,12 +82,16 @@ export default {
         computedChartOptions() {
             return {
                 ...this.chartOptions, ...{
+
                     xaxis: {
                         title: {
                             text: this.yname,
+                            style: {
+                                fontSize: "15px",
+                            }
                         },
                         labels: {
-                            rotate: -45
+                            rotate: -45,
                         },
                         categories: this.categories,
                         tickPlacement: 'on'
@@ -100,7 +104,7 @@ export default {
                         offsetY: 0,
                         floating: false,
                         style: {
-                            fontSize: '14px',
+                            fontSize: '16px',
                             fontWeight: 'bold',
                             fontFamily: undefined,
                             color: '#263238'
@@ -109,6 +113,9 @@ export default {
                     yaxis: {
                         title: {
                             text: this.xname,
+                            style: {
+                                fontSize: "15px",
+                            }
                         },
                     },
                 }

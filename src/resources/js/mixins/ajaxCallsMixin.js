@@ -7,29 +7,41 @@ export const ajaxCalls = {
         // Kanban App Data
 
         asyncGetkanbanData(id) {
-            return axios.get('get-board-data/' + id);
+            return axios.get('get-board-data/' + id).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         asyncGetDashboardData() {
-            return axios.get('get-dashboard-data');
+            return axios.get('get-dashboard-data').catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         asyncGetBacklogData(start, end) {
-            return axios.get('get-backlog-data/' + start + '/' + end);
+            return axios.get('get-backlog-data/' + start + '/' + end).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         // Notifications
 
         asyncGetNotificationData(page, logType) {
-            return axios.get('get-notif-data/' + logType + '?page=' + page);
+            return axios.get('get-notif-data/' + logType + '?page=' + page).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         asyncGetNotificationCount() {
-            return axios.get('get-notif-count');
+            return axios.get('get-notif-count').catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         asyncUpdateNotificationCount() {
-            return axios.post('update-notif-count');
+            return axios.post('update-notif-count').catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         asyncGetBoardsWithEmployeeNotificationSettings(){
@@ -47,45 +59,69 @@ export const ajaxCalls = {
         // Metrics
 
         asyncGetBadgeData(start, end) {
-            return axios.get('get-badge-data/' + start + '/' + end);
+            return axios.get('get-badge-data/' + start + '/' + end).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
-        asyncGetTicketsByEmployee(start, end) {
-            return axios.get('get-tickets-by-employee/' + start + '/' + end);
+        asyncGetTasksCreatedByEmployee(start, end) {
+            return axios.get('get-tasks-created-by-employee/' + start + '/' + end).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
-
-        asyncGetCreationByHour(start, end) {
-            return axios.get('get-creation-by-hour/' + start + '/' + end);
+        asyncGetEstimatedHoursCompletedByEmployees(start, end) {
+            return axios.get('get-estimated-completed-by-employee/' + start + '/' + end).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
+        },
+        asyncGetPeakHoursTasksCreated(start, end) {
+            return axios.get('get-peak-hours-tasks-created/' + start + '/' + end).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         asyncGetContractData(start, end) {
-            return axios.get('get-contract-data/' + start + '/' + end);
+            return axios.get('get-contract-data/' + start + '/' + end).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
-        asyncGetClosedTasksByEmployee(start, end) {
-            return axios.get('get-closed-by-employee/' + start + '/' + end);
+        asyncGetClosedTasksByAssignedTo(start, end) {
+            return axios.get('get-closed-by-employee/' + start + '/' + end).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         asyncGetClosedTasksByAdmin(start, end) {
-            return axios.get('get-closed-by-admin/' + start + '/' + end);
+            return axios.get('get-closed-by-admin/' + start + '/' + end).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
-        asyncGetDelayByBadge(start, end) {
-            return axios.get('get-delay-by-badge/' + start + '/' + end);
+        asyncGetAverageTimeToCompletionByBadge(start, end) {
+            return axios.get('get-average-time-to-completion-by-badge/' + start + '/' + end).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
-        asyncGetDelayByEmployee(start, end) {
-            return axios.get('get-delay-by-employee/' + start + '/' + end);
+        asyncGetAverageTimeToCompletionByEmployee(start, end) {
+            return axios.get('get-average-time-to-completion-by-employee/' + start + '/' + end).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         asyncGetCreatedVsResolved(start, end) {
-            return axios.get('get-created-vs-resolved/' + start + '/' + end);
+            return axios.get('get-created-vs-resolved/' + start + '/' + end).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         // Board
 
         asyncGetBoards() {
-            return axios.get('get-boards');
+            return axios.get('get-boards').catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         asyncCreateBoard(kanbanData) {
@@ -113,12 +149,16 @@ export const ajaxCalls = {
         },
 
         asyncGetColumns(row_id) {
-            return axios.get('get-columns/' + row_id);
+            return axios.get('get-columns/' + row_id).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
 
         asyncGetRows(board_id) {
-            return axios.get('get-rows/' + board_id);
+            return axios.get('get-rows/' + board_id).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         asyncDeleteRow(rowId) {
@@ -138,22 +178,30 @@ export const ajaxCalls = {
         },
 
         asyncGetAllTasks() {
-            return axios.get('get-all-tasks');
+            return axios.get('get-all-tasks').catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         asyncGetRelatedTasks(taskId) {
-            return axios.get('get-related-tasks/' + taskId);
+            return axios.get('get-related-tasks/' + taskId).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         asyncGetSomeTasks(searchTerm) {
             if (searchTerm === '') {
                 return axios.get('get-all-tasks');
             }
-            return axios.get('get-some-tasks/' + searchTerm);
+            return axios.get('get-some-tasks/' + searchTerm).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         asyncGetTaskData(taskId) {
-            return axios.get('get-task-data/' + taskId);
+            return axios.get('get-task-data/' + taskId).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         asyncGetRelatedTasksLessInfo(taskId) {
@@ -267,22 +315,32 @@ export const ajaxCalls = {
         // Employees
 
         asyncGetUserProfile() {
-            return axios.get('get-user-profile');
+            return axios.get('get-user-profile').catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         asyncGetAllUsers() {
-            return axios.get('get-all-users');
+            return axios.get('get-all-users').catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         asyncGetSomeUsers(searchTerm) {
             if (searchTerm == '') {
-                return axios.get('get-all-users');
+                return axios.get('get-all-users').catch((error) => {
+                    this.triggerErrorToast(error.response.data.message);
+                });
             }
-            return axios.get('get-some-users/' + searchTerm);
+            return axios.get('get-some-users/' + searchTerm).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         asyncGetKanbanEmployees() {
-            return axios.get('get-kanban-employees');
+            return axios.get('get-kanban-employees').catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         asyncCreateKanbanEmployee(employeeData) {
@@ -326,24 +384,34 @@ export const ajaxCalls = {
         // Contracts
 
         asyncGetAllContracts() {
-            return axios.get('get-all-contracts');
+            return axios.get('get-all-contracts').catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         asyncGetSomeContracts(searchTerm) {
             if (searchTerm === '') {
-                return axios.get('get-all-contracts');
+                return axios.get('get-all-contracts').catch((error) => {
+                    this.triggerErrorToast(error.response.data.message);
+                });
             }
-            return axios.get('get-some-contracts/' + searchTerm);
+            return axios.get('get-some-contracts/' + searchTerm).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         // Badges
 
         asyncGetBadges() {
-            return axios.get('get-all-badges');
+            return axios.get('get-all-badges').catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         asyncListBadgesWithCount() {
-            return axios.get('list-badges-with-count');
+            return axios.get('list-badges-with-count').catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         asyncCreateBadge(badgeData) {
@@ -365,17 +433,23 @@ export const ajaxCalls = {
         // Logs
 
         asyncGetLogs(taskId) {
-            return axios.get('get-logs/' + taskId);
+            return axios.get('get-logs/' + taskId).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         // Members
 
         asyncGetMembers(boardId) {
-            return axios.get('get-members/' + boardId);
+            return axios.get('get-members/' + boardId).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         asyncGetMembersFormattedForQuill(boardId) {
-            return axios.get('get-members-formatted-for-quill/' + boardId);
+            return axios.get('get-members-formatted-for-quill/' + boardId).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         asyncAddMembers(memberData, boardId) {
@@ -398,7 +472,9 @@ export const ajaxCalls = {
         // Comments
 
         asyncGetComments(taskId) {
-            return axios.get('get-task-comments/' + taskId);
+            return axios.get('get-task-comments/' + taskId).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
         },
 
         asyncCreateOrEditComment(commentData) {

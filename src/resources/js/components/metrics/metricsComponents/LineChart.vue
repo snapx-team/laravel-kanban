@@ -90,6 +90,9 @@ export default {
                         title: {
                             text: this.yname,
                         },
+                        style: {
+                            fontSize: "15px",
+                        }
                     },
                 }
             };

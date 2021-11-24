@@ -39,7 +39,7 @@ class UpdateTaskAction extends Action
             'rowId' => ['nullable', 'integer', 'gt:0'],
             'status' => ['nullable', 'string'],
             'taskId' => ['required', 'integer', 'gt:0'],
-            'sharedTaskDataId' => ['required', 'integer', 'gt:0'],
+            'timeEstimate' => ['present', 'integer', 'digits_between: 0,40'],
         ];
     }
 

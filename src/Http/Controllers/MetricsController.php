@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use DateInterval;
 use DatePeriod;
 use DateTime;
+use DB;
 use Exception;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Xguard\LaravelKanban\Models\Employee;
@@ -14,90 +15,119 @@ use Xguard\LaravelKanban\Models\Task;
 
 class MetricsController extends Controller
 {
-
+    /**
+     * @throws Exception
+     */
     public function getBadgeData($start, $end): array
     {
-        $tasks = Task::with('badge')
+        $tasks = Task::select('badge_id', DB::raw('count(*) as total'))
+            ->groupBy('badge_id')
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
             ->get();
 
-
-        $full = [];
+        $badgeData = [];
         foreach ($tasks as $task) {
-            if (array_key_exists($task->badge->name, $full)) {
-                $full[$task->badge->name] += 1;
-            } else {
-                $full[$task->badge->name] = 1;
-            }
+            $badgeData[$task->badge->name] = $task->total;
         }
 
         return [
-            'names' => array_keys($full),
-            'hits' => array_values($full),
+            'names' => array_keys($badgeData),
+            'hits' => array_values($badgeData),
         ];
     }
 
+    /**
+     * @throws Exception
+     */
     public function getContractData($start, $end): array
     {
-        $tasks = Task::with(['sharedTaskData' => function ($q) {
-                $q->with(['erpContracts' => function ($q) {
-                    $q->select(['contracts.id', 'contract_identifier']);
-                }])->with(['erpEmployees' => function ($q) {
-                    $q->select(['users.id', 'first_name', 'last_name']);
-                }]);
-        }])
-        ->whereDate('created_at', '>=', new DateTime($start))
-        ->whereDate('created_at', '<=', new DateTime($end))
-        ->get();
+        $tasks = Task::whereDate('created_at', '>=', new DateTime($start))
+            ->whereDate('created_at', '<=', new DateTime($end))
+            ->get();
 
-        $ContractCounts = [];
+        $ContractData = [];
         foreach ($tasks as $task) {
             foreach ($task->sharedTaskData->erpContracts as $contract) {
-                if (array_key_exists($contract->contract_identifier, $ContractCounts)) {
-                    $ContractCounts[$contract->contract_identifier] += 1;
+                if (array_key_exists($contract->contract_identifier, $ContractData)) {
+                    $ContractData[$contract->contract_identifier] += 1;
                 } else {
-                    $ContractCounts[$contract->contract_identifier] = 1;
+                    $ContractData[$contract->contract_identifier] = 1;
                 }
             }
         }
 
         return [
-            'hits' => array_values($ContractCounts),
-            'names' => array_keys($ContractCounts),
+            'hits' => array_values($ContractData),
+            'names' => array_keys($ContractData),
         ];
     }
 
-    public function getTicketsByEmployee($start, $end): array
+    /**
+     * @throws Exception
+     */
+    public function getTasksCreatedByEmployee($start, $end): array
     {
-        $tasks = Task::with('reporter.user')
+        $tasks = Task::select('reporter_id', DB::raw('count(*) as total'))
+            ->groupBy('reporter_id')
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
             ->get();
 
-        $employees = Employee::with('user')->get();
-
-        $reporters = [];
-        $assArray = array();
+        $reportersData = [];
         if (count($tasks) > 0) {
-            foreach ($employees as $employee) {
-                array_push($reporters, $employee->user->full_name);
-                if (!array_key_exists($employee->user->email, $assArray)) {
-                    $assArray[$employee->user->email] = 0;
-                }
-            }
             foreach ($tasks as $task) {
-                $assArray[$task->reporter->user->email] += 1;
+                $reportersData[$task->reporter->user->full_name] = $task->total;
             }
         }
 
         return [
-            'hits' => array_values($assArray),
-            'names' => $reporters,
+            'hits' => array_values($reportersData),
+            'names' => array_keys($reportersData),
         ];
     }
 
-    public function getCreationByHour($start, $end): array
+    /**
+     * @throws Exception
+     */
+
+    public function getEstimatedHoursCompletedByEmployees($start, $end): array
+    {
+        $logs = Log::where('log_type', Log::TYPE_CARD_COMPLETED)
+            ->whereDate('created_at', '>=', new DateTime($start))
+            ->whereDate('created_at', '<=', new DateTime($end))
+            ->where('loggable_type', 'Xguard\LaravelKanban\Models\Task')
+            ->orderBy('loggable_id')
+            ->latest()
+            ->get()
+            ->unique('loggable_id');
+
+        $names = [];
+        $hits = [];
+        foreach ($logs as $log) {
+            foreach ($log->loggable->assignedTo as $employee) {
+                // check whether card estimate greater than 0 and if original task status is still completed
+                if ($log->loggable->time_estimate > 0 && $log->loggable->status === 'completed') {
+                    if (array_key_exists($employee['employee']['user']['email'], $hits)) {
+                        $hits[$employee['employee']['user']['email']] += $log->loggable->time_estimate;
+                    } else {
+                        $hits[$employee['employee']['user']['email']] = $log->loggable->time_estimate;
+                        array_push($names, $employee['employee']['user']['full_name']);
+                    }
+                }
+            }
+        }
+
+        return [
+            'hits' => array_values($hits),
+            'names' => $names,
+        ];
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getPeakHoursTasksCreated($start, $end): array
     {
         $tasks = Task::whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
@@ -121,12 +151,12 @@ class MetricsController extends Controller
         ];
     }
 
-    public function getClosedTasksByEmployee($start, $end): array
+    /**
+     * @throws Exception
+     */
+    public function getClosedTasksByAssignedTo($start, $end): array
     {
-        $logs = Log::with(['user', 'loggable' => function (MorphTo $morphTo) {
-                $morphTo->morphWith([Task::class => ['assignedTo.employee.user']]);
-            }])
-            ->where('log_type', Log::TYPE_CARD_COMPLETED)
+        $logs = Log::where('log_type', Log::TYPE_CARD_COMPLETED)
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
             ->where('loggable_type', 'Xguard\LaravelKanban\Models\Task')
@@ -139,11 +169,14 @@ class MetricsController extends Controller
         $hits = [];
         foreach ($logs as $log) {
             foreach ($log->loggable->assignedTo as $employee) {
-                if (array_key_exists($employee['employee']['user']['email'], $hits)) {
-                    $hits[ $employee['employee']['user']['email']] += 1;
-                } else {
-                    $hits[ $employee['employee']['user']['email']] = 1;
-                    array_push($names,  $employee['employee']['user']['full_name']);
+                // check if original task status is still completed
+                if ($log->loggable->status === 'completed') {
+                    if (array_key_exists($employee['employee']['user']['email'], $hits)) {
+                        $hits[$employee['employee']['user']['email']] += 1;
+                    } else {
+                        $hits[$employee['employee']['user']['email']] = 1;
+                        array_push($names, $employee['employee']['user']['full_name']);
+                    }
                 }
             }
         }
@@ -154,7 +187,9 @@ class MetricsController extends Controller
         ];
     }
 
-
+    /**
+     * @throws Exception
+     */
     public function getClosedTasksByAdmin($start, $end): array
     {
         $logs = Log::with('user')
@@ -185,7 +220,10 @@ class MetricsController extends Controller
     }
 
 
-    public function getDelayByBadge($start, $end): array
+    /**
+     * @throws Exception
+     */
+    public function getAverageTimeToCompletionByBadge($start, $end): array
     {
         $closedLogs = Log::where('log_type', Log::TYPE_CARD_COMPLETED)
             ->whereDate('created_at', '>=', new DateTime($start))
@@ -193,8 +231,8 @@ class MetricsController extends Controller
             ->where('loggable_type', 'Xguard\LaravelKanban\Models\Task')
             ->orderBy('loggable_id')->get();
         $assignedLogs = Log::with(['loggable' => function (MorphTo $morphTo) {
-                $morphTo->morphWith([Task::class => ['badge']]);
-            }])
+            $morphTo->morphWith([Task::class => ['badge']]);
+        }])
             ->where('log_type', Log::TYPE_CARD_ASSIGNED_TO_USER)
             ->whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
@@ -237,7 +275,7 @@ class MetricsController extends Controller
     /**
      * @throws Exception
      */
-    public function getDelayByEmployee($start, $end): array
+    public function getAverageTimeToCompletionByEmployee($start, $end): array
     {
         $closedLogs = Log::where('log_type', Log::TYPE_CARD_COMPLETED)
             ->whereDate('created_at', '>=', new DateTime($start))
@@ -245,10 +283,7 @@ class MetricsController extends Controller
             ->where('loggable_type', 'Xguard\LaravelKanban\Models\Task')
             ->orderBy('loggable_id')
             ->get();
-        $assignedLogs = Log::with(['user', 'loggable' => function (MorphTo $morphTo) {
-                $morphTo->morphWith([Task::class => ['assignedTo.employee.user']]);
-            }])
-            ->whereDate('created_at', '>=', new DateTime($start))
+        $assignedLogs = Log::whereDate('created_at', '>=', new DateTime($start))
             ->whereDate('created_at', '<=', new DateTime($end))
             ->where('log_type', Log::TYPE_CARD_ASSIGNED_TO_USER)
             ->where('loggable_type', 'Xguard\LaravelKanban\Models\Task')
@@ -266,7 +301,7 @@ class MetricsController extends Controller
                     $end = new DateTime($closedLog->created_at);
                     $diff = $end->diff($beginning);
                     $hours = $diff->h;
-                    $hours = $hours + ($diff->days*24);
+                    $hours = $hours + ($diff->days * 24);
 
                     foreach ($assignedLog->loggable->assignedTo as $user) {
                         if (array_key_exists($user->employee->user->id, $hits)) {

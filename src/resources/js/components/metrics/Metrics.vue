@@ -32,28 +32,28 @@
             <div class="grid grid-cols-12 gap-4">
 
                 <div class="lg:col-span-4 col-span-12">
-                    <div @click="showTicketBreakdown()"
+                    <div @click="showTaskBreakdown()"
                          :class="{'bg-gray-200': showTB}"
                          class="flex items-center px-3 rounded my-2 border hover:bg-gray-200 py-2 cursor-pointer">
-                        <span class="font-medium text-gray-900 pl-2">Ticket Breakdown</span>
+                        <span class="font-medium text-gray-900 pl-2">Task Breakdown</span>
                     </div>
 
-                    <div @click="showTicketEmployee()"
-                         :class="{'bg-gray-200': showTE}"
+                    <div @click="showEmployeeBreakdown()"
+                         :class="{'bg-gray-200': shoeEB}"
                          class="flex items-center px-3 rounded my-2 border hover:bg-gray-200 py-2 cursor-pointer">
-                        <span class="font-medium text-gray-900 pl-2">Ticket Employee Breakdown</span>
+                        <span class="font-medium text-gray-900 pl-2">Employee Breakdown</span>
                     </div>
 
-                    <div @click="showTicketStats()"
-                         :class="{'bg-gray-200': showTS}"
+                    <div @click="showPeakHours()"
+                         :class="{'bg-gray-200': shoePH}"
                          class="flex items-center px-3 rounded my-2 border hover:bg-gray-200 py-2 cursor-pointer">
-                        <span class="font-medium text-gray-900 pl-2">Ticket Statistics</span>
+                        <span class="font-medium text-gray-900 pl-2">Peak Hours Metrics</span>
                     </div>
 
-                    <div @click="showHourlyStats()"
-                         :class="{'bg-gray-200': showHS}"
+                    <div @click="showTimePerformance()"
+                         :class="{'bg-gray-200': shoeTP}"
                          class="flex items-center px-3 rounded my-2 border hover:bg-gray-200 py-2 cursor-pointer">
-                        <span class="font-medium text-gray-900 pl-2">Hourly Statistics</span>
+                        <span class="font-medium text-gray-900 pl-2">Time Performance</span>
                     </div>
 
                     <div @click="showCreatedVsResolved()"
@@ -68,75 +68,90 @@
                         <loading-animation :size="80" class="m-auto"></loading-animation>
                     </div>
                     <div v-else>
-                        <div v-if="showTB" class="border rounded my-2">
+                        <div v-if="showTB">
                             <pie-chart
+                                class="border rounded my-2 max-w-screen-sm"
                                 v-if="badgeData != null"
                                 :series="badgeData.hits"
                                 :labels="badgeData.names"
-                                :title="'Tickets by Badge'">
+                                :title="'Tasks created: grouped by badge'">
                             </pie-chart>
-                        </div>
-                        <div v-if="showTE" class="border rounded my-2 ">
+
                             <pie-chart
-                                v-if="ticketByEmployeeData != null"
-                                :series="ticketByEmployeeData.hits"
-                                :labels="ticketByEmployeeData.names"
-                                :title="'Tickets Created by Employee'">
-                            </pie-chart>
-                        </div>
-                        <div v-if="showTB" class="border rounded my-2 ">
-                            <pie-chart
+                                class="border rounded my-2 max-w-screen-sm"
                                 v-if="contractData != null"
                                 :series="contractData.hits"
                                 :labels="contractData.names"
-                                :title="'Tickets by Contract'">
+                                :title="'Tasks created: grouped by contracts'">
                             </pie-chart>
                         </div>
-                        <div v-if="showTE" class="border rounded my-2 ">
+                        <div v-if="shoeEB" >
                             <pie-chart
-                                v-if="closedTasksByEmployee != null"
-                                :series="closedTasksByEmployee.hits"
-                                :labels="closedTasksByEmployee.names"
-                                :title="'Tickets Closed by Assigned Employee'">
+                                class="border rounded my-2 max-w-screen-sm"
+                                v-if="tasksCreatedData != null"
+                                :series="tasksCreatedData.hits"
+                                :labels="tasksCreatedData.names"
+                                :title="'Tasks created'">
                             </pie-chart>
-                        </div>
-                        <div v-if="showTE" class="border rounded my-2 ">
+
                             <pie-chart
+                                class="border rounded my-2 max-w-screen-sm"
+                                v-if="closedTasksByAssignedTo != null"
+                                :series="closedTasksByAssignedTo.hits"
+                                :labels="closedTasksByAssignedTo.names"
+                                :title="'Closed tasks per assigned employees'">
+                            </pie-chart>
+
+                            <pie-chart
+                                class="border rounded my-2 max-w-screen-sm"
                                 v-if="closedTasksByAdmin != null"
                                 :series="closedTasksByAdmin.hits"
                                 :labels="closedTasksByAdmin.names"
-                                :title="'Tickets Closed by Admin'">
+                                :title="'Tasks Closed by Admin'">
                             </pie-chart>
                         </div>
-                        <div v-if="showTS" class="border rounded my-2 ">
+                        <div v-if="shoePH" class="border rounded my-2 ">
                             <bar-chart
-                                v-if="creationByHour != null"
-                                :data="creationByHour.hits"
-                                :categories="creationByHour.names"
-                                :xname="'Tickets'"
+                                v-if="peakHoursTasksCreated != null"
+                                :data="peakHoursTasksCreated.hits"
+                                :categories="peakHoursTasksCreated.names"
+                                :xname="'Tasks'"
                                 :yname="'Hour'"
-                                :title="'Tickets by Hour Created'">
+                                :title="'Tasks Created'">
                             </bar-chart>
                         </div>
-                        <div v-if="showHS" class="border rounded my-2 ">
+                        <div v-if="shoeTP">
+
                             <bar-chart
-                                v-if="delayByBadge != null"
-                                :data="delayByBadge.hits"
-                                :categories="delayByBadge.names"
-                                :xname="'Hours'"
-                                :yname="'Categories'"
-                                :title="'Average Hours by Badge'">
-                            </bar-chart>
-                        </div>
-                        <div v-if="showHS" class="border rounded my-2 ">
-                            <bar-chart
-                                v-if="delayByEmployee != null"
-                                :data="delayByEmployee.hits"
-                                :categories="delayByEmployee.names"
+                                class="border rounded my-2"
+                                v-if="estimatedHoursCompletedByEmployees != null"
+                                :data="estimatedHoursCompletedByEmployees.hits"
+                                :categories="estimatedHoursCompletedByEmployees.names"
                                 :xname="'Hours'"
                                 :yname="'Employees'"
-                                :title="'Average Hours by Employee'">
+                                :title="'Estimated hours completed'">
                             </bar-chart>
+
+                            <bar-chart
+                                class="border rounded my-2"
+                                v-if="averageHoursToCompletionByEmployee != null"
+                                :data="averageHoursToCompletionByEmployee.hits"
+                                :categories="averageHoursToCompletionByEmployee.names"
+                                :xname="'Hours'"
+                                :yname="'Employees'"
+                                :title="'Average hours from assigned to completed: By employee'">
+                            </bar-chart>
+
+                            <bar-chart
+                                class="border rounded my-2"
+                                v-if="averageHoursToCompletionByBadge != null"
+                                :data="averageHoursToCompletionByBadge.hits"
+                                :categories="averageHoursToCompletionByBadge.names"
+                                :xname="'Hours'"
+                                :yname="'Categories'"
+                                :title="'Average hours from created to completed: By badge'">
+                            </bar-chart>
+
                         </div>
                         <div v-if="showCR" class="border rounded my-2 ">
                             <line-chart
@@ -144,11 +159,10 @@
                                 :series="createdVsResolved.series"
                                 :categories="createdVsResolved.categories"
                                 :xname="'Days'"
-                                :yname="'Total Tickets'"
+                                :yname="'Total Tasks'"
                                 :title="'Created Vs Resolved'">
                             </line-chart>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -178,20 +192,21 @@ export default {
         return {
             chartIsLoading: false,
             badgeData: null,
-            ticketByEmployeeData: null,
-            creationByHour: null,
+            tasksCreatedData: null,
+            peakHoursTasksCreated: null,
             contractData: null,
-            closedTasksByEmployee: null,
+            estimatedHoursCompletedByEmployees: null,
+            closedTasksByAssignedTo: null,
             closedTasksByAdmin: null,
-            delayByBadge: null,
-            delayByEmployee: null,
+            averageHoursToCompletionByBadge: null,
+            averageHoursToCompletionByEmployee: null,
             createdVsResolved: null,
             start: this.getMonday(new Date()),
             end: new Date(),
             showTB: true,
-            showTE: false,
-            showTS: false,
-            showHS: false,
+            shoeEB: false,
+            shoePH: false,
+            shoeTP: false,
             showCR: false,
         }
     },
@@ -213,82 +228,81 @@ export default {
     methods: {
         reload() {
             if (this.showTB) {
-                this.showTicketBreakdown();
+                this.showTaskBreakdown();
             }
-            if (this.showTE) {
-                this.showTicketEmployee()
+            if (this.shoeEB) {
+                this.showEmployeeBreakdown()
             }
-            if (this.showTS) {
-                this.showTicketStats();
+            if (this.shoePH) {
+                this.showPeakHours();
             }
-            if (this.showHS) {
-                this.showHourlyStats()
+            if (this.shoeTP) {
+                this.showTimePerformance()
             }
             if (this.showCR) {
                 this.showCreatedVsResolved();
             }
 
         },
-        showTicketBreakdown() {
+        showTaskBreakdown() {
             this.chartIsLoading = true;
             this.showTB = true;
-            this.showTE = false;
-            this.showTS = false;
-            this.showHS = false;
+            this.shoeEB = false;
+            this.shoePH = false;
+            this.shoeTP = false;
             this.showCR = false;
 
             Promise.all([this.getBadgeData(), this.getContractData()]).then(() => {
                 this.chartIsLoading = false;
             });
         },
-        showTicketEmployee() {
+        showEmployeeBreakdown() {
             this.chartIsLoading = true;
             this.showTB = false;
-            this.showTE = true;
-            this.showTS = false;
-            this.showHS = false;
+            this.shoeEB = true;
+            this.shoePH = false;
+            this.shoeTP = false;
             this.showCR = false;
 
-            Promise.all([this.getTicketsByEmployee(), this.getClosedTasksByEmployee(), this.getClosedTasksByAdmin()]).then(() => {
+            Promise.all([this.getTasksCreatedByEmployee(), this.getClosedTasksByAssignedTo(), this.getClosedTasksByAdmin()]).then(() => {
                 this.chartIsLoading = false;
             });
         },
-        showTicketStats() {
+        showPeakHours() {
             this.chartIsLoading = true;
             this.showTB = false;
-            this.showTE = false;
-            this.showTS = true;
-            this.showHS = false;
+            this.shoeEB = false;
+            this.shoePH = true;
+            this.shoeTP = false;
             this.showCR = false;
 
-            Promise.all([this.getCreationByHour()]).then(() => {
+            Promise.all([this.getPeakHoursTasksCreated()]).then(() => {
                 this.chartIsLoading = false;
             });
         },
-        showHourlyStats() {
+        showTimePerformance() {
             this.chartIsLoading = true;
             this.showTB = false;
-            this.showTE = false;
-            this.showTS = false;
-            this.showHS = true;
+            this.shoeEB = false;
+            this.shoePH = false;
+            this.shoeTP = true;
             this.showCR = false;
 
-            Promise.all([this.getDelayByBadge(), this.getDelayByEmployee()]).then(() => {
+            Promise.all([this.getEstimatedHoursCompletedByEmployees(), this.getAverageTimeToCompletionByBadge(), this.getAverageTimeToCompletionByEmployee()]).then(() => {
                 this.chartIsLoading = false;
             });
         },
         showCreatedVsResolved() {
             this.chartIsLoading = true;
             this.showTB = false;
-            this.showTE = false;
-            this.showTS = false;
-            this.showHS = false;
+            this.shoeEB = false;
+            this.shoePH = false;
+            this.shoeTP = false;
             this.showCR = true;
 
             Promise.all([this.getCreatedVsResolved()]).then(() => {
                 this.chartIsLoading = false;
             });
-
         },
         getMonday(d) {
             d = new Date(d);
@@ -306,65 +320,52 @@ export default {
         async getBadgeData() {
             return await this.asyncGetBadgeData(this.startTime, this.endTime).then((data) => {
                 this.badgeData = data.data;
-            }).catch(res => {
-                console.log(res)
-            });
+            })
         },
-        async getTicketsByEmployee() {
-            return await this.asyncGetTicketsByEmployee(this.startTime, this.endTime).then((data) => {
-                this.ticketByEmployeeData = data.data
-            }).catch(res => {
-                console.log(res)
-            });
+        async getTasksCreatedByEmployee() {
+            return await this.asyncGetTasksCreatedByEmployee(this.startTime, this.endTime).then((data) => {
+                this.tasksCreatedData = data.data
+            })
         },
-        async getCreationByHour() {
-            return await this.asyncGetCreationByHour(this.startTime, this.endTime).then((data) => {
-                this.creationByHour = data.data;
-            }).catch(res => {
-                console.log(res)
-            });
+        async getEstimatedHoursCompletedByEmployees() {
+            return await this.asyncGetEstimatedHoursCompletedByEmployees(this.startTime, this.endTime).then((data) => {
+                this.estimatedHoursCompletedByEmployees = data.data
+            })
+        },
+        async getPeakHoursTasksCreated() {
+            return await this.asyncGetPeakHoursTasksCreated(this.startTime, this.endTime).then((data) => {
+                this.peakHoursTasksCreated = data.data;
+            })
         },
         async getContractData() {
             return await this.asyncGetContractData(this.startTime, this.endTime).then((data) => {
                 this.contractData = data.data;
-            }).catch(res => {
-                console.log(res)
-            });
+            })
         },
-        async getClosedTasksByEmployee() {
-            return await this.asyncGetClosedTasksByEmployee(this.startTime, this.endTime).then((data) => {
-                this.closedTasksByEmployee = data.data;
-            }).catch(res => {
-                console.log(res)
-            });
+        async getClosedTasksByAssignedTo() {
+            return await this.asyncGetClosedTasksByAssignedTo(this.startTime, this.endTime).then((data) => {
+                this.closedTasksByAssignedTo = data.data;
+            })
         },
         async getClosedTasksByAdmin() {
             return await this.asyncGetClosedTasksByAdmin(this.startTime, this.endTime).then((data) => {
                 this.closedTasksByAdmin = data.data;
-            }).catch(res => {
-                console.log(res)
-            });
+            })
         },
-        async getDelayByBadge() {
-            return await this.asyncGetDelayByBadge(this.startTime, this.endTime).then((data) => {
-                this.delayByBadge = data.data;
-            }).catch(res => {
-                console.log(res)
-            });
+        async getAverageTimeToCompletionByBadge() {
+            return await this.asyncGetAverageTimeToCompletionByBadge(this.startTime, this.endTime).then((data) => {
+                this.averageHoursToCompletionByBadge = data.data;
+            })
         },
-        async getDelayByEmployee() {
-            return await this.asyncGetDelayByEmployee(this.startTime, this.endTime).then((data) => {
-                this.delayByEmployee = data.data;
-            }).catch(res => {
-                console.log(res)
-            });
+        async getAverageTimeToCompletionByEmployee() {
+            return await this.asyncGetAverageTimeToCompletionByEmployee(this.startTime, this.endTime).then((data) => {
+                this.averageHoursToCompletionByEmployee = data.data;
+            })
         },
         async getCreatedVsResolved() {
             return await this.asyncGetCreatedVsResolved(this.startTime, this.endTime).then((data) => {
                 this.createdVsResolved = data.data;
-            }).catch(res => {
-                console.log(res)
-            });
+            })
         }
     }
 }

@@ -43,7 +43,7 @@ class CreateTaskAction extends Action
             'name' => ['required', 'string'],
             'rowId' => ['nullable', 'integer', 'gt:0'],
             'selectedKanbans' => ['required', 'array', "min:1"],
-            'timeEstimate' => ['present', 'integer', 'gt:0'],
+            'timeEstimate' => ['present', 'integer', 'digits_between: 0,40'],
 
         ];
     }

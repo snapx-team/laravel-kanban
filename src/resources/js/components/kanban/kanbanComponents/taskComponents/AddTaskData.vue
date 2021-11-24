@@ -221,7 +221,6 @@ export default {
             tasks: [],
         };
     },
-
     created() {
         this.cloneCardData = {...this.cardData};
 
