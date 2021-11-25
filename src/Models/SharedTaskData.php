@@ -4,7 +4,7 @@ namespace Xguard\LaravelKanban\Models;
 
 use App\Models\Contract;
 use App\Models\User;
-use Iatstuti\Database\Support\CascadeSoftDeletes;
+use Dyrynda\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
