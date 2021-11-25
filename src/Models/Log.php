@@ -80,7 +80,7 @@ class Log extends Model
 
     public static function createLog(
         ?int $userId,
-        int $logId,
+        int $logType,
         string $description,
         ?int $targetedEmployeeId,
         int $loggableId,
@@ -89,7 +89,7 @@ class Log extends Model
 
         $log = Log::create([
             'user_id' => $userId,
-            'log_type' => $logId,
+            'log_type' => $logType,
             'description' => $description,
             'targeted_employee_id' => $targetedEmployeeId,
             'loggable_id' => $loggableId,
