@@ -9,7 +9,6 @@ use Throwable;
 use Xguard\LaravelKanban\Models\Comment;
 use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Log;
-use Xguard\LaravelKanban\Models\Task;
 
 class EditTaskCommentAction extends Action
 {
