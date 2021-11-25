@@ -26,6 +26,12 @@
 import {ajaxCalls} from "../../mixins/ajaxCallsMixin";
 
 export default {
+
+    watch: {
+        value: function(newVal, oldVal) {
+            this.content =  newVal;
+        }
+    },
     props: {
         value: {default: 0,},
     },

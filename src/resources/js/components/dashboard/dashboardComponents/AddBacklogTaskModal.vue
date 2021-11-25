@@ -392,6 +392,7 @@ export default {
                         erp_employees: [],
                         erp_contracts: [],
                     },
+                    time_estimate: 0
                 }
                 this.checkedOptions = [];
                 this.selectedTemplate = null;

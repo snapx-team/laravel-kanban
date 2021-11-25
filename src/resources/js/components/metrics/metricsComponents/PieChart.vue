@@ -27,21 +27,13 @@ export default {
                 labels: [],
                 legend: {
                     offsetY: 40,
-                    width: 500,
+                    width: 300,
                 },
                 responsive: [{
                     breakpoint: 1300,
                     options: {
                         legend: {
                             width: 200,
-                        },
-                    },
-                },
-                    {
-                    breakpoint: 1600,
-                    options: {
-                        legend: {
-                            width: 300,
                         },
                     },
                 }]
@@ -72,7 +64,7 @@ export default {
                         offsetY: 0,
                         floating: false,
                         style: {
-                            fontSize: '20px',
+                            fontSize: '16px',
                             fontWeight: 'bold',
                             fontFamily: undefined,
                             color: '#263238'
