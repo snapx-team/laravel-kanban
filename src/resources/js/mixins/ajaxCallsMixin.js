@@ -60,59 +60,59 @@ export const ajaxCalls = {
 
         asyncGetBadgeData(start, end) {
             return axios.get('get-badge-data/' + start + '/' + end).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
-            });
-        },
-
-        asyncGetTasksCreatedByEmployee(start, end) {
-            return axios.get('get-tasks-created-by-employee/' + start + '/' + end).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
-            });
-        },
-        asyncGetEstimatedHoursCompletedByEmployees(start, end) {
-            return axios.get('get-estimated-completed-by-employee/' + start + '/' + end).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
-            });
-        },
-        asyncGetPeakHoursTasksCreated(start, end) {
-            return axios.get('get-peak-hours-tasks-created/' + start + '/' + end).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
         asyncGetContractData(start, end) {
             return axios.get('get-contract-data/' + start + '/' + end).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
+            });
+        },
+
+        asyncGetTasksCreatedByEmployee(start, end) {
+            return axios.get('get-tasks-created-by-employee/' + start + '/' + end).catch((error) => {
+                this.loopAllErrorsAsTriggerErrorToast(error);
+            });
+        },
+        asyncGetEstimatedHoursCompletedByEmployees(start, end) {
+            return axios.get('get-estimated-completed-by-employee/' + start + '/' + end).catch((error) => {
+                this.loopAllErrorsAsTriggerErrorToast(error);
+            });
+        },
+        asyncGetPeakHoursTasksCreated(start, end) {
+            return axios.get('get-peak-hours-tasks-created/' + start + '/' + end).catch((error) => {
+                this.loopAllErrorsAsTriggerErrorToast(error.response.data.message);
             });
         },
 
         asyncGetClosedTasksByAssignedTo(start, end) {
             return axios.get('get-closed-by-employee/' + start + '/' + end).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error.response.data.message);
             });
         },
 
         asyncGetClosedTasksByAdmin(start, end) {
             return axios.get('get-closed-by-admin/' + start + '/' + end).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error.response.data.message);
             });
         },
 
         asyncGetAverageTimeToCompletionByBadge(start, end) {
             return axios.get('get-average-time-to-completion-by-badge/' + start + '/' + end).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error.response.data.message);
             });
         },
 
         asyncGetAverageTimeToCompletionByEmployee(start, end) {
             return axios.get('get-average-time-to-completion-by-employee/' + start + '/' + end).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error.response.data.message);
             });
         },
 
         asyncGetCreatedVsResolved(start, end) {
             return axios.get('get-created-vs-resolved/' + start + '/' + end).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error.response.data.message);
             });
         },
 

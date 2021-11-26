@@ -1,6 +1,10 @@
 <template>
     <div>
-        <backlog-bar :name="'Metrics'"></backlog-bar>
+        <div class="flex flex-wrap p-4 pl-10">
+            <h3 class="text-3xl text-gray-800 font-bold py-1 pr-2">Metrics - </h3>
+            <h3 class="text-3xl text-gray-800 py-1"> Between {{ start | moment("MMM Do YYYY") }} and
+                {{ end | moment("MMM Do YYYY") }}</h3>
+        </div>
         <div class="bg-gray-100 w-full h-64 absolute top-0 rounded-b-lg" style="z-index: -1"></div>
         <div class="mx-10 my-3 space-y-5 shadow-xl p-5 bg-white">
             <div class="flex-1 space-y-2">
@@ -64,7 +68,8 @@
                 </div>
 
                 <div class="lg:col-span-8 col-span-12">
-                    <div v-if="chartIsLoading" class="m-2 rounded bg-blue-50 flex flex-col items-center bg-blue-50 h-full">
+                    <div v-if="chartIsLoading"
+                         class="m-2 rounded bg-blue-50 flex flex-col items-center bg-blue-50 h-full">
                         <loading-animation :size="80" class="m-auto"></loading-animation>
                     </div>
                     <div v-else>
@@ -85,7 +90,7 @@
                                 :title="'Tasks created: grouped by contracts'">
                             </pie-chart>
                         </div>
-                        <div v-if="shoeEB" >
+                        <div v-if="shoeEB">
                             <pie-chart
                                 class="border rounded my-2 max-w-screen-sm"
                                 v-if="tasksCreatedData != null"
@@ -149,7 +154,7 @@
                                 :categories="averageHoursToCompletionByBadge.names"
                                 :xname="'Hours'"
                                 :yname="'Categories'"
-                                :title="'Average hours from created to completed: By badge'">
+                                :title="'Average hours from assigned to completed: By badge'">
                             </bar-chart>
 
                         </div>
@@ -312,59 +317,59 @@ export default {
         },
         filter() {
             if (this.start === null || this.start === '' || this.end === null || this.end === '') {
-                alert("fill date fields");
+                this.triggerErrorToast("fill date fields");
             } else {
                 this.reload();
             }
         },
         async getBadgeData() {
             return await this.asyncGetBadgeData(this.startTime, this.endTime).then((data) => {
-                this.badgeData = data.data;
-            })
-        },
-        async getTasksCreatedByEmployee() {
-            return await this.asyncGetTasksCreatedByEmployee(this.startTime, this.endTime).then((data) => {
-                this.tasksCreatedData = data.data
-            })
-        },
-        async getEstimatedHoursCompletedByEmployees() {
-            return await this.asyncGetEstimatedHoursCompletedByEmployees(this.startTime, this.endTime).then((data) => {
-                this.estimatedHoursCompletedByEmployees = data.data
-            })
-        },
-        async getPeakHoursTasksCreated() {
-            return await this.asyncGetPeakHoursTasksCreated(this.startTime, this.endTime).then((data) => {
-                this.peakHoursTasksCreated = data.data;
+                this.badgeData = data.data.data;
             })
         },
         async getContractData() {
             return await this.asyncGetContractData(this.startTime, this.endTime).then((data) => {
-                this.contractData = data.data;
+                this.contractData = data.data.data;
+            })
+        },
+        async getTasksCreatedByEmployee() {
+            return await this.asyncGetTasksCreatedByEmployee(this.startTime, this.endTime).then((data) => {
+                this.tasksCreatedData = data.data.data;
+            })
+        },
+        async getEstimatedHoursCompletedByEmployees() {
+            return await this.asyncGetEstimatedHoursCompletedByEmployees(this.startTime, this.endTime).then((data) => {
+                this.estimatedHoursCompletedByEmployees = data.data.data;
+            })
+        },
+        async getPeakHoursTasksCreated() {
+            return await this.asyncGetPeakHoursTasksCreated(this.startTime, this.endTime).then((data) => {
+                this.peakHoursTasksCreated = data.data.data;
             })
         },
         async getClosedTasksByAssignedTo() {
             return await this.asyncGetClosedTasksByAssignedTo(this.startTime, this.endTime).then((data) => {
-                this.closedTasksByAssignedTo = data.data;
+                this.closedTasksByAssignedTo = data.data.data;
             })
         },
         async getClosedTasksByAdmin() {
             return await this.asyncGetClosedTasksByAdmin(this.startTime, this.endTime).then((data) => {
-                this.closedTasksByAdmin = data.data;
+                this.closedTasksByAdmin = data.data.data;
             })
         },
         async getAverageTimeToCompletionByBadge() {
             return await this.asyncGetAverageTimeToCompletionByBadge(this.startTime, this.endTime).then((data) => {
-                this.averageHoursToCompletionByBadge = data.data;
+                this.averageHoursToCompletionByBadge = data.data.data;
             })
         },
         async getAverageTimeToCompletionByEmployee() {
             return await this.asyncGetAverageTimeToCompletionByEmployee(this.startTime, this.endTime).then((data) => {
-                this.averageHoursToCompletionByEmployee = data.data;
+                this.averageHoursToCompletionByEmployee = data.data.data;
             })
         },
         async getCreatedVsResolved() {
             return await this.asyncGetCreatedVsResolved(this.startTime, this.endTime).then((data) => {
-                this.createdVsResolved = data.data;
+                this.createdVsResolved = data.data.data;
             })
         }
     }
