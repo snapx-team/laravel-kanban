@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Auth;
 use Lorisleiva\Actions\Action;
 use Xguard\LaravelKanban\Actions\Badges\CreateBadgeAction;
 use Xguard\LaravelKanban\Actions\ErpShareables\CreateErpShareablesAction;
-use Xguard\LaravelKanban\Http\Helper\AccessManager;
 use Xguard\LaravelKanban\Models\Badge;
 use Xguard\LaravelKanban\Models\Log;
 use Xguard\LaravelKanban\Models\Task;
@@ -14,15 +13,6 @@ use Xguard\LaravelKanban\Repositories\TasksRepository;
 
 class CreateTaskAction extends Action
 {
-    public function authorize()
-    {
-        foreach ($this->selectedKanbans as $kanban) {
-            if (!AccessManager::canAccessBoard($kanban['id'])) {
-                return false;
-            }
-        }
-        return true;
-    }
     /**
      * Get the validation rules that apply to the action.
      *
