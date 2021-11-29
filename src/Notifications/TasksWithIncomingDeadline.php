@@ -26,6 +26,11 @@ class TasksWithIncomingDeadline extends Notification
         $this->tasks = $tasks;
     }
 
+    public function getTasks()
+    {
+        return $this->tasks;
+    }
+
     /**
      * Get the notification's delivery channels.
      *

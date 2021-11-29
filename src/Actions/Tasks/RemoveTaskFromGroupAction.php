@@ -32,7 +32,7 @@ class RemoveTaskFromGroupAction extends Action
     {
         try {
             \DB::beginTransaction();
-            $taskCard = Task::find($this->taskId);
+            $taskCard = Task::findOrFail($this->taskId);
 
             $sharedTaskData = SharedTaskData::create(['description' => $taskCard['sharedTaskData']['description']]);
 

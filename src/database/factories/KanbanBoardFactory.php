@@ -6,9 +6,8 @@ use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factory;
 use Xguard\LaravelKanban\Models\Board;
 
-$factory->define(Board::class, function (Faker $faker) {
-
+$factory->define(Board::class, function (Faker $faker, $attributes) {
     return [
-        'name' => $faker->jobTitle,
+        'name' => $attributes['name'] ?? $faker->unique()->text(),
     ];
 });

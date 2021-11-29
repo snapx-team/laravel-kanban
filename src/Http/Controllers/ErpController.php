@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Responses\JsonResponse;
 use App\Models\User;
 use App\Models\Contract;
-use Xguard\LaravelKanban\Actions\Users\GetUserProfileAction;
 
 class ErpController extends Controller
 {

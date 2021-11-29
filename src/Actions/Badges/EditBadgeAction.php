@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Auth;
 
 class EditBadgeAction extends Action
 {
+    public function authorize()
+    {
+        return session('role') === 'admin';
+    }
     /**
      * Get the validation rules that apply to the action.
      *

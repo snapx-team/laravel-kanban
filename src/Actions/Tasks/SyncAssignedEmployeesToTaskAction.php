@@ -3,7 +3,6 @@
 namespace Xguard\LaravelKanban\Actions\Tasks;
 
 use Lorisleiva\Actions\Action;
-use Xguard\LaravelKanban\Models\Badge;
 use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Log;
 use Illuminate\Support\Facades\Auth;

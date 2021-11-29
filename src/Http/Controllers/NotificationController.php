@@ -9,19 +9,11 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Lorisleiva\Actions\Action;
-use Xguard\LaravelKanban\Actions\Badges\ListBadgesWithCountAction;
 use Xguard\LaravelKanban\Actions\Notifications\CreateOrUpdateEmployeeBoardNotificationSettingsAction;
-use Xguard\LaravelKanban\Actions\Tasks\RemoveTaskFromGroupAction;
-use Xguard\LaravelKanban\Http\Helper\AccessManager;
-use Xguard\LaravelKanban\Models\Badge;
 use Xguard\LaravelKanban\Models\Comment;
 use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Board;
-use Xguard\LaravelKanban\Models\EmployeeBoardNotificationSetting;
-use Xguard\LaravelKanban\Models\Template;
 use Xguard\LaravelKanban\Models\Task;
-use Xguard\LaravelKanban\Actions\Users\GetUserProfileAction;
 
 class NotificationController extends Controller
 {

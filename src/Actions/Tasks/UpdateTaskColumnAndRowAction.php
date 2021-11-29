@@ -38,7 +38,7 @@ class UpdateTaskColumnAndRowAction extends Action
     {
         try {
             \DB::beginTransaction();
-            $task = Task::find($this->taskId);
+            $task = Task::findOrFail($this->taskId);
             $prevTask = clone $task;
             $task->update(['column_id' => $this->columnId, 'row_id' => $this->rowId]);
 

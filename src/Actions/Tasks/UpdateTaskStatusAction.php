@@ -2,6 +2,7 @@
 
 namespace Xguard\LaravelKanban\Actions\Tasks;
 
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Lorisleiva\Actions\Action;
 use Xguard\LaravelKanban\Models\Log;
@@ -37,7 +38,12 @@ class UpdateTaskStatusAction extends Action
     {
         try {
             \DB::beginTransaction();
-            $task = Task::find($this->taskId);
+            $task = Task::findOrFail($this->taskId);
+
+            if (!in_array($this->newStatus, ['active', 'completed', 'cancelled'])) {
+                throw new Exception("invalid new status");
+            }
+
             if ($this->newStatus === 'active') {
                 $task->update([
                     'status' => $this->newStatus,
