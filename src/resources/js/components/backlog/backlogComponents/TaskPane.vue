@@ -543,7 +543,7 @@ export default {
             if (this.task.row === null || this.task.column === null) {
                 this.triggerErrorToast('row and column need to be selected!');
             } else {
-                this.asyncAssignTaskToBoard(this.task.id, this.task.row.id, this.task.column.id, this.task.board.id).then(() => {
+                this.asyncPlaceTask(this.task.id, this.task.row.id, this.task.column.id, this.task.board.id).then(() => {
                     this.asyncGetTaskData(this.task.id).then((data) => {
                         this.task = data.data;
                     })

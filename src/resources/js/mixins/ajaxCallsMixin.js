@@ -288,9 +288,9 @@ export const ajaxCalls = {
             });
         },
 
-        asyncAssignTaskToBoard(task_id, row_id, column_id, board_id) {
-            return axios.post('assign-task-to-board/' + task_id + '/' + row_id + '/' + column_id + '/' + board_id).then(() => {
-                this.triggerSuccessToast('Task Assigned!');
+        asyncPlaceTask(task_id, row_id, column_id, board_id) {
+            return axios.post('place-task/' + task_id + '/' + row_id + '/' + column_id + '/' + board_id).then(() => {
+                this.triggerSuccessToast('Task Placed!');
             }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
