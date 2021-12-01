@@ -24,7 +24,7 @@ use Xguard\LaravelKanban\QueryBuilders\TasksQueryBuilder;
 class Task extends Model
 {
     use SoftDeletes, CascadeSoftDeletes;
-    
+
     protected $dates = ['deleted_at'];
 
     protected $table = 'kanban_tasks';
@@ -112,5 +112,10 @@ class Task extends Model
     public function getTaskSimpleNameAttribute(): string
     {
         return strtoupper(substr($this->board->name, 0, 3)) . '-' . $this->id;
+    }
+
+    public function getDeadlineAttribute($value): string
+    {
+        return Carbon::parse($value)->format('c');
     }
 }

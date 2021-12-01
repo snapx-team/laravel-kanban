@@ -2,6 +2,7 @@
 
 namespace Xguard\LaravelKanban\Actions\Tasks;
 
+use Carbon;
 use Illuminate\Support\Facades\Auth;
 use Lorisleiva\Actions\Action;
 use Xguard\LaravelKanban\Models\Log;
@@ -51,7 +52,7 @@ class RemoveTaskFromGroupAction extends Action
             TasksRepository::versionTask([
                 "index" => $taskCard->index,
                 "name" => $taskCard->name,
-                "deadline" => date('y-m-d h:m', strtotime($taskCard->deadline)),
+                "deadline" => $taskCard->deadline,
                 "shared_task_data_id" =>$taskCard->shared_task_data_id,
                 "reporter_id" => $taskCard->reporter_id,
                 "column_id" => $taskCard->column_id,

@@ -2,6 +2,7 @@
 
 namespace Xguard\LaravelKanban\Actions\Tasks;
 
+use Carbon;
 use Illuminate\Support\Facades\Auth;
 use Lorisleiva\Actions\Action;
 use Xguard\LaravelKanban\Actions\Badges\CreateBadgeAction;
@@ -79,7 +80,7 @@ class CreateTaskAction extends Action
                     'index' => $maxIndex,
                     'reporter_id' => session('employee_id'),
                     'name' => $this->name,
-                    'deadline' => date('y-m-d h:m', strtotime($this->deadline)),
+                    'deadline' => Carbon::parse($this->deadline),
                     'badge_id' => $badge->id,
                     'column_id' => $this->columnId ? $this->columnId : null,
                     'row_id' => $this->rowId ? $this->rowId : null,
@@ -102,7 +103,7 @@ class CreateTaskAction extends Action
                 TasksRepository::versionTask([
                     "index" => $task->index,
                     "name" => $task->name,
-                    "deadline" => date('y-m-d h:m', strtotime($task->deadline)),
+                    "deadline" => $task->deadline,
                     "shared_task_data_id" => $task->shared_task_data_id,
                     "reporter_id" => $task->reporter_id,
                     "column_id" => $task->column_id,
