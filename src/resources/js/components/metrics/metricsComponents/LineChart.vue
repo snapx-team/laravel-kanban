@@ -4,8 +4,8 @@
             <vue-apex-charts type="area" height="350" :options="computedChartOptions"
                              :series="series"></vue-apex-charts>
         </div>
-        <div v-if="this.series.length === 0">
-            No Data for {{ this.title }}
+        <div class="text-lg font-light leading-relaxed p-3" v-if="this.series.length === 0">
+            No Data For <b>{{ this.title }}</b>
         </div>
     </div>
 </template>

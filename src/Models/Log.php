@@ -25,7 +25,7 @@ class Log extends Model
 
     protected $table = 'kanban_logs';
 
-    protected $cascadeDeletes = ['notifications'];
+    protected array $cascadeDeletes = ['notifications'];
 
     protected $guarded = [];
 
@@ -103,7 +103,6 @@ class Log extends Model
 
     public static function returnLogGroup(string $logGroup): array
     {
-
         switch ($logGroup) {
             case 'EMPLOYEE_GROUP':
                 return [
