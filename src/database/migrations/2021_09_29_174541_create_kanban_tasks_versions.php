@@ -17,7 +17,7 @@ class CreateKanbanTasksVersions extends Migration
             $table->id();
             $table->integer('index')->nullable();
             $table->string('name');
-            $table->dateTime('deadline')->nullable();
+            $table->timestamp('deadline')->nullable();
             $table->unsignedBigInteger('shared_task_data_id')->nullable();
             $table->unsignedBigInteger('reporter_id')->nullable();
             $table->unsignedBigInteger('column_id')->nullable();

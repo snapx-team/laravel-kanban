@@ -2,6 +2,7 @@
 
 namespace Xguard\LaravelKanban\Actions\Tasks;
 
+use Carbon;
 use Illuminate\Support\Facades\Auth;
 use Lorisleiva\Actions\Action;
 use Xguard\LaravelKanban\Models\Log;
@@ -58,7 +59,7 @@ class UpdateGroupAction extends Action
             TasksRepository::versionTask([
                 "index" => $task->index,
                 "name" => $task->name,
-                "deadline" => date('y-m-d h:m', strtotime($task->deadline)),
+                "deadline" => $task->deadline,
                 "shared_task_data_id" =>$task->shared_task_data_id,
                 "reporter_id" => $task->reporter_id,
                 "column_id" => $task->column_id,

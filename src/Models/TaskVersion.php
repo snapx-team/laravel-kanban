@@ -2,6 +2,7 @@
 
 namespace Xguard\LaravelKanban\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -88,5 +89,10 @@ class TaskVersion extends Model
     public function assignedTo(): BelongsToMany
     {
         return $this->belongsToMany(Employee::class, 'kanban_employee_task', 'task_id', 'employee_id');
+    }
+
+    public function getDeadlineAttribute($value): string
+    {
+        return Carbon::parse($value)->format('c');
     }
 }

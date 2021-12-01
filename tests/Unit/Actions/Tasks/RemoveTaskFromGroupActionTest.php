@@ -3,6 +3,7 @@
 namespace Tests\Unit\Actions\Tasks;
 
 use App\Models\User;
+use Carbon;
 use Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
@@ -53,7 +54,7 @@ class RemoveTaskFromGroupActionTest extends TestCase
         $payloadTaskVersion = [
             "index" => $task->index,
             "name" => $task->name,
-            "deadline" => date('y-m-d h:m', strtotime($task->deadline)),
+            "deadline" => Carbon::parse($task->deadline),
             "shared_task_data_id" =>$task->shared_task_data_id,
             "reporter_id" => $task->reporter_id,
             "column_id" => $task->column_id,

@@ -2,10 +2,10 @@
 
 namespace Xguard\LaravelKanban\Actions\Tasks;
 
+use Carbon;
 use Illuminate\Support\Facades\Auth;
 use Lorisleiva\Actions\Action;
 use Xguard\LaravelKanban\Actions\Badges\CreateBadgeAction;
-use Xguard\LaravelKanban\Actions\Tasks\UpdateTaskStatusAction;
 use Xguard\LaravelKanban\Actions\ErpShareables\UpdateErpShareablesDescriptionAction;
 use Xguard\LaravelKanban\Models\Badge;
 use Xguard\LaravelKanban\Models\Log;
@@ -20,6 +20,7 @@ class UpdateTaskAction extends Action
     {
         return AccessManager::canAccessBoardUsingTaskId($this->taskId);
     }
+
     /**
      * Get the validation rules that apply to the action.
      *
@@ -49,6 +50,7 @@ class UpdateTaskAction extends Action
             'name.required' => 'Name is required',
         ];
     }
+
     /**
      * Execute the action and return a result.
      *
@@ -70,16 +72,16 @@ class UpdateTaskAction extends Action
                 $badge = app(CreateBadgeAction::class)->fill(["name" => $badgeName])->run();
             }
 
-            app(SyncAssignedEmployeesToTaskAction::class)->fill(["assignedTo" => $this->assignedTo, "task"=> $task])->run();
+            app(SyncAssignedEmployeesToTaskAction::class)->fill(["assignedTo" => $this->assignedTo, "task" => $task])->run();
 
             if ($this->sharedTaskDataId === $prevGroup) {
                 // update shared data if group hasn't changed
                 app(UpdateErpShareablesDescriptionAction::class)->fill([
-                        "description" => $this->description,
-                        "sharedTaskDataId" => $this->sharedTaskDataId,
-                        "erpEmployees" => $this->erpEmployees,
-                        "erpContracts" => $this->erpContracts,
-                    ])->run();
+                    "description" => $this->description,
+                    "sharedTaskDataId" => $this->sharedTaskDataId,
+                    "erpEmployees" => $this->erpEmployees,
+                    "erpContracts" => $this->erpContracts,
+                ])->run();
             } else {
                 // delete previous group if no other tasks point to it
                 $tasksWithSharedTaskDataCount = Task::where('shared_task_data_id', $prevGroup)->count();
@@ -90,7 +92,7 @@ class UpdateTaskAction extends Action
 
             $task->update([
                 'name' => $this->name,
-                'deadline' => date('y-m-d h:m', strtotime($this->deadline)),
+                'deadline' => Carbon::parse($this->deadline),
                 'badge_id' => $badge->id,
                 'column_id' => $this->columnId,
                 'row_id' => $this->rowId,
@@ -98,10 +100,12 @@ class UpdateTaskAction extends Action
                 'time_estimate' => $this->timeEstimate
             ]);
 
-            app(UpdateTaskStatusAction::class)->fill([
-                'taskId' => $task->id,
-                'newStatus' => $this->status
-            ])->run();
+            if ($this->status !== $prevTask->status) {
+                app(UpdateTaskStatusAction::class)->fill([
+                    'taskId' => $task->id,
+                    'newStatus' => $this->status
+                ])->run();
+            }
 
             // logic to log what was changed during update
 
@@ -131,8 +135,8 @@ class UpdateTaskAction extends Action
                 TasksRepository::versionTask([
                     "index" => $task->index,
                     "name" => $task->name,
-                    "deadline" => date('y-m-d h:m', strtotime($task->deadline)),
-                    "shared_task_data_id" =>$task->shared_task_data_id,
+                    "deadline" => $task->deadline,
+                    "shared_task_data_id" => $task->shared_task_data_id,
                     "reporter_id" => $task->reporter_id,
                     "column_id" => $task->column_id,
                     "row_id" => $task->row_id,

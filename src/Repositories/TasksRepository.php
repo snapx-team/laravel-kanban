@@ -2,6 +2,7 @@
 
 namespace Xguard\LaravelKanban\Repositories;
 
+use Carbon;
 use Xguard\LaravelKanban\Models\TaskVersion;
 
 class TasksRepository
@@ -11,7 +12,7 @@ class TasksRepository
         TaskVersion::create([
             "index" => $taskData['index'],
             "name" => $taskData['name'],
-            "deadline" => date('y-m-d h:m', strtotime($taskData['deadline'])),
+            "deadline" => Carbon::parse($taskData['deadline'])->toDateTimeString(),
             "shared_task_data_id" =>$taskData['shared_task_data_id'],
             "reporter_id" => $taskData['reporter_id'],
             "column_id" => $taskData['column_id'],

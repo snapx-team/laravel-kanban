@@ -3,6 +3,7 @@
 namespace Tests\Unit\Actions\Tasks;
 
 use App\Models\User;
+use Carbon;
 use Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
@@ -55,7 +56,7 @@ class UpdateGroupActionTest extends TestCase
         $payloadTaskVersion = [
             "index" => $tasks[0]->index,
             "name" => $tasks[0]->name,
-            "deadline" => date('y-m-d h:m', strtotime($tasks[0]->deadline)),
+            "deadline" => Carbon::parse($tasks[0]->deadline),
             "shared_task_data_id" => $tasks[0]->shared_task_data_id,
             "reporter_id" => $tasks[0]->reporter_id,
             "column_id" => $tasks[0]->column_id,
@@ -132,7 +133,7 @@ class UpdateGroupActionTest extends TestCase
         $payloadTaskVersion = [
             "index" => $task->index,
             "name" => $task->name,
-            "deadline" => date('y-m-d h:m', strtotime($task->deadline)),
+            "deadline" => Carbon::parse($task->deadline),
             "shared_task_data_id" => $task->shared_task_data_id,
             "reporter_id" => $task->reporter_id,
             "column_id" => $task->column_id,

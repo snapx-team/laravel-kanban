@@ -7,6 +7,7 @@ import Toast from 'vue-toastification';
 import 'vue-toastification/dist/index.css';
 import DatePicker from 'vue2-datepicker';
 import VueMoment from 'vue-moment';
+import moment from 'moment-timezone';
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import VueQuillEditor from 'vue-quill-editor';
@@ -30,7 +31,9 @@ Vue.use(Toast, {
 Vue.use(VueQuillEditor, /* { default global options } */);
 Vue.use(VueSweetalert2);
 Vue.use(DatePicker);
-Vue.use(VueMoment);
+Vue.use(VueMoment, {
+    moment,
+})
 Vue.use(device);
 Vue.use(VueObserveVisibility);
 Vue.use(VueMenu);
