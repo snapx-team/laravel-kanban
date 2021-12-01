@@ -20,7 +20,7 @@ class UpdateGroupAction extends Action
     {
         return [
             'taskId' => ['required', 'integer', 'gt:0'],
-            'groupId' => ['required', 'string']
+            'groupId' => ['required', 'integer', 'gt:0']
         ];
     }
 
@@ -33,7 +33,7 @@ class UpdateGroupAction extends Action
     {
         try {
             \DB::beginTransaction();
-            $task = Task::find($this->taskId);
+            $task = Task::findOrFail($this->taskId);
             $prevGroup = (clone $task)->shared_task_data_id;
 
 

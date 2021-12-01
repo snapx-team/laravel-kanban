@@ -30,7 +30,7 @@ class DeleteBadgeAction extends Action
      */
     public function handle()
     {
-        $badge = Badge::find($this->badge_id);
+        $badge = Badge::findOrFail($this->badge_id);
         $task = Task::where('badge_id', $this->badge_id)->first();
         $template = Template::where('badge_id', $this->badge_id)->first();
         if ($task || $template) {

@@ -7,8 +7,7 @@ use Illuminate\Database\Eloquent\Factory;
 use Xguard\LaravelKanban\Models\Board;
 
 $factory->define(Board::class, function (Faker $faker) {
-
     return [
-        'name' => $faker->jobTitle,
+        'name' => $faker->unique()->text(),
     ];
 });
