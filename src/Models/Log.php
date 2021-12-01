@@ -25,7 +25,7 @@ class Log extends Model
 
     protected $table = 'kanban_logs';
 
-    protected array $cascadeDeletes = ['notifications'];
+    protected $cascadeDeletes = ['notifications'];
 
     protected $guarded = [];
 
