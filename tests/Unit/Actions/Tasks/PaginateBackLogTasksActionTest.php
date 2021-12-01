@@ -127,7 +127,7 @@ class PaginateBackLogTasksActionTest extends TestCase
     {
         $board = factory(Board::class)->create(['name' => 'board']);
         $task1 = factory(Task::class)->create(['reporter_id' => session('employee_id'), 'name' => 'task']);
-        $task2 = factory(Task::class)->create(['reporter_id' => session('employee_id'), 'board_id' => $board]);
+        $task2 = factory(Task::class)->create(['reporter_id' => session('employee_id'), 'board_id' => $board->id]);
 
         $now = new DateTime('now');
         $yesterday = new DateTime('yesterday');

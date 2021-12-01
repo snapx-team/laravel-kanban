@@ -45,6 +45,7 @@ class CreateTaskActionTest extends TestCase
             'name' => $this->faker->realText(),
             'rowId' => null,
             'selectedKanbans' => [$board],
+            'timeEstimate' => 0,
         ])->run();
 
         $this->assertCount(1, Task::all());
@@ -68,6 +69,7 @@ class CreateTaskActionTest extends TestCase
             'name' => $this->faker->realText(),
             'rowId' => null,
             'selectedKanbans' => $boards,
+            'timeEstimate' => 0,
         ])->run();
 
         $this->assertCount(3, Task::all());

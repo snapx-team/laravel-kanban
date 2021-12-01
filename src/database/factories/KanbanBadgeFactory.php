@@ -1,13 +1,13 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
-
+/** @var Factory $factory */
 
 use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factory;
 use Xguard\LaravelKanban\Models\Badge;
 
-$factory->define(Badge::class, function (Faker $faker, $attributes) {
+$factory->define(Badge::class, function (Faker $faker) {
     return [
-        'name' => $attributes['name'] ?? $faker->text(rand(10, 20))
+        'name' => $faker->text(rand(10, 20))
     ];
 });
