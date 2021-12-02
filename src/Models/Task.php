@@ -98,6 +98,11 @@ class Task extends Model
         return $this->morphMany(Log::class, 'loggable');
     }
 
+    public function taskFiles(): HasMany
+    {
+        return $this->hasMany(TaskFile::class);
+    }
+
     public function getHoursToDeadlineAttribute(): ?int
     {
         if ($this->deadline === null) {
