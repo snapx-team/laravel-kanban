@@ -19,7 +19,22 @@ import 'quill/dist/quill.bubble.css';// for bubble theme
 import axios from 'axios';
 import device from 'vue-device-detector';
 import VueObserveVisibility from 'vue-observe-visibility';
-import * as VueMenu from '@hscmap/vue-menu'
+import * as VueMenu from '@hscmap/vue-menu';
+
+//All file uploader imports
+
+import vueFilePond from 'vue-filepond';
+import 'filepond/dist/filepond.min.css';
+import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css';
+import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
+import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+import FilePondPluginValidateFileSize from 'filepond-plugin-file-validate-size';
+
+const FilePond = vueFilePond(
+    FilePondPluginFileValidateType,
+    FilePondPluginImagePreview,
+    FilePondPluginValidateFileSize
+);
 
 Vue.config.productionTip = false;
 
@@ -28,12 +43,12 @@ Vue.use(Toast, {
     maxToasts: 20,
     newestOnTop: true
 });
-Vue.use(VueQuillEditor, /* { default global options } */);
+Vue.use(VueQuillEditor);
 Vue.use(VueSweetalert2);
 Vue.use(DatePicker);
 Vue.use(VueMoment, {
     moment,
-})
+});
 Vue.use(device);
 Vue.use(VueObserveVisibility);
 Vue.use(VueMenu);
@@ -73,6 +88,9 @@ new Vue({
         }).catch(res => {
             console.log(res);
         });
+    },
+    components: {
+        FilePond,
     },
     render: (h) => h(App)
 }).$mount('#app');

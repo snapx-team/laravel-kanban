@@ -160,7 +160,8 @@
 
                             <div class="flex flex-wrap">
                                 <div class="flex-1 space-y-2 pr-2">
-                                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline *</span>
+                                    <span
+                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline *</span>
                                     <date-picker format="YYYY-MM-DD HH:mm"
                                                  placeholder="YYYY-MM-DD HH:mm"
                                                  type="datetime"
@@ -168,7 +169,8 @@
                                 </div>
 
                                 <div class="space-y-2">
-                                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Time Estimate</span>
+                                    <span
+                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Time Estimate</span>
                                     <counter v-model="task.time_estimate"></counter>
                                 </div>
                             </div>
@@ -257,6 +259,22 @@
                                 </div>
                             </div>
 
+                            <div class="flex-1" v-if="checkedOptions.includes('Upload Files')">
+
+                                <file-pond
+                                    name="test"
+                                    ref="pond"
+                                    label-idle="Click or Drop files here..."
+                                    allow-multiple="true"
+                                    :files="task.attachedFiles"
+                                    credits=false
+                                    maxFileSize="5MB"
+                                    @updatefiles="updateFiles"
+                                    @addfile="onAddFile"
+                                    @removefile="onRemovefile"
+                                />
+                            </div>
+
                             <div class="w-full grid sm:grid-cols-2 gap-3 sm:gap-3">
                                 <button @click="modalOpen = false"
                                         class="px-4 py-3 border border-gray-200 rounded text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-600 transition duration-300 ease-in-out"
@@ -310,6 +328,7 @@ export default {
                 {name: 'ERP Employee',},
                 {name: 'ERP Contract',},
                 {name: 'Group',},
+                {name: 'Upload Files',}
             ],
             checkedOptions: [],
             config: {
@@ -341,6 +360,8 @@ export default {
                     erp_contracts: [],
                 },
                 time_estimate: 0,
+                attachedFiles: [],
+                filesToUpload: []
             },
             badges: [],
             erpEmployees: [],
@@ -371,6 +392,17 @@ export default {
     },
 
     methods: {
+        updateFiles: function () {
+            this.task.filesToUpload = this.$refs.pond.getFiles();
+        },
+        onAddFile(error, file) {
+            console.log('file added', { error, file })
+        },
+
+        onRemovefile(error, file) {
+            console.log('file removed', { error, file })
+        },
+
         saveBacklogTask(event) {
 
             let isValid = this.validateCreateOrUpdateTaskEvent(this.task, this.checkedOptions)
