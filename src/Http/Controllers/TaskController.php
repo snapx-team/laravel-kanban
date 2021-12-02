@@ -58,6 +58,7 @@ class TaskController extends Controller
     public function createBacklogTaskCards(Request $request)
     {
         try {
+            $taskFiles = $request->file('file');
             $backlogTaskData = $request->all();
             app(CreateTaskAction::class)->fill([
                 'assignedTo' => null,
@@ -72,6 +73,8 @@ class TaskController extends Controller
                 'rowId' => null,
                 'selectedKanbans' => $backlogTaskData['selectedKanbans'],
                 'timeEstimate' =>  $backlogTaskData['time_estimate'],
+                'task_files'=>  null,
+                'added_task_files'=>  $taskFiles,
             ])->run();
         } catch (\Exception $e) {
             return response([
@@ -85,6 +88,7 @@ class TaskController extends Controller
     public function createTaskCard(Request $request)
     {
         try {
+            $taskFiles = $request->file('file');
             $taskCard = $request->all();
             $selectedKanban = [];
             $board = ['id'=>$taskCard['boardId']];
@@ -102,6 +106,8 @@ class TaskController extends Controller
                 'rowId' => $taskCard['selectedRowId'],
                 'selectedKanbans' => $selectedKanban,
                 'timeEstimate' =>  $taskCard['time_estimate'],
+                'task_files'=>  $taskCard['task_files'],
+                'added_task_files'=>  $taskFiles,
             ])->run();
         } catch (\Exception $e) {
             return response([
