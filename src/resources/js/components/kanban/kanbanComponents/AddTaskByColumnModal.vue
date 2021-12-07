@@ -264,6 +264,19 @@
                                 </div>
                             </div>
 
+                            <div class="flex-1" v-if="checkedOptions.includes('Upload Files')">
+
+                                <file-pond
+                                    name="filepond"
+                                    ref="pond"
+                                    allow-multiple="true"
+                                    credits=false
+                                    maxFileSize="5MB"
+                                    imagePreviewHeight="100"
+                                    @updatefiles="updateFiles"
+                                />
+                            </div>
+
                             <div class="w-full grid sm:grid-cols-2 gap-3 sm:gap-3">
                                 <button @click="modalOpen = false"
                                         class="px-4 py-3 border border-gray-200 rounded text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-600 transition duration-300 ease-in-out"
@@ -315,6 +328,7 @@ export default {
                 {name: 'ERP Employee',},
                 {name: 'ERP Contract',},
                 {name: 'Group',},
+                {name: 'Upload Files',}
             ],
             checkedOptions: [],
             config: {
@@ -390,6 +404,15 @@ export default {
     },
 
     methods: {
+
+        updateFiles(files) {
+            // all new files to upload
+            this.task.filesToUpload = files.filter(function (file) {
+                // We don't want any files over 5mb
+                return (file.fileSize < 5000000);
+            });
+        },
+
         saveTask(event) {
 
             let isValid = this.validateCreateOrUpdateTaskEvent(this.task, this.checkedOptions)

@@ -37,7 +37,7 @@ class TasksQueryBuilder extends Builder
 
     public function withTaskData()
     {
-        return $this->with('badge', 'row', 'column', 'board', 'sharedTaskData')
+        return $this->with('badge', 'row', 'column', 'board', 'sharedTaskData', 'taskFiles', 'comments')
             ->with(['assignedTo.employee.user' => function ($q) {
                 $q->select(['id', 'first_name', 'last_name']);
             }])

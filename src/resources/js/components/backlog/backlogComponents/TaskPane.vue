@@ -176,7 +176,7 @@
                         class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Description *</span>
 
                     <div class="space-y-5">
-                        <div class="rounded border p-5 cursor-text" @click="descriptionIsEditable = true"
+                        <div class="rounded border border-gray-300 p-5 cursor-text" @click="descriptionIsEditable = true"
                              v-if="!descriptionIsEditable">
                             <div class="ql-editor h-auto" id="task-description"
                                  v-html="task.shared_task_data.description"></div>
@@ -255,6 +255,20 @@
                         No result .
                     </template>
                 </vSelect>
+            </div>
+
+            <div class="flex-1 space-y-2">
+                <p class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Task Files</p>
+                <file-pond
+                    name="filepond"
+                    ref="pond"
+                    allow-multiple="true"
+                    :files="formattedFiles"
+                    credits=false
+                    maxFileSize="5MB"
+                    imagePreviewHeight="100"
+                    @updatefiles="updateFiles"
+                />
             </div>
 
             <div class="space-y-5">
@@ -399,6 +413,7 @@ export default {
             checklistStatus: null,
             selectedStatus: null,
             statuses: ['active', 'completed', 'cancelled'],
+            formattedFiles: [],
         }
     },
     props: {
@@ -426,6 +441,8 @@ export default {
             this.task = {...task};
             this.selectGroupIsVisible = false;
             this.populateTaskView(this.task);
+            this.formatFilesForFilepond();
+
         });
     },
 
@@ -439,6 +456,38 @@ export default {
         this.getTasks();
     },
     methods: {
+        formatFilesForFilepond() {
+            this.formattedFiles = []
+            this.task.task_files.forEach((file, index) => {
+
+                this.formattedFiles.push({
+                    source: file.full_url,
+                    options: {
+                        metadata: {
+                            path: file.task_file_url,
+                            id: file.id
+                        },
+                    }
+                })
+            })
+        },
+
+        updateFiles(files) {
+
+            // all new files to upload
+            this.task.filesToUpload = files.filter(function( file ) {
+                // all new files don't have ids, and we don't want any files over 5mb
+                return (file.getMetadata('id') === undefined && file.fileSize < 5000000);
+            });
+
+            // getting all the existing file ids from files metadata
+            let existingFileIds = files.map(file => file.getMetadata('id')).filter( Number );
+
+            // filtering the task_files to not include remove files
+            this.task.task_files = this.task.task_files.filter(function(file){
+                return existingFileIds.includes(file.id);
+            });
+        },
         populateTaskView(task) {
             this.task = task;
             if (task.deadline) {

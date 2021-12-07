@@ -71,3 +71,10 @@
 #task-description {
     padding: 0px !important;
 }
+
+// filepond style
+
+.filepond--fullsize-overlay{
+    z-index: 10000 !important;
+    position: fixed !important;
+}

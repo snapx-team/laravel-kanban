@@ -345,12 +345,8 @@ export default {
                 this.asyncGetTaskCardsByColumn(cloneCardData.column_id).then((data) => {
                     this.kanban.rows[cloneCardData.row.index].columns[cloneCardData.column.index].task_cards = data.data;
                     this.loadingCards = {columnId: null, isLoading: false}
-                }).catch(res => {
-                    console.log(res)
-                });
-            }).catch(res => {
-                console.log(res)
-            });
+                })
+            })
         },
 
         saveTask(taskData) {

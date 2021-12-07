@@ -225,7 +225,6 @@
                                         </vSelect>
                                     </div>
                                 </div>
-
                             </div>
 
                             <div class="flex-1" v-if="checkedOptions.includes('Group')">
@@ -260,18 +259,14 @@
                             </div>
 
                             <div class="flex-1" v-if="checkedOptions.includes('Upload Files')">
-
                                 <file-pond
-                                    name="test"
+                                    name="filepond"
                                     ref="pond"
-                                    label-idle="Click or Drop files here..."
                                     allow-multiple="true"
-                                    :files="task.attachedFiles"
                                     credits=false
                                     maxFileSize="5MB"
+                                    imagePreviewHeight="100"
                                     @updatefiles="updateFiles"
-                                    @addfile="onAddFile"
-                                    @removefile="onRemovefile"
                                 />
                             </div>
 
@@ -392,15 +387,12 @@ export default {
     },
 
     methods: {
-        updateFiles: function () {
-            this.task.filesToUpload = this.$refs.pond.getFiles();
-        },
-        onAddFile(error, file) {
-            console.log('file added', { error, file })
-        },
-
-        onRemovefile(error, file) {
-            console.log('file removed', { error, file })
+        updateFiles(files) {
+            // all new files to upload
+            this.cloneCardData.filesToUpload = files.filter(function (file) {
+                // We don't want any files over 5mb
+                return (file.fileSize < 5000000);
+            });
         },
 
         saveBacklogTask(event) {

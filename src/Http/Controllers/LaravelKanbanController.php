@@ -48,7 +48,7 @@ class LaravelKanbanController extends Controller
         if ($hasBoardAccess) {
             return Board::with(['rows.columns.taskCards' => function ($q) {
                 $q->where('status', 'active')
-                    ->with('badge', 'board', 'row', 'column')
+                    ->with('badge', 'board', 'row', 'column', 'taskFiles', 'comments')
                     ->with(['sharedTaskData' => function ($q) {
                         $q->with(['erpContracts' => function ($q) {
                             $q->select(['contracts.id', 'contract_identifier']);
@@ -95,7 +95,7 @@ class LaravelKanbanController extends Controller
     public function getBacklogData($start, $end): array
     {
 
-        $backlogTasks = Task::with('badge', 'row', 'column', 'board');
+        $backlogTasks = Task::with('badge', 'row', 'column', 'board', 'taskFiles', 'comments');
 
         if (session('role') === 'admin') {
             $backlogTasks->whereHas('board.members', function ($q) {

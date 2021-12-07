@@ -26,14 +26,24 @@ import * as VueMenu from '@hscmap/vue-menu';
 import vueFilePond from 'vue-filepond';
 import 'filepond/dist/filepond.min.css';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css';
+import 'filepond-plugin-get-file/dist/filepond-plugin-get-file.min.css';
+import 'filepond-plugin-image-overlay/dist/filepond-plugin-image-overlay.css';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import FilePondPluginValidateFileSize from 'filepond-plugin-file-validate-size';
+import FilePondPluginFileMetadata from 'filepond-plugin-file-metadata';
+import FilePondPluginGetFile from 'filepond-plugin-get-file';
+import FilePondPluginImageOverlay from 'filepond-plugin-image-overlay';
+
+
 
 const FilePond = vueFilePond(
     FilePondPluginFileValidateType,
     FilePondPluginImagePreview,
-    FilePondPluginValidateFileSize
+    FilePondPluginValidateFileSize,
+    FilePondPluginFileMetadata,
+    FilePondPluginGetFile,
+    FilePondPluginImageOverlay
 );
 
 Vue.config.productionTip = false;

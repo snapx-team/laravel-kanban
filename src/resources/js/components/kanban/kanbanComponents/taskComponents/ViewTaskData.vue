@@ -67,6 +67,26 @@
 
 
                 <div class="space-y-5 pt-5">
+                    <p class="text-gray-700 font-semibold font-sans tracking-wide text-lg"> Task Files: </p>
+                    <file-pond
+                        name="filepond"
+                        ref="pond"
+                        :files="formattedFiles"
+                        :label-idle="`${formattedFiles.length} attached files`"
+                        allow-multiple="true"
+                        credits=false
+                        maxFileSize="5MB"
+                        imagePreviewHeight="100"
+                        allowRemove="false"
+                        allowDrop ="false"
+                        allowBrowse ="false"
+                        allowPaste="false"
+                        allowReplace="false"
+                        allowRevert="false"
+                    />
+                </div>
+
+                <div class="space-y-5 pt-5">
                     <p class="text-gray-700 font-semibold font-sans tracking-wide text-lg"> Comments: </p>
                     <task-comments :cardData="cardData"></task-comments>
                 </div>
@@ -311,7 +331,8 @@ export default {
                     color: 'red',
                 }
             ],
-            clickedCheckboxEl: null
+            clickedCheckboxEl: null,
+            formattedFiles: []
         };
     },
 
@@ -320,10 +341,28 @@ export default {
         this.handleChecklist();
         this.getRelatedTasks();
         this.getTasks();
+        this.formatFilesForFilepond();
         this.selectedStatus = this.cardData.status;
     },
 
     methods: {
+
+        formatFilesForFilepond() {
+            this.formattedFiles = []
+            this.cloneCardData.task_files.forEach((file, index) => {
+
+                this.formattedFiles.push({
+                    source: file.full_url,
+                    options: {
+                        metadata: {
+                            path: file.task_file_url,
+                            id: file.id
+                        },
+                    }
+                })
+            })
+        },
+
         updateTask(task) {
             this.eventHub.$emit("update-kanban-task-cards", task);
         },

@@ -2,7 +2,7 @@
 
 namespace Xguard\LaravelKanban\Actions\Tasks;
 
-use App\Models\TaskFile;
+use Xguard\LaravelKanban\Models\TaskFile;
 use Lorisleiva\Actions\Action;
 use Xguard\LaravelKanban\AWSStorage\S3Storage;
 use Xguard\LaravelKanban\Models\Task;
@@ -18,7 +18,7 @@ class DeleteTaskFilesAction extends Action
     {
         return [
             'task' => ['required', 'instance_of:' . Task::class],
-            'fileIds' => ['required', 'array']
+            'filesIds' => ['required', 'array']
         ];
     }
 
@@ -30,7 +30,7 @@ class DeleteTaskFilesAction extends Action
     public function handle()
     {
         $disk = app(S3Storage::class);
-        $filesToDelete = TaskFile::whereIn('id', $this->fileIds)->get();
+        $filesToDelete = TaskFile::whereIn('id', $this->filesIds)->get();
 
         foreach ($filesToDelete as $file) {
             $disk->delete($file->task_file_url);

@@ -48,7 +48,6 @@ class LaravelKanbanServiceProvider extends ServiceProvider
             SetLoggableTypeAndLoggableIdOnExistingLogs::class, NotifyOfTasksWithDeadlineInNext24::class
         ]);
 
-
         include __DIR__ . '/routes/web.php';
 
         $this->publishes([
@@ -59,11 +58,10 @@ class LaravelKanbanServiceProvider extends ServiceProvider
             $schedule = $this->app->make(Schedule::class);
             $schedule->command(DeleteKanbanEmployeesWithDeletedUsers::class)->daily();
             $schedule->command(NotifyOfTasksWithDeadlineInNext24::class)->hourly();
-            
         });
 
         $this->app->singleton(S3Storage::class, function () {
-            $disk = env('APP_ENV') === 'production' ? 'kanyeban-s3' : 'local-s3';
+            $disk = env('APP_ENV') === 'production' ? 'kanyeban-s3' : 'kanyeban-local';
             return Storage::disk($disk);
         });
     }
