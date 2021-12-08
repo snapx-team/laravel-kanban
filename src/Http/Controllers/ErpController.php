@@ -3,37 +3,30 @@
 namespace Xguard\LaravelKanban\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Responses\JsonResponse;
-use App\Models\User;
-use App\Models\Contract;
+use Illuminate\Support\Collection;
+use Xguard\LaravelKanban\Repositories\ErpContractsRepository;
+use Xguard\LaravelKanban\Repositories\ErpUsersRepository;
 
 class ErpController extends Controller
 {
 
-    public function getAllUsers()
+    public function getAllUsers(): Collection
     {
-        return User::orderBy('first_name')->take(10)->get();
+        return ErpUsersRepository::getAllUsers();
     }
 
-    public function getSomeUsers($search)
+    public function getSomeUsers($search): Collection
     {
-        return User::
-        where(function ($q) use ($search) {
-            $q->where('first_name', 'like', "%{$search}%")
-                ->orWhere('last_name', 'like', "%{$search}%")
-                ->orWhere(User::raw('CONCAT(first_name, " ", last_name)'), 'like', "%{$search}%");
-        })->orderBy('first_name')->take(10)->get();
+        return ErpUsersRepository::getSomeUsers($search);
     }
 
-    public function getAllContracts()
+    public function getAllContracts(): Collection
     {
-        return Contract::orderBy('contract_identifier')->take(10)->get();
+        return ErpContractsRepository::getAllContracts();
     }
 
-    public function getSomeContracts($search)
+    public function getSomeContracts($search): Collection
     {
-        return Contract::where(function ($q) use ($search) {
-            $q->where('contract_identifier', 'like', "%{$search}%");
-        })->orderBy('contract_identifier')->take(10)->get();
+        return ErpContractsRepository::getSomeContracts($search);
     }
 }

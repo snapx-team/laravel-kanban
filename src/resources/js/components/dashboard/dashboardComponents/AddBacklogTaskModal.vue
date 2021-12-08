@@ -184,16 +184,16 @@
                                         <vSelect :options="erpEmployees"
                                                  multiple
                                                  class="text-gray-400"
-                                                 label="full_name"
+                                                 label="fullName"
                                                  placeholder="Select Employee"
                                                  style="margin-top: 7px"
                                                  @search="onTypeEmployee"
                                                  v-model="task.shared_task_data.erp_employees">
                                             <template slot="option" slot-scope="option">
-                                                <avatar :name="option.full_name"
+                                                <avatar :name="option.fullName"
                                                         :size="4"
                                                         class="mr-3 m-1 float-left"></avatar>
-                                                <p class="inline">{{ option.full_name }}</p>
+                                                <p class="inline">{{ option.fullName }}</p>
                                             </template>
                                             <template #no-options="{ search, searching, loading }">
                                                 No result .
@@ -209,13 +209,13 @@
                                         <vSelect :options="erpContracts"
                                                  multiple
                                                  class="text-gray-400"
-                                                 label="contract_identifier"
+                                                 label="contractIdentifier"
                                                  placeholder="Select Contract"
                                                  style="margin-top: 7px"
                                                  @search="onTypeContract"
                                                  v-model="task.shared_task_data.erp_contracts">
                                             <template slot="option" slot-scope="option">
-                                                <p class="inline">{{ option.contract_identifier }}</p>
+                                                <p class="inline">{{ option.contractIdentifier }}</p>
                                             </template>
                                             <template #no-options="{ search, searching, loading }">
                                                 No result .
