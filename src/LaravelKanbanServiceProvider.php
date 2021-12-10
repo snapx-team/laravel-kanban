@@ -61,7 +61,7 @@ class LaravelKanbanServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton(S3Storage::class, function () {
-            $disk = env('APP_ENV') === 'production' ? 'kanyeban-s3' : 'kanyeban-local';
+            $disk = env('APP_ENV') === 'production' || env('APP_ENV') === 'qa' ? 'kanyeban-s3' : 'kanyeban-local';
             return Storage::disk($disk);
         });
     }
