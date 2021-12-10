@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Xguard\LaravelKanban\Models\Log;
 use Carbon\Carbon;
 use Dyrynda\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -96,6 +95,11 @@ class Task extends Model
     public function logs()
     {
         return $this->morphMany(Log::class, 'loggable');
+    }
+
+    public function taskFiles(): HasMany
+    {
+        return $this->hasMany(TaskFile::class);
     }
 
     public function getHoursToDeadlineAttribute(): ?int

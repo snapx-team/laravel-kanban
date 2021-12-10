@@ -11,6 +11,8 @@ use Xguard\LaravelKanban\Commands\NotifyOfTasksWithDeadlineInNext24;
 use Xguard\LaravelKanban\Commands\ReplaceAllReporterIdsFromUserToEmployee;
 use Xguard\LaravelKanban\Commands\SetLoggableTypeAndLoggableIdOnExistingLogs;
 use Xguard\LaravelKanban\Http\Middleware\CheckHasAccess;
+use Illuminate\Support\Facades\Storage;
+use Xguard\LaravelKanban\AWSStorage\S3Storage;
 
 class LaravelKanbanServiceProvider extends ServiceProvider
 {
@@ -46,7 +48,6 @@ class LaravelKanbanServiceProvider extends ServiceProvider
             SetLoggableTypeAndLoggableIdOnExistingLogs::class, NotifyOfTasksWithDeadlineInNext24::class
         ]);
 
-
         include __DIR__ . '/routes/web.php';
 
         $this->publishes([
@@ -57,6 +58,11 @@ class LaravelKanbanServiceProvider extends ServiceProvider
             $schedule = $this->app->make(Schedule::class);
             $schedule->command(DeleteKanbanEmployeesWithDeletedUsers::class)->daily();
             $schedule->command(NotifyOfTasksWithDeadlineInNext24::class)->hourly();
+        });
+
+        $this->app->singleton(S3Storage::class, function () {
+            $disk = env('APP_ENV') === 'production' ? 'kanyeban-s3' : 'kanyeban-local';
+            return Storage::disk($disk);
         });
     }
 }

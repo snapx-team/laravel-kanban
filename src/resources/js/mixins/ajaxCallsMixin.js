@@ -44,11 +44,11 @@ export const ajaxCalls = {
             });
         },
 
-        asyncGetBoardsWithEmployeeNotificationSettings(){
+        asyncGetBoardsWithEmployeeNotificationSettings() {
             return axios.get('get-boards-with-employee-notification-settings');
         },
 
-        asyncFirstOrCreateNotificationSettings(notificationSettings){
+        asyncFirstOrCreateNotificationSettings(notificationSettings) {
             return axios.post('first-or-create-employee-notification-settings', notificationSettings).then(() => {
                 this.triggerSuccessToast('Notification Settings Updated!');
             }).catch((error) => {
@@ -210,8 +210,26 @@ export const ajaxCalls = {
             });
         },
 
+        convertToFormDataObject($data) {
+            const json = JSON.stringify($data);
+            const blob = new Blob([json], {
+                type: 'application/json'
+            });
+            let formData = new FormData();
+
+            if ($data['filesToUpload'] !== undefined) {
+                for (const file of $data['filesToUpload']) {
+                    formData.append('file[]', file.file, file.filename);
+                }
+            }
+            formData.append('taskCardData', blob);
+
+            return formData;
+        },
+
         asyncUpdateTask(taskCardData) {
-            return axios.post('update-task', taskCardData).then(() => {
+            let formData = this.convertToFormDataObject(taskCardData);
+            return axios.post('update-task', formData).then(() => {
                 this.triggerSuccessToast('Task Updated');
             }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
@@ -219,7 +237,10 @@ export const ajaxCalls = {
         },
 
         asyncCreateTask(taskCardData) {
-            return axios.post('create-task', taskCardData).then(() => {
+
+            let formData = this.convertToFormDataObject(taskCardData);
+
+            return axios.post('create-task', formData).then(() => {
                 this.triggerSuccessToast('Task created!');
             }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
@@ -227,7 +248,10 @@ export const ajaxCalls = {
         },
 
         asyncCreateBacklogTasks(backlogTasksData) {
-            return axios.post('create-backlog-tasks', backlogTasksData).then(() => {
+
+            let formData = this.convertToFormDataObject(backlogTasksData);
+
+            return axios.post('create-backlog-tasks', formData).then(() => {
                 this.triggerSuccessToast('Backlog task created!');
             }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
@@ -427,7 +451,8 @@ export const ajaxCalls = {
                 this.triggerSuccessToast('Badge Deleted!');
             }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
-            });;
+            });
+            ;
         },
 
         // Logs
@@ -553,8 +578,7 @@ export const ajaxCalls = {
                     errors = errors.concat(error);
                 });
                 errors.forEach(error => this.triggerErrorToast(error));
-            }
-            else{
+            } else {
                 this.triggerErrorToast(errorResponse.response.data.message);
             }
         }

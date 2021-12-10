@@ -41,6 +41,8 @@ class UpdateTaskAction extends Action
             'status' => ['nullable', 'string'],
             'taskId' => ['required', 'integer', 'gt:0'],
             'timeEstimate' => ['present', 'integer', 'digits_between: 0,40'],
+            'task_files' => ['nullable', 'array'],
+            'filesToUpload' => ['nullable', 'array'],
         ];
     }
 
@@ -148,6 +150,8 @@ class UpdateTaskAction extends Action
                     'time_estimate' => $this->timeEstimate
                 ]);
             }
+
+            app(UpdateTaskFilesAction::class)->fill(['task' => $task, 'taskFiles'=> $this->taskFiles, 'filesToUpload' => $this->filesToUpload])->run();
             \DB::commit();
         } catch (\Exception $e) {
             \DB::rollBack();

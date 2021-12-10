@@ -4,6 +4,7 @@ namespace Xguard\LaravelKanban\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Xguard\LaravelKanban\AWSStorage\S3Storage;
 use Xguard\LaravelKanban\Models\Task;
 use Xguard\LaravelKanban\Actions\Tasks\PlaceTaskAction;
 use Xguard\LaravelKanban\Actions\Tasks\CreateTaskAction;
@@ -58,20 +59,23 @@ class TaskController extends Controller
     public function createBacklogTaskCards(Request $request)
     {
         try {
-            $backlogTaskData = $request->all();
+            $taskFilesToUpload = $request->file('file');
+            $taskCard = json_decode(file_get_contents($request->file('taskCardData')), true);
             app(CreateTaskAction::class)->fill([
                 'assignedTo' => null,
-                'associatedTask' => $backlogTaskData['associatedTask'],
-                'badge' => $backlogTaskData['badge'],
+                'associatedTask' => $taskCard['associatedTask'],
+                'badge' => $taskCard['badge'],
                 'columnId' => null,
-                'deadline' => $backlogTaskData['deadline'],
-                'description' => $backlogTaskData['shared_task_data']['description'],
-                'erpEmployees' => $backlogTaskData['shared_task_data']['erp_employees'],
-                'erpContracts' => $backlogTaskData['shared_task_data']['erp_contracts'],
-                'name' => $backlogTaskData['name'],
+                'deadline' => $taskCard['deadline'],
+                'description' => $taskCard['shared_task_data']['description'],
+                'erpEmployees' => $taskCard['shared_task_data']['erp_employees'],
+                'erpContracts' => $taskCard['shared_task_data']['erp_contracts'],
+                'name' => $taskCard['name'],
                 'rowId' => null,
-                'selectedKanbans' => $backlogTaskData['selectedKanbans'],
-                'timeEstimate' =>  $backlogTaskData['time_estimate'],
+                'selectedKanbans' => $taskCard['selectedKanbans'],
+                'timeEstimate' =>  $taskCard['time_estimate'],
+                'taskFiles'=>  null,
+                'filesToUpload'=>  $taskFilesToUpload,
             ])->run();
         } catch (\Exception $e) {
             return response([
@@ -85,7 +89,8 @@ class TaskController extends Controller
     public function createTaskCard(Request $request)
     {
         try {
-            $taskCard = $request->all();
+            $taskFilesToUpload = $request->file('file');
+            $taskCard = json_decode(file_get_contents($request->file('taskCardData')), true);
             $selectedKanban = [];
             $board = ['id'=>$taskCard['boardId']];
             array_push($selectedKanban, $board);
@@ -102,6 +107,9 @@ class TaskController extends Controller
                 'rowId' => $taskCard['selectedRowId'],
                 'selectedKanbans' => $selectedKanban,
                 'timeEstimate' =>  $taskCard['time_estimate'],
+                'taskFiles'=>  null,
+                'filesToUpload'=>  $taskFilesToUpload,
+
             ])->run();
         } catch (\Exception $e) {
             return response([
@@ -114,9 +122,9 @@ class TaskController extends Controller
 
     public function updateTaskCard(Request $request)
     {
-        $taskCard = $request->all();
-
         try {
+            $taskFilesToUpload = $request->file('file');
+            $taskCard = json_decode(file_get_contents($request->file('taskCardData')), true);
             app(UpdateTaskAction::class)->fill([
                 'assignedTo' => $taskCard['assigned_to'],
                 'badge' => $taskCard['badge'],
@@ -131,6 +139,9 @@ class TaskController extends Controller
                 'taskId' => $taskCard['id'],
                 'sharedTaskDataId' => $taskCard['shared_task_data_id'],
                 'timeEstimate' =>  $taskCard['time_estimate'],
+                'taskFiles'=>  $taskCard['task_files'],
+                'filesToUpload'=>  $taskFilesToUpload,
+
             ])->run();
         } catch (\Exception $e) {
             return response([

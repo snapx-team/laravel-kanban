@@ -95,4 +95,16 @@ class TaskVersion extends Model
     {
         return Carbon::parse($value)->format('c');
     }
+
+    public function taskFiles(): HasMany
+    {
+        return $this->hasMany(TaskFile::class, 'task_id', 'task_id');
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->HasMany(Comment::class, 'task_id', 'task_id');
+    }
+
+
 }

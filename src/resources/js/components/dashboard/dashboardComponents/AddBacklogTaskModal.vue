@@ -160,7 +160,8 @@
 
                             <div class="flex flex-wrap">
                                 <div class="flex-1 space-y-2 pr-2">
-                                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline *</span>
+                                    <span
+                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline *</span>
                                     <date-picker format="YYYY-MM-DD HH:mm"
                                                  placeholder="YYYY-MM-DD HH:mm"
                                                  type="datetime"
@@ -168,7 +169,8 @@
                                 </div>
 
                                 <div class="space-y-2">
-                                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Time Estimate</span>
+                                    <span
+                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Time Estimate</span>
                                     <counter v-model="task.time_estimate"></counter>
                                 </div>
                             </div>
@@ -223,7 +225,6 @@
                                         </vSelect>
                                     </div>
                                 </div>
-
                             </div>
 
                             <div class="flex-1" v-if="checkedOptions.includes('Group')">
@@ -255,6 +256,18 @@
                                         </template>
                                     </vSelect>
                                 </div>
+                            </div>
+
+                            <div class="flex-1" v-if="checkedOptions.includes('Upload Files')">
+                                <file-pond
+                                    name="filepond"
+                                    ref="pond"
+                                    allow-multiple="true"
+                                    credits=false
+                                    maxFileSize="5MB"
+                                    imagePreviewHeight="100"
+                                    @updatefiles="updateFiles"
+                                />
                             </div>
 
                             <div class="w-full grid sm:grid-cols-2 gap-3 sm:gap-3">
@@ -310,6 +323,7 @@ export default {
                 {name: 'ERP Employee',},
                 {name: 'ERP Contract',},
                 {name: 'Group',},
+                {name: 'Upload Files',}
             ],
             checkedOptions: [],
             config: {
@@ -341,6 +355,8 @@ export default {
                     erp_contracts: [],
                 },
                 time_estimate: 0,
+                attachedFiles: [],
+                filesToUpload: []
             },
             badges: [],
             erpEmployees: [],
@@ -371,6 +387,14 @@ export default {
     },
 
     methods: {
+        updateFiles(files) {
+            // all new files to upload
+            this.cloneCardData.filesToUpload = files.filter(function (file) {
+                // We don't want any files over 5mb
+                return (file.fileSize < 5000000);
+            });
+        },
+
         saveBacklogTask(event) {
 
             let isValid = this.validateCreateOrUpdateTaskEvent(this.task, this.checkedOptions)

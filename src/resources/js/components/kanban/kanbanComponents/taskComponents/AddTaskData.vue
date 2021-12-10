@@ -61,7 +61,8 @@
                 <div>
                     <div class="flex-grow space-y-2">
                         <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Description*</span>
-                        <quill-editor v-model="cloneCardData.shared_task_data.description" :options="config"
+                        <quill-editor v-model="cloneCardData.shared_task_data.description"
+                                      :options="config"
                                       output="html"></quill-editor>
                     </div>
                 </div>
@@ -69,14 +70,13 @@
                 <div class="flex space-x-3">
                     <div class="flex-1 space-y-2">
                         <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Assign employees</span>
-                        <vSelect
-                            v-model="cloneCardData.assigned_to"
-                            multiple
-                            :options="kanbanData.members"
-                            :getOptionLabel="opt => opt.employee.user.full_name"
-                            style="margin-top: 7px"
-                            placeholder="Select one or more kanban members"
-                            class="text-gray-400">
+                        <vSelect v-model="cloneCardData.assigned_to"
+                                 multiple
+                                 :options="kanbanData.members"
+                                 :getOptionLabel="opt => opt.employee.user.full_name"
+                                 style="margin-top: 7px"
+                                 placeholder="Select one or more kanban members"
+                                 class="text-gray-400">
                             <template slot="option" slot-scope="option">
                                 <avatar :name="option.employee.user.full_name" :size="4"
                                         class="mr-3 m-1 float-left"></avatar>
@@ -92,7 +92,8 @@
                 <div class="flex flex-wrap">
 
                     <div class="flex-1 space-y-2 pr-2">
-                        <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline *</span>
+                        <span
+                            class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Deadline *</span>
                         <date-picker type="datetime" v-model="cloneCardData.deadline"
                                      placeholder="YYYY-MM-DD HH:mm"
                                      format="YYYY-MM-DD HH:mm"></date-picker>
@@ -151,6 +152,19 @@
                     </div>
                 </div>
 
+                <div class="flex-1" v-if="checkedOptions.includes('Upload Files')">
+                    <file-pond
+                        name="filepond"
+                        ref="pond"
+                        allow-multiple="true"
+                        :files="formattedFiles"
+                        credits=false
+                        maxFileSize="5MB"
+                        imagePreviewHeight="100"
+                        @updatefiles="updateFiles"
+                    />
+                </div>
+
                 <div class="w-full grid sm:grid-cols-2 gap-3 sm:gap-3">
                     <button
                         @click="cancel($event)"
@@ -197,6 +211,7 @@ export default {
             taskOptions: [
                 {name: 'ERP Employee',},
                 {name: 'ERP Contract',},
+                {name: 'Upload Files',}
             ],
             checkedOptions: [],
             config: {
@@ -219,6 +234,7 @@ export default {
             erpEmployees: [],
             erpContracts: [],
             tasks: [],
+            formattedFiles: []
         };
     },
     created() {
@@ -232,17 +248,26 @@ export default {
             this.checkedOptions.push('ERP Contract');
         if (this.cloneCardData.shared_task_data.erp_employees.length)
             this.checkedOptions.push('ERP Employee');
+        if (this.cloneCardData.task_files.length)
+            this.checkedOptions.push('Upload Files');
 
         this.getErpEmployees();
         this.getContracts();
         this.getBadges();
+        this.formatFilesForFilepond();
 
         this.eventHub.$on("update-add-task-data-with-group-data", (cardData) => {
             this.cloneCardData = cardData;
         });
     },
 
+    beforeDestroy() {
+        this.eventHub.$off('update-add-task-data-with-group-data');
+    },
+
+
     computed: {
+
         computedBadges() {
             return this.badges.map(badge => {
                 let computedBadges = {};
@@ -267,6 +292,41 @@ export default {
         },
     },
     methods: {
+
+        formatFilesForFilepond() {
+            this.formattedFiles = []
+            this.cloneCardData.task_files.forEach((file, index) => {
+
+                this.formattedFiles.push({
+                    source: file.full_url,
+                    options: {
+                        metadata: {
+                            path: file.task_file_url,
+                            id: file.id
+                        },
+                    }
+                })
+
+            })
+        },
+
+        updateFiles(files) {
+
+            // all new files to upload
+            this.cloneCardData.filesToUpload = files.filter(function( file ) {
+                // all new files don't have ids, and we don't want any files over 5mb
+                return (file.getMetadata('id') === undefined && file.fileSize < 5000000);
+            });
+
+            // getting all the existing file ids from files metadata
+            let existingFileIds = files.map(file => file.getMetadata('id')).filter( Number );
+
+            // filtering the task_files to not include remove files
+            this.cloneCardData.task_files = this.cloneCardData.task_files.filter(function(file){
+                return existingFileIds.includes(file.id);
+            });
+        },
+
         onTypeEmployee(search, loading) {
             if (search.length) {
                 loading(true);
@@ -276,11 +336,7 @@ export default {
         typeEmployee: _.debounce(function (search, loading, vm) {
             this.asyncGetSomeUsers(search).then((data) => {
                 this.erpEmployees = data.data;
-            })
-                .catch(res => {
-                    console.log(res)
-                })
-                .then(function () {
+            }).then(function () {
                     setTimeout(500);
                     loading(false);
                 });
@@ -294,11 +350,7 @@ export default {
         typeContract: _.debounce(function (search, loading, vm) {
             this.asyncGetSomeContracts(search).then((data) => {
                 this.erpContracts = data.data;
-            })
-                .catch(res => {
-                    console.log(res)
-                })
-                .then(function () {
+            }).then(function () {
                     setTimeout(500);
                     loading(false);
                 });
@@ -322,33 +374,25 @@ export default {
         getBadges() {
             this.asyncGetBadges().then((data) => {
                 this.badges = data.data;
-            }).catch(res => {
-                console.log(res)
-            });
+            })
         },
 
         getErpEmployees() {
             this.asyncGetAllUsers().then((data) => {
                 this.erpEmployees = data.data;
-            }).catch(res => {
-                console.log(res)
-            });
+            })
         },
 
         getContracts() {
             this.asyncGetAllContracts().then((data) => {
                 this.erpContracts = data.data;
-            }).catch(res => {
-                console.log(res)
-            });
+            })
         },
 
         getTasks() {
             this.asyncGetAllTasks().then((data) => {
                 this.tasks = data.data;
-            }).catch(res => {
-                console.log(res)
-            });
+            })
         },
 
         removeNotNeededData() {
@@ -366,4 +410,3 @@ export default {
     },
 };
 </script>
-
