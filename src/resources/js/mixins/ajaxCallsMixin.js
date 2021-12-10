@@ -216,14 +216,13 @@ export const ajaxCalls = {
                 type: 'application/json'
             });
             let formData = new FormData();
-
             if ($data['filesToUpload'] !== undefined) {
                 for (const file of $data['filesToUpload']) {
                     formData.append('file[]', file.file, file.filename);
                 }
             }
-            formData.append('taskCardData', blob);
 
+            formData.append('taskCardData', blob);
             return formData;
         },
 

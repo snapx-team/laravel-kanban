@@ -116,8 +116,9 @@ class CreateTaskAction extends Action
                     "log_id" => $log->id,
                     'time_estimate' => $this->timeEstimate
                 ]);
+
+                app(UpdateTaskFilesAction::class)->fill(['task' => $task, 'taskFiles'=> $this->taskFiles, 'filesToUpload' => $this->filesToUpload])->run();
             }
-            app(UpdateTaskFilesAction::class)->fill(['task' => $task, 'taskFiles'=> $this->taskFiles, 'filesToUpload' => $this->filesToUpload])->run();
             \DB::commit();
         } catch (\Exception $e) {
             \DB::rollBack();

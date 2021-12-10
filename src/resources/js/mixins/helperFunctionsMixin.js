@@ -20,7 +20,6 @@ export const helperFunctions = {
 
         validateCreateOrUpdateTaskEvent(task, checkedOptions) {
 
-            console.log(task);
             let errorCount = 0;
 
             if (!(task.name)) {

@@ -355,7 +355,6 @@ export default {
                     erp_contracts: [],
                 },
                 time_estimate: 0,
-                attachedFiles: [],
                 filesToUpload: []
             },
             badges: [],
@@ -389,7 +388,7 @@ export default {
     methods: {
         updateFiles(files) {
             // all new files to upload
-            this.cloneCardData.filesToUpload = files.filter(function (file) {
+            this.task.filesToUpload = files.filter(function (file) {
                 // We don't want any files over 5mb
                 return (file.fileSize < 5000000);
             });
@@ -416,7 +415,8 @@ export default {
                         erp_employees: [],
                         erp_contracts: [],
                     },
-                    time_estimate: 0
+                    time_estimate: 0,
+                    filesToUpload: []
                 }
                 this.checkedOptions = [];
                 this.selectedTemplate = null;

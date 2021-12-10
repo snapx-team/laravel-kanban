@@ -35,8 +35,6 @@ import FilePondPluginFileMetadata from 'filepond-plugin-file-metadata';
 import FilePondPluginGetFile from 'filepond-plugin-get-file';
 import FilePondPluginImageOverlay from 'filepond-plugin-image-overlay';
 
-
-
 const FilePond = vueFilePond(
     FilePondPluginFileValidateType,
     FilePondPluginImagePreview,
