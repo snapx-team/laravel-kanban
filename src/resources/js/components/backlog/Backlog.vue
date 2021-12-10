@@ -286,8 +286,6 @@
                                     </div>
                                 </div>
                             </div>
-
-
                         </pane>
                         <pane v-if="showTaskPane">
                             <task-pane :badges="backlogData.badges"
