@@ -4,33 +4,22 @@ namespace Xguard\LaravelKanban\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Xguard\LaravelKanban\Models\Member;
-use Xguard\LaravelKanban\Models\Log;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Collection;
+use Illuminate\HTTP\Response;
+use Xguard\LaravelKanban\Actions\Members\CreateMembersAction;
+use Xguard\LaravelKanban\Actions\ErpShareables\DeleteMemberAction;
+use Xguard\LaravelKanban\Repositories\MembersRepository;
 
 class MemberController extends Controller
 {
-    public function createMembers(Request $request, $boardId)
+    public function createMembers(Request $request, $boardId): Response
     {
-        $members = $request->all();
+        $employees = $request->all();
         try {
-            foreach ($members as $employee) {
-                $member = Member::with('employee.user', 'board')->firstOrCreate([
-                    'employee_id' => $employee['id'],
-                    'board_id' => $boardId,
-                ]);
-
-                if ($member->wasRecentlyCreated) {
-                    Log::createLog(
-                        Auth::user()->id,
-                        Log::TYPE_KANBAN_MEMBER_CREATED,
-                        'Added a new member [' . $member->employee->user->full_name . '] to board [' . $member->board->name . ']',
-                        $member->employee_id,
-                        $member->board_id,
-                        'Xguard\LaravelKanban\Models\Board'
-                    );
-                }
-            }
+            app(CreateMembersAction::class)->fill([
+                'employees' => $employees,
+                'boardId' => $boardId
+            ])->run();
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
@@ -40,20 +29,10 @@ class MemberController extends Controller
         return response(['success' => 'true'], 200);
     }
 
-    public function deleteMember($id)
+    public function deleteMember($id): Response
     {
         try {
-            $member = Member::with('employee.user', 'board')->get()->find($id);
-            $member->delete();
-
-            Log::createLog(
-                Auth::user()->id,
-                Log::TYPE_KANBAN_MEMBER_DELETED,
-                'Deleted member [' . $member->employee->user->full_name . '] from board [' . $member->board->name . ']',
-                $member->employee_id,
-                $member->board_id,
-                'Xguard\LaravelKanban\Models\Board'
-            );
+            app(DeleteMemberAction::class)->fill(['memberId' => $id])->run();
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
@@ -63,27 +42,13 @@ class MemberController extends Controller
         return response(['success' => 'true'], 200);
     }
 
-    public function getMembers($id)
+    public function getMembers($id): Collection
     {
-        return Member::where('board_id', $id)
-            ->with(['employee.user' => function ($q) {
-                $q->select(['id', 'first_name', 'last_name']);
-            }])->get();
+        return MembersRepository::getMembers($id);
     }
 
-    public function getMembersFormattedForQuill($id)
+    public function getMembersFormattedForQuill($id): Collection
     {
-        $members = Member::where('board_id', $id)
-            ->with(['employee.user' => function ($q) {
-                $q->select(['id', 'first_name', 'last_name']);
-            }])->get();
-
-        $formattedBoardMembers= [];
-        foreach ($members as $member) {
-            array_push($formattedBoardMembers, ['id' => $member->employee->id, 'value' => $member->employee->user->full_name]);
-
-        }
-
-        return $formattedBoardMembers;
+        return MembersRepository::getMembersFormattedForQuill($id);
     }
 }
