@@ -1,6 +1,6 @@
 <?php
 
-namespace Xguard\LaravelKanban\Actions\Notifications;
+namespace Xguard\LaravelKanban\Actions\EmployeeBoardNotificationSettings;
 
 use DB;
 use Exception;
