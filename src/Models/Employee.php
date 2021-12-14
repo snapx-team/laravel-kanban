@@ -32,7 +32,10 @@ class Employee extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->withDefault(function ($user) {
+            $user->first_name = 'DELETED';
+            $user->last_name = 'USER';
+        });
     }
 
     public function employee(): BelongsTo

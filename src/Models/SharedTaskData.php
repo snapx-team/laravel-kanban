@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class SharedTaskData extends Model
 {
     use SoftDeletes, CascadeSoftDeletes;
-    
+
     protected $dates = ['deleted_at'];
 
     protected $table = 'kanban_shared_task_data';

@@ -65,10 +65,10 @@ class GetEstimatedHoursCompletedByEmployeesAction extends Action
             foreach ($log->loggable->assignedTo as $employee) {
                 // check whether card estimate greater than 0 and if original task status is still completed
                 if ($log->loggable->time_estimate > 0 && $log->loggable->status === 'completed') {
-                    if (array_key_exists($employee['employee']['user']['email'], $hits)) {
-                        $hits[$employee['employee']['user']['email']] += $log->loggable->time_estimate;
+                    if (array_key_exists($employee['employee']['user']['id'], $hits)) {
+                        $hits[$employee['employee']['user']['id']] += $log->loggable->time_estimate;
                     } else {
-                        $hits[$employee['employee']['user']['email']] = $log->loggable->time_estimate;
+                        $hits[$employee['employee']['user']['id']] = $log->loggable->time_estimate;
                         array_push($names, $employee['employee']['user']['full_name']);
                     }
                 }

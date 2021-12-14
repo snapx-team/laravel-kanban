@@ -61,10 +61,10 @@ class GetClosedTasksByAssignedToAction extends Action
             foreach ($log->loggable->assignedTo as $employee) {
                 // check if original task status is still completed
                 if ($log->loggable->status === 'completed') {
-                    if (array_key_exists($employee['employee']['user']['email'], $hits)) {
-                        $hits[$employee['employee']['user']['email']] += 1;
+                    if (array_key_exists($employee['employee']['user']['id'], $hits)) {
+                        $hits[$employee['employee']['user']['id']] += 1;
                     } else {
-                        $hits[$employee['employee']['user']['email']] = 1;
+                        $hits[$employee['employee']['user']['id']] = 1;
                         array_push($names, $employee['employee']['user']['full_name']);
                     }
                 }

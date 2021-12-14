@@ -6,9 +6,9 @@ use JsonSerializable;
 
 class ErpUser implements JsonSerializable
 {
-    private $id;
-    private $firstName;
-    private $lastName;
+    private int $id;
+    private string $firstName;
+    private string $lastName;
 
     public function __construct(int $id, string $firstName, string $lastName)
     {
@@ -17,10 +17,11 @@ class ErpUser implements JsonSerializable
         $this->lastName = $lastName;
     }
 
-    public function jsonSerialize() {
+    public function jsonSerialize(): array
+    {
         return [
             'id' => $this->id,
-            'fullName' => $this->getFullName(),
+            'full_name' => $this->getFullName(),
         ];
     }
 

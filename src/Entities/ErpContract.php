@@ -6,8 +6,8 @@ use JsonSerializable;
 
 class ErpContract implements JsonSerializable
 {
-    private $id;
-    private $contractIdentifier;
+    private int $id;
+    private string $contractIdentifier;
 
     public function __construct(int $id, string $contractIdentifier)
     {
@@ -15,14 +15,15 @@ class ErpContract implements JsonSerializable
         $this->contractIdentifier = $contractIdentifier;
     }
 
-    public function jsonSerialize() {
+    public function jsonSerialize(): array
+    {
         return [
             'id' => $this->id,
-            'contractIdentifier' => $this->contractIdentifier
+            'contract_identifier' => $this->contractIdentifier
         ];
     }
 
-    public function setId(int $id) : void 
+    public function setId(int $id) : void
     {
         $this->id = $id;
     }

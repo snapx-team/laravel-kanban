@@ -190,16 +190,16 @@
                                 v-model="filters.filterErpEmployee"
                                 multiple
                                 :options="erpEmployees"
-                                :getOptionLabel="opt => opt.fullName"
-                                label="fullName"
+                                :getOptionLabel="opt => opt.full_name"
+                                label="full_name"
                                 placeholder="Filter By ERP Employees"
                                 @search="onTypeEmployee"
                                 @input="filterTrigger()"
                                 class="w-72 flex-grow text-gray-400">
                                 <template slot="option" slot-scope="option">
-                                    <avatar :name="option.fullName" :size="4"
+                                    <avatar :name="option.full_name" :size="4"
                                             class="mr-3 m-1 float-left"></avatar>
-                                    <p class="inline">{{ option.fullName }}</p>
+                                    <p class="inline">{{ option.full_name }}</p>
                                 </template>
                                 <template #no-options="{ search, searching, loading }">
                                     No result .
@@ -213,16 +213,16 @@
                                 v-model="filters.filterErpContract"
                                 multiple
                                 :options="erpContracts"
-                                :getOptionLabel="opt => opt.contractIdentifier"
-                                label="contractIdentifier"
+                                :getOptionLabel="opt => opt.contract_identifier"
+                                label="contract_identifier"
                                 placeholder="Filter By ERP Contracts"
                                 @search="onTypeContract"
                                 @input="filterTrigger()"
                                 class="w-72 flex-grow text-gray-400">
                                 <template slot="option" slot-scope="option">
-                                    <avatar :name="option.contractIdentifier" :size="4"
+                                    <avatar :name="option.contract_identifier" :size="4"
                                             class="mr-3 m-1 float-left"></avatar>
-                                    <p class="inline">{{ option.contractIdentifier }}</p>
+                                    <p class="inline">{{ option.contract_identifier }}</p>
                                 </template>
                                 <template #no-options="{ search, searching, loading }">
                                     No result .
@@ -422,7 +422,7 @@ export default {
                 this.pageNumber = 1;
                 this.backlogTaskList = [];
 
-                await this.asyncGetBacklogData(this.startTime, this.endTime,).then((data) => {
+                await this.asyncGetBacklogData(this.startTime, this.endTime).then((data) => {
                     this.backlogData = data.data;
                     this.eventHub.$emit("set-loading-state", false);
                     this.getMoreBacklogTasks();
@@ -439,16 +439,13 @@ export default {
             }
             this.isLoadingTasks = true;
 
-
             tokenSource = cancellationToken.source();
             this.asyncGetBacklogTasks(this.pageNumber, this.filters, tokenSource.token).then((data) => {
                 this.pageNumber++;
                 this.backlogData.backlogTasks = data.data;
                 this.backlogTaskList = this.backlogTaskList.concat(this.backlogData.backlogTasks.data);
                 this.isLoadingTasks = false;
-            }).catch((error) => {
-                console.log(error);
-            });
+            })
         },
 
         visibilityChanged(isVisible, entry) {

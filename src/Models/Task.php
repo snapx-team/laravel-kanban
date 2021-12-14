@@ -49,7 +49,10 @@ class Task extends Model
 
     public function reporter(): BelongsTo
     {
-        return $this->belongsTo(Employee::class, 'reporter_id');
+        return $this->belongsTo(Employee::class, 'reporter_id')->withDefault(function ($reporter) {
+            $reporter->user->first_name = 'DELETED';
+            $reporter->user->last_name = 'USER';
+        });
     }
 
     public function badge(): BelongsTo
@@ -62,11 +65,6 @@ class Task extends Model
         return $this->belongsTo(Board::class, 'board_id');
     }
 
-    public function erpEmployee(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'erp_employee_id');
-    }
-
     public function column(): BelongsTo
     {
         return $this->belongsTo(Column::class);
@@ -75,11 +73,6 @@ class Task extends Model
     public function row(): BelongsTo
     {
         return $this->belongsTo(Row::class);
-    }
-
-    public function erpContract(): BelongsTo
-    {
-        return $this->belongsTo(Contract::class, 'erp_contract_id');
     }
 
     public function assignedTo(): BelongsToMany

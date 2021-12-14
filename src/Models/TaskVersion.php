@@ -63,7 +63,10 @@ class TaskVersion extends Model
 
     public function reporter(): BelongsTo
     {
-        return $this->belongsTo(Employee::class, 'reporter_id');
+        return $this->belongsTo(Employee::class, 'reporter_id')->withDefault(function ($reporter) {
+            $reporter->user->first_name = 'DELETED';
+            $reporter->user->last_name = 'USER';
+        });
     }
 
     public function badge(): BelongsTo
