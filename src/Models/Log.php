@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Xguard\LaravelKanban\Actions\Notifications\NotifyEmployeesAction;
-use Xguard\LaravelKanban\Models\Task;
+use Xguard\LaravelKanban\Repositories\LogsRepository;
 
 /**
  * @property int $task_id
@@ -87,7 +87,7 @@ class Log extends Model
         string $loggableType
     ) {
 
-        $log = Log::create([
+        $log = LogsRepository::create([
             'user_id' => $userId,
             'log_type' => $logType,
             'description' => $description,

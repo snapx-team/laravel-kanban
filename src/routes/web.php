@@ -29,7 +29,7 @@ Route::group(['prefix' => 'kanban',], function () {
                 //Notifications
                 Route::get('/get-notif-data/{logType}', 'NotificationController@getNotificationData');
                 Route::get('/get-notif-count', 'NotificationController@getNotificationCount');
-                Route::post('/update-notif-count', 'NotificationController@updateNotificationCount');
+                Route::post('/update-notif-count', 'NotificationController@updateLastNotificationCheck');
                 Route::get(
                     '/get-boards-with-employee-notification-settings',
                     'NotificationController@getBoardsWithEmployeeNotificationSettings'
@@ -41,8 +41,10 @@ Route::group(['prefix' => 'kanban',], function () {
 
                 // Metrics
                 Route::get('/get-badge-data/{start}/{end}', 'MetricsController@getBadgeData');
-                Route::get('/get-tasks-created-by-employee/{start}/{end}',
-                    'MetricsController@getTasksCreatedByEmployee');
+                Route::get(
+                    '/get-tasks-created-by-employee/{start}/{end}',
+                    'MetricsController@getTasksCreatedByEmployee'
+                );
                 Route::get('/get-peak-hours-tasks-created/{start}/{end}', 'MetricsController@getPeakHoursTasksCreated');
                 Route::get('/get-contract-data/{start}/{end}', 'MetricsController@getContractData');
                 Route::get('/get-closed-by-employee/{start}/{end}', 'MetricsController@getClosedTasksByAssignedTo');

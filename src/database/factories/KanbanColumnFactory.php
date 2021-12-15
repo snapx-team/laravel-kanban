@@ -3,7 +3,6 @@
 /** @var Factory $factory */
 
 use Faker\Generator as Faker;
-use Illuminate\Database\Eloquent\Factory;
 use Xguard\LaravelKanban\Models\Column;
 use Xguard\LaravelKanban\Models\Row;
 
