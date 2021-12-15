@@ -5,7 +5,8 @@
                     :kanbanName="kanban.name"
                     :loadingMembers="loadingMembers"></kanban-bar>
 
-        <draggable @end="getRowChangeData($event)"
+        <draggable @start="isDraggingRow = true"
+                   @end="getRowChangeData($event)"
                    :animation="200"
                    :list="kanban.rows"
                    class="h-full list-group"
@@ -41,32 +42,33 @@
                 <div class="flex flex-wrap" :class="{ 'hidden' : collapsedRows.includes(row.id)  }">
                     <div class="space-x-2  flex flex-1 flex-col pt-3 pb-2 overflow-x-auto overflow-y-hidden">
 
-                        <draggable :animation="200"
+                        <draggable @start="isDraggingColumn = true"
+                                   @end="getColumnChangeData($event, rowIndex)"
+                                   :animation="200"
                                    class="h-full list-group flex"
                                    ghost-class="ghost-card"
                                    :list="row.columns"
                                    :group="'row-'+ row.id"
                                    :disabled="isDraggableDisabled || $role !== 'admin'"
-                                   @end="getColumnChangeData($event, rowIndex)"
                                    :options="draggableOptions">
                             <div :key="column.id"
                                  class="flex flex-col flex-1 bg-gray-200 px-3 py-3 column-width rounded mr-4 overflow-y-auto overflow-x-hidden"
                                  style="max-height: 800px"
                                  v-for="(column, columnIndex) in row.columns">
-                                    <div class="flex" v-if="loadingCards.columnId === column.id && loadingCards.isLoading ">
-                                        <p class="flex-auto text-gray-700 font-semibold font-sans tracking-wide pt-1 animate-pulse">
-                                            Loading... </p>
-                                    </div>
-                                    <div class="flex" v-else>
+                                <div class="flex" v-if="loadingCards.columnId === column.id && loadingCards.isLoading ">
+                                    <p class="flex-auto text-gray-700 font-semibold font-sans tracking-wide pt-1 animate-pulse">
+                                        Loading... </p>
+                                </div>
+                                <div class="flex" v-else>
 
-                                        <p class="flex-auto text-gray-700 font-semibold font-sans tracking-wide pt-1">
-                                            {{ column.name }} </p>
+                                    <p class="flex-auto text-gray-700 font-semibold font-sans tracking-wide pt-1">
+                                        {{ column.name }} </p>
 
-                                        <button @click="createTaskCard(rowIndex, columnIndex)"
-                                                class="w-6 h-6 bg-blue-200 rounded-full hover:bg-blue-300 mouse transition ease-in duration-200 focus:outline-none">
-                                            <i class="fas fa-plus text-white"></i>
-                                        </button>
-                                    </div>
+                                    <button @click="createTaskCard(rowIndex, columnIndex)"
+                                            class="w-6 h-6 bg-blue-200 rounded-full hover:bg-blue-300 mouse transition ease-in duration-200 focus:outline-none">
+                                        <i class="fas fa-plus text-white"></i>
+                                    </button>
+                                </div>
 
                                 <draggable :animation="200"
                                            :disabled="isDraggableDisabled"
@@ -75,7 +77,8 @@
                                            class="list-group flex-col flex-1"
                                            ghost-class="ghost-card"
                                            group="tasks"
-                                           @start="start"
+                                           @start="taskDragStart"
+                                           @end="isDraggingTask=false"
                                            :options="draggableOptions">
                                     <task-card :class="{'opacity-60':isDraggableDisabled}"
                                                :key="task_card.id"
@@ -146,8 +149,11 @@ export default {
             loadingCards: {columnId: null, isLoading: false},
             loadingMembers: {memberId: null, isLoading: false},
             isDraggableDisabled: false,
-            collapsedRows:[],
-            drag: false
+            collapsedRows: [],
+            kanbanHash: null,
+            isDraggingRow: false,
+            isDraggingColumn: false,
+            isDraggingTask: false
         };
     },
 
@@ -155,7 +161,9 @@ export default {
         this.getKanban(this.id);
         if (localStorage.collapsedRows) {
             this.collapsedRows = localStorage.collapsedRows.split(',').map(Number);
-        };
+        }
+        this.getAndVerifyKanbanHash()
+        this.checkKanbanChange();
     },
 
     watch: {
@@ -186,10 +194,9 @@ export default {
         this.eventHub.$on("delete-row", (rowData) => {
             this.deleteRow(rowData);
         });
-        this.eventHub.$on("fetch-and-set-column-tasks", (task)=> {
+        this.eventHub.$on("fetch-and-set-column-tasks", (task) => {
             this.fetchAndSetColumnTasks(task);
         });
-
     },
 
     beforeDestroy() {
@@ -200,12 +207,12 @@ export default {
         this.eventHub.$off('save-row-and-columns');
         this.eventHub.$off('update-task-card-data');
         this.eventHub.$off('delete-row');
-
+        this.$crontab.deleteJob('checkKanbanChange');
     },
 
-    computed:{
-        draggableOptions(){
-            if(this.$device.mobile || this.$device.ios || this.$device.android) {
+    computed: {
+        draggableOptions() {
+            if (this.$device.mobile || this.$device.ios || this.$device.android) {
                 return {delay: 400}
             }
         }
@@ -213,8 +220,41 @@ export default {
 
     methods: {
 
-        start() {
+        taskDragStart() {
+            this.isDraggingTask = true;
             navigator.vibrate(200);
+        },
+
+        checkKanbanChange() {
+            this.$crontab.addJob({
+                name: 'checkKanbanChange',
+                auto_start: true,
+                interval: {
+                    seconds: '/3',
+                },
+                job: this.getAndVerifyKanbanHash
+            });
+        },
+
+        getAndVerifyKanbanHash() {
+            this.asyncGetAndVerifyKanbanHash(this.id).then((data) => {
+                if (data.status === 200) {
+                    let isLoading = (this.isDraggingTask || this.isDraggingColumn || this.isDraggingRow || this.isDraggableDisabled)
+                    if (this.kanbanHash === null) {
+                        this.kanbanHash = data.data;
+                    } else if (data.data !== this.kanbanHash) {
+                        if (!isLoading) {
+                            this.kanbanHash = data.data;
+                            console.log('UPDATING KANBAN')
+
+                            this.asyncGetkanbanData(this.id).then((data) => {
+                                this.kanban = {};
+                                this.kanban = data.data;
+                            })
+                        }
+                    }
+                }
+            })
         },
 
         createTaskCard(rowIndex, columnIndex) {
@@ -236,6 +276,7 @@ export default {
                 boardId
             });
         },
+
         createRowAndColumns(rowIndex, rowColumns, rowId, rowName, boardId = this.kanban.id) {
             this.eventHub.$emit("create-row-and-columns", {
                 rowIndex,
@@ -248,12 +289,12 @@ export default {
 
         // Whenever a user drags a card
         getTaskChangeData(event, columnIndex, rowIndex) {
+
+            this.isDraggableDisabled = true;
             let eventName = Object.keys(event)[0];
             let taskCardData = this.kanban.rows[rowIndex].columns[columnIndex].task_cards;
             let columnId = this.kanban.rows[rowIndex].columns[columnIndex].id;
             let rowId = this.kanban.rows[rowIndex].id
-            this.isDraggableDisabled = true;
-
 
             switch (eventName) {
                 case "moved":
@@ -267,9 +308,7 @@ export default {
                                 this.asyncGetTaskCardsByColumn(columnId).then((data) => {
                                     this.kanban.rows[rowIndex].columns[columnIndex].task_cards = data.data;
                                     this.isDraggableDisabled = false
-                                }).catch(res => {
-                                    console.log(res)
-                                });
+                                })
                             });
                         }
                     );
@@ -284,12 +323,11 @@ export default {
 
         // Whenever a user drags a column
         getColumnChangeData(event, rowIndex) {
-
+            this.isDraggingColumn = false;
             if (event.oldIndex !== event.newIndex) {
                 let columns = this.kanban.rows[rowIndex].columns;
                 this.isDraggableDisabled = true;
                 this.asyncUpdateColumnIndexes(columns).then(() => {
-                    this.isDraggableDisabled = false
                     this.getKanban(this.kanban.id);
                 });
             }
@@ -297,10 +335,10 @@ export default {
 
         // Whenever a user drags a row
         getRowChangeData(event) {
+            this.isDraggingRow = false;
             if (event.oldIndex !== event.newIndex) {
                 this.isDraggableDisabled = true
                 this.asyncUpdateRowIndexes(this.kanban.rows).then(() => {
-                    this.isDraggableDisabled = false
                     this.getKanban(this.kanban.id);
                 });
             }
@@ -309,17 +347,12 @@ export default {
         saveMember(selectedMembers) {
             this.loadingMembers = {memberId: null, isLoading: true}
             const cloneSelectedMembers = {...selectedMembers};
-            this.asyncAddMembers(cloneSelectedMembers, this.kanban.id
-            ).then(() => {
+            this.asyncAddMembers(cloneSelectedMembers, this.kanban.id).then(() => {
                 this.asyncGetMembers(this.kanban.id).then((data) => {
                     this.kanban.members = data.data;
                     this.loadingMembers = {memberId: null, isLoading: false}
-                }).catch(res => {
-                    console.log(res)
-                });
-            }).catch(res => {
-                console.log(res)
-            });
+                })
+            })
         },
 
         deleteMember(member) {
@@ -328,23 +361,20 @@ export default {
                 this.asyncGetMembers(this.kanban.id).then((data) => {
                     this.kanban.members = data.data;
                     this.loadingMembers = {memberId: null, isLoading: false};
-                }).catch(res => {
-                    console.log(res)
-                });
-            }).catch(res => {
-                console.log(res)
-            });
-
-            this.getKanban(this.kanban.id);
+                    this.getKanban(this.kanban.id);
+                })
+            })
         },
 
         updateTaskCard(cardData) {
+            this.isDraggableDisabled = true;
             const cloneCardData = {...cardData};
             this.loadingCards = {columnId: cloneCardData.column_id, isLoading: true}
             this.asyncUpdateTask(cloneCardData).then(() => {
                 this.asyncGetTaskCardsByColumn(cloneCardData.column_id).then((data) => {
                     this.kanban.rows[cloneCardData.row.index].columns[cloneCardData.column.index].task_cards = data.data;
                     this.loadingCards = {columnId: null, isLoading: false}
+                    this.isDraggableDisabled = false
                 })
             })
         },
@@ -355,72 +385,65 @@ export default {
             this.asyncCreateTask(taskData).then((data) => {
                 this.asyncGetTaskCardsByColumn(taskData.selectedColumnId).then((data) => {
                     this.kanban.rows[taskData.selectedRowIndex].columns[taskData.selectedColumnIndex].task_cards = data.data;
-                    this.isDraggableDisabled = false
-                }).catch(res => {
-                    console.log(res)
-                });
+                    this.isDraggableDisabled = false;
+                })
             });
         },
 
         saveRowAndColumns(rowData) {
+            this.isDraggableDisabled = true;
             const cloneRowData = {...rowData};
             let rowIndex = cloneRowData.rowIndex;
 
-            if (cloneRowData.rowId !== null)
+            if (cloneRowData.rowId !== null) {
                 this.loadingRow = {rowId: this.kanban.rows[rowIndex].id, isLoading: true}
+            }
 
             this.asyncCreateRowAndColumns(cloneRowData).then((data) => {
 
                 if (cloneRowData.rowId !== null) {
                     this.kanban.rows[rowIndex] = data.data[0];
-
                 } else {
                     this.kanban.rows.push(data.data[0]);
                 }
                 this.loadingRow = {rowId: null, isLoading: false}
-
-            }).catch(res => {
-                console.log(res)
-            });
+                this.isDraggableDisabled = false;
+            })
         },
 
         deleteRow(rowData) {
             this.asyncDeleteRow(rowData.rowId).then(() => {
                 this.getKanban(this.kanban.id);
-            }).catch(res => {
-                console.log(res)
-            });
+            })
         },
 
-        fetchAndSetColumnTasks(task){
+        fetchAndSetColumnTasks(task) {
+            this.isDraggableDisabled = true;
             this.asyncGetTaskCardsByColumn(task.column.id).then((data) => {
                 this.kanban.rows[task.row.index].columns[task.column.index].task_cards = data.data;
                 this.isDraggableDisabled = false
-            }).catch(res => {
-                console.log(res)
-            });
+            })
         },
 
         getKanban(kanbanID) {
+            this.isDraggableDisabled = true
             this.eventHub.$emit("set-loading-state", true);
-
             this.asyncGetkanbanData(kanbanID).then((data) => {
                 this.kanban = data.data;
                 this.eventHub.$emit("set-loading-state", false);
-            }).catch(res => {
-                console.log(res)
-            });
+                this.isDraggableDisabled = false
+            })
         },
 
         openTask(task) {
             this.eventHub.$emit("update-kanban-task-cards", task);
         },
 
-        collapseRow(rowId){
+        collapseRow(rowId) {
 
-            if(!this.collapsedRows.includes(rowId)){          //checking weather array contain the id
+            if (!this.collapsedRows.includes(rowId)) {          //checking weather array contain the id
                 this.collapsedRows.push(rowId);               //adding to array because value doesnt exists
-            }else{
+            } else {
                 this.collapsedRows.splice(this.collapsedRows.indexOf(rowId), 1);  //deleting
             }
         }

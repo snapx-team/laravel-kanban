@@ -135,6 +135,7 @@ export default {
             openTab: 1,
             cardData: Object,
             modalOpen: false,
+            taskHash: null
         };
     },
 
@@ -146,7 +147,8 @@ export default {
 
     created() {
         this.eventHub.$on("update-kanban-task-cards", (task) => {
-            this.$router.replace({name: "board", query: {id: this.kanbanData.id, task: task.id}}).catch(()=>{});
+            this.$router.replace({name: "board", query: {id: this.kanbanData.id, task: task.id}}).catch(() => {
+            });
             this.setCardData(task.id);
         });
 
@@ -161,6 +163,33 @@ export default {
     },
 
     methods: {
+
+        checkTaskHash() {
+            this.$crontab.addJob({
+                name: 'checkTaskHash',
+                auto_start: true,
+                interval: {
+                    seconds: '2',
+                },
+                job: this.getAndVerifyTaskHash
+            });
+        },
+
+        getAndVerifyTaskHash() {
+            this.asyncGetAndVerifyTaskHash(this.taskId).then((data) => {
+
+                if(data.status === 200){
+                    if (this.taskHash === null) {
+                        this.taskHash = data.data;
+                    } else if (data.data !== this.taskHash) {
+                        console.log('UPDATING TASK')
+                        this.taskHash = data.data;
+                        this.eventHub.$emit('external-task-update');
+                        this.triggerInfoToast('Task updated');
+                    }
+                }
+            })
+        },
         toggleTabs: function (tabNumber) {
             this.openTab = tabNumber
         },
@@ -177,14 +206,16 @@ export default {
                     this.cardData = data.data;
                     this.modalOpen = true;
                 }
-            }).catch(res => {
-                console.log(res)
-            });
+                this.checkTaskHash();
+            })
         },
 
-        closeTaskModal(){
-            this.$router.replace({name: "board",query: {id: this.kanbanData.id}}).catch(()=>{});
+        closeTaskModal() {
+            this.$router.replace({name: "board", query: {id: this.kanbanData.id}}).catch(() => {
+            });
             this.modalOpen = false;
+            this.$crontab.deleteJob('checkTaskHash');
+            this.taskHash = null;
         },
 
         copyToClipboard() {

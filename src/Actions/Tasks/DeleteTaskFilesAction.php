@@ -2,6 +2,8 @@
 
 namespace Xguard\LaravelKanban\Actions\Tasks;
 
+use Illuminate\Support\Facades\Auth;
+use Xguard\LaravelKanban\Models\Log;
 use Xguard\LaravelKanban\Models\TaskFile;
 use Lorisleiva\Actions\Action;
 use Xguard\LaravelKanban\AWSStorage\S3Storage;
@@ -25,7 +27,7 @@ class DeleteTaskFilesAction extends Action
     /**
      * Delete file associated with contract.
      *
-     * @return mixed
+     * @return void
      */
     public function handle()
     {
@@ -35,6 +37,15 @@ class DeleteTaskFilesAction extends Action
         foreach ($filesToDelete as $file) {
             $disk->delete($file->task_file_url);
             $file->delete();
+
+            Log::createLog(
+                Auth::user()->id,
+                Log::TYPE_CARD_FILE_REMOVED,
+                'Deleted file  [' . $file->task_file_url . ']',
+                null,
+                $file->task_id,
+                'Xguard\LaravelKanban\Models\Task'
+            );
         }
     }
 }

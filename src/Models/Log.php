@@ -47,6 +47,8 @@ class Log extends Model
     const TYPE_CARD_ASSIGNED_TO_USER = 22;
     const TYPE_CARD_UNASSIGNED_TO_USER = 23;
     const TYPE_CARD_REMOVED_FROM_GROUP = 24;
+    const TYPE_CARD_FILE_ADDED = 25;
+    const TYPE_CARD_FILE_REMOVED= 26;
 
     const TYPE_TEMPLATE_CREATED = 30;
     const TYPE_TEMPLATE_UPDATED = 31;

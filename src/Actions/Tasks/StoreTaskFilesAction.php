@@ -2,8 +2,10 @@
 
 namespace Xguard\LaravelKanban\Actions\Tasks;
 
+use Illuminate\Support\Facades\Auth;
 use Lorisleiva\Actions\Action;
 use Xguard\LaravelKanban\AWSStorage\S3Storage;
+use Xguard\LaravelKanban\Models\Log;
 use Xguard\LaravelKanban\Models\Task;
 
 class StoreTaskFilesAction extends Action
@@ -25,7 +27,7 @@ class StoreTaskFilesAction extends Action
     /**
      * Execute the action and return a result.
      *
-     * @return mixed
+     * @return void
      */
     public function handle()
     {
@@ -38,6 +40,15 @@ class StoreTaskFilesAction extends Action
                 $this->task->taskFiles()->create([
                     'task_file_url' => $path,
                 ]);
+
+                Log::createLog(
+                    Auth::user()->id,
+                    Log::TYPE_CARD_FILE_ADDED,
+                    'Added file  [' . $path  . ']',
+                    null,
+                    $this->task->id,
+                    'Xguard\LaravelKanban\Models\Task'
+                );
             }
         }
     }

@@ -49,8 +49,15 @@ export default {
     methods: {
         setSessions() {
             axios.get('set-sessions').then((data) => {
-                if(!data.data['is_logged_in']){
-                    location.reload();
+                if (data.status === 200){
+                    if(!data.data['is_logged_in']){
+
+                        this.triggerErrorToast('IS NOT LOGGED IN');
+                        console.log('IS NOT LOGGED IN')
+                        console.log(data.data);
+
+                        // location.reload();
+                    }
                 }
             });
         }
