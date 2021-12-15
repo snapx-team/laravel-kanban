@@ -28,6 +28,7 @@ import SideBar from "./components/global/SideBar.vue";
 import Vue from "vue";
 import Footer from "./components/global/VueFooter";
 import VueFooter from "./components/global/VueFooter";
+import axios from "axios";
 
 export default {
     name: "App",
@@ -44,10 +45,30 @@ export default {
             kanban: {},
         };
     },
+
+    methods: {
+        setSessions() {
+            axios.get('set-sessions').then((data) => {
+                if(!data.data['is_logged_in']){
+                    location.reload();
+                }
+            });
+        }
+    },
     provide() {
         return {
             eventHub: this.eventHub,
         };
+    },
+    mounted(){
+        this.$crontab.addJob({
+            name: 'setSessions',
+            interval: {
+                seconds: '/10',
+            },
+            job: this.setSessions
+        });
+
     },
     created() {
         this.eventHub.$on("set-loading-state", (state) => {

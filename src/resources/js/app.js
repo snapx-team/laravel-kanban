@@ -20,6 +20,8 @@ import axios from 'axios';
 import device from 'vue-device-detector';
 import VueObserveVisibility from 'vue-observe-visibility';
 import * as VueMenu from '@hscmap/vue-menu';
+import VueCrontab from 'vue-crontab';
+
 
 //All file uploader imports
 
@@ -54,12 +56,12 @@ Vue.use(Toast, {
 Vue.use(VueQuillEditor);
 Vue.use(VueSweetalert2);
 Vue.use(DatePicker);
-Vue.use(VueMoment, {
-    moment,
-});
+Vue.use(VueMoment, {moment,});
 Vue.use(device);
 Vue.use(VueObserveVisibility);
 Vue.use(VueMenu);
+Vue.use(VueCrontab)
+
 
 let globalData = new Vue({
     data: {$role: 'employee'}
@@ -89,12 +91,8 @@ new Vue({
     router,
     mounted() {
         axios.get('get-role-and-employee-id').then((data) => {
-
             this.$role = data.data['role'];
             this.$employeeIdSession = data.data['employee_id'];
-
-        }).catch(res => {
-            console.log(res);
         });
     },
     components: {

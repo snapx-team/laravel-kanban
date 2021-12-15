@@ -179,7 +179,7 @@ class Log extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->withDefault(['first_name' => 'DELETED', 'last_name'=>'USER']);
     }
 
     public function notifications(): BelongsToMany

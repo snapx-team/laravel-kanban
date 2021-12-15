@@ -220,16 +220,16 @@
                 <vSelect :options="erpEmployees"
                          multiple
                          class="text-gray-400"
-                         label="fullName"
+                         label="full_name"
                          placeholder="Select Employee"
                          style="margin-top: 7px"
                          @search="onTypeEmployee"
                          v-model="task.shared_task_data.erp_employees">
                     <template slot="option" slot-scope="option">
-                        <avatar :name="option.fullName"
+                        <avatar :name="option.full_name"
                                 :size="4"
                                 class="mr-3 m-1 float-left"></avatar>
-                        <p class="inline">{{ option.fullName }}</p>
+                        <p class="inline">{{ option.full_name }}</p>
                     </template>
                     <template #no-options="{ search, searching, loading }">
                         No result .
@@ -243,13 +243,13 @@
                 <vSelect :options="erpContracts"
                          multiple
                          class="text-gray-400"
-                         label="contractIdentifier"
+                         label="contract_identifier"
                          placeholder="Select Contract"
                          style="margin-top: 7px"
                          @search="onTypeContract"
                          v-model="task.shared_task_data.erp_contracts">
                     <template slot="option" slot-scope="option">
-                        <p class="inline">{{ option.contractIdentifier }}</p>
+                        <p class="inline">{{ option.contract_identifier }}</p>
                     </template>
                     <template #no-options="{ search, searching, loading }">
                         No result .

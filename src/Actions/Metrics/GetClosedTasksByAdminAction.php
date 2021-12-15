@@ -60,10 +60,10 @@ class GetClosedTasksByAdminAction extends Action
         $names = [];
         $hits = [];
         foreach ($logs as $log) {
-            if (array_key_exists($log->user['email'], $hits)) {
-                $hits[$log->user['email']] += 1;
+            if (array_key_exists($log->user['id'], $hits)) {
+                $hits[$log->user['id']] += 1;
             } else {
-                $hits[$log->user['email']] = 1;
+                $hits[$log->user['id']] = 1;
                 array_push($names, $log->user['full_name']);
             }
         }

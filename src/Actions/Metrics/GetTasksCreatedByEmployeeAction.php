@@ -57,7 +57,12 @@ class GetTasksCreatedByEmployeeAction extends Action
         $reportersData = [];
         if (count($tasks) > 0) {
             foreach ($tasks as $task) {
-                $reportersData[$task->reporter->user->full_name] = $task->total;
+                // needed to account for deleted users where multiple names can be "DELETED USER"
+                if (array_key_exists($task->reporter->user->full_name, $reportersData)) {
+                    $reportersData[$task->reporter->user->full_name] += $task->total;
+                } else {
+                    $reportersData[$task->reporter->user->full_name] = $task->total;
+                }
             }
         }
 
@@ -67,6 +72,3 @@ class GetTasksCreatedByEmployeeAction extends Action
         ];
     }
 }
-
-
-
