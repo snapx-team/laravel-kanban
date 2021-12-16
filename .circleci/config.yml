@@ -1,0 +1,63 @@
+# PHP CircleCI 2.0 configuration file
+# Check https://circleci.com/docs/2.0/language-php/ for more details
+version: 2
+
+jobs: # a collection of steps
+  build: # runs not using Workflows must have a `build` job as entry point
+    docker: # run the steps with Docker
+      - image: circleci/php:7.4-node-browsers
+      #- image: circleci/mysql:5.7
+    resource_class: medium
+    parallelism: 4
+    working_directory: ~/kanban
+
+    steps:
+      - checkout
+      - run: cd .. && git clone --depth 5 "$CLONING_URL" --branch "$BRANCH"
+
+      - run: cd .. && sudo apt update # PHP CircleCI 2.0 Configuration File# PHP CircleCI 2.0 Configuration File
+      - run: cd .. && sudo apt-get install -y --no-install-recommends libpng-dev libfreetype6-dev libjpeg-dev libjpeg62-turbo-dev libmagickwand-dev
+      - run: cd .. && sudo docker-php-ext-configure gd --with-freetype --with-jpeg
+      - run: cd .. && sudo docker-php-ext-install gd pcntl
+      - run: cd .. && yes '' |sudo pecl install mailparse || true
+      - run: cd .. && sudo docker-php-ext-enable mailparse
+      - run: cd .. && sudo docker-php-ext-enable xdebug
+      - run:
+          name: Disable xdebug
+          command: |
+            cd .. && sudo sed -i 's/^zend_extension/;zend_extension/g' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
+      # Download and cache composer dependencies
+      - restore_cache:
+          keys:
+            # "composer.lock" can be used if it is committed to the repo
+            - v1-dependencies-{{ checksum "~/xguard-schedule/composer.json" }}v
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      # Rollback to composer v1
+      - run: composer --version
+
+      # Composer install
+      - run: cd ~/xguard-schedule && composer install -n --prefer-dist
+
+      # Download cached composer dependencies
+      - save_cache:
+          key: v1-dependencies-{{ checksum "~/xguard-schedule/composer.json" }}
+          paths:
+            - ./vendor
+
+      # Create and move kanban into the xguard-schedule/packages/laravel-kanban/ directory
+      - run: cd ~/xguard-schedule && sudo mkdir packages
+      - run: cd ~/xguard-schedule/packages && sudo mkdir laravel-kanban
+      - run: sudo rm -r ~/xguard-schedule/vendor/xguard/laravel-kanban/*
+      - run: cd .. && sudo cp -r ~/kanban/* ~/xguard-schedule/packages/laravel-kanban/
+      - run: cd .. && sudo cp -r ~/kanban/* ~/xguard-schedule/vendor/xguard/laravel-kanban/
+
+      # Run unit tests
+      - run:
+          name: "Run Tests in Parallel"
+          command: |
+            cd ~/xguard-schedule && phpdbg -d memory_limit=64G -qrr vendor/bin/paratest -p4 --testsuite=Kanban
+
+
