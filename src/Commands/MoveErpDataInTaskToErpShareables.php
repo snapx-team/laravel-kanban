@@ -2,9 +2,7 @@
 
 namespace Xguard\LaravelKanban\Commands;
 
-use App\Models\User;
 use Illuminate\Console\Command;
-use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\ErpShareables;
 use Xguard\LaravelKanban\Models\Task;
 

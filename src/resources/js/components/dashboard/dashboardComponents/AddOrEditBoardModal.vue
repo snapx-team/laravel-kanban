@@ -62,7 +62,7 @@
                                     type="button">
                                 Cancel
                             </button>
-                            <button @click="saveBoard($event)"
+                            <button @click="saveBoard()"
                                     class="px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
                                     type="button">
 
@@ -128,10 +128,13 @@
         },
 
         methods: {
-            saveBoard(event) {
-                event.target.disabled = true;
-                this.eventHub.$emit("save-board", this.kanbanData);
-                this.modalOpen = false;
+            saveBoard() {
+                if (this.kanbanData.name) {
+                    this.eventHub.$emit("save-board", this.kanbanData);
+                    this.modalOpen = false;
+                }else{
+                    this.triggerErrorToast('Board name is empty');
+                }
             },
 
             deleteBoard(event) {

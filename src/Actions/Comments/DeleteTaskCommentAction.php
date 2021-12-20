@@ -6,7 +6,6 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
 use Lorisleiva\Actions\Action;
 use Throwable;
-use Xguard\LaravelKanban\Http\Helper\AccessManager;
 use Xguard\LaravelKanban\Models\Comment;
 use Xguard\LaravelKanban\Models\Log;
 

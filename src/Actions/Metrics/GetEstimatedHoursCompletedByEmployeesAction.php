@@ -3,12 +3,9 @@
 namespace Xguard\LaravelKanban\Actions\Metrics;
 
 use DateTime;
-use DB;
 use Exception;
-use Illuminate\Validation\ValidationException;
 use Lorisleiva\Actions\Action;
 use Xguard\LaravelKanban\Models\Log;
-use Xguard\LaravelKanban\Models\Task;
 
 class GetEstimatedHoursCompletedByEmployeesAction extends Action
 {

@@ -57,7 +57,8 @@
                                 </div>
 
                                 <div v-else>
-                                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">
+                                    <span
+                                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">
                                         Employees
                                     </span>
                                     <vSelect :options="allUsers"
@@ -69,7 +70,8 @@
                                              v-model="employeeData.selectedUsers"
                                              @search="onType">
                                         <template slot="option" slot-scope="option">
-                                            <avatar :name="option.full_name" :size="4" class="mr-3 m-1 float-left"></avatar>
+                                            <avatar :name="option.full_name" :size="4"
+                                                    class="mr-3 m-1 float-left"></avatar>
                                             <p class="inline">{{ option.full_name }}</p>
                                         </template>
                                         <template #no-options="{ search, searching, loading }">
@@ -108,7 +110,7 @@
                                         <div class="ml-3 text-gray-700 font-medium">
                                             <p>Admin</p>
                                             <small class="text-indigo-700">Create/Edit/Delete access for employees and
-                                                                           kanban boards.
+                                                kanban boards.
                                             </small>
                                         </div>
                                     </label>
@@ -141,96 +143,95 @@
     </div>
 </template>
 <script>
-    import vSelect from "vue-select";
-    import Avatar from "../../global/Avatar";
-    import {ajaxCalls} from "../../../mixins/ajaxCallsMixin";
-    import _ from 'lodash';
+import vSelect from "vue-select";
+import Avatar from "../../global/Avatar";
+import {ajaxCalls} from "../../../mixins/ajaxCallsMixin";
+import _ from 'lodash';
 
-    export default {
-        inject: ["eventHub"],
-        components: {
-            vSelect,
-            Avatar,
-        },
-        mixins: [ajaxCalls],
+export default {
+    inject: ["eventHub"],
+    components: {
+        vSelect,
+        Avatar,
+    },
+    mixins: [ajaxCalls],
 
-        data() {
-            return {
-                isEdit: false,
+    data() {
+        return {
+            isEdit: false,
 
-                employeeData: {
+            employeeData: {
+                id: null,
+                role: "employee",
+                selectedUsers: [],
+                user: null,
+            },
+            modalOpen: false,
+            allUsers: [],
+
+        };
+    },
+
+    created() {
+        this.eventHub.$on("create-kanban-employees", (employee) => {
+            if (employee !== undefined) {
+                this.employeeData.role = employee.role;
+                this.employeeData.id = employee.id;
+                this.employeeData.selectedUsers = [{id: employee.user.id}];
+                this.employeeData.user = employee.user;
+                this.isEdit = true;
+            } else {
+                this.employeeData = {
                     id: null,
                     role: "employee",
-                    selectedUsers: [],
-                    user: null,
-                },
-                modalOpen: false,
-                allUsers: [],
+                };
+                this.isEdit = false;
+            }
+            this.modalOpen = true;
+        });
+    },
 
-            };
-        },
+    beforeDestroy() {
+        this.eventHub.$off('create-kanban-employee');
+    },
 
-        created() {
-            this.eventHub.$on("create-kanban-employees", (employee) => {
-                if (employee !== undefined) {
-                    this.employeeData.role = employee.role;
-                    this.employeeData.id =  employee.id;
-                    this.employeeData.selectedUsers = [{id : employee.user.id}];
-                    this.employeeData.user = employee.user;
-                    this.isEdit = true;
-                }
-                else {
-                    this.employeeData = {
-                        id: null,
-                        role: "employee",
-                    };
-                    this.isEdit = false;
-                }
-                this.modalOpen = true;
-            });
-        },
+    mounted() {
+        this.asyncGetAllUsers().then((data) => {
+            this.allUsers = data.data;
+        }).catch(res => {
+            console.log(res)
+        });
+    },
 
-        beforeDestroy() {
-            this.eventHub.$off('create-kanban-employee');
-        },
-
-        mounted(){
-            this.asyncGetAllUsers().then((data) => {
-                this.allUsers = data.data;
-            }).catch(res => {
-                console.log(res)
-            });
-        },
-
-        methods: {
-            saveEmployee(event) {
+    methods: {
+        saveEmployee(event) {
+            if (this.employeeData.selectedUsers) {
                 event.target.disabled = true;
                 this.eventHub.$emit("save-employee", this.employeeData);
                 this.modalOpen = false;
-            },
-            deleteEmployee(event) {
-                event.target.disabled = true;
-                this.eventHub.$emit("delete-kanban-employee", this.employeeData.id);
-                this.modalOpen = false;
-            },
-            onType(search, loading) {
-                if(search.length) {
-                        loading(true);
-                        this.type(search, loading, this);
-                    }
-                },
-            type : _.debounce(function (search, loading, vm) {
-                this.asyncGetSomeUsers(search).then((data) => {
-                    this.allUsers = data.data;
-                })
-                .catch(res => {
-                    console.log(res)
-                })
-                .then(function() {
-                    setTimeout(500);
-                    loading(false);
-                });
-            }, 500)
+            } else {
+                this.triggerErrorToast('You need to select an employee');
+            }
         },
-    };
+        deleteEmployee(event) {
+            event.target.disabled = true;
+            this.eventHub.$emit("delete-kanban-employee", this.employeeData.id);
+            this.modalOpen = false;
+        },
+        onType(search, loading) {
+            if (search.length) {
+                loading(true);
+                this.type(search, loading, this);
+            }
+        },
+        type: _.debounce(function (search, loading, vm) {
+            this.asyncGetSomeUsers(search).then((data) => {
+                this.allUsers = data.data;
+            }).then(function () {
+                setTimeout(500);
+                loading(false);
+            });
+        }, 500)
+    },
+};
 </script>

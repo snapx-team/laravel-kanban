@@ -2,7 +2,6 @@
 
 namespace Xguard\LaravelKanban\Actions\Tasks;
 
-use Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Lorisleiva\Actions\Action;
