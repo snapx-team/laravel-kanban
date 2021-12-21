@@ -132,6 +132,14 @@ export const ajaxCalls = {
             });
         },
 
+        asyncEditBoard(kanbanData) {
+            return axios.post('edit-board', kanbanData).then(() => {
+                this.triggerSuccessToast('Board edited!');
+            }).catch((error) => {
+                this.triggerErrorToast(error.response.data.message);
+            });
+        },
+
         asyncDeleteBoard(boardId) {
             return axios.post('delete-board/' + boardId).then(() => {
                 this.triggerSuccessToast('Board Deleted!');
@@ -451,7 +459,6 @@ export const ajaxCalls = {
             }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
-            ;
         },
 
         // Logs

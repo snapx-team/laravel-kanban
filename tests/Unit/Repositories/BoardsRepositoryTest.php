@@ -41,4 +41,18 @@ class BoardsRepositoryTest extends TestCase
         $this->assertNotNull($result[0]->employeeNotificationSettings); //returns the settings of the session's employee
         $this->assertEquals($result[0]->employeeNotificationSettings->employee->id, $settings->employee->id);
     }
+
+    public function testGetBoards()
+    {
+        $board = factory(Board::class)->create(['deleted_at' => null]);
+        $retrievedBoard = $this->boardsRepository::getBoards();
+        $this->assertDatabaseHas('kanban_boards', [
+            'id' => $retrievedBoard[0]->id,
+            'name' => $retrievedBoard[0]->name,
+            'created_at' => $retrievedBoard[0]->created_at,
+            'updated_at' => $retrievedBoard[0]->updated_at,
+            'deleted_at' => $retrievedBoard[0]->deleted_at,
+        ]);
+        $this->assertEquals($board->name, $retrievedBoard[0]->name);
+    }
 }
