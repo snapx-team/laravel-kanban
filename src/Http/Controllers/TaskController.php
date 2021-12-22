@@ -4,7 +4,9 @@ namespace Xguard\LaravelKanban\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Xguard\LaravelKanban\AWSStorage\S3Storage;
+use Illuminate\Support\Facades\Auth;
+use Xguard\LaravelKanban\Actions\Tasks\UpdateTaskCardIndexesAction;
+use Xguard\LaravelKanban\Models\Log;
 use Xguard\LaravelKanban\Models\Task;
 use Xguard\LaravelKanban\Actions\Tasks\PlaceTaskAction;
 use Xguard\LaravelKanban\Actions\Tasks\CreateTaskAction;
@@ -15,6 +17,7 @@ use Xguard\LaravelKanban\Actions\Tasks\UpdateTaskAction;
 use Xguard\LaravelKanban\Actions\Tasks\UpdateTaskColumnAndRowAction;
 use Xguard\LaravelKanban\Actions\Tasks\UpdateTaskDescriptionAction;
 use Xguard\LaravelKanban\Actions\Tasks\UpdateTaskStatusAction;
+use Xguard\LaravelKanban\Repositories\TasksRepository;
 
 class TaskController extends Controller
 {
@@ -159,17 +162,15 @@ class TaskController extends Controller
 
     public function updateTaskCardIndexes(Request $request)
     {
-        $taskCards = $request->all();
-        $newIndex = 0;
         try {
-            foreach ($taskCards as $taskCard) {
-                Task::find($taskCard['id'])->update(['index' => $newIndex]);
-                $newIndex++;
-            }
+            app(UpdateTaskCardIndexesAction::class)->fill([
+                'taskCards' => $request->all()
+            ])->run();
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
                 'message' => $e->getMessage(),
+                'errors'=>$e->getErrors()
             ], 400);
         }
         return response(['success' => 'true'], 200);

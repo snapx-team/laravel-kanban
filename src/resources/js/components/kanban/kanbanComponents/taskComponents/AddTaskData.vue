@@ -265,9 +265,7 @@ export default {
         this.eventHub.$off('update-add-task-data-with-group-data');
     },
 
-
     computed: {
-
         computedBadges() {
             return this.badges.map(badge => {
                 let computedBadges = {};

@@ -43,9 +43,7 @@ export default {
             this.asyncGetLogs(this.cardData.id).then((data) => {
                 this.logs = data.data;
                 this.loadingLogs = false;
-            }).catch(res => {
-                console.log(res)
-            });
+            })
         }
     },
 

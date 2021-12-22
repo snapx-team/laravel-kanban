@@ -2,7 +2,7 @@
     <div>
 
         <div class="inline-flex space-x-1">
-            <badge :name="cardData.badge.name" v-if="cardData.badge !== []"></badge>
+            <badge :name="cloneCardData.badge.name" v-if="cloneCardData.badge !== []"></badge>
 
             <div
                 class="px-3 py-1 rounded text-xs font-semibold flex items-center"
@@ -10,7 +10,7 @@
                 <span class="w-2 h-2 rounded-full mr-1"
                       :class="`bg-${statusColor}-800`"
                 ></span>
-                <span> status: {{ cardData.status }}</span>
+                <span> status: {{ cloneCardData.status }}</span>
             </div>
 
             <div :style="`background-color: hsl( ${priorityHue}, 45%, 90%); color: hsl( ${priorityHue}, 50%, 45%)`"
@@ -25,10 +25,12 @@
 
 
             <div class="py-2 flex-1">
-                <p class="text-gray-700 font-semibold font-sans tracking-wide text-2xl py-1"> {{ cardData.name }} </p>
-                <p class="text-gray-500 text-sm py-1" v-if="cardData.row_id !== null"> Row:
-                    <i class="font-semibold">'{{ cardData.row.name }}'</i> Column:
-                    <i class="font-semibold">'{{ cardData.column.name }}'</i>
+                <p class="text-gray-700 font-semibold font-sans tracking-wide text-2xl py-1"> {{
+                        cloneCardData.name
+                    }} </p>
+                <p class="text-gray-500 text-sm py-1" v-if="cloneCardData.row_id !== null"> Row:
+                    <i class="font-semibold">'{{ cloneCardData.row.name }}'</i> Column:
+                    <i class="font-semibold">'{{ cloneCardData.column.name }}'</i>
                 </p>
                 <p class="text-gray-500 text-sm py-1" v-else> In Backlog</p>
             </div>
@@ -45,7 +47,7 @@
                     label="name"
                     style="margin-top: 7px"
                     class="text-gray-700"
-                    @input="setStatus()">>
+                    @input="setStatus()">
                     <template slot="option" slot-scope="option">
                         <i class="fas fa-circle mr-2" :class="`text-${option.color}-400 `"></i>
                         {{ option.name }}
@@ -78,8 +80,8 @@
                         maxFileSize="5MB"
                         imagePreviewHeight="100"
                         allowRemove="false"
-                        allowDrop ="false"
-                        allowBrowse ="false"
+                        allowDrop="false"
+                        allowBrowse="false"
                         allowPaste="false"
                         allowReplace="false"
                         allowRevert="false"
@@ -88,7 +90,7 @@
 
                 <div class="space-y-5 pt-5">
                     <p class="text-gray-700 font-semibold font-sans tracking-wide text-lg"> Comments: </p>
-                    <task-comments :cardData="cardData"></task-comments>
+                    <task-comments :cardData="cloneCardData"></task-comments>
                 </div>
             </div>
 
@@ -120,9 +122,9 @@
                         <i class="fas fa-bullhorn mr-2"></i>
                         <p class="font-semibold font-sans tracking-wide text-sm"> Reporter: </p>
                     </div>
-                    <avatar :name="cardData.reporter.user.full_name" :size="6" :tooltip="true"
+                    <avatar :name="cloneCardData.reporter.user.full_name" :size="6" :tooltip="true"
                             class="border border-white max-w-md"></avatar>
-                    <span class="text-xs text-gray-600 px-1"> {{ cardData.reporter.user.full_name }}</span>
+                    <span class="text-xs text-gray-600 px-1"> {{ cloneCardData.reporter.user.full_name }}</span>
                 </div>
 
                 <div class="flex">
@@ -131,9 +133,9 @@
                         <p class="font-semibold font-sans tracking-wide text-sm"> Assigned To: </p>
                     </div>
                     <div class="space-y-2">
-                        <span v-if=" cardData.assigned_to.length === 0"
+                        <span v-if=" cloneCardData.assigned_to.length === 0"
                               class="text-xs text-red-800 px-2 py-1 bg-red-200 rounded"> unnasigned</span>
-                        <template v-for="(employee, employeeIndex) in cardData.assigned_to">
+                        <template v-for="(employee, employeeIndex) in cloneCardData.assigned_to">
                             <div class="flex items-center">
                                 <avatar class="border border-white max-w-md"
                                         :key="employeeIndex"
@@ -150,46 +152,54 @@
 
                     <div class="py-4 space-y-4">
 
-                        <div v-if="cardData.shared_task_data.erp_employees.length" class="text-sm flex items-start">
+                        <div v-if="cloneCardData.shared_task_data.erp_employees.length"
+                             class="text-sm flex items-start">
                             <div class="w-32 flex items-center text-gray-700">
                                 <i class="fas fa-user mr-2"></i>
                                 <p class="font-semibold font-sans tracking-wide text-sm">
-                                    <span v-if="cardData.shared_task_data.erp_employees.length > 1">Employees:</span>
+                                    <span
+                                        v-if="cloneCardData.shared_task_data.erp_employees.length > 1">Employees:</span>
                                     <span v-else>Employee:</span>
                                 </p>
                             </div>
                             <div>
-                                <div class="flex" v-for="(employee, index) in cardData.shared_task_data.erp_employees">
+                                <div class="flex" v-for="employee in cloneCardData.shared_task_data.erp_employees">
                                     <avatar :name="employee.full_name" :size="6" :tooltip="true"
                                             class="border border-white max-w-md"></avatar>
-                                    <a :href="`/app/users/${employee.id}/edit`" target="_blank" class="text-xs px-1 text-indigo-500 underline"> {{ employee.full_name }}</a>
+                                    <a :href="`/app/users/${employee.id}/edit`" target="_blank"
+                                       class="text-xs px-1 text-indigo-500 underline"> {{ employee.full_name }}</a>
                                 </div>
                             </div>
                         </div>
 
-                        <div v-if="cardData.shared_task_data.erp_contracts.length" class="text-sm text-gray-700 flex items-start">
+                        <div v-if="cloneCardData.shared_task_data.erp_contracts.length"
+                             class="text-sm text-gray-700 flex items-start">
                             <div class="w-32 flex items-center text-gray-700">
                                 <i class="fas fa-building mr-2"></i>
                                 <p class="font-semibold font-sans tracking-wide text-sm">
-                                    <span v-if="cardData.shared_task_data.erp_contracts.length > 1">Contracts:</span>
+                                    <span
+                                        v-if="cloneCardData.shared_task_data.erp_contracts.length > 1">Contracts:</span>
                                     <span v-else>Contracts:</span>
                                 </p>
                             </div>
                             <div>
-                                <div class="flex" v-for="(contract, index) in cardData.shared_task_data.erp_contracts">
+                                <div class="flex" v-for="contract in cloneCardData.shared_task_data.erp_contracts">
                                     <avatar :name="contract.contract_identifier" :size="6" :tooltip="true"
                                             class="border border-white max-w-md"></avatar>
-                                    <a :href="`/app/contracts/${contract.id}/edit`" target="_blank" class="text-xs  px-1 text-indigo-500 underline">{{ contract.contract_identifier }}</a>
+                                    <a :href="`/app/contracts/${contract.id}/edit`" target="_blank"
+                                       class="text-xs  px-1 text-indigo-500 underline">{{
+                                            contract.contract_identifier
+                                        }}</a>
                                 </div>
                             </div>
                         </div>
 
-                        <div v-if="cardData.deadline !== null" class="text-sm text-gray-700 flex">
+                        <div v-if="cloneCardData.deadline !== null" class="text-sm text-gray-700 flex">
                             <div class="w-32 flex items-center">
                                 <i class="fas fa-stopwatch mr-2"></i>
                                 <p class="font-semibold font-sans tracking-wide text-sm">Deadline: </p>
                             </div>
-                            <a class="max-w-md text-xs">{{ cardData.deadline | moment("DD MMM, YYYY") }}</a>
+                            <a class="max-w-md text-xs">{{ cloneCardData.deadline | moment("DD MMM, YYYY") }}</a>
                         </div>
 
                         <div class="text-sm text-gray-700 flex">
@@ -197,7 +207,7 @@
                                 <i class="fas fa-clock mr-2"></i>
                                 <p class="font-semibold font-sans tracking-wide text-sm">Estimate: </p>
                             </div>
-                            <a class="max-w-md text-sm"> {{ cardData.time_estimate }} hours </a>
+                            <a class="max-w-md text-sm"> {{ cloneCardData.time_estimate }} hours </a>
                         </div>
                     </div>
                 </div>
@@ -210,7 +220,8 @@
                 </div>
 
                 <div v-if="!loadingRelatedTasks" class="space-y-4 whitespace-nowrap">
-                    <p v-if="relatedTasks.length === 0 && !selectGroupIsVisible" class="tracking-wide text-sm">No Related Tasks</p>
+                    <p v-if="relatedTasks.length === 0 && !selectGroupIsVisible" class="tracking-wide text-sm">No
+                        Related Tasks</p>
                     <button @click="selectGroupIsVisible = true"
                             class="py-2 text-sm text-indigo-600 hover:text-indigo-800 transition duration-300 ease-in-out focus:outline-none"
                             v-if="!selectGroupIsVisible && $role === 'admin'">
@@ -232,13 +243,13 @@
                                          v-model="associatedTask">
                                     <template slot="selected-option" slot-scope="option">
                                         <p>
-                                        <span class="font-bold">{{ option.task_simple_name}}: </span>
+                                            <span class="font-bold">{{ option.task_simple_name }}: </span>
                                             <span class="italic">{{ option.name }}</span>
                                         </p>
                                     </template>
                                     <template slot="option" slot-scope="option">
                                         <p>
-                                        <span class="font-bold">{{ option.task_simple_name}}: </span>
+                                            <span class="font-bold">{{ option.task_simple_name }}: </span>
                                             <span class="italic">{{ option.name }}</span>
                                         </p>
                                     </template>
@@ -342,7 +353,7 @@ export default {
         this.getRelatedTasks();
         this.getTasks();
         this.formatFilesForFilepond();
-        this.selectedStatus = this.cardData.status;
+        this.selectedStatus = this.cloneCardData.status;
     },
 
     methods: {
@@ -368,33 +379,29 @@ export default {
         },
         getRelatedTasks() {
             this.loadingRelatedTasks = true;
-            this.asyncGetRelatedTasks(this.cardData.id).then((data) => {
+            this.asyncGetRelatedTasks(this.cloneCardData.id).then((data) => {
                 this.relatedTasks = data.data;
                 this.loadingRelatedTasks = false;
-            }).catch(res => {
-                console.log(res)
-            });
+            })
         },
 
         fetchAndReplaceTaskData() {
             this.loadingSharedData = true;
-            this.asyncGetTaskData(this.cardData.id).then((data) => {
+            this.asyncGetTaskData(this.cloneCardData.id).then((data) => {
                 this.cloneCardData = data.data;
+                this.loadingSharedData = false;
+                this.selectedStatus = this.cloneCardData.status;
                 this.handleChecklist();
                 this.getRelatedTasks();
+                this.formatFilesForFilepond();
                 this.eventHub.$emit("update-add-task-data-with-group-data", data.data);
-                this.loadingSharedData = false;
-            }).catch(res => {
-                console.log(res)
-            });
+            })
         },
 
         getTasks() {
             this.asyncGetAllTasks().then((data) => {
                 this.tasks = data.data;
-            }).catch(res => {
-                console.log(res)
-            });
+            })
         },
         onTypeTask(search, loading) {
             if (search.length) {
@@ -405,20 +412,15 @@ export default {
         typeTask: _.debounce(function (search, loading) {
             this.asyncGetSomeTasks(search).then((data) => {
                 this.tasks = data.data;
-            })
-                .catch(res => {
-                    console.log(res)
-                })
-                .then(function () {
-                    setTimeout(500);
-                    loading(false);
-                });
+            }).then(function () {
+                setTimeout(500);
+                loading(false);
+            });
         }, 500),
         filterTasks(options, search) {
             return this.tasks;
         },
         updateGroup() {
-
             this.$swal({
                 icon: 'warning',
                 title: 'Warning',
@@ -427,7 +429,7 @@ export default {
                 confirmButtonText: `Continue`,
             }).then((result) => {
                 if (result.isConfirmed) {
-                    this.asyncUpdateGroup(this.cardData.id, this.associatedTask.shared_task_data_id).then(() => {
+                    this.asyncUpdateGroup(this.cloneCardData.id, this.associatedTask.shared_task_data_id).then(() => {
                         this.fetchAndReplaceTaskData();
                     });
                 }
@@ -435,14 +437,22 @@ export default {
 
         },
         removeGroup() {
-            this.asyncRemoveGroup(this.cardData.id).then(() => {
-                this.fetchAndReplaceTaskData();
-            }).catch(res => {
-                console.log(res)
-            });
+            this.$swal({
+                icon: 'warning',
+                title: 'Warning',
+                text: 'Are you sure you want to remove this task from the group?',
+                showCancelButton: true,
+                confirmButtonText: `Continue`,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.asyncRemoveGroup(this.cloneCardData.id).then(() => {
+                        this.fetchAndReplaceTaskData();
+                    })
+                }
+            })
         },
         setStatus() {
-            if(this.selectedStatus.name !==  this.cardData.status){
+            if (this.selectedStatus.name !== this.cloneCardData.status) {
                 this.$swal({
                     icon: 'info',
                     title: 'Set status to ' + this.selectedStatus.name,
@@ -454,16 +464,13 @@ export default {
                         this.asyncSetStatus(this.cloneCardData.id, this.selectedStatus.name).then(() => {
                             this.eventHub.$emit("fetch-and-set-column-tasks", this.cloneCardData);
                             this.eventHub.$emit("close-task-modal");
-                            this.triggerSuccessToast('Status Updated')
-                        }).catch(res => {
-                            console.log(res)
-                        });
+                            this.triggerSuccessToast('Status Updated');
+                        })
                     } else {
-                        this.selectedStatus = this.cardData.status;
+                        this.selectedStatus = this.cloneCardData.status;
                     }
                 })
-            }
-            else{
+            } else {
                 this.triggerInfoToast('You current status is already set to \'' + this.selectedStatus.name + '\'');
             }
         },
@@ -520,7 +527,7 @@ export default {
 
                             let toggle = this.clickedCheckboxEl.getAttribute("data-checked") === 'true' ? "false" : "true";
                             this.clickedCheckboxEl.setAttribute('data-checked', toggle);
-                            this.cardData.shared_task_data.description = (document.getElementById('task-description').innerHTML);
+                            this.cloneCardData.shared_task_data.description = (document.getElementById('task-description').innerHTML);
 
                             let done = document.querySelectorAll('#task-description ul[data-checked="true"] li');
                             let total = document.querySelectorAll('#task-description ul[data-checked] li');
@@ -529,17 +536,15 @@ export default {
                             this.checklistData.total = total.length;
 
                             this.asyncUpdateDescription({
-                                'description': this.cardData.shared_task_data.description,
-                                'id': this.cardData.id,
+                                'description': this.cloneCardData.shared_task_data.description,
+                                'id': this.cloneCardData.id,
                                 'isChecked': this.clickedCheckboxEl.getAttribute("data-checked"),
                                 'checkboxContent': this.clickedCheckboxEl.querySelector('li').innerHTML
                             }).then(() => {
-                                this.asyncGetTaskData(this.cardData.id).then((data) => {
+                                this.asyncGetTaskData(this.cloneCardData.id).then((data) => {
                                     this.cloneCardData = data.data;
                                     this.eventHub.$emit("update-add-task-data-with-group-data", data.data);
-                                }).catch(res => {
-                                    console.log(res)
-                                });
+                                })
                             })
 
                         }, true);
@@ -551,24 +556,24 @@ export default {
 
     computed: {
         priorityHue() {
-            if (this.cardData.hours_to_deadline === null) {
+            if (this.cloneCardData.hours_to_deadline === null) {
                 return 0;
-            } else if (this.cardData.hours_to_deadline <= 0) {
+            } else if (this.cloneCardData.hours_to_deadline <= 0) {
                 return 0;
-            } else if (this.cardData.hours_to_deadline >= 200) {
+            } else if (this.cloneCardData.hours_to_deadline >= 200) {
                 return 100;
             } else {
-                return this.cardData.hours_to_deadline / 2;
+                return this.cloneCardData.hours_to_deadline / 2;
             }
         },
 
         timeRemaining() {
-            if (this.cardData.hours_to_deadline <= 0) {
+            if (this.cloneCardData.hours_to_deadline <= 0) {
                 return ('Time Remaining: 0 days, 0 hours');
             }
-            if (this.cardData.hours_to_deadline) {
-                let totalHours = this.cardData.hours_to_deadline;
-                let days = Math.floor(this.cardData.hours_to_deadline / 24);
+            if (this.cloneCardData.hours_to_deadline) {
+                let totalHours = this.cloneCardData.hours_to_deadline;
+                let days = Math.floor(this.cloneCardData.hours_to_deadline / 24);
                 let hours = totalHours - days * 24
                 return ('Time Remaining: days: ' + days + ', hours: ' + hours);
             } else {
@@ -581,7 +586,7 @@ export default {
         },
 
         statusColor() {
-            switch (this.cardData.status) {
+            switch (this.cloneCardData.status) {
                 case 'active':
                     return 'green'
                 case 'cancelled':

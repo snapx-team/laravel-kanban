@@ -146,7 +146,8 @@ export default {
 
     created() {
         this.eventHub.$on("update-kanban-task-cards", (task) => {
-            this.$router.replace({name: "board", query: {id: this.kanbanData.id, task: task.id}}).catch(()=>{});
+            this.$router.replace({name: "board", query: {id: this.kanbanData.id, task: task.id}}).catch(() => {
+            });
             this.setCardData(task.id);
         });
 
@@ -161,6 +162,7 @@ export default {
     },
 
     methods: {
+
         toggleTabs: function (tabNumber) {
             this.openTab = tabNumber
         },
@@ -177,13 +179,12 @@ export default {
                     this.cardData = data.data;
                     this.modalOpen = true;
                 }
-            }).catch(res => {
-                console.log(res)
-            });
+            })
         },
 
-        closeTaskModal(){
-            this.$router.replace({name: "board",query: {id: this.kanbanData.id}}).catch(()=>{});
+        closeTaskModal() {
+            this.$router.replace({name: "board", query: {id: this.kanbanData.id}}).catch(() => {
+            });
             this.modalOpen = false;
         },
 

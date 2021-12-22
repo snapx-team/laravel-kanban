@@ -18,7 +18,7 @@
         <div class="pt-2">
             <div class="flex justify-between pb-1">
                 <small>Assigned Active Tasks: {{ percentAssigned }} </small>
-                <small>({{ board.assigned }}/{{ board.total }})</small>
+                <small>({{ board.assigned }}/{{ board.active }})</small>
             </div>
             <div class="overflow-hidden h-3 mb-4 text-xs flex rounded bg-green-200">
                 <div
@@ -33,7 +33,7 @@
             <div>
                 <div class="flex justify-between pb-1">
                     <small>Placed Active Tasks: {{ percentPlaced }} </small>
-                    <small>({{ board.placed_in_board }}/{{ board.total }})</small>
+                    <small>({{ board.placed_in_board }}/{{ board.active }})</small>
                 </div>
 
                 <div class="overflow-hidden h-3 mb-4 text-xs flex rounded bg-blue-200">
@@ -82,14 +82,14 @@ export default {
     },
     computed: {
         percentAssigned: function () {
-            let value = ((this.board.assigned / this.board.total) * 100).toFixed(2);
+            let value = ((this.board.assigned / this.board.active) * 100).toFixed(2);
             if (isNaN(value))
                 return '0%'
             return value + '%'
         },
 
         percentPlaced: function () {
-            let value = ((this.board.placed_in_board / this.board.total) * 100).toFixed(2);
+            let value = ((this.board.placed_in_board / this.board.active) * 100).toFixed(2);
             if (isNaN(value))
                 return '0%'
             return value + '%'

@@ -18,12 +18,13 @@ Route::group(['prefix' => 'kanban',], function () {
                 Route::get('/board', 'LaravelKanbanController@getIndex');
                 Route::get('/metrics', 'LaravelKanbanController@getIndex');
 
+
                 // Kanban App Data
                 Route::get('/get-role-and-employee-id', 'LaravelKanbanController@getRoleAndEmployeeId');
-                Route::get('/get-board-data/{id}', 'LaravelKanbanController@getkanbanData');
+                Route::get('/get-board-data/{id}', 'LaravelKanbanController@getKanbanData');
                 Route::get('/get-dashboard-data', 'LaravelKanbanController@getDashboardData');
                 Route::get('/get-backlog-data/{start}/{end}', 'LaravelKanbanController@getBacklogData');
-                Route::get('/get-footer-info', 'LaravelKanbanController@getfooterInfo');
+                Route::get('/get-footer-info', 'LaravelKanbanController@getFooterInfo');
                 Route::get('/get-user-profile', 'LaravelKanbanController@getUserProfile');
 
                 //Notifications
@@ -101,7 +102,6 @@ Route::group(['prefix' => 'kanban',], function () {
                 Route::post('/place-task/{taskId}/{row_id}/{column_id}/{board_id}', 'TaskController@placeTask');
                 Route::post('/update-group/{taskId}/{group}', 'TaskController@updateGroup');
                 Route::post('/remove-group/{taskId}', 'TaskController@removeFromGroup');
-
 
                 // Comments
                 Route::get('/get-task-comments/{taskId}', 'CommentController@getAllTaskComments');

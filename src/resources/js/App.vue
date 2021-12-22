@@ -49,7 +49,7 @@ export default {
     methods: {
         setSessions() {
             axios.get('set-sessions').then((data) => {
-                if(!data.data['is_logged_in']){
+                if (data.status === 200 && data.data['is_logged_in'] === false) {
                     location.reload();
                 }
             });
@@ -60,7 +60,7 @@ export default {
             eventHub: this.eventHub,
         };
     },
-    mounted(){
+    mounted() {
         this.$crontab.addJob({
             name: 'setSessions',
             interval: {

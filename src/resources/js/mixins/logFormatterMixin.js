@@ -83,6 +83,14 @@ export const formattedLog = {
                     'color': 'purple',
                     'desc': desc
                 };
+            case 18:
+                desc = log.user.full_name + ' updated task index for task [' + log.loggable.task_simple_name + ']';
+                return {
+                    'type': 'updated index',
+                    'icon': 'fa-arrows-alt',
+                    'color': 'purple',
+                    'desc': desc
+                };
             case 20:
                 desc = log.user.full_name + ' checked -> [' + log.description + ']';
                 return {
@@ -112,6 +120,31 @@ export const formattedLog = {
                 return {
                     'type': 'unassigned a task to an employee',
                     'icon': 'fa-user-minus',
+                    'color': 'red',
+                    'desc': desc
+                };
+            case 24:
+                desc = log.user.full_name + ' removed group from task [' + log.loggable.task_simple_name + ']';
+                return {
+                    'type': 'updated group',
+                    'icon': 'fa-layer-group',
+                    'color': 'red',
+                    'desc': desc
+                };
+            case 25:
+                desc = log.user.full_name + ' added file to task [' + log.loggable.task_simple_name + ']';
+                return {
+                    'type': 'added task file',
+                    'icon': 'fa-folder-plus',
+                    'color': 'green',
+                    'desc': desc
+                };
+
+            case 26:
+                desc = log.user.full_name + ' removed file from task [' + log.loggable.task_simple_name + ']';
+                return {
+                    'type': 'deleted task file',
+                    'icon': 'fa-folder-minus',
                     'color': 'red',
                     'desc': desc
                 };

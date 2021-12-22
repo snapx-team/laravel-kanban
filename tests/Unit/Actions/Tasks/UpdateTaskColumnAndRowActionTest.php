@@ -31,7 +31,7 @@ class UpdateTaskColumnAndRowActionTest extends TestCase
         session(['role' => 'admin', 'employee_id' => $employee->id]);
     }
 
-    public function testUpdateGroupActionUpdatesSharedTaskDataCreatesLogsAndVersion()
+    public function testUpdateColumnAndRowActionUpdatesItselfAndCreatesLogsAndVersion()
     {
         $task = factory(Task::class)->create();
         $oldColumn = Column::find($task->column_id);
@@ -79,7 +79,7 @@ class UpdateTaskColumnAndRowActionTest extends TestCase
         $this->assertNotEquals($oldRow->id, $newRow->id);
     }
 
-    public function testUpdateGroupActionThrowsErrorOnInvalidTaskId()
+    public function testUpdateColumnAndRowActionThrowsErrorOnInvalidTaskId()
     {
         $this->expectException(Exception::class);
 
