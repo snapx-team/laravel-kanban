@@ -128,7 +128,7 @@ export const ajaxCalls = {
             return axios.post('create-board', kanbanData).then(() => {
                 this.triggerSuccessToast('Board created!');
             }).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 

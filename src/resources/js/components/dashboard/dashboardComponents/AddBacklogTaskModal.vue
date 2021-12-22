@@ -262,6 +262,7 @@
                                <span
                                    class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Task Files: </span>
                                 <file-pond
+                                    class="mt-2"
                                     name="filepond"
                                     ref="pond"
                                     allow-multiple="true"
