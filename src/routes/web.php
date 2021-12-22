@@ -66,8 +66,8 @@ Route::group(['prefix' => 'kanban',], function () {
                 // Board
                 Route::post('/create-board', 'BoardsController@createBoard');
                 Route::post('/delete-board/{id}', 'BoardsController@deleteBoard');
+                Route::post('/edit-board', 'BoardsController@editBoard');
                 Route::get('/get-boards', 'BoardsController@getBoards');
-                Route::get('/get-tags', 'BoardsController@getTags');
 
                 // Columns
                 Route::post('/save-row-and-columns', 'RowAndColumnsController@createOrUpdateRowAndColumns');

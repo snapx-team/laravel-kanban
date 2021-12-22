@@ -127,8 +127,6 @@ export default {
                 this.asyncGetKanbanEmployees().then((data) => {
                     this.dashboardData.employees = data.data;
                     this.loadingEmployee = false;
-                }).catch(res => {
-                    console.log(res)
                 });
             });
         },
@@ -136,14 +134,21 @@ export default {
         saveBoard(kanbanData) {
             this.loadingBoard = true
             const cloneKanbanData = {...kanbanData};
-            this.asyncCreateBoard(cloneKanbanData).then(res => {
-                this.eventHub.$emit("update-side-bar");
-                this.asyncGetBoards().then((data) => {
-                    this.dashboardData.boards = data.data;
-                    this.loadingBoard = false;
-                }).catch(res => {
-                    console.log(res)
-                });
+           if(!cloneKanbanData.id) {
+               this.asyncCreateBoard(cloneKanbanData).then(res => {
+                   this.loadBoardsIntoDOM()
+               });
+           }else {
+               this.asyncEditBoard(cloneKanbanData).then(res => {
+                   this.loadBoardsIntoDOM()
+               });
+           }
+        },
+        loadBoardsIntoDOM(){
+            this.eventHub.$emit("update-side-bar");
+            this.asyncGetBoards().then((data) => {
+                this.dashboardData.boards = data.data;
+                this.loadingBoard = false;
             });
         },
 
@@ -160,8 +165,6 @@ export default {
                 this.asyncGetBoards().then((data) => {
                     this.dashboardData.boards = data.data;
                     this.loadingBoard = false;
-                }).catch(res => {
-                    console.log(res)
                 });
             });
         },
@@ -172,8 +175,6 @@ export default {
                 this.asyncGetKanbanEmployees().then((data) => {
                     this.dashboardData.employees = data.data;
                     this.loadingEmployee = false;
-                }).catch(res => {
-                    console.log(res)
                 });
             });
         },
@@ -185,8 +186,6 @@ export default {
                 this.asyncGetTemplates().then((data) => {
                     this.dashboardData.templates = data.data;
                     this.loadingTemplates = false;
-                }).catch(res => {
-                    console.log(res)
                 });
             });
         },
@@ -197,10 +196,7 @@ export default {
                 this.asyncGetTemplates().then((data) => {
                     this.dashboardData.templates = data.data;
                     this.loadingTemplates = false;
-                }).catch(res => {
-                    console.log(res)
                 });
-
             });
         },
 
@@ -211,8 +207,6 @@ export default {
                 this.asyncListBadgesWithCount().then((data) => {
                     this.dashboardData.badges = data.data.data;
                     this.loadingBadges = false;
-                }).catch(res => {
-                    console.log(res)
                 });
             });
         },
@@ -223,8 +217,6 @@ export default {
                 this.asyncListBadgesWithCount().then((data) => {
                     this.dashboardData.badges = data.data.data;
                     this.loadingBadges = false;
-                }).catch(res => {
-                    console.log(res)
                 });
             });
         },
@@ -234,8 +226,6 @@ export default {
             this.asyncGetDashboardData().then((data) => {
                 this.dashboardData = data.data;
                 this.eventHub.$emit("set-loading-state", false);
-            }).catch(res => {
-                console.log(res)
             });
         },
     },
