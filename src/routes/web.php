@@ -26,8 +26,6 @@ Route::group(['prefix' => 'kanban',], function () {
                 Route::get('/get-backlog-data/{start}/{end}', 'LaravelKanbanController@getBacklogData');
                 Route::get('/get-footer-info', 'LaravelKanbanController@getFooterInfo');
                 Route::get('/get-user-profile', 'LaravelKanbanController@getUserProfile');
-                Route::get('/get-board-hash/{id}', 'LaravelKanbanController@getKanbanHash');
-
 
                 //Notifications
                 Route::get('/get-notif-data/{logType}', 'NotificationController@getNotificationData');
@@ -104,7 +102,6 @@ Route::group(['prefix' => 'kanban',], function () {
                 Route::post('/place-task/{taskId}/{row_id}/{column_id}/{board_id}', 'TaskController@placeTask');
                 Route::post('/update-group/{taskId}/{group}', 'TaskController@updateGroup');
                 Route::post('/remove-group/{taskId}', 'TaskController@removeFromGroup');
-                Route::get('/get-task-hash/{id}', 'TaskController@getTaskHash');
 
                 // Comments
                 Route::get('/get-task-comments/{taskId}', 'CommentController@getAllTaskComments');

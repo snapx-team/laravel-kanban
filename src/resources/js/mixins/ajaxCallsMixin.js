@@ -12,12 +12,6 @@ export const ajaxCalls = {
             });
         },
 
-        asyncGetAndVerifyKanbanHash(id) {
-            return axios.get('get-board-hash/' + id).catch((error) => {
-                return error.response;
-            });
-        },
-
         asyncGetDashboardData() {
             return axios.get('get-dashboard-data').catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
@@ -338,12 +332,6 @@ export const ajaxCalls = {
                 this.triggerSuccessToast('Group Removed!');
             }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
-            });
-        },
-
-        asyncGetAndVerifyTaskHash(id) {
-            return axios.get('get-task-hash/' + id).catch((error) => {
-                return error.response;
             });
         },
 

@@ -129,7 +129,9 @@ class Log extends Model
             case 'TASK_INFORMATION_UPDATE_GROUP':
                 return [
                     Log::TYPE_CARD_UPDATED,
-                    Log::TYPE_CARD_ASSIGNED_GROUP
+                    Log::TYPE_CARD_ASSIGNED_GROUP,
+                    Log::TYPE_CARD_FILE_REMOVED,
+                    Log::TYPE_CARD_FILE_ADDED
                 ];
 
             case 'TASK_CHECKLIST_GROUP':

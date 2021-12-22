@@ -354,14 +354,6 @@ export default {
         this.getTasks();
         this.formatFilesForFilepond();
         this.selectedStatus = this.cloneCardData.status;
-
-        this.eventHub.$on("external-task-update", () => {
-            this.fetchAndReplaceTaskData();
-        });
-    },
-
-    beforeDestroy() {
-        this.eventHub.$off('external-task-update');
     },
 
     methods: {

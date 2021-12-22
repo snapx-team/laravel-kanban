@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Auth;
 use Xguard\LaravelKanban\Actions\BacklogData\GetBacklogDataAction;
 use Xguard\LaravelKanban\Actions\DashboardData\GetDashboardDataAction;
 use Xguard\LaravelKanban\Actions\KanbanData\GetKanbanDataAction;
-use Xguard\LaravelKanban\Actions\KanbanData\GetKanbanHashAction;
 use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Actions\UserProfileData\GetUserProfileAction;
 
@@ -59,21 +58,6 @@ class LaravelKanbanController extends Controller
             return response([
                 'success' => 'false',
                 'message' => $e->getMessage(),
-            ], 400);
-        }
-    }
-
-    public function getKanbanHash($id)
-    {
-        try {
-            return app(GetKanbanHashAction::class)->fill([
-                'boardId' => $id,
-            ])->run();
-        } catch (\Exception $e) {
-            return response([
-                'success' => 'false',
-                'message' => $e->getMessage(),
-                'errors' => $e->errors()
             ], 400);
         }
     }

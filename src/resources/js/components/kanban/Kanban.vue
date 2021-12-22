@@ -150,7 +150,6 @@ export default {
             loadingMembers: {memberId: null, isLoading: false},
             isDraggableDisabled: false,
             collapsedRows: [],
-            kanbanHash: null,
             isDraggingRow: false,
             isDraggingColumn: false,
             isDraggingTask: false
@@ -162,8 +161,6 @@ export default {
         if (localStorage.collapsedRows) {
             this.collapsedRows = localStorage.collapsedRows.split(',').map(Number);
         }
-        this.getAndVerifyKanbanHash()
-        this.checkKanbanChange();
     },
 
     watch: {
@@ -207,7 +204,6 @@ export default {
         this.eventHub.$off('save-row-and-columns');
         this.eventHub.$off('update-task-card-data');
         this.eventHub.$off('delete-row');
-        this.$crontab.deleteJob('checkKanbanChange');
     },
 
     computed: {
@@ -223,38 +219,6 @@ export default {
         taskDragStart() {
             this.isDraggingTask = true;
             navigator.vibrate(200);
-        },
-
-        checkKanbanChange() {
-            this.$crontab.addJob({
-                name: 'checkKanbanChange',
-                auto_start: true,
-                interval: {
-                    seconds: '/3',
-                },
-                job: this.getAndVerifyKanbanHash
-            });
-        },
-
-        getAndVerifyKanbanHash() {
-            this.asyncGetAndVerifyKanbanHash(this.id).then((data) => {
-                if (data.status === 200) {
-                    let isLoading = (this.isDraggingTask || this.isDraggingColumn || this.isDraggingRow || this.isDraggableDisabled)
-                    if (this.kanbanHash === null) {
-                        this.kanbanHash = data.data;
-                    } else if (data.data !== this.kanbanHash) {
-                        if (!isLoading) {
-                            this.kanbanHash = data.data;
-                            console.log('UPDATING KANBAN')
-
-                            this.asyncGetkanbanData(this.id).then((data) => {
-                                this.kanban = {};
-                                this.kanban = data.data;
-                            })
-                        }
-                    }
-                }
-            })
         },
 
         createTaskCard(rowIndex, columnIndex) {
