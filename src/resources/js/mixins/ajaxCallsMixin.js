@@ -400,7 +400,7 @@ export const ajaxCalls = {
             return axios.post('create-template', templateData).then(() => {
                 this.triggerSuccessToast('Template Created!');
             }).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -521,8 +521,7 @@ export const ajaxCalls = {
             });
         },
 
-        // Triggers
-
+        //Triggers
         triggerSuccessToast(message) {
             this.$toast.success(message, {
                 position: 'bottom-right',
@@ -578,7 +577,6 @@ export const ajaxCalls = {
 
         loopAllErrorsAsTriggerErrorToast(errorResponse) {
             if ('response' in errorResponse && 'errors' in errorResponse.response.data) {
-
                 let errors = [];
                 Object.values(errorResponse.response.data.errors).map(error => {
                     errors = errors.concat(error);

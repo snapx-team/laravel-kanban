@@ -153,6 +153,7 @@
                 </div>
 
                 <div class="flex-1" v-if="checkedOptions.includes('Upload Files')">
+                    <span class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Task Files: </span>
                     <file-pond
                         name="filepond"
                         ref="pond"
@@ -311,16 +312,16 @@ export default {
         updateFiles(files) {
 
             // all new files to upload
-            this.cloneCardData.filesToUpload = files.filter(function( file ) {
+            this.cloneCardData.filesToUpload = files.filter(function (file) {
                 // all new files don't have ids, and we don't want any files over 5mb
                 return (file.getMetadata('id') === undefined && file.fileSize < 5000000);
             });
 
             // getting all the existing file ids from files metadata
-            let existingFileIds = files.map(file => file.getMetadata('id')).filter( Number );
+            let existingFileIds = files.map(file => file.getMetadata('id')).filter(Number);
 
             // filtering the task_files to not include remove files
-            this.cloneCardData.task_files = this.cloneCardData.task_files.filter(function(file){
+            this.cloneCardData.task_files = this.cloneCardData.task_files.filter(function (file) {
                 return existingFileIds.includes(file.id);
             });
         },
@@ -335,9 +336,9 @@ export default {
             this.asyncGetSomeUsers(search).then((data) => {
                 this.erpEmployees = data.data;
             }).then(function () {
-                    setTimeout(500);
-                    loading(false);
-                });
+                setTimeout(500);
+                loading(false);
+            });
         }, 500),
         onTypeContract(search, loading) {
             if (search.length) {
@@ -349,9 +350,9 @@ export default {
             this.asyncGetSomeContracts(search).then((data) => {
                 this.erpContracts = data.data;
             }).then(function () {
-                    setTimeout(500);
-                    loading(false);
-                });
+                setTimeout(500);
+                loading(false);
+            });
         }, 500),
 
         updateTaskData(event) {

@@ -2,11 +2,8 @@
 
 namespace Xguard\LaravelKanban\Commands;
 
-use Xguard\LaravelKanban\Notifications\TasksWithIncomingDeadline;
 use Illuminate\Console\Command;
-use Illuminate\Support\Carbon;
 use Xguard\LaravelKanban\Actions\Notifications\NotifyOfTasksWithDeadlineInNext24Action;
-use Xguard\LaravelKanban\Models\Task;
 
 class NotifyOfTasksWithDeadlineInNext24 extends Command
 {

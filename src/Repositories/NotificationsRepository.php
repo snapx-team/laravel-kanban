@@ -3,10 +3,12 @@
 namespace Xguard\LaravelKanban\Repositories;
 
 use Illuminate\Database\Eloquent\Collection;
+use Xguard\LaravelKanban\Models\Board;
 use Xguard\LaravelKanban\Models\Comment;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Xguard\LaravelKanban\Models\Employee;
+use Xguard\LaravelKanban\Models\Task;
 
 class NotificationsRepository
 {

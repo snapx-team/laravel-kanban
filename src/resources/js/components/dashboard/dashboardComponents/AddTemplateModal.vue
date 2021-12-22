@@ -264,6 +264,8 @@ export default {
                 this.triggerErrorToast('Template name is required');
             else if(!(!!this.templateData.task_name))
                 this.triggerErrorToast('Task name is required');
+            else if(!(!!this.templateData.description))
+                this.triggerErrorToast('Description is required');
             else if ( this.templateData.badge.name && this.templateData.badge.name.trim().length === 0) {
                 this.triggerErrorToast('The badge name must contain at least one character');
             } else {

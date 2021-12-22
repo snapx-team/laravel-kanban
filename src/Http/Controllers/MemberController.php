@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\HTTP\Response;
 use Xguard\LaravelKanban\Actions\Members\CreateMembersAction;
-use Xguard\LaravelKanban\Actions\ErpShareables\DeleteMemberAction;
+use Xguard\LaravelKanban\Actions\Members\DeleteMemberAction;
 use Xguard\LaravelKanban\Repositories\MembersRepository;
 
 class MemberController extends Controller

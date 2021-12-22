@@ -60,7 +60,7 @@ Vue.use(VueMoment, {moment,});
 Vue.use(device);
 Vue.use(VueObserveVisibility);
 Vue.use(VueMenu);
-Vue.use(VueCrontab)
+Vue.use(VueCrontab);
 
 
 let globalData = new Vue({

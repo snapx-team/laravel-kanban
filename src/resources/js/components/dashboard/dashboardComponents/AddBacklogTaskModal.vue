@@ -259,6 +259,8 @@
                             </div>
 
                             <div class="flex-1" v-if="checkedOptions.includes('Upload Files')">
+                               <span
+                                   class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Task Files: </span>
                                 <file-pond
                                     name="filepond"
                                     ref="pond"

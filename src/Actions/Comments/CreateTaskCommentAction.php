@@ -9,7 +9,6 @@ use Xguard\LaravelKanban\Http\Helper\AccessManager;
 use Xguard\LaravelKanban\Models\Comment;
 use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Log;
-use Xguard\LaravelKanban\Models\Task;
 use Lorisleiva\Actions\Action;
 
 class CreateTaskCommentAction extends Action

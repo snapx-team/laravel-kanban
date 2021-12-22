@@ -33,6 +33,7 @@ class TemplateController extends Controller
             return response([
                 'success' => 'false',
                 'message' => $e->getMessage(),
+                'errors' => $e->errors()
             ], 400);
         }
         return response(['success' => 'true'], 200);
