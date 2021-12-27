@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Carbon\Carbon;
 use Dyrynda\Database\Support\CascadeSoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Xguard\LaravelKanban\QueryBuilders\TasksQueryBuilder;
 
@@ -113,5 +114,10 @@ class Task extends Model
     public function getDeadlineAttribute($value): string
     {
         return Carbon::parse($value)->format('c');
+    }
+
+    public function taskVersion(): HasOne
+    {
+        return $this->hasOne(TaskVersion::class)->first();
     }
 }

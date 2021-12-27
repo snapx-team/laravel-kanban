@@ -18,8 +18,7 @@ class TasksWithIncomingDeadline extends Notification
     /**
      * Create a new notification instance.
      *
-     * @param JobSiteShift $jobSiteShift
-     * @return void
+     * @param $tasks
      */
     public function __construct($tasks)
     {
@@ -55,10 +54,13 @@ class TasksWithIncomingDeadline extends Notification
             ->content('There are tasks with deadline in the next 24 hours!');
         foreach ($this->tasks as $task) {
             $message->attachment(function ($attachment) use ($task) {
+
                 $fields = [
-                    'Task' => $task->name,
-                    'Board' => $task->board->name,
+                    'Identifier' => $task->getTaskSimpleNameAttribute(),
+                    'Task' => $task->taskVersion->name,
+                    'Board' => $task->taskVersion->board->name,
                     'Deadline' => Carbon::parse($task->deadline)->format('Y-m-d H:i:s'),
+                    'URL' => env('APP_URL') .'/kanban/board?name=board&id='. $task->taskVersion->board_id .'&task=' . $task->taskVersion->task_id
                 ];
                 $attachment->fields($fields);
             });
