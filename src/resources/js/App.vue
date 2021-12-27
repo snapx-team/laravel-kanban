@@ -68,7 +68,6 @@ export default {
             },
             job: this.setSessions
         });
-
     },
     created() {
         this.eventHub.$on("set-loading-state", (state) => {

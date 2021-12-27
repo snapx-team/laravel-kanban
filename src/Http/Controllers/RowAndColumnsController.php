@@ -20,7 +20,7 @@ class RowAndColumnsController extends Controller
     {
         $rowData = $request->all();
         try {
-            app(CreateOrUpdateRowAndColumnsAction::class)->fill([
+            return app(CreateOrUpdateRowAndColumnsAction::class)->fill([
                 'rowId' => $rowData['rowId'],
                 'name' => $rowData['name'],
                 'rowIndex' => $rowData['rowIndex'],

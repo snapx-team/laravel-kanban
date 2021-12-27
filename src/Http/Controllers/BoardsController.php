@@ -4,13 +4,9 @@ namespace Xguard\LaravelKanban\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Xguard\LaravelKanban\Actions\Boards\CreateBoardAction;
 use Xguard\LaravelKanban\Actions\Boards\DeleteBoardAction;
 use Xguard\LaravelKanban\Actions\Boards\EditBoardAction;
-use Xguard\LaravelKanban\Models\Board;
-use Xguard\LaravelKanban\Models\Log;
-use Illuminate\Support\Facades\Auth;
 use Xguard\LaravelKanban\Repositories\BoardsRepository;
 
 class BoardsController extends Controller

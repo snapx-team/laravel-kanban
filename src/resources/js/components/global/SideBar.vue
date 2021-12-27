@@ -21,8 +21,8 @@
                  :class="`bg-${version.color}-700`">
                 <p v-if="isSideBarOpen" class="px-8"> {{ version.name }}</p>
                 <a :href="version.url"
-                     class="p-4  cursor-pointer transition duration-300 ease-in-out rounded"
-                     :class="[`hover:bg-${version.color}-800 hover:text-${version.color}-200`, { 'flex-auto': !isSideBarOpen  }]">
+                   class="p-4  cursor-pointer transition duration-300 ease-in-out rounded"
+                   :class="[`hover:bg-${version.color}-800 hover:text-${version.color}-200`, { 'flex-auto': !isSideBarOpen  }]">
                     <div v-if="isSideBarOpen"><i class="fas fa-angle-double-right"></i></div>
                     <p v-else>{{ version.shortName }}</p>
                 </a>
@@ -172,7 +172,7 @@ export default {
             isSideBarOpen: true,
             isErpLinksOpen: false,
             subdomain: null,
-            erpVersion:{
+            erpVersion: {
                 color: 'red',
                 subdomain: 'none',
                 name: 'Xguard Default',
@@ -216,8 +216,14 @@ export default {
         this.getBoards();
         this.getNotificationCount();
         this.setVersion();
-
-        if(this.$device.mobile || this.$device.ios || this.$device.android || window.innerWidth < 1200){
+        this.$crontab.addJob({
+            name: 'setSessions',
+            interval: {
+                seconds: '/4',
+            },
+            job: this.getNotificationCount
+        });
+        if (this.$device.mobile || this.$device.ios || this.$device.android || window.innerWidth < 1200) {
             this.isSideBarOpen = false;
         }
     },
@@ -232,21 +238,18 @@ export default {
     },
 
     methods: {
+
         getBoards() {
             this.loadingBoard = true;
             this.asyncGetBoards().then((data) => {
                 this.boards = data.data;
                 this.loadingBoard = false;
-            }).catch(res => {
-                console.log(res)
-            });
+            })
         },
         getNotificationCount() {
             this.asyncGetNotificationCount().then((data) => {
                 this.notifNumber = data.data;
-            }).catch(res => {
-                console.log(res)
-            });
+            })
         },
 
         toggleSidebar() {
@@ -258,7 +261,7 @@ export default {
 
             this.erpVersions.forEach(version => {
                 if (version.subdomain === this.subdomain) {
-                    this.erpVersion =  version;
+                    this.erpVersion = version;
                 }
             });
         }

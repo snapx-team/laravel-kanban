@@ -42,7 +42,7 @@ class CreateOrUpdateRowAndColumnsAction extends Action
                     Auth::user()->id,
                     Log::TYPE_ROW_UPDATED,
                     'Updated row [' . $updatedRow->name . '] in board [' . $updatedRow->board->name . ']',
-                    null, 
+                    null,
                     $updatedRow->id,
                     'Xguard\LaravelKanban\Models\Row'
                 );
