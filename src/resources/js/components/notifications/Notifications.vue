@@ -169,6 +169,7 @@ export default {
     },
 
     methods: {
+
         getNotificationData() {
             this.isLoadingMore = true;
             let code = this.logType ? this.logType.code : null;
@@ -179,16 +180,12 @@ export default {
                 }
                 this.pageNumber++;
                 this.isLoadingMore = false;
-            }).catch(res => {
-                console.log(res)
-            });
+            })
         },
         updateNotificationCount() {
             this.asyncUpdateNotificationCount().then((data) => {
                 this.eventHub.$emit("update-notif-count");
-            }).catch(res => {
-                console.log(res)
-            });
+            })
         },
 
         updateNotificationSettings() {

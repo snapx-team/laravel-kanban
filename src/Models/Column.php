@@ -7,12 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Xguard\LaravelKanban\Models\Log;
 
 class Column extends Model
 {
     use SoftDeletes, CascadeSoftDeletes;
-    
+
     protected $dates = ['deleted_at'];
 
     protected $table = 'kanban_columns';
