@@ -26,10 +26,10 @@ class GetKanbanDataActionTest extends TestCase
 
     public function testGetKanbanDataIfBoardExists()
     {
-        $board= factory(Board::class)->create();
+        $board = factory(Board::class)->create();
 
 
-        $kanbanData =  app(GetKanbanDataAction::class)->fill([
+        $kanbanData = app(GetKanbanDataAction::class)->fill([
             'boardId' => $board->id,
         ])->run();
 
@@ -38,7 +38,7 @@ class GetKanbanDataActionTest extends TestCase
 
     public function testGetKanbanDataIsNullIfBoardDoesntExist()
     {
-        $kanbanData =  app(GetKanbanDataAction::class)->fill([
+        $kanbanData = app(GetKanbanDataAction::class)->fill([
             'boardId' => 100,
         ])->run();
 

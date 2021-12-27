@@ -18,7 +18,7 @@ export const formattedLog = {
 
             switch (log.log_type) {
             case 10:
-                desc = log.user.full_name + ' created a new task [' + log.loggable.task_simple_name + '] in board [' + log.loggable.board.name + ']';
+                desc = log.user.full_name + ' created a new task [' + log.loggable.task_simple_name + '] in board [' + log.task_version.board.name + ']';
                 return {
                     'type': 'created a task',
                     'icon': 'fa-tasks',
@@ -60,7 +60,7 @@ export const formattedLog = {
                     'desc': desc
                 };
             case 15:
-                desc = log.user.full_name + ' assigned task [' + log.loggable.task_simple_name + '] to board [' + log.loggable.board.name + '] in [' + log.loggable.row.name + ':' + log.loggable.column.name + ']';
+                desc = log.user.full_name + ' assigned task [' + log.loggable.task_simple_name + '] to board [' + log.task_version.board.name + '] in [' + log.task_version.row.name + ':' + log.task_version.column.name + ']';
                 return {
                     'type': 'assigned a task to a board',
                     'icon': 'fa-vote-yea',

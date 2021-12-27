@@ -71,22 +71,22 @@ class TaskVersion extends Model
 
     public function badge(): BelongsTo
     {
-        return $this->belongsTo(Badge::class, 'badge_id');
+        return $this->belongsTo(Badge::class, 'badge_id')->withTrashed();
     }
 
     public function board(): BelongsTo
     {
-        return $this->belongsTo(Board::class, 'board_id');
+        return $this->belongsTo(Board::class, 'board_id')->withTrashed();
     }
 
     public function column(): BelongsTo
     {
-        return $this->belongsTo(Column::class);
+        return $this->belongsTo(Column::class)->withTrashed();
     }
 
     public function row(): BelongsTo
     {
-        return $this->belongsTo(Row::class);
+        return $this->belongsTo(Row::class)->withTrashed();
     }
 
     public function assignedTo(): BelongsToMany
@@ -108,6 +108,4 @@ class TaskVersion extends Model
     {
         return $this->HasMany(Comment::class, 'task_id', 'task_id');
     }
-
-
 }

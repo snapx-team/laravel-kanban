@@ -17,34 +17,55 @@
                     <p class="text-gray-700 text-xs mt-1">{{ moment(log.created_at).format("MMMM Do h:mm a") }}</p>
                 </div>
             </div>
-            <div  v-if="log.loggable && log.loggable_type === 'Xguard\\LaravelKanban\\Models\\Task'"  class="flex flex-col justify-between items-end">
-                <router-link v-if="!log.loggable.board.deleted_at" :to="{ name: 'board', query: { id: log.loggable.board.id } }">
+            <div v-if="log.loggable && log.loggable_type === 'Xguard\\LaravelKanban\\Models\\Task'"
+                 class="flex flex-col justify-between items-end">
+
+                <!--BOARD LINK-->
+                <router-link v-if="log.loggable.board && !log.loggable.board.deleted_at"
+                             :to="{ name: 'board', query: { id: log.loggable.board.id } }">
                     <badge class="cursor-pointer" :name="log.loggable.board.name"></badge>
                 </router-link>
+                <p v-else class="text-red-200">Board Deleted</p>
 
-                <router-link v-if="!log.loggable.deleted_at"  :to="{ name: 'board', query: { name: 'board', id: log.loggable.board.id, task: log.loggable.id} }">
+                <!--TASK LINK-->
+                <router-link v-if="!log.loggable.deleted_at"
+                             :to="{ name: 'board', query: { name: 'board', id: log.loggable.board.id, task: log.loggable.id} }">
                     <h2 class="cursor-pointer text-gray-500 hover:text-gray-700 transition duration-300 ease-in-out focus:outline-none">
                         <span class="ml-1 font-bold">{{ log.loggable.task_simple_name }}</span>
                         <i class="fas fa-arrow-right"></i>
                     </h2>
                 </router-link>
+                <p v-else class="text-red-200">Task Deleted</p>
             </div>
-            <div v-else-if="log.loggable && log.loggable_type === 'Xguard\\LaravelKanban\\Models\\Board'" class="flex flex-col justify-between items-end">
+            <div v-else-if="log.loggable && log.loggable_type === 'Xguard\\LaravelKanban\\Models\\Board'"
+                 class="flex flex-col justify-between items-end">
+                <!--BOARD LINK-->
                 <router-link v-if="!log.loggable.deleted_at" :to="{ name: 'board', query: { id: log.loggable.id} }">
                     <badge class="cursor-pointer" :name="log.loggable.name"></badge>
                 </router-link>
+                <p v-else class="text-red-200">Board Deleted</p>
+
             </div>
-            <div v-else-if="log.loggable && log.loggable_type === 'Xguard\\LaravelKanban\\Models\\Comment'" class="flex flex-col justify-between items-end" >
-                <router-link v-if="!log.loggable.task.board.deleted_at" :to="{ name: 'board', query: { id: log.loggable.task.board.id} }">
+            <div v-else-if="log.loggable && log.loggable_type === 'Xguard\\LaravelKanban\\Models\\Comment'"
+                 class="flex flex-col justify-between items-end">
+
+                <!--BOARD LINK-->
+                <router-link v-if="log.loggable.task && log.loggable.task.board && !log.loggable.task.board.deleted_at"
+                             :to="{ name: 'board', query: { id: log.loggable.task.board.id} }">
                     <badge class="cursor-pointer inline-flex" :name="log.loggable.task.board.name"></badge>
                 </router-link>
+                <p v-else class="text-red-200">board Deleted</p>
 
-                <router-link v-if="!log.loggable.task.deleted_at" :to="{ name: 'board', query: { id: log.loggable.task.board.id, task: log.loggable.task.id} }">
+
+                <!--TASK LINK-->
+                <router-link v-if="log.loggable.task && !log.loggable.task.deleted_at"
+                             :to="{ name: 'board', query: { id: log.loggable.task.board.id, task: log.loggable.task.id} }">
                     <h2 class="cursor-pointer text-gray-500 hover:text-gray-700 transition duration-300 ease-in-out focus:outline-none">
                         <span class="ml-1 font-bold">{{ log.loggable.task.task_simple_name }}</span>
                         <i class="fas fa-arrow-right"></i>
                     </h2>
                 </router-link>
+                <p v-else class="text-red-200">Task Deleted</p>
             </div>
         </div>
     </div>
@@ -81,7 +102,7 @@ export default {
     },
     data() {
         return {
-            formattedLog:null
+            formattedLog: null
         }
     },
 };
