@@ -2,8 +2,6 @@
 
 namespace Xguard\LaravelKanban\Models;
 
-use App\Models\User;
-use App\Models\Contract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -108,7 +106,8 @@ class Task extends Model
 
     public function getTaskSimpleNameAttribute(): string
     {
-        return strtoupper(substr($this->board->name, 0, 3)) . '-' . $this->id;
+        $boardName = $this->board()->withTrashed()->first()->name;
+        return strtoupper(substr($boardName, 0, 3)) . '-' . $this->id;
     }
 
     public function getDeadlineAttribute($value): string

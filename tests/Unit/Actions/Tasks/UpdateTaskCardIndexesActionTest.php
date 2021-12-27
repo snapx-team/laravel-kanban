@@ -34,14 +34,19 @@ class UpdateTaskCardIndexesActionTest extends TestCase
 
     public function testUpdateTaskCardIndexesActionUpdatesItself()
     {
-
         $board = factory(Column::class)->create();
-        $row = factory(Row::class)->create(['board_id'=>$board->id]);
-        $column = factory(Column::class)->create(['row_id'=>$row->id]);
+        $row = factory(Row::class)->create(['board_id' => $board->id]);
+        $column = factory(Column::class)->create(['row_id' => $row->id]);
 
-        $task1 = factory(Task::class)->create(['index' => 0, 'row_id' => $row->id, 'column_id' => $column->id, 'board_id' => $board->id]);
-        $task2 = factory(Task::class)->create(['index' => 0, 'row_id' => $row->id, 'column_id' => $column->id, 'board_id' => $board->id]);
-        $task3 = factory(Task::class)->create(['index' => 0, 'row_id' => $row->id, 'column_id' => $column->id, 'board_id' => $board->id]);
+        $task1 = factory(Task::class)->create([
+            'index' => 0, 'row_id' => $row->id, 'column_id' => $column->id, 'board_id' => $board->id
+        ]);
+        $task2 = factory(Task::class)->create([
+            'index' => 0, 'row_id' => $row->id, 'column_id' => $column->id, 'board_id' => $board->id
+        ]);
+        $task3 = factory(Task::class)->create([
+            'index' => 0, 'row_id' => $row->id, 'column_id' => $column->id, 'board_id' => $board->id
+        ]);
 
         app(UpdateTaskCardIndexesAction::class)->fill([
             'taskCards' => [$task1, $task2, $task3]
