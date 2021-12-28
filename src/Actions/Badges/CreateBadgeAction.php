@@ -3,6 +3,9 @@
 namespace Xguard\LaravelKanban\Actions\Badges;
 
 use Lorisleiva\Actions\Action;
+use Xguard\LaravelKanban\Enums\LoggableTypes;
+use Xguard\LaravelKanban\Enums\Roles;
+use Xguard\LaravelKanban\Enums\SessionVariables;
 use Xguard\LaravelKanban\Models\Badge;
 use Xguard\LaravelKanban\Models\Log;
 use Illuminate\Support\Facades\Auth;
@@ -11,7 +14,7 @@ class CreateBadgeAction extends Action
 {
     public function authorize()
     {
-        return session('role') === 'admin';
+        return session(SessionVariables::ROLE()->getValue()) === Roles::ADMIN()->getValue();
     }
     /**
      * Get the validation rules that apply to the action.
@@ -40,7 +43,7 @@ class CreateBadgeAction extends Action
     public function handle()
     {
         $badge = Badge::create([
-            'name' => $this->name,
+            Badge::NAME => $this->name,
         ]);
 
         Log::createLog(
@@ -49,7 +52,7 @@ class CreateBadgeAction extends Action
             'Added new badge [' . $badge->name . ']',
             null,
             $badge->id,
-            'Xguard\LaravelKanban\Models\Badge'
+            LoggableTypes::BADGE()->getValue()
         );
 
         return $badge;

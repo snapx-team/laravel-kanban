@@ -9,12 +9,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Member extends Model
 {
     use SoftDeletes;
-    
+
     protected $dates = ['deleted_at'];
-
     protected $table = 'kanban_members';
-
     protected $guarded = [];
+
+    const EMPLOYEE_ID = 'employee_id';
 
     public function employee(): BelongsTo
     {
@@ -25,5 +25,4 @@ class Member extends Model
     {
         return $this->belongsTo(Board::class);
     }
-
 }

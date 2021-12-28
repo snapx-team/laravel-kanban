@@ -97,7 +97,6 @@ class NotifyEmployeesAction extends Action
 
     /**
      * Attaches notification if user hasn't disallowed the notification type for a given board
-     *
      */
 
     public function attachNotificationIfAllowed($log, $boardId, $employeeId)

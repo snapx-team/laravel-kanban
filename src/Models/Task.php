@@ -24,17 +24,19 @@ class Task extends Model
     use SoftDeletes, CascadeSoftDeletes;
 
     protected $dates = ['deleted_at'];
-
     protected $table = 'kanban_tasks';
-
     protected $cascadeDeletes = ['comments', 'assignedTo'];
-
     protected $guarded = [];
-
     protected $appends = [
         'hours_to_deadline',
         'task_simple_name'
     ];
+
+    const ID = 'id';
+    const BADGE_ID = 'badge_id';
+    const CREATED_AT = 'created_at';
+    const DELETED_AT = 'deleted_at';
+    const BOARD_RELATION_NAME = 'board';
 
     public function newEloquentBuilder($query): TasksQueryBuilder
     {
