@@ -118,6 +118,6 @@ class Task extends Model
 
     public function taskVersion(): HasOne
     {
-        return $this->hasOne(TaskVersion::class)->first();
+        return $this->hasOne(TaskVersion::class);
     }
 }

@@ -56,10 +56,11 @@ class TasksWithIncomingDeadline extends Notification
             $message->attachment(function ($attachment) use ($task) {
 
                 $fields = [
-                    'Identifier' => $task->getTaskSimpleNameAttribute(),
-                    'Task' => $task->taskVersion->name,
-                    'Board' => $task->taskVersion->board->name,
+                    'ID' => $task->task_simple_name,
+                    'Task Name' => $task->taskVersion->name,
+                    'Board Name' => $task->taskVersion->board->name,
                     'Deadline' => Carbon::parse($task->deadline)->format('Y-m-d H:i:s'),
+                    'Time Left' => $task->hours_to_deadline . ' Hours',
                     'URL' => env('APP_URL') .'/kanban/board?name=board&id='. $task->taskVersion->board_id .'&task=' . $task->taskVersion->task_id
                 ];
                 $attachment->fields($fields);
