@@ -13,7 +13,7 @@ class GetKanbanDataAction extends Action
 {
     public function authorize(): bool
     {
-        return AccessManager::canAccessBoardUsingTaskId($this->boardId);
+        return AccessManager::canAccessBoard($this->boardId);
     }
 
     protected function failedAuthorization()
