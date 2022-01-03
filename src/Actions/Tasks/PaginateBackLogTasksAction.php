@@ -80,7 +80,6 @@ class PaginateBackLogTasksAction extends Action
             });
         }
 
-
         if (!empty($this->filterAssignedTo)) {
             $assignedToIds = array_column($this->filterAssignedTo, 'id');
             $query->whereHas('assignedTo', function ($q) use ($assignedToIds) {

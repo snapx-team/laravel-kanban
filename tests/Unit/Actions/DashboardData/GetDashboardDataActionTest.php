@@ -26,10 +26,10 @@ class GetDashboardDataActionTest extends TestCase
         $employee = factory(Employee::class)->states('admin')->create(['user_id' => $user->id,]);
         session(['role' => 'admin', 'employee_id' => $employee->id]);
 
-        factory(Employee::class, 5)->create();
-        factory(Board::class, 10)->create();
-        factory(Template::class, 15)->create(['badge_id'=>null]);
-        factory(Badge::class, 20)->create();
+        factory(Employee::class, 2)->create();
+        factory(Board::class, 4)->create();
+        factory(Template::class, 6)->create(['badge_id'=>null]);
+        factory(Badge::class, 8)->create();
     }
 
     public function testGetDashboardDataIfAdmin()
@@ -37,10 +37,10 @@ class GetDashboardDataActionTest extends TestCase
 
         $dashboardData = app(GetDashboardDataAction::class)->run();
 
-        $this->assertCount(6, $dashboardData['employees']);
-        $this->assertCount(10, $dashboardData['boards']);
-        $this->assertCount(15, $dashboardData['templates']);
-        $this->assertCount(20, $dashboardData['badges']);
+        $this->assertCount(3, $dashboardData['employees']);
+        $this->assertCount(4, $dashboardData['boards']);
+        $this->assertCount(6, $dashboardData['templates']);
+        $this->assertCount(8, $dashboardData['badges']);
     }
 
     public function testGetDashboardDataIfEmployee()
@@ -50,9 +50,9 @@ class GetDashboardDataActionTest extends TestCase
 
         $dashboardData = app(GetDashboardDataAction::class)->run();
 
-        $this->assertCount(6, $dashboardData['employees']);
+        $this->assertCount(3, $dashboardData['employees']);
         $this->assertCount(1, $dashboardData['boards']); //only member of 1 board
-        $this->assertCount(15, $dashboardData['templates']);
-        $this->assertCount(20, $dashboardData['badges']);
+        $this->assertCount(6, $dashboardData['templates']);
+        $this->assertCount(8, $dashboardData['badges']);
     }
 }

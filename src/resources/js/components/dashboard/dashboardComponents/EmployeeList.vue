@@ -142,10 +142,11 @@ export default {
             const regex = new RegExp(this.filter, "i");
             return this.employees.filter((e) => {
                 this.paginationIndex = 0;
-                return !this.filter || e.user.full_name.match(regex) || e.user.email.match(regex);
+                return !this.filter || e.user.full_name.match(regex);
             });
         },
     },
+
     methods: {
         editEmployee(index) {
             this.eventHub.$emit("create-kanban-employees", this.filtered[index]);

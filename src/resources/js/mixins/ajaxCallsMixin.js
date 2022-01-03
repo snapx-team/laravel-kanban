@@ -6,9 +6,10 @@ export const ajaxCalls = {
 
         // Kanban App Data
 
-        asyncGetkanbanData(id) {
+        asyncGetKanbanData(id) {
             return axios.get('get-board-data/' + id).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
+                throw error.response.data.message;
             });
         },
 
@@ -60,59 +61,59 @@ export const ajaxCalls = {
 
         asyncGetBadgeData(start, end) {
             return axios.get('get-badge-data/' + start + '/' + end).catch((error) => {
-                this.loopAllErrorsAsTriggerErrorToast(error);
+                throw error;
             });
         },
 
         asyncGetContractData(start, end) {
             return axios.get('get-contract-data/' + start + '/' + end).catch((error) => {
-                this.loopAllErrorsAsTriggerErrorToast(error);
+                throw error;
             });
         },
 
         asyncGetTasksCreatedByEmployee(start, end) {
             return axios.get('get-tasks-created-by-employee/' + start + '/' + end).catch((error) => {
-                this.loopAllErrorsAsTriggerErrorToast(error);
+                throw error;
             });
         },
         asyncGetEstimatedHoursCompletedByEmployees(start, end) {
             return axios.get('get-estimated-completed-by-employee/' + start + '/' + end).catch((error) => {
-                this.loopAllErrorsAsTriggerErrorToast(error);
+                throw error;
             });
         },
         asyncGetPeakHoursTasksCreated(start, end) {
             return axios.get('get-peak-hours-tasks-created/' + start + '/' + end).catch((error) => {
-                this.loopAllErrorsAsTriggerErrorToast(error.response.data.message);
+                throw error;
             });
         },
 
         asyncGetClosedTasksByAssignedTo(start, end) {
             return axios.get('get-closed-by-employee/' + start + '/' + end).catch((error) => {
-                this.loopAllErrorsAsTriggerErrorToast(error.response.data.message);
+                throw error;
             });
         },
 
         asyncGetClosedTasksByAdmin(start, end) {
             return axios.get('get-closed-by-admin/' + start + '/' + end).catch((error) => {
-                this.loopAllErrorsAsTriggerErrorToast(error.response.data.message);
+                throw error;
             });
         },
 
         asyncGetAverageTimeToCompletionByBadge(start, end) {
             return axios.get('get-average-time-to-completion-by-badge/' + start + '/' + end).catch((error) => {
-                this.loopAllErrorsAsTriggerErrorToast(error.response.data.message);
+                throw error;
             });
         },
 
         asyncGetAverageTimeToCompletionByEmployee(start, end) {
             return axios.get('get-average-time-to-completion-by-employee/' + start + '/' + end).catch((error) => {
-                this.loopAllErrorsAsTriggerErrorToast(error.response.data.message);
+                throw error;
             });
         },
 
         asyncGetCreatedVsResolved(start, end) {
             return axios.get('get-created-vs-resolved/' + start + '/' + end).catch((error) => {
-                this.loopAllErrorsAsTriggerErrorToast(error.response.data.message);
+                throw error;
             });
         },
 

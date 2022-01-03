@@ -34,7 +34,7 @@ class GetAverageTimeToCompletionByBadgeAction extends Action
             'start.before_or_equal' => 'Start date cannot be in the future',
             'end.required' => 'End date is required',
             'end.date' => 'End date needs to be in a date format',
-            'end.after' => 'End date needs to be after start date'
+            'end.after_or_equal' => 'End date needs to be after start date'
         ];
     }
 
