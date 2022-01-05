@@ -10,9 +10,9 @@ use Xguard\LaravelKanban\Models\Template;
 $factory->define(Template::class, function (Faker $faker) {
 
     return [
-        'name' => $faker->text(rand(10, 20)),
-        'task_name' => $faker->text(rand(10, 20)),
-        'description' => $faker->text(rand(10, 20)),
+        'name' => $faker->text(),
+        'task_name' => $faker->text(),
+        'description' => $faker->text(),
         'options' => '',
         'badge_id' => factory(Badge::class)
     ];

@@ -17,39 +17,52 @@ class TasksQueryBuilder extends Builder
 
         if (preg_match("/[a-zA-Z]{1,3}-\d{1,7}/", $searchText)) {
             return $this->whereHas('board', function ($q) use ($extractedLetters) {
-                $q->where('name', 'like', $extractedLetters . "%");
-            })->where('id', 'like', $extractedNumbers . "%")
-                ->orWhere('name', 'like', "%{$searchText}%");
+                $q->where('name', 'like', $extractedLetters."%");
+            })->where(function ($q) use ($extractedNumbers, $searchText) {
+                $q->where('id', 'like', $extractedNumbers."%")
+                    ->orWhere('name', 'like', "%{$searchText}%");
+            });
         } elseif ($extractedLetters != "") {
-            return $this
-                ->whereHas('board', function ($q) use ($extractedLetters) {
-                    $q->where('name', 'like', $extractedLetters . "%");
-                })
-                ->orWhere('name', 'like', "%{$searchText}%");
+            return $this->where(function ($q) use ($extractedLetters, $searchText) {
+                $q->whereHas('board', function ($q) use ($extractedLetters) {
+                    $q->where('name', 'like', $extractedLetters."%");
+                })->orWhere('name', 'like', "%{$searchText}%");
+            });
         } elseif ($extractedNumbers != 0) {
-            return $this
-                ->where('id', 'like', $extractedNumbers . "%")
-                ->orWhere('name', 'like', "%{$searchText}%");
+            return $this->where(function ($q) use ($extractedNumbers, $searchText) {
+                $q->where('id', 'like', $extractedNumbers."%")
+                    ->orWhere('name', 'like', "%{$searchText}%");
+            });
         } else {
             return $this;
         }
     }
 
-    public function withTaskData()
+    public function withTaskData(): TasksQueryBuilder
     {
         return $this->with('badge', 'row', 'column', 'board', 'sharedTaskData', 'taskFiles', 'comments')
-            ->with(['assignedTo.employee.user' => function ($q) {
-                $q->select(['id', 'first_name', 'last_name']);
-            }])
-            ->with(['reporter.user' => function ($q) {
-                $q->select(['id', 'first_name', 'last_name']);
-            }])
-            ->with(['sharedTaskData' => function ($q) {
-                $q->with(['erpContracts' => function ($q) {
-                    $q->select(['contracts.id', 'contract_identifier']);
-                }])->with(['erpEmployees' => function ($q) {
-                    $q->select(['users.id', 'first_name', 'last_name']);
-                }]);
-            }]);
+            ->with([
+                'assignedTo.employee.user' => function ($q) {
+                    $q->select(['id', 'first_name', 'last_name']);
+                }
+            ])
+            ->with([
+                'reporter.user' => function ($q) {
+                    $q->select(['id', 'first_name', 'last_name']);
+                }
+            ])
+            ->with([
+                'sharedTaskData' => function ($q) {
+                    $q->with([
+                        'erpContracts' => function ($q) {
+                            $q->select(['contracts.id', 'contract_identifier']);
+                        }
+                    ])->with([
+                        'erpEmployees' => function ($q) {
+                            $q->select(['users.id', 'first_name', 'last_name']);
+                        }
+                    ]);
+                }
+            ]);
     }
 }

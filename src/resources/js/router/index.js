@@ -18,6 +18,7 @@ export default new Router({
             redirect: 'kanban/dashboard'
         },
         {
+            name: 'dashboard',
             path: '/kanban/dashboard',
             component: Dashboard
         },

@@ -81,4 +81,4 @@ php artisan db:seed --class="Xguard\LaravelKanban\database\seeds\EmployeeSeeder"
 <br>
 
 ## License
-Let's go ahead and say we make it open source? Liscensed under the [MIT license](https://choosealicense.com/licenses/mit/)
+Let's go ahead and say we make it open source? Licensed under the [MIT license](https://choosealicense.com/licenses/mit/)

@@ -76,50 +76,49 @@
                         <div v-if="showTB">
                             <pie-chart
                                 class="border rounded my-2 max-w-screen-sm"
-                                v-if="badgeData != null"
-                                :series="badgeData.hits"
-                                :labels="badgeData.names"
+                                :data="badgeData.data"
+                                :errors="badgeData.errors"
                                 :title="'Tasks created: grouped by badge'">
                             </pie-chart>
 
                             <pie-chart
                                 class="border rounded my-2 max-w-screen-sm"
-                                v-if="contractData != null"
-                                :series="contractData.hits"
-                                :labels="contractData.names"
+                                :series="contractData.data.hits"
+                                :labels="contractData.data.names"
+                                :errors="contractData.errors"
                                 :title="'Tasks created: grouped by contracts'">
                             </pie-chart>
                         </div>
                         <div v-if="shoeEB">
                             <pie-chart
                                 class="border rounded my-2 max-w-screen-sm"
-                                v-if="tasksCreatedData != null"
-                                :series="tasksCreatedData.hits"
-                                :labels="tasksCreatedData.names"
-                                :title="'Tasks created'">
+                                :series="tasksCreatedData.data.hits"
+                                :labels="tasksCreatedData.data.names"
+                                :errors="tasksCreatedData.errors"
+                                :title="'Tasks created by employee'">
                             </pie-chart>
 
                             <pie-chart
                                 class="border rounded my-2 max-w-screen-sm"
-                                v-if="closedTasksByAssignedTo != null"
-                                :series="closedTasksByAssignedTo.hits"
-                                :labels="closedTasksByAssignedTo.names"
+                                :series="closedTasksByAssignedTo.data.hits"
+                                :labels="closedTasksByAssignedTo.data.names"
+                                :errors="closedTasksByAssignedTo.errors"
                                 :title="'Closed tasks per assigned employees'">
                             </pie-chart>
 
                             <pie-chart
                                 class="border rounded my-2 max-w-screen-sm"
-                                v-if="closedTasksByAdmin != null"
-                                :series="closedTasksByAdmin.hits"
-                                :labels="closedTasksByAdmin.names"
+                                :series="closedTasksByAdmin.data.hits"
+                                :labels="closedTasksByAdmin.data.names"
+                                :errors="closedTasksByAdmin.errors"
                                 :title="'Tasks Closed by Admin'">
                             </pie-chart>
                         </div>
                         <div v-if="shoePH" class="border rounded my-2 ">
                             <bar-chart
-                                v-if="peakHoursTasksCreated != null"
-                                :data="peakHoursTasksCreated.hits"
-                                :categories="peakHoursTasksCreated.names"
+                                :data="peakHoursTasksCreated.data.hits"
+                                :categories="peakHoursTasksCreated.data.names"
+                                :errors="peakHoursTasksCreated.errors"
                                 :xname="'Tasks'"
                                 :yname="'Hour'"
                                 :title="'Tasks Created'">
@@ -129,9 +128,9 @@
 
                             <bar-chart
                                 class="border rounded my-2"
-                                v-if="estimatedHoursCompletedByEmployees != null"
-                                :data="estimatedHoursCompletedByEmployees.hits"
-                                :categories="estimatedHoursCompletedByEmployees.names"
+                                :data="estimatedHoursCompletedByEmployees.data.hits"
+                                :categories="estimatedHoursCompletedByEmployees.data.names"
+                                :errors="estimatedHoursCompletedByEmployees.errors"
                                 :xname="'Hours'"
                                 :yname="'Employees'"
                                 :title="'Estimated hours completed'">
@@ -139,9 +138,9 @@
 
                             <bar-chart
                                 class="border rounded my-2"
-                                v-if="averageHoursToCompletionByEmployee != null"
-                                :data="averageHoursToCompletionByEmployee.hits"
-                                :categories="averageHoursToCompletionByEmployee.names"
+                                :data="averageHoursToCompletionByEmployee.data.hits"
+                                :categories="averageHoursToCompletionByEmployee.data.names"
+                                :errors="averageHoursToCompletionByEmployee.errors"
                                 :xname="'Hours'"
                                 :yname="'Employees'"
                                 :title="'Average hours from assigned to completed: By employee'">
@@ -149,9 +148,9 @@
 
                             <bar-chart
                                 class="border rounded my-2"
-                                v-if="averageHoursToCompletionByBadge != null"
-                                :data="averageHoursToCompletionByBadge.hits"
-                                :categories="averageHoursToCompletionByBadge.names"
+                                :data="averageHoursToCompletionByBadge.data.hits"
+                                :categories="averageHoursToCompletionByBadge.data.names"
+                                :errors="averageHoursToCompletionByBadge.errors"
                                 :xname="'Hours'"
                                 :yname="'Categories'"
                                 :title="'Average hours from assigned to completed: By badge'">
@@ -160,9 +159,9 @@
                         </div>
                         <div v-if="showCR" class="border rounded my-2 ">
                             <line-chart
-                                v-if="createdVsResolved != null"
-                                :series="createdVsResolved.series"
-                                :categories="createdVsResolved.categories"
+                                :series="createdVsResolved.data.series"
+                                :categories="createdVsResolved.data.categories"
+                                :errors="createdVsResolved.errors"
                                 :xname="'Days'"
                                 :yname="'Total Tasks'"
                                 :title="'Created Vs Resolved'">
@@ -196,16 +195,6 @@ export default {
     data() {
         return {
             chartIsLoading: false,
-            badgeData: null,
-            tasksCreatedData: null,
-            peakHoursTasksCreated: null,
-            contractData: null,
-            estimatedHoursCompletedByEmployees: null,
-            closedTasksByAssignedTo: null,
-            closedTasksByAdmin: null,
-            averageHoursToCompletionByBadge: null,
-            averageHoursToCompletionByEmployee: null,
-            createdVsResolved: null,
             start: this.getMonday(new Date()),
             end: new Date(),
             showTB: true,
@@ -213,6 +202,19 @@ export default {
             shoePH: false,
             shoeTP: false,
             showCR: false,
+            //pie chart data
+            badgeData: {data: {hits: [], names: []}, errors: []},
+            tasksCreatedData: {data: {hits: [], names: []}, errors: []},
+            contractData: {data: {hits: [], names: []}, errors: []},
+            closedTasksByAssignedTo: {data: {hits: [], names: []}, errors: []},
+            closedTasksByAdmin: {data: {hits: [], names: []}, errors: []},
+            //bar chart data
+            peakHoursTasksCreated: {data: {hits: [], names: []}, errors: []},
+            estimatedHoursCompletedByEmployees: {data: {hits: [], names: []}, errors: []},
+            averageHoursToCompletionByBadge: {data: {hits: [], names: []}, errors: []},
+            averageHoursToCompletionByEmployee: {data: {hits: [], names: []}, errors: []},
+            //line chart data
+            createdVsResolved: {data: {series: [], categories: []}, errors: []},
         }
     },
 
@@ -259,6 +261,9 @@ export default {
 
             Promise.all([this.getBadgeData(), this.getContractData()]).then(() => {
                 this.chartIsLoading = false;
+            }).catch(() => {
+                this.chartIsLoading = false;
+                this.triggerErrorToast('Invalid Data Entered');
             });
         },
         showEmployeeBreakdown() {
@@ -271,6 +276,9 @@ export default {
 
             Promise.all([this.getTasksCreatedByEmployee(), this.getClosedTasksByAssignedTo(), this.getClosedTasksByAdmin()]).then(() => {
                 this.chartIsLoading = false;
+            }).catch(() => {
+                this.chartIsLoading = false;
+                this.triggerErrorToast('Invalid Data Entered');
             });
         },
         showPeakHours() {
@@ -283,6 +291,9 @@ export default {
 
             Promise.all([this.getPeakHoursTasksCreated()]).then(() => {
                 this.chartIsLoading = false;
+            }).catch(() => {
+                this.chartIsLoading = false;
+                this.triggerErrorToast('Invalid Data Entered');
             });
         },
         showTimePerformance() {
@@ -295,6 +306,9 @@ export default {
 
             Promise.all([this.getEstimatedHoursCompletedByEmployees(), this.getAverageTimeToCompletionByBadge(), this.getAverageTimeToCompletionByEmployee()]).then(() => {
                 this.chartIsLoading = false;
+            }).catch(() => {
+                this.chartIsLoading = false;
+                this.triggerErrorToast('Error loading metrics');
             });
         },
         showCreatedVsResolved() {
@@ -307,6 +321,9 @@ export default {
 
             Promise.all([this.getCreatedVsResolved()]).then(() => {
                 this.chartIsLoading = false;
+            }).catch(() => {
+                this.chartIsLoading = false;
+                this.triggerErrorToast('Invalid Data Entered');
             });
         },
         getMonday(d) {
@@ -322,54 +339,97 @@ export default {
                 this.reload();
             }
         },
+
+        // all metric calls
+
         async getBadgeData() {
             return await this.asyncGetBadgeData(this.startTime, this.endTime).then((data) => {
-                this.badgeData = data.data.data;
+                this.badgeData.data = data.data.data;
+                this.badgeData.errors = [];
+            }).catch((error) => {
+                this.badgeData.errors = Object.values(error.response.data.errors).flat();
+                throw new Error('getBadgeData failed')
             })
         },
         async getContractData() {
             return await this.asyncGetContractData(this.startTime, this.endTime).then((data) => {
-                this.contractData = data.data.data;
+                this.contractData.data = data.data.data;
+                this.contractData.errors = [];
+            }).catch((error) => {
+                this.contractData.errors = Object.values(error.response.data.errors).flat();
+                throw new Error('getContractData failed')
             })
         },
         async getTasksCreatedByEmployee() {
             return await this.asyncGetTasksCreatedByEmployee(this.startTime, this.endTime).then((data) => {
-                this.tasksCreatedData = data.data.data;
+                this.tasksCreatedData.data = data.data.data;
+                this.tasksCreatedData.errors = [];
+            }).catch((error) => {
+                this.tasksCreatedData.errors = Object.values(error.response.data.errors).flat();
+                throw new Error('getTasksCreatedByEmployee failed')
             })
         },
         async getEstimatedHoursCompletedByEmployees() {
             return await this.asyncGetEstimatedHoursCompletedByEmployees(this.startTime, this.endTime).then((data) => {
-                this.estimatedHoursCompletedByEmployees = data.data.data;
+                this.estimatedHoursCompletedByEmployees.data = data.data.data;
+                this.estimatedHoursCompletedByEmployees.errors = [];
+            }).catch((error) => {
+                this.estimatedHoursCompletedByEmployees.errors = Object.values(error.response.data.errors).flat();
+                throw new Error('getEstimatedHoursCompletedByEmployees failed')
             })
         },
         async getPeakHoursTasksCreated() {
             return await this.asyncGetPeakHoursTasksCreated(this.startTime, this.endTime).then((data) => {
-                this.peakHoursTasksCreated = data.data.data;
+                this.peakHoursTasksCreated.data = data.data.data;
+                this.peakHoursTasksCreated.errors = [];
+            }).catch((error) => {
+                this.peakHoursTasksCreated.errors = Object.values(error.response.data.errors).flat();
+                throw new Error('getPeakHoursTasksCreated failed')
             })
         },
         async getClosedTasksByAssignedTo() {
             return await this.asyncGetClosedTasksByAssignedTo(this.startTime, this.endTime).then((data) => {
-                this.closedTasksByAssignedTo = data.data.data;
+                this.closedTasksByAssignedTo.data = data.data.data;
+                this.closedTasksByAssignedTo.errors = [];
+            }).catch((error) => {
+                this.closedTasksByAssignedTo.errors = Object.values(error.response.data.errors).flat();
+                throw new Error('getClosedTasksByAssignedTo failed')
             })
         },
         async getClosedTasksByAdmin() {
             return await this.asyncGetClosedTasksByAdmin(this.startTime, this.endTime).then((data) => {
-                this.closedTasksByAdmin = data.data.data;
+                this.closedTasksByAdmin.data = data.data.data;
+                this.closedTasksByAdmin.errors = [];
+            }).catch((error) => {
+                this.closedTasksByAdmin.errors = Object.values(error.response.data.errors).flat();
+                throw new Error('getClosedTasksByAdmin failed')
             })
         },
         async getAverageTimeToCompletionByBadge() {
             return await this.asyncGetAverageTimeToCompletionByBadge(this.startTime, this.endTime).then((data) => {
-                this.averageHoursToCompletionByBadge = data.data.data;
+                this.averageHoursToCompletionByBadge.data = data.data.data;
+                this.averageHoursToCompletionByBadge.errors = [];
+            }).catch((error) => {
+                this.averageHoursToCompletionByBadge.errors = Object.values(error.response.data.errors).flat();
+                throw new Error('getAverageTimeToCompletionByBadge failed')
             })
         },
         async getAverageTimeToCompletionByEmployee() {
             return await this.asyncGetAverageTimeToCompletionByEmployee(this.startTime, this.endTime).then((data) => {
-                this.averageHoursToCompletionByEmployee = data.data.data;
+                this.averageHoursToCompletionByEmployee.data = data.data.data;
+                this.averageHoursToCompletionByEmployee.errors = [];
+            }).catch((error) => {
+                this.averageHoursToCompletionByEmployee.errors = Object.values(error.response.data.errors).flat();
+                throw new Error('getAverageTimeToCompletionByEmployee failed')
             })
         },
         async getCreatedVsResolved() {
             return await this.asyncGetCreatedVsResolved(this.startTime, this.endTime).then((data) => {
-                this.createdVsResolved = data.data.data;
+                this.createdVsResolved.data = data.data.data;
+                this.createdVsResolved.errors = [];
+            }).catch((error) => {
+                this.createdVsResolved.errors = Object.values(error.response.data.errors).flat();
+                throw new Error('getCreatedVsResolved failed')
             })
         }
     }
