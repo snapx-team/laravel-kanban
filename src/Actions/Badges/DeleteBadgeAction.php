@@ -4,6 +4,7 @@ namespace Xguard\LaravelKanban\Actions\Badges;
 
 use Exception;
 use Lorisleiva\Actions\Action;
+use Xguard\LaravelKanban\Enums\LoggableTypes;
 use Xguard\LaravelKanban\Models\Badge;
 use Xguard\LaravelKanban\Models\Log;
 use Illuminate\Support\Facades\Auth;
@@ -31,8 +32,8 @@ class DeleteBadgeAction extends Action
     public function handle()
     {
         $badge = Badge::findOrFail($this->badge_id);
-        $task = Task::where('badge_id', $this->badge_id)->first();
-        $template = Template::where('badge_id', $this->badge_id)->first();
+        $task = Task::where(Task::BADGE_ID, $this->badge_id)->first();
+        $template = Template::where(Template::BADGE_ID, $this->badge_id)->first();
         if ($task || $template) {
             throw new Exception('Can\'t delete a badge that is currently used');
         }
@@ -44,7 +45,7 @@ class DeleteBadgeAction extends Action
             'Deleted badge [' . $badge->name . ']',
             null,
             $badge->id,
-            'Xguard\LaravelKanban\Models\Badge',
+            LoggableTypes::BADGE()->getValue()
         );
     }
 }

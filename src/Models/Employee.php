@@ -17,13 +17,11 @@ class Employee extends Model
     use SoftDeletes, CascadeSoftDeletes;
 
     protected $dates = ['deleted_at'];
-
     protected $table = 'kanban_employees';
-
     protected $cascadeDeletes = ['members', 'tasks', 'logs'];
-
     protected $guarded = [];
 
+    const USER_RELATION_NAME = 'user';
 
     public function members(): HasMany
     {

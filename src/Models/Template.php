@@ -15,18 +15,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Template extends Model
 {
     use SoftDeletes, CascadeSoftDeletes;
-    
+
     protected $dates = ['deleted_at'];
-
     protected $table = 'kanban_templates';
-
     protected $cascadeDeletes = ['boards'];
-
     protected $guarded = [];
-
     protected $appends = [
         'unserialized_options',
     ];
+
+    const BADGE_ID = 'badge_id';
+
     public function getUnserializedOptionsAttribute()
     {
         return unserialize($this->options);
