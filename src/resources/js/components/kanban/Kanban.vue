@@ -434,7 +434,6 @@ export default {
         },
 
         collapseRow(rowId) {
-
             if (!this.collapsedRows.includes(rowId)) {          //checking weather array contain the id
                 this.collapsedRows.push(rowId);               //adding to array because value doesnt exists
             } else {
