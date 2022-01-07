@@ -58,7 +58,7 @@
 <script>
 import {ajaxCalls} from "../../mixins/ajaxCallsMixin";
 import BacklogBar from "../backlog/backlogComponents/BacklogBar.vue";
-import LogCard from "../kanban/kanbanComponents/taskComponents/LogCard.vue";
+import LogCard from "../global/taskComponents/LogCard.vue";
 import NotificationSettingsModal from "./notificationsComponents/NotificationSettingsModal";
 import vSelect from "vue-select";
 

@@ -51,27 +51,27 @@
 
                     <div class="flex flex-wrap">
                         <div class="w-full">
-                            <ul class="flex mb-0 list-none flex-wrap pt-3 pb-4 flex-row">
+                            <ul class="flex mb-0 list-none flex-wrap py-3 flex-row">
 
-                                <li class="mx-1 flex-1 text-center">
+                                <li class="m-1 flex-1 text-center">
                                     <a class="text-xs font-bold uppercase px-5 py-3 rounded block leading-normal"
                                        v-on:click="toggleTabs(1)"
                                        v-bind:class="{'text-gray-600 bg-gray-200 hover:bg-gray-300 cursor-pointer ': openTab !== 1, 'text-white bg-gray-500': openTab === 1}">
-                                        <i class="fas fa-space-shuttle text-base mr-1"></i> Task Data
+                                        <i class="fas fa-tasks text-base mr-1"></i> Task Data
                                     </a>
                                 </li>
-                                <li class="mx-1 flex-1 text-center">
+                                <li class="m-1 flex-1 text-center">
                                     <a class="text-xs font-bold uppercase px-5 py-3 rounded block leading-normal"
                                        v-on:click="toggleTabs(2)"
                                        v-bind:class="{'text-gray-600 bg-gray-200 hover:bg-gray-300 cursor-pointer ': openTab !== 2, 'text-white bg-gray-500': openTab === 2}">
-                                        <i class="fas fa-cog text-base mr-1"></i> Edit Task
+                                        <i class="fas fa-edit text-base mr-1"></i> Edit Task
                                     </a>
                                 </li>
-                                <li class="mx-1 flex-1 text-center">
+                                <li class="m-1 flex-1 text-center">
                                     <a class="text-xs font-bold uppercase px-5 py-3 rounded block leading-normal"
                                        v-on:click="toggleTabs(3)"
                                        v-bind:class="{'text-gray-600 bg-gray-200 hover:bg-gray-300 cursor-pointer ': openTab !== 3, 'text-white bg-gray-500': openTab === 3}">
-                                        <i class="fas fa-space-shuttle text-base mr-1"></i> Logs
+                                        <i class="fas fa-history text-base mr-1"></i> Logs
                                     </a>
                                 </li>
                             </ul>
@@ -85,12 +85,13 @@
                                             </p>
                                         </div>
                                         <div v-bind:class="{'hidden': openTab !== 2, 'block': openTab === 2}">
-                                            <add-task-data :kanbanData="kanbanData"
+                                            <add-task-data :source="source"
+                                                           :members="kanbanData.members"
                                                            :cardData="cardData"></add-task-data>
                                         </div>
                                         <div v-bind:class="{'hidden': openTab !== 3, 'block': openTab === 3}">
                                             <p>
-                                                <task-logs :cardData="cardData"></task-logs>
+                                                <task-logs :taskId="taskId"></task-logs>
                                             </p>
                                         </div>
                                     </div>
@@ -106,11 +107,12 @@
 <script>
 import vSelect from "vue-select";
 import Avatar from "../../global/Avatar.vue";
-import addTaskData from "./taskComponents/AddTaskData";
-import taskComments from "./taskComponents/TaskComments";
-import taskLogs from "./taskComponents/TaskLogs"
-import viewTaskData from "./taskComponents/viewTaskData";
+import addTaskData from "../../global/taskComponents/AddTaskData";
+import taskComments from "../../global/taskComponents/TaskComments";
+import taskLogs from "../../global/taskComponents/TaskLogs"
+import viewTaskData from "../../global/taskComponents/viewTaskData";
 import {ajaxCalls} from "../../../mixins/ajaxCallsMixin";
+import {componentNames} from '../../../enums/componentNames';
 
 export default {
     inject: ["eventHub"],
@@ -132,6 +134,7 @@ export default {
 
     data() {
         return {
+            source: componentNames.KanbanTaskModal,
             openTab: 1,
             cardData: Object,
             modalOpen: false,

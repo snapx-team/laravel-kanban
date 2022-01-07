@@ -33,7 +33,7 @@ class TaskController extends Controller
 
     public function getSomeTasks($searchTerm)
     {
-        return Task::with('board')->whereSearchText($searchTerm)->take(10)->get();
+        return Task::with('board')->whereSearchText($searchTerm)->orderBy('name', 'ASC')->take(10)->get();
     }
 
     public function getTaskData($id)

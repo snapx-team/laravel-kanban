@@ -35,7 +35,7 @@
                 </div>
 
                 <!-- general search -->
-                <div class="flex flex-wrap bg-gray-50 p-4 mt-3 rounded">
+                <div class="bg-gray-50 p-4 mt-3 rounded">
 
                     <div class="flex flex-wrap">
                         <div class="flex block relative mt-3">
@@ -160,7 +160,7 @@
                         </div>
 
                         <!-- reporter -->
-                        <div class="flex block">
+                        <div class="flex block mr-2">
                             <vSelect
                                 v-model="filters.filterReporter"
                                 multiple
@@ -180,54 +180,53 @@
                                 </template>
                             </vSelect>
                         </div>
-                    </div>
 
-                    <div class="flex flex-wrap">
+                        <div class="flex">
+                            <!-- erp employee -->
+                            <div class="flex block mr-2">
+                                <vSelect
+                                    v-model="filters.filterErpEmployee"
+                                    multiple
+                                    :options="erpEmployees"
+                                    :getOptionLabel="opt => opt.full_name"
+                                    label="full_name"
+                                    placeholder="Filter By ERP Employees"
+                                    @search="onTypeEmployee"
+                                    @input="filterTrigger()"
+                                    class="w-72 flex-grow text-gray-400">
+                                    <template slot="option" slot-scope="option">
+                                        <avatar :name="option.full_name" :size="4"
+                                                class="mr-3 m-1 float-left"></avatar>
+                                        <p class="inline">{{ option.full_name }}</p>
+                                    </template>
+                                    <template #no-options="{ search, searching, loading }">
+                                        No result .
+                                    </template>
+                                </vSelect>
+                            </div>
 
-                        <!-- erp employee -->
-                        <div class="flex block  mr-2">
-                            <vSelect
-                                v-model="filters.filterErpEmployee"
-                                multiple
-                                :options="erpEmployees"
-                                :getOptionLabel="opt => opt.full_name"
-                                label="full_name"
-                                placeholder="Filter By ERP Employees"
-                                @search="onTypeEmployee"
-                                @input="filterTrigger()"
-                                class="w-72 flex-grow text-gray-400">
-                                <template slot="option" slot-scope="option">
-                                    <avatar :name="option.full_name" :size="4"
-                                            class="mr-3 m-1 float-left"></avatar>
-                                    <p class="inline">{{ option.full_name }}</p>
-                                </template>
-                                <template #no-options="{ search, searching, loading }">
-                                    No result .
-                                </template>
-                            </vSelect>
-                        </div>
-
-                        <!-- erp contract -->
-                        <div class="flex block  mr-2">
-                            <vSelect
-                                v-model="filters.filterErpContract"
-                                multiple
-                                :options="erpContracts"
-                                :getOptionLabel="opt => opt.contract_identifier"
-                                label="contract_identifier"
-                                placeholder="Filter By ERP Contracts"
-                                @search="onTypeContract"
-                                @input="filterTrigger()"
-                                class="w-72 flex-grow text-gray-400">
-                                <template slot="option" slot-scope="option">
-                                    <avatar :name="option.contract_identifier" :size="4"
-                                            class="mr-3 m-1 float-left"></avatar>
-                                    <p class="inline">{{ option.contract_identifier }}</p>
-                                </template>
-                                <template #no-options="{ search, searching, loading }">
-                                    No result .
-                                </template>
-                            </vSelect>
+                            <!-- erp contract -->
+                            <div class="flex block mr-2">
+                                <vSelect
+                                    v-model="filters.filterErpContract"
+                                    multiple
+                                    :options="erpContracts"
+                                    :getOptionLabel="opt => opt.contract_identifier"
+                                    label="contract_identifier"
+                                    placeholder="Filter By ERP Contracts"
+                                    @search="onTypeContract"
+                                    @input="filterTrigger()"
+                                    class="w-72 flex-grow text-gray-400">
+                                    <template slot="option" slot-scope="option">
+                                        <avatar :name="option.contract_identifier" :size="4"
+                                                class="mr-3 m-1 float-left"></avatar>
+                                        <p class="inline">{{ option.contract_identifier }}</p>
+                                    </template>
+                                    <template #no-options="{ search, searching, loading }">
+                                        No result .
+                                    </template>
+                                </vSelect>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -288,8 +287,7 @@
                             </div>
                         </pane>
                         <pane v-if="showTaskPane">
-                            <task-pane :badges="backlogData.badges"
-                                       :boards="backlogData.allBoards"></task-pane>
+                            <task-pane></task-pane>
                         </pane>
                     </splitpanes>
                 </div>
@@ -402,6 +400,7 @@ export default {
         this.eventHub.$off('close-board-view');
         this.eventHub.$off('filter-by-board');
         this.eventHub.$off('reload-backlog-data');
+        this.eventHub.$off('fetch-and-replace-task-data');
     },
 
     computed: {

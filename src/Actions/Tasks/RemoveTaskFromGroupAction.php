@@ -2,6 +2,7 @@
 
 namespace Xguard\LaravelKanban\Actions\Tasks;
 
+use DB;
 use Illuminate\Support\Facades\Auth;
 use Lorisleiva\Actions\Action;
 use Xguard\LaravelKanban\Models\Log;
@@ -31,7 +32,7 @@ class RemoveTaskFromGroupAction extends Action
     public function handle()
     {
         try {
-            \DB::beginTransaction();
+            DB::beginTransaction();
             $taskCard = Task::findOrFail($this->taskId);
 
             $sharedTaskData = SharedTaskData::create(['description' => $taskCard['sharedTaskData']['description']]);
@@ -62,9 +63,9 @@ class RemoveTaskFromGroupAction extends Action
                 "task_id" => $taskCard->id,
                 "log_id" => $log->id
             ]);
-            \DB::commit();
+            DB::commit();
         } catch (\Exception $e) {
-            \DB::rollBack();
+            DB::rollBack();
             throw $e;
         }
     }
