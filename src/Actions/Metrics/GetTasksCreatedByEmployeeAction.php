@@ -14,11 +14,7 @@ class GetTasksCreatedByEmployeeAction extends Action
     {
         return session('role') === 'admin';
     }
-    /**
-     * Get the validation rules that apply to the action.
-     *
-     * @return array
-     */
+
     public function rules(): array
     {
         return [
@@ -40,7 +36,6 @@ class GetTasksCreatedByEmployeeAction extends Action
     }
 
     /**
-     * Execute the action and return a result.
      *
      * @return array
      * @throws Exception

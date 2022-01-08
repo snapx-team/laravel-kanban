@@ -2,6 +2,7 @@
 
 Route::group(['prefix' => 'kanban',], function () {
     Route::group(['namespace' => 'Xguard\LaravelKanban\Http\Controllers',], function () {
+
         Route::group(['middleware' => ['web']], function () {
 
             // Setting sessions variables and checking if user is still logged in
@@ -99,7 +100,7 @@ Route::group(['prefix' => 'kanban',], function () {
                 Route::post('/delete-kanban-task-card/{id}', 'TaskController@deleteTaskCard');
                 Route::post('/update-task-description', 'TaskController@updateDescription');
                 Route::post('/set-status/{taskCardId}/{status}', 'TaskController@setStatus');
-                Route::post('/place-task/{taskId}/{row_id}/{column_id}/{board_id}', 'TaskController@placeTask');
+                Route::post('/place-task', 'TaskController@placeTask');
                 Route::post('/update-group/{taskId}/{group}', 'TaskController@updateGroup');
                 Route::post('/remove-group/{taskId}', 'TaskController@removeFromGroup');
 

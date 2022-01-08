@@ -197,6 +197,7 @@ import {ajaxCalls} from "../../../mixins/ajaxCallsMixin";
 import {helperFunctions} from "../../../mixins/helperFunctionsMixin";
 import _ from 'lodash';
 import Counter from "../Counter";
+import {componentNames} from "../../../enums/componentNames";
 
 export default {
     mixins: [ajaxCalls, helperFunctions],
@@ -213,7 +214,7 @@ export default {
             type: Boolean,
             default: false
         },
-        source: String,
+        sourceFrom: String,
     },
     data() {
         return {
@@ -382,21 +383,21 @@ export default {
             if (isValid) {
                 event.target.disabled = true;
 
-                if (this.source === "KanbanTaskModal") {
+                if (this.sourceFrom === componentNames.KanbanTaskModal) {
                     this.eventHub.$emit("update-task-card-data", this.cloneCardData);
                     this.eventHub.$emit("close-task-modal");
                 }
-                if (this.source === "TaskPane") {
+                if (this.sourceFrom === componentNames.TaskPane) {
                     this.eventHub.$emit("update-task-card-data", this.cloneCardData);
                 }
             }
         },
 
         cancel() {
-            if (this.source === "KanbanTaskModal") {
+            if (this.sourceFrom === componentNames.KanbanTaskModal) {
                 this.eventHub.$emit("close-task-modal");
             }
-            if (this.source === "TaskPane") {
+            if (this.sourceFrom === componentNames.TaskPane) {
                 this.triggerInfoToast('Resetting Task Data')
                 this.$refs.quill.quill.clipboard.dangerouslyPasteHTML(this.cardData.shared_task_data.description, 'user'); //resetting quill content
                 this.getAndSetInitialData();

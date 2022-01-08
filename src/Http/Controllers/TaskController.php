@@ -4,9 +4,7 @@ namespace Xguard\LaravelKanban\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Xguard\LaravelKanban\Actions\Tasks\UpdateTaskCardIndexesAction;
-use Xguard\LaravelKanban\Models\Log;
 use Xguard\LaravelKanban\Models\Task;
 use Xguard\LaravelKanban\Actions\Tasks\PlaceTaskAction;
 use Xguard\LaravelKanban\Actions\Tasks\CreateTaskAction;
@@ -17,7 +15,6 @@ use Xguard\LaravelKanban\Actions\Tasks\UpdateTaskAction;
 use Xguard\LaravelKanban\Actions\Tasks\UpdateTaskColumnAndRowAction;
 use Xguard\LaravelKanban\Actions\Tasks\UpdateTaskDescriptionAction;
 use Xguard\LaravelKanban\Actions\Tasks\UpdateTaskStatusAction;
-use Xguard\LaravelKanban\Repositories\TasksRepository;
 
 class TaskController extends Controller
 {
@@ -243,17 +240,19 @@ class TaskController extends Controller
         return response(['success' => 'true'], 200);
     }
 
-    public function placeTask($task_id, $row_id, $column_id, $board_id)
+    public function placeTask(Request $request)
     {
+        $taskPlacementData = $request->all();
         try {
             app(PlaceTaskAction::class)->fill([
-            'taskId' => $task_id,
-            'boardId' => $board_id,
-            'rowId' => $row_id,
-            'columnId' => $column_id,
+            'taskId' => $taskPlacementData['taskId'],
+            'boardId' => $taskPlacementData['boardId'],
+            'rowId' => $taskPlacementData['rowId'],
+            'columnId' => $taskPlacementData['columnId'],
             ])->run();
         } catch (\Exception $e) {
             return response([
+                'errors' => $e->errors(),
                 'success' => 'false',
                 'message' => $e->getMessage(),
             ], 400);

@@ -320,11 +320,11 @@ export const ajaxCalls = {
             });
         },
 
-        asyncPlaceTask(task_id, row_id, column_id, board_id) {
-            return axios.post('place-task/' + task_id + '/' + row_id + '/' + column_id + '/' + board_id).then(() => {
-                this.triggerSuccessToast('Task Placed!');
+        asyncPlaceTask(taskPlacementData) {
+            return axios.post('place-task', taskPlacementData).then(() => {
+                this.triggerSuccessToast('Task Placement Updated!');
             }).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -583,7 +583,7 @@ export const ajaxCalls = {
                     errors = errors.concat(error);
                 });
                 errors.forEach(error => this.triggerErrorToast(error));
-            } else {
+            } else if (errorResponse.response.data.message) {
                 this.triggerErrorToast(errorResponse.response.data.message);
             }
         }

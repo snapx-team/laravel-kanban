@@ -12,14 +12,15 @@ use Xguard\LaravelKanban\Models\Log;
 class Row extends Model
 {
     use SoftDeletes, CascadeSoftDeletes;
-    
+
     protected $dates = ['deleted_at'];
-
     protected $table = 'kanban_rows';
-
     protected $cascadeDeletes = ['columns'];
-
     protected $guarded = [];
+
+    const COLUMNS_RELATION_NAME = 'columns';
+    const BOARD_RELATION_NAME = 'board';
+    const LOGS_RELATION_NAME = 'logs';
 
     public function logs()
     {
