@@ -28,11 +28,20 @@
                     <p class="text-gray-700 font-semibold font-sans tracking-wide text-2xl py-1">
                         {{ cloneCardData.name }}
                     </p>
-                    <p class="text-gray-500 text-sm py-1" v-if="cloneCardData.row_id !== null"> Row:
-                        <i class="font-semibold">'{{ cloneCardData.row.name }}'</i> Column:
-                        <i class="font-semibold">'{{ cloneCardData.column.name }}'</i>
-                    </p>
-                    <p class="text-gray-500 text-sm py-1" v-else> In Backlog</p>
+                    <div v-if="cloneCardData.row_id !== null"
+                         class="flex">
+                        <p
+                            class="text-gray-500 text-sm py-1"> Row:
+                            <i class="font-semibold">'{{ cloneCardData.row.name }}'</i> Column:
+                            <i class="font-semibold">'{{ cloneCardData.column.name }}'</i>
+                        </p>
+                        <button @click="removeFromRowAndColumn()"
+                                class="px-2 text-xs text-indigo-600 hover:text-indigo-800 transition duration-300 ease-in-out focus:outline-none">
+                            remove
+                        </button>
+                    </div>
+
+                    <p v-else class="text-gray-500 text-sm py-1"> In Backlog</p>
                 </div>
 
 
@@ -267,7 +276,6 @@ export default {
     },
 
     props: {
-        source: componentNames.ViewTaskData,
         cardData: Object,
         isVerticalMode: {
             type: Boolean,
@@ -281,10 +289,12 @@ export default {
             type: Boolean,
             default: true
         },
+        sourceFrom: String,
     },
 
     data() {
         return {
+            source: componentNames.ViewTaskData,
             loadingSharedData: false,
             tasks: [],
             formatted: null,
@@ -350,6 +360,37 @@ export default {
                 this.handleChecklist();
                 this.formatFilesForFilepond();
                 this.eventHub.$emit("update-add-task-data-with-group-data", data.data);
+            })
+        },
+
+        removeFromRowAndColumn() {
+            this.$swal({
+                icon: 'info',
+                title: 'Remove task from Row and Column',
+                text: 'The task will no longer be visible in the board but will continue to exist in the backlog',
+                showCancelButton: true,
+                confirmButtonText: `Continue`,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let taskPlacementData = {
+                        taskId: this.cloneCardData.id,
+                        boardId: this.cloneCardData.board_id,
+                        rowId: null,
+                        columnId: null
+                    }
+                    this.asyncPlaceTask(taskPlacementData).then(() => {
+                        switch (this.sourceFrom){
+                            case componentNames.TaskPane :
+                                this.eventHub.$emit("fetch-and-replace-task-data");
+                                window.scrollTo({top: 0, behavior: 'smooth'});
+                                break;
+                            case componentNames.KanbanTaskModal :
+                                this.eventHub.$emit("fetch-and-set-column-tasks", this.cloneCardData);
+                                this.eventHub.$emit("close-task-modal");
+                                break;
+                        }
+                    })
+                }
             })
         },
 

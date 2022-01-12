@@ -33,9 +33,19 @@ class Task extends Model
     ];
 
     const ID = 'id';
+    const STATUS = 'status';
     const BADGE_ID = 'badge_id';
     const CREATED_AT = 'created_at';
     const DELETED_AT = 'deleted_at';
+
+    const ROW_RELATION_NAME = 'row';
+    const COLUMN_RELATION_NAME = 'column';
+    const TASK_FILES_RELATION_NAME = 'taskFiles';
+    const SHARED_TASK_DATA_RELATION_NAME='sharedTaskData';
+    const ASSIGNED_TO_RELATION_NAME ='assignedTo';
+    const REPORTER_RELATION_NAME ='reporter';
+    const BADGE_RELATION_NAME ='badge';
+
     const BOARD_RELATION_NAME = 'board';
 
     public function newEloquentBuilder($query): TasksQueryBuilder

@@ -14,11 +14,7 @@ class GetBadgeDataAction extends Action
     {
         return session('role') === 'admin';
     }
-    /**
-     * Get the validation rules that apply to the action.
-     *
-     * @return array
-     */
+
     public function rules(): array
     {
         return [
@@ -56,7 +52,7 @@ class GetBadgeDataAction extends Action
 
         $badgeData = [];
         foreach ($tasks as $task) {
-            $badgeData[$task->badge->name] = $task->total;
+             $badgeData[$task->badge->name] = $task->total;
         }
 
         return [

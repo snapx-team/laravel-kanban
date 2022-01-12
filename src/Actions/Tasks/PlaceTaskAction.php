@@ -15,6 +15,7 @@ class PlaceTaskAction extends Action
     {
         return AccessManager::canAccessBoardUsingTaskId($this->taskId);
     }
+
     /**
      * Get the validation rules that apply to the action.
      *
@@ -25,8 +26,8 @@ class PlaceTaskAction extends Action
         return [
             'taskId' => ['required', 'integer', 'gt:0'],
             'boardId' => ['required', 'integer', 'gt:0'],
-            'rowId' => ['required', 'integer', 'gt:0'],
-            'columnId' => ['required', 'integer', 'gt:0'],
+            'rowId' => ['nullable' , 'required_with:columnId,', 'integer', 'gt:0'],
+            'columnId' => ['nullable', 'required_with:rowId', 'integer', 'gt:0'],
         ];
     }
 
@@ -46,19 +47,26 @@ class PlaceTaskAction extends Action
                 'column_id' => $this->columnId
             ]);
 
+            // occurs when users wants to remove card that is currently placed in board
+            if ($this->rowId === null && $this->columnId === null) {
+                $logDesc = 'Task ['.$task->task_simple_name.'] placed in board ['.$task->board->name.'] without a row and column ';
+            } else {
+                $logDesc = 'Task ['.$task->task_simple_name.'] placed in board ['.$task->board->name.'] on ['.$task->row->name.':'.$task->column->name.']';
+            }
             $log = Log::createLog(
                 Auth::user()->id,
                 Log::TYPE_CARD_PLACED,
-                'Task [' . $task->task_simple_name . '] assigned to board [' . $task->board->name . '] on [' . $task->row->name . ':' . $task->column->name . ']',
+                $logDesc,
                 null,
                 $task->id,
                 'Xguard\LaravelKanban\Models\Task'
             );
+
             TasksRepository::versionTask([
                 "index" => $task->index,
                 "name" => $task->name,
                 "deadline" => $task->deadline,
-                "shared_task_data_id" =>$task->shared_task_data_id,
+                "shared_task_data_id" => $task->shared_task_data_id,
                 "reporter_id" => $task->reporter_id,
                 "column_id" => $task->column_id,
                 "row_id" => $task->row_id,

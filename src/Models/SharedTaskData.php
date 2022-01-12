@@ -15,12 +15,12 @@ class SharedTaskData extends Model
     use SoftDeletes, CascadeSoftDeletes;
 
     protected $dates = ['deleted_at'];
-
     protected $table = 'kanban_shared_task_data';
-
     protected $cascadeDeletes = ['erpContracts', 'erpEmployees'];
-
     protected $guarded = [];
+
+    const ERP_CONTRACTS_RELATION_NAME = 'erpContracts';
+    const ERP_EMPLOYEES_RELATION_NAME ='erpEmployees';
 
     public function taskCards(): HasMany
     {

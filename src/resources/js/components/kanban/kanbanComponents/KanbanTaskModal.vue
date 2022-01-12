@@ -81,7 +81,8 @@
                                     <div class="tab-content tab-space">
                                         <div v-bind:class="{'hidden': openTab !== 1, 'block': openTab === 1}">
                                             <p>
-                                                <view-task-data :cardData="cardData"></view-task-data>
+                                                <view-task-data :sourceFrom="source"
+                                                                :cardData="cardData"></view-task-data>
                                             </p>
                                         </div>
                                         <div v-bind:class="{'hidden': openTab !== 2, 'block': openTab === 2}">

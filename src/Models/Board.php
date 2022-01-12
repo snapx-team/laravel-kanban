@@ -22,7 +22,11 @@ class Board extends Model
 
     const ID = 'id';
     const NAME = 'name';
+    const STATUS = 'status';
+    const BADGE = 'badge';
     const MEMBERS_RELATION_NAME = 'members';
+    const ROWS_RELATION_NAME= 'rows';
+
 
 
     public function logs()

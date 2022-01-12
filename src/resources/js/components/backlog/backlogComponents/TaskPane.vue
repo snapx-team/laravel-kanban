@@ -83,6 +83,7 @@
                                     <view-task-data class="px-4 py-5"
                                                     v-if="task.id"
                                                     :key="task.id+'.'+task.board_id"
+                                                    :sourceFrom="source"
                                                     :isVerticalMode=true
                                                     :isCommentsVisible=false
                                                     :isRelatedTasksVisible=false

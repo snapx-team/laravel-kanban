@@ -13,12 +13,14 @@ class Column extends Model
     use SoftDeletes, CascadeSoftDeletes;
 
     protected $dates = ['deleted_at'];
-
     protected $table = 'kanban_columns';
-
     protected $cascadeDeletes = ['taskCards'];
-
     protected $guarded = [];
+
+
+    const LOGS_RELATION_NAME = 'logs';
+    const ROW_RELATION_NAME = 'row';
+    const TASK_CARDS_RELATION_NAME = 'taskCards';
 
     public function logs()
     {

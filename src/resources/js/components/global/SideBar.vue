@@ -217,9 +217,9 @@ export default {
         this.getNotificationCount();
         this.setVersion();
         this.$crontab.addJob({
-            name: 'setSessions',
+            name: 'getNotificationCount',
             interval: {
-                seconds: '/4',
+                seconds: '/6',
             },
             job: this.getNotificationCount
         });

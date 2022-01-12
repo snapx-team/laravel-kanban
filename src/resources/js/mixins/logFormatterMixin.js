@@ -6,6 +6,8 @@
  * @property {Object} target_employee
  * @property {Object} previous_task_version
  * @property {Object} task_version
+ * @property {number} row_id
+ * @property {number} column_id
  *
  */
 
@@ -60,9 +62,12 @@ export const formattedLog = {
                     'desc': desc
                 };
             case 15:
-                desc = log.user.full_name + ' assigned task [' + log.loggable.task_simple_name + '] to board [' + log.task_version.board.name + '] in [' + log.task_version.row.name + ':' + log.task_version.column.name + ']';
+                if( log.task_version.row_id  && log.task_version.column_id)
+                    desc = log.user.full_name + ' placed task [' + log.loggable.task_simple_name + '] in board [' + log.task_version.board.name + '] in [' + log.task_version.row.name + ':' + log.task_version.column.name + ']';
+                else
+                    desc = log.user.full_name + ' placed task [' + log.loggable.task_simple_name + '] in board [' + log.task_version.board.name + '] without a row and column';
                 return {
-                    'type': 'assigned a task to a board',
+                    'type': 'placed task',
                     'icon': 'fa-vote-yea',
                     'color': 'purple',
                     'desc': desc

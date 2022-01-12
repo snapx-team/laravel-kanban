@@ -30,7 +30,6 @@ class LaravelKanbanController extends Controller
         return ['is_logged_in' => false];
     }
 
-
     public function getRoleAndEmployeeId(): array
     {
         return [

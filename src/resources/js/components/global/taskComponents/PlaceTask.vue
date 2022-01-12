@@ -148,7 +148,13 @@ export default {
             if (this.cloneCardData.row === null || this.cloneCardData.column === null) {
                 this.triggerErrorToast('row and column need to be selected!');
             } else {
-                this.asyncPlaceTask(this.cloneCardData.id, this.cloneCardData.row.id, this.cloneCardData.column.id, this.cloneCardData.board.id).then(() => {
+                let taskPlacementData = {
+                    taskId: this.cloneCardData.id,
+                    boardId: this.cloneCardData.board.id,
+                    rowId: this.cloneCardData.row.id,
+                    columnId: this.cloneCardData.column.id
+                }
+                this.asyncPlaceTask(taskPlacementData).then(() => {
                     this.eventHub.$emit("fetch-and-replace-task-data");
                     window.scrollTo({top: 0, behavior: 'smooth'});
                 })

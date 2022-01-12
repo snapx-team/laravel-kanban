@@ -76,7 +76,8 @@
                         <div v-if="showTB">
                             <pie-chart
                                 class="border rounded my-2 max-w-screen-sm"
-                                :data="badgeData.data"
+                                :series="badgeData.data.hits"
+                                :labels="badgeData.data.names"
                                 :errors="badgeData.errors"
                                 :title="'Tasks created: grouped by badge'">
                             </pie-chart>
@@ -182,6 +183,7 @@ import BarChart from "./metricsComponents/BarChart.vue";
 import LineChart from "./metricsComponents/LineChart.vue";
 import BacklogBar from "../backlog/backlogComponents/BacklogBar.vue";
 import LoadingAnimation from "../global/LoadingAnimation";
+import moment from "moment";
 
 export default {
     inject: ["eventHub"],
@@ -195,8 +197,8 @@ export default {
     data() {
         return {
             chartIsLoading: false,
-            start: this.getMonday(new Date()),
-            end: new Date(),
+            start: moment().subtract(1, 'weeks').startOf('week').startOf('day').add(1, 'days').toDate(),
+            end: moment().subtract(1, 'weeks').endOf('week').startOf('day').add(1, 'days').toDate(),
             showTB: true,
             shoeEB: false,
             shoePH: false,
@@ -221,7 +223,6 @@ export default {
     mixins: [ajaxCalls],
 
     mounted() {
-        this.start.setDate(this.start.getDate() - (this.start.getDay() + 6) % 7);
         this.reload();
     },
     computed: {
@@ -308,7 +309,7 @@ export default {
                 this.chartIsLoading = false;
             }).catch(() => {
                 this.chartIsLoading = false;
-                this.triggerErrorToast('Error loading metrics');
+                this.triggerErrorToast('Invalid Data Entered');
             });
         },
         showCreatedVsResolved() {
@@ -326,12 +327,7 @@ export default {
                 this.triggerErrorToast('Invalid Data Entered');
             });
         },
-        getMonday(d) {
-            d = new Date(d);
-            let day = d.getDay(),
-                diff = d.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
-            return new Date(d.setDate(diff));
-        },
+
         filter() {
             if (this.start === null || this.start === '' || this.end === null || this.end === '') {
                 this.triggerErrorToast("fill date fields");

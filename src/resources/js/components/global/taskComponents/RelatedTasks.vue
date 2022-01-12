@@ -85,6 +85,7 @@ import Badge from "../Badge";
 import TaskCard from "../../kanban/kanbanComponents/TaskCard";
 import {ajaxCalls} from "../../../mixins/ajaxCallsMixin";
 import vSelect from "vue-select";
+import {componentNames} from "../../../enums/componentNames";
 
 export default {
     inject: ["eventHub"],
@@ -101,7 +102,7 @@ export default {
             type: Boolean,
             default: false
         },
-        source: String,
+        sourceFrom: String,
     },
     data() {
         return {
@@ -200,9 +201,9 @@ export default {
 
         updateParentWithChange(){
             this.eventHub.$emit("fetch-and-replace-task-data");
-            if (this.source === 'ViewTaskData') {
+            if (this.sourceFrom === componentNames.ViewTaskData) {
                 this.eventHub.$emit("fetch-and-set-column-tasks", this.cardData);
-            } else if (this.source === 'TaskPane') {
+            } else if (this.sourceFrom === componentNames.TaskPane) {
                 this.eventHub.$emit("reload-backlog-data");
             }
             this.getRelatedTasks(this.cardData.id);
