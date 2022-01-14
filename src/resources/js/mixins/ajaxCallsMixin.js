@@ -315,7 +315,9 @@ export const ajaxCalls = {
         },
 
         asyncSetStatus(taskCardId, status) {
-            return axios.post('set-status/' + taskCardId + '/' + status).catch((error) => {
+            return axios.post('set-status/' + taskCardId + '/' + status).then(()=> {
+                this.triggerSuccessToast('Status Updated');
+            }).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },

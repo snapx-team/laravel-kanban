@@ -1,18 +1,16 @@
 <template>
-    <div :class="`w-${size} h-${size} ${isSelected ? 'mb-6' : ''}`" class="rounded-full inline relative flex flex-col items-center group">
+    <div :class="`w-${size} h-${size} ${isSelected ? 'mb-6' : ''} border-${borderSize} border-${borderColor} ${borderSize=== 0 ? 'border' : ''}`"
+         class="rounded-full inline relative flex flex-col items-center group"
+         :style="`background-color:#${backgroundColor}`">
         <div :class="`mt-${size}`"
              class="absolute top-0 flex flex-col items-center hidden mb-6 group-hover:flex"
              v-if="tooltip">
             <div class="w-3 h-3 -mb-2 rotate-45 bg-gray-800"></div>
-            <span
-                class="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-gray-800 rounded shadow-lg">{{
-                    name
-                }}</span>
+            <p class="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-gray-800 rounded shadow-lg">
+                {{ name }}
+            </p>
         </div>
-        <img :class="`border-${borderSize} border-${borderColor} ${borderSize === 0 ? 'border' : ''}`"
-             :src="avatarUrl(name)"
-             alt="Avatar"
-             class="rounded-full"/>
+        <p class="text-white m-auto " :style="`font-size: ${size*2-1}px`">{{initials}}</p>
     </div>
 </template>
 <script>
@@ -25,6 +23,8 @@ export default {
     data() {
         return {
             isSelected: false,
+            backgroundColor: 'fff',
+            initials: 'XX'
         }
     },
     props: {
@@ -48,6 +48,10 @@ export default {
         },
     },
 
+    mounted(){
+        this.initials = this.getInitials()
+        this.backgroundColor = this.generateHexColorWithText(this.name);
+    },
     created() {
         this.eventHub.$on("show-employee-tasks", (idArray) => {
             this.select(idArray);
@@ -55,18 +59,24 @@ export default {
     },
 
     methods: {
-        select(idArray) {
-            if(this.user_id != null) {
-                if (idArray.includes(this.user_id)) {
-                    this.isSelected = true;
-                } else {
-                    this.isSelected = false;
-                }
+
+        getInitials() {
+            let names = this.name.split(' '),
+                initials = names[0].substring(0, 1).toUpperCase();
+
+            if (names.length > 1) {
+                initials += names[names.length - 1].substring(0, 1).toUpperCase();
             }
+            else {
+                initials += names[names.length - 1].substring(1, 2).toUpperCase();
+            }
+            return initials;
         },
-        avatarUrl(name) {
-            var color = this.generateHexColorWithText(name);
-            return ("https://ui-avatars.com/api/?name=" + name + "&background=" + color + "&color=fff");
+
+        select(idArray) {
+            if (this.user_id != null) {
+                this.isSelected = !!idArray.includes(this.user_id);
+            }
         },
     },
 };

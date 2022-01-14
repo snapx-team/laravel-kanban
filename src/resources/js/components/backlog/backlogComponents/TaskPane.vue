@@ -73,7 +73,7 @@
                                     </div>
                                     <place-task class="px-4 py-5"
                                                 v-if="task.id"
-                                                :key="task.id+'.'+task.board_id"
+                                                :key="getUniqueId()"
                                                 :task="task"></place-task>
                                 </div>
                                 <div>
@@ -82,7 +82,7 @@
                                     </div>
                                     <view-task-data class="px-4 py-5"
                                                     v-if="task.id"
-                                                    :key="task.id+'.'+task.board_id"
+                                                    :key="getUniqueId()"
                                                     :sourceFrom="source"
                                                     :isVerticalMode=true
                                                     :isCommentsVisible=false
@@ -95,7 +95,7 @@
                                     <h1 class="text-white">Edit Task</h1>
                                 </div>
                                 <add-task-data v-if="task.id"
-                                               :key="task.id+'.'+task.board_id"
+                                               :key="getUniqueId()"
                                                :isVerticalMode=true
                                                :source="source"
                                                :cardData="task"></add-task-data>
@@ -106,7 +106,7 @@
                                 </div>
                                 <task-comments class="px-4 py-5"
                                                v-if="task.id"
-                                               :key="task.id+'.'+task.board_id"
+                                               :key="getUniqueId()"
                                                :cardData="task"></task-comments>
                             </div>
                             <div v-bind:class="{'hidden': openTab !== 4, 'block': openTab === 4}">
@@ -115,7 +115,7 @@
                                 </div>
                                 <related-tasks class="px-4 py-5"
                                                v-if="task.id"
-                                               :key="task.id+'.'+task.board_id"
+                                               :key="getUniqueId()"
                                                :appendSelectToBody=true
                                                :source="source"
                                                :cardData="task"></related-tasks>
@@ -126,7 +126,7 @@
                                 </div>
                                 <task-logs class="px-4 py-5"
                                            v-if="task.id"
-                                           :key="task.id"
+                                           :key="getUniqueId()"
                                            :taskId="task.id"></task-logs>
                             </div>
                         </div>
@@ -183,8 +183,8 @@ export default {
             this.populateTaskView(task);
 
         });
-        this.eventHub.$on("fetch-and-replace-task-data", () => {
-            this.fetchAndReplaceTaskData();
+        this.eventHub.$on("fetch-and-replace-task-pane-data", () => {
+            this.fetchAndReplaceTaskPaneData();
         });
 
         this.eventHub.$on("update-task-card-data", (task) => {
@@ -194,7 +194,7 @@ export default {
 
     beforeDestroy() {
         this.eventHub.$off('populate-task-view');
-        this.eventHub.$off('fetch-and-replace-task-data');
+        this.eventHub.$off('fetch-and-replace-task-pane-data');
     },
 
     methods: {
@@ -215,12 +215,17 @@ export default {
         toggleTabs: function (tabNumber) {
             this.openTab = tabNumber
         },
-        fetchAndReplaceTaskData() {
+        fetchAndReplaceTaskPaneData() {
             window.scrollTo({top: 0, behavior: 'smooth'});
             this.eventHub.$emit("reload-backlog-data");
             this.asyncGetTaskData(this.task.id).then((data) => {
                 Object.assign(this.task, {...data.data});
+                this.$forceUpdate();
             })
+        },
+
+        getUniqueId(){
+            return this.task.id+'.'+this.task.board_id+'.'+this.task.row_id+'.'+this.task.row_id+'.'+this.task.status;
         },
         copyToClipboard() {
             let temp = document.createElement('input'),

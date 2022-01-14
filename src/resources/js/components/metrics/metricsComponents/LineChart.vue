@@ -1,10 +1,10 @@
 <template>
     <div>
-        <div v-if="this.series.length > 0" id="chart">
+        <div v-if="this.series.length > 0 && errors.length === 0" id="chart">
             <vue-apex-charts type="area" height="350" :options="computedChartOptions"
                              :series="series"></vue-apex-charts>
         </div>
-        <div class="text-lg font-light leading-relaxed p-3" v-if="this.series.length === 0">
+        <div v-else class="text-lg font-light leading-relaxed p-3">
             No Data For <b>{{ this.title }}</b>
             <p class="text-red-600 font-semibold text-sm pt-2" v-for="error in errors">{{ error }}</p>
         </div>
