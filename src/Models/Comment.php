@@ -11,10 +11,14 @@ class Comment extends Model
     use SoftDeletes;
 
     protected $dates = ['deleted_at'];
-
     protected $table = 'kanban_comments';
-
     protected $guarded = [];
+
+    const ID = 'id';
+
+    const TASK_RELATION_NAME = 'task';
+    const EMPLOYEE_RELATION_NAME = 'employee';
+    const LOGS_RELATION_NAME = 'logs';
 
     public function task(): BelongsTo
     {

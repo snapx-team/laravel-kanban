@@ -466,8 +466,8 @@ export const ajaxCalls = {
 
         // Logs
 
-        asyncGetLogs(taskId) {
-            return axios.get('get-logs/' + taskId).catch((error) => {
+        asyncGetLogs(page, taskId) {
+            return axios.get('get-logs/' + taskId + '?page=' + page).catch((error) => {
                 this.triggerErrorToast(error.response.data.message);
             });
         },
