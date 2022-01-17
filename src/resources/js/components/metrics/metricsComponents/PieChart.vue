@@ -4,8 +4,8 @@
             <vue-apex-charts :options="computedChartOptions"
                              :series="series"></vue-apex-charts>
         </div>
-        <div class="text-lg font-light leading-relaxed p-3" v-else>
-            No Data For <b>{{ title }}</b>
+        <div v-else class="text-lg font-light leading-relaxed p-3">
+            No Data For <b>{{ this.title }}</b>
             <p class="text-red-600 font-semibold text-sm pt-2" v-for="error in errors">{{ error }}</p>
         </div>
     </div>

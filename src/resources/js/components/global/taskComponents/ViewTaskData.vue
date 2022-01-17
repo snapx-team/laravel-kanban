@@ -379,10 +379,9 @@ export default {
                         columnId: null
                     }
                     this.asyncPlaceTask(taskPlacementData).then(() => {
-                        switch (this.sourceFrom){
+                        switch (this.sourceFrom) {
                             case componentNames.TaskPane :
-                                this.eventHub.$emit("fetch-and-replace-task-data");
-                                window.scrollTo({top: 0, behavior: 'smooth'});
+                                this.eventHub.$emit("fetch-and-replace-task-pane-data");
                                 break;
                             case componentNames.KanbanTaskModal :
                                 this.eventHub.$emit("fetch-and-set-column-tasks", this.cloneCardData);
@@ -395,19 +394,29 @@ export default {
         },
 
         setStatus() {
+            let swalText = (this.selectedStatus.name === "active"
+                ? 'This task will be able to appear inside a board'
+                : 'This will archive the task. You can find it in the backlog.');
+
             if (this.selectedStatus.name !== this.cloneCardData.status) {
                 this.$swal({
                     icon: 'info',
                     title: 'Set status to ' + this.selectedStatus.name,
-                    text: 'This will archive the task. You can find it in the backlog.',
+                    text: swalText,
                     showCancelButton: true,
                     confirmButtonText: `Continue`,
                 }).then((result) => {
                     if (result.isConfirmed) {
                         this.asyncSetStatus(this.cloneCardData.id, this.selectedStatus.name).then(() => {
-                            this.eventHub.$emit("fetch-and-set-column-tasks", this.cloneCardData);
-                            this.eventHub.$emit("close-task-modal");
-                            this.triggerSuccessToast('Status Updated');
+                            switch (this.sourceFrom) {
+                                case componentNames.TaskPane :
+                                    this.eventHub.$emit("fetch-and-replace-task-pane-data");
+                                    break;
+                                case componentNames.KanbanTaskModal :
+                                    this.eventHub.$emit("fetch-and-set-column-tasks", this.cloneCardData);
+                                    this.eventHub.$emit("close-task-modal");
+                                    break;
+                            }
                         })
                     } else {
                         this.selectedStatus = this.cloneCardData.status;

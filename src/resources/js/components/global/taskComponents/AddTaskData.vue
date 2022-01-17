@@ -287,7 +287,6 @@ export default {
         },
     },
     methods: {
-
         getAndSetInitialData() {
             this.cloneCardData = _.cloneDeep(this.cardData);
             this.checkedOptions = [];
@@ -315,6 +314,7 @@ export default {
                 this.members = data.data;
             });
         },
+
         formatFilesForFilepond() {
             this.formattedFiles = []
             this.cloneCardData.task_files.forEach((file, index) => {
@@ -331,8 +331,8 @@ export default {
 
             })
         },
-        updateFiles(files) {
 
+        updateFiles(files) {
             // all new files to upload
             this.cloneCardData.filesToUpload = files.filter(function (file) {
                 // all new files don't have ids, and we don't want any files over 5mb
@@ -354,6 +354,7 @@ export default {
                 this.typeEmployee(search, loading, this);
             }
         },
+
         typeEmployee: _.debounce(function (search, loading, vm) {
             this.asyncGetSomeUsers(search).then((data) => {
                 this.erpEmployees = data.data;
@@ -362,12 +363,14 @@ export default {
                 loading(false);
             });
         }, 500),
+
         onTypeContract(search, loading) {
             if (search.length) {
                 loading(true);
                 this.typeContract(search, loading, this);
             }
         },
+
         typeContract: _.debounce(function (search, loading, vm) {
             this.asyncGetSomeContracts(search).then((data) => {
                 this.erpContracts = data.data;
@@ -429,7 +432,6 @@ export default {
         },
 
         removeNotNeededData() {
-
             if (!this.checkedOptions.includes('Deadline')) {
                 this.cloneCardData.deadline = null
             }

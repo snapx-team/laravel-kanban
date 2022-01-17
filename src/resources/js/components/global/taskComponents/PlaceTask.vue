@@ -155,8 +155,7 @@ export default {
                     columnId: this.cloneCardData.column.id
                 }
                 this.asyncPlaceTask(taskPlacementData).then(() => {
-                    this.eventHub.$emit("fetch-and-replace-task-data");
-                    window.scrollTo({top: 0, behavior: 'smooth'});
+                    this.eventHub.$emit("fetch-and-replace-task-pane-data");
                 })
             }
         },
