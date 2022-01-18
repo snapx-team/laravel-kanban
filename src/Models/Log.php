@@ -22,12 +22,21 @@ class Log extends Model
     use SoftDeletes, CascadeSoftDeletes;
 
     protected $dates = ['deleted_at'];
-
     protected $table = 'kanban_logs';
-
     protected $cascadeDeletes = ['notifications'];
-
     protected $guarded = [];
+
+    const ID = 'id';
+    const LOGGABLE_TYPE = 'loggable_type';
+    const LOGGABLE_ID = 'loggable_id';
+
+    const LOGGABLE_RELATION_NAME = 'loggable';
+    const TASK_VERSION_RELATION_NAME = 'taskVersion';
+    const TARGET_EMPLOYEE_RELATION_NAME = 'targetEmployee';
+    const USER_RELATION_NAME = 'user';
+    const NOTIFICATION_EMPLOYEE_RELATION_NAME = 'notifications';
+
+    //LOG TYPES
 
     const TYPE_EMPLOYEE_CREATED = 1;
     const TYPE_EMPLOYEE_UPDATED = 2;

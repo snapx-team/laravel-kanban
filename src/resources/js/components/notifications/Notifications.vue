@@ -104,6 +104,7 @@ export default {
                     data: [
                         {name: 'Task Updated', code: '16'},
                         {name: 'Task Added To Group', code: '17'},
+                        {name: 'Task Removed From Group', code: '24'},
                     ]
                 },
                 {
@@ -149,12 +150,6 @@ export default {
                 },
             ]
         };
-    },
-
-    created() {
-        this.eventHub.$on("save-notification-settings", (notificationSettings) => {
-            this.saveNotificationSettings(notificationSettings);
-        });
     },
 
     computed: {

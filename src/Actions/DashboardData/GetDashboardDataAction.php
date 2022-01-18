@@ -6,10 +6,8 @@ use DateTime;
 use Exception;
 use Lorisleiva\Actions\Action;
 use Xguard\LaravelKanban\Actions\Badges\ListBadgesWithCountAction;
-use Xguard\LaravelKanban\Http\Helper\AccessManager;
 use Xguard\LaravelKanban\Models\Board;
 use Xguard\LaravelKanban\Models\Employee;
-use Xguard\LaravelKanban\Models\Log;
 use Xguard\LaravelKanban\Models\Template;
 
 class GetDashboardDataAction extends Action
