@@ -8,15 +8,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Xguard\LaravelKanban\Models\Log;
 
 class Board extends Model
 {
-
     use SoftDeletes, CascadeSoftDeletes;
 
     protected $dates = ['deleted_at'];
-    protected $cascadeDeletes = ['members', 'rows', 'templates'];
+    protected $cascadeDeletes = ['members', 'rows', 'templates', 'tasks'];
     protected $table = 'kanban_boards';
     protected $guarded = [];
 
@@ -26,8 +24,6 @@ class Board extends Model
     const BADGE_RELATION_NAME = 'badge';
     const MEMBERS_RELATION_NAME = 'members';
     const ROWS_RELATION_NAME= 'rows';
-
-
 
     public function logs()
     {
@@ -52,5 +48,10 @@ class Board extends Model
     public function employeeNotificationSettings(): HasOne
     {
         return $this->HasOne(EmployeeBoardNotificationSetting::class)->where('employee_id', session('employee_id'));
+    }
+
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(Task::class);
     }
 }
