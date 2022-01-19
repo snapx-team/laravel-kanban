@@ -97,7 +97,7 @@
                                 <add-task-data v-if="task.id"
                                                :key="getUniqueId()"
                                                :isVerticalMode=true
-                                               :source="source"
+                                               :sourceFrom="source"
                                                :cardData="task"></add-task-data>
                             </div>
                             <div v-bind:class="{'hidden': openTab !== 3, 'block': openTab === 3}">

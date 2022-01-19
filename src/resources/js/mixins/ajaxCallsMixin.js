@@ -8,20 +8,20 @@ export const ajaxCalls = {
 
         asyncGetKanbanData(id) {
             return axios.get('get-board-data/' + id).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
                 throw error.response.data.message;
             });
         },
 
         asyncGetDashboardData() {
             return axios.get('get-dashboard-data').catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
         asyncGetBacklogData(start, end) {
             return axios.get('get-backlog-data/' + start + '/' + end).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -29,19 +29,19 @@ export const ajaxCalls = {
 
         asyncGetNotificationData(page, logType) {
             return axios.get('get-notif-data/' + logType + '?page=' + page).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
         asyncGetNotificationCount() {
             return axios.get('get-notif-count').catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
         asyncUpdateNotificationCount() {
             return axios.post('update-notif-count').catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -53,7 +53,7 @@ export const ajaxCalls = {
             return axios.post('first-or-create-employee-notification-settings', notificationSettings).then(() => {
                 this.triggerSuccessToast('Notification Settings Updated!');
             }).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -121,7 +121,7 @@ export const ajaxCalls = {
 
         asyncGetBoards() {
             return axios.get('get-boards').catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -137,7 +137,7 @@ export const ajaxCalls = {
             return axios.post('edit-board', kanbanData).then(() => {
                 this.triggerSuccessToast('Board edited!');
             }).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -145,7 +145,7 @@ export const ajaxCalls = {
             return axios.post('delete-board/' + boardId).then(() => {
                 this.triggerSuccessToast('Board Deleted!');
             }).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -153,20 +153,20 @@ export const ajaxCalls = {
 
         asyncCreateRowAndColumns(rowData) {
             return axios.post('save-row-and-columns', rowData).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
         asyncGetColumns(row_id) {
             return axios.get('get-columns/' + row_id).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
 
         asyncGetRows(board_id) {
             return axios.get('get-rows/' + board_id).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -174,7 +174,7 @@ export const ajaxCalls = {
             return axios.post('delete-row/' + rowId).then(() => {
                 this.triggerSuccessToast('Row Deleted!');
             }).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -182,19 +182,19 @@ export const ajaxCalls = {
 
         asyncGetBacklogTasks(page, filters, cancelToken) {
             return axios.post('get-backlog-tasks?page=' + page, filters, {cancelToken: cancelToken}).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
         asyncGetAllTasks() {
             return axios.get('get-all-tasks').catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
         asyncGetRelatedTasks(taskId) {
             return axios.get('get-related-tasks/' + taskId).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -203,19 +203,19 @@ export const ajaxCalls = {
                 return axios.get('get-all-tasks');
             }
             return axios.get('get-some-tasks/' + searchTerm).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
         asyncGetTaskData(taskId) {
             return axios.get('get-task-data/' + taskId).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
         asyncGetRelatedTasksLessInfo(taskId) {
             return axios.get('get-related-tasks-less-info/' + taskId).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -240,7 +240,7 @@ export const ajaxCalls = {
             return axios.post('update-task', formData).then(() => {
                 this.triggerSuccessToast('Task Updated');
             }).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -251,7 +251,7 @@ export const ajaxCalls = {
             return axios.post('create-task', formData).then(() => {
                 this.triggerSuccessToast('Task created!');
             }).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -262,7 +262,7 @@ export const ajaxCalls = {
             return axios.post('create-backlog-tasks', formData).then(() => {
                 this.triggerSuccessToast('Backlog task created!');
             }).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -273,7 +273,7 @@ export const ajaxCalls = {
 
         asyncDeleteKanbanTaskCard(taskCardId) {
             return axios.post('delete-kanban-task-card/' + taskCardId).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -282,7 +282,7 @@ export const ajaxCalls = {
                 if (type === 'moved' || type === 'added')
                     this.triggerSuccessToast('task moved');
             }).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -290,7 +290,7 @@ export const ajaxCalls = {
             return axios.post('update-column-indexes', columns).then(() => {
                 this.triggerSuccessToast('Column position updated');
             }).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -298,19 +298,19 @@ export const ajaxCalls = {
             return axios.post('update-row-indexes', rows).then(() => {
                 this.triggerSuccessToast('Row position updated');
             }).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
         asyncUpdateTaskCardRowAndColumnId(columnId, rowId, taskCardId) {
             return axios.post('update-task-card-row-and-column/' + columnId + '/' + rowId + '/' + taskCardId).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
         asyncUpdateDescription(data) {
             return axios.post('update-task-description', data).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -318,7 +318,7 @@ export const ajaxCalls = {
             return axios.post('set-status/' + taskCardId + '/' + status).then(()=> {
                 this.triggerSuccessToast('Status Updated');
             }).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -334,7 +334,7 @@ export const ajaxCalls = {
             return axios.post('update-group/' + task_id + '/' + group).then(() => {
                 this.triggerSuccessToast('Group Updated!');
             }).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -342,7 +342,7 @@ export const ajaxCalls = {
             return axios.post('remove-group/' + task_id).then(() => {
                 this.triggerSuccessToast('Group Removed!');
             }).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -350,30 +350,30 @@ export const ajaxCalls = {
 
         asyncGetUserProfile() {
             return axios.get('get-user-profile').catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
         asyncGetAllUsers() {
             return axios.get('get-all-users').catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
         asyncGetSomeUsers(searchTerm) {
             if (searchTerm == '') {
                 return axios.get('get-all-users').catch((error) => {
-                    this.triggerErrorToast(error.response.data.message);
+                    this.loopAllErrorsAsTriggerErrorToast(error);
                 });
             }
             return axios.get('get-some-users/' + searchTerm).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
         asyncGetKanbanEmployees() {
             return axios.get('get-kanban-employees').catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -381,7 +381,7 @@ export const ajaxCalls = {
             return axios.post('create-kanban-employees', employeeData).then(() => {
                 this.triggerSuccessToast('Employee Added!');
             }).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -389,7 +389,7 @@ export const ajaxCalls = {
             return axios.post('delete-kanban-employee/' + employeeId).then(() => {
                 this.triggerSuccessToast('Employee Removed');
             }).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -411,7 +411,7 @@ export const ajaxCalls = {
             return axios.post('delete-template/' + templateId).then(() => {
                 this.triggerSuccessToast('Templated Deleted!');
             }).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -419,18 +419,18 @@ export const ajaxCalls = {
 
         asyncGetAllContracts() {
             return axios.get('get-all-contracts').catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
         asyncGetSomeContracts(searchTerm) {
             if (searchTerm === '') {
                 return axios.get('get-all-contracts').catch((error) => {
-                    this.triggerErrorToast(error.response.data.message);
+                    this.loopAllErrorsAsTriggerErrorToast(error);
                 });
             }
             return axios.get('get-some-contracts/' + searchTerm).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -438,13 +438,13 @@ export const ajaxCalls = {
 
         asyncGetBadges() {
             return axios.get('get-all-badges').catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
         asyncListBadgesWithCount() {
             return axios.get('list-badges-with-count').catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -460,7 +460,7 @@ export const ajaxCalls = {
             return axios.delete('delete-badge/' + $badgeId).then(() => {
                 this.triggerSuccessToast('Badge Deleted!');
             }).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -468,7 +468,7 @@ export const ajaxCalls = {
 
         asyncGetLogs(page, taskId) {
             return axios.get('get-logs/' + taskId + '?page=' + page).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -476,13 +476,13 @@ export const ajaxCalls = {
 
         asyncGetMembers(boardId) {
             return axios.get('get-members/' + boardId).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
         asyncGetMembersFormattedForQuill(boardId) {
             return axios.get('get-members-formatted-for-quill/' + boardId).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -491,7 +491,7 @@ export const ajaxCalls = {
             return axios.post('create-members/' + boardId, memberData).then(() => {
                 this.triggerSuccessToast('New Board Member Added!');
             }).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -499,7 +499,7 @@ export const ajaxCalls = {
             return axios.post('delete-member/' + memberId).then(() => {
                 this.triggerSuccessToast('Board Member Deleted!');
             }).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -507,7 +507,7 @@ export const ajaxCalls = {
 
         asyncGetComments(taskId) {
             return axios.get('get-task-comments/' + taskId).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 
@@ -520,7 +520,7 @@ export const ajaxCalls = {
 
         asyncDeleteComment(commentData) {
             return axios.post('delete-task-comment', commentData).catch((error) => {
-                this.triggerErrorToast(error.response.data.message);
+                this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
 

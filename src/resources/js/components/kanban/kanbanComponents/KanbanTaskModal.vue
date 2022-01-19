@@ -86,7 +86,7 @@
                                             </p>
                                         </div>
                                         <div v-bind:class="{'hidden': openTab !== 2, 'block': openTab === 2}">
-                                            <add-task-data :source="source"
+                                            <add-task-data :sourceFrom="source"
                                                            :members="kanbanData.members"
                                                            :cardData="cardData"></add-task-data>
                                         </div>

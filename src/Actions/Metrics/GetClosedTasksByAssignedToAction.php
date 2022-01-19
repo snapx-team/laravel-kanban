@@ -4,8 +4,11 @@ namespace Xguard\LaravelKanban\Actions\Metrics;
 
 use DateTime;
 use Exception;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Lorisleiva\Actions\Action;
 use Xguard\LaravelKanban\Models\Log;
+use Xguard\LaravelKanban\Models\Task;
 
 class GetClosedTasksByAssignedToAction extends Action
 {
@@ -41,7 +44,10 @@ class GetClosedTasksByAssignedToAction extends Action
      */
     public function handle(): array
     {
-        $logs = Log::where('log_type', Log::TYPE_CARD_COMPLETED)
+        $logs = Log::with(['loggable' => function (MorphTo $morphTo) {
+            $morphTo->withoutGlobalScope(SoftDeletingScope::class)
+                ->morphWith([Task::class => ['assignedTo']]);
+        }])->where('log_type', Log::TYPE_CARD_COMPLETED)
             ->whereDate('created_at', '>=', new DateTime($this->start))
             ->whereDate('created_at', '<=', new DateTime($this->end))
             ->where('loggable_type', 'Xguard\LaravelKanban\Models\Task')

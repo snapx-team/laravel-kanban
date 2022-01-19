@@ -17,7 +17,6 @@ class Column extends Model
     protected $cascadeDeletes = ['taskCards'];
     protected $guarded = [];
 
-
     const LOGS_RELATION_NAME = 'logs';
     const ROW_RELATION_NAME = 'row';
     const TASK_CARDS_RELATION_NAME = 'taskCards';
