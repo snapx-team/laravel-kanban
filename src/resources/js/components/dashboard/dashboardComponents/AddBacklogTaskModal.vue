@@ -268,6 +268,7 @@
                                     allow-multiple="true"
                                     credits=false
                                     maxFileSize="5MB"
+                                    maxTotalFileSize="10MB"
                                     imagePreviewHeight="100"
                                     @updatefiles="updateFiles"
                                 />

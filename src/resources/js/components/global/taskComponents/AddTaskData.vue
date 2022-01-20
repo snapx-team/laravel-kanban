@@ -166,6 +166,7 @@
                         :files="formattedFiles"
                         credits=false
                         maxFileSize="5MB"
+                        maxTotalFileSize="10MB"
                         imagePreviewHeight="100"
                         @updatefiles="updateFiles"
                     />
@@ -178,7 +179,7 @@
                         type="button">
                         Cancel
                     </button>
-                    <button @click="updateTaskDataInTaskModal($event)"
+                    <button @click="updateTaskDataInTaskModal()"
                             class="px-4 py-3 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
                             type="button">
 
@@ -380,12 +381,10 @@ export default {
             });
         }, 500),
 
-        updateTaskDataInTaskModal(event) {
+        updateTaskDataInTaskModal() {
             let isValid = this.validateCreateOrUpdateTaskEvent(this.cloneCardData, this.checkedOptions)
 
             if (isValid) {
-                event.target.disabled = true;
-
                 if (this.sourceFrom === componentNames.KanbanTaskModal) {
                     this.eventHub.$emit("update-task-card-data", this.cloneCardData);
                     this.eventHub.$emit("close-task-modal");
