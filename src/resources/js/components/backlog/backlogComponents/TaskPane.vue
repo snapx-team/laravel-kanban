@@ -209,7 +209,7 @@ export default {
         },
         updateTaskCard(task) {
             this.asyncUpdateTask(task).then(() => {
-                this.fetchAndReplaceTaskData();
+                this.fetchAndReplaceTaskPaneData();
             })
         },
         toggleTabs: function (tabNumber) {
