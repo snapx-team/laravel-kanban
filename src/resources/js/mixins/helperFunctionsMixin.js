@@ -21,7 +21,6 @@ export const helperFunctions = {
         validateCreateOrUpdateTaskEvent(task, checkedOptions) {
 
             let errorCount = 0;
-            let totalFileSize = task.filesToUpload.reduce((acc, curr) => acc + curr.fileSize, 0);
 
             if (!(task.name)) {
                 this.triggerErrorToast('Task name is required');
@@ -35,12 +34,14 @@ export const helperFunctions = {
                 this.triggerErrorToast('The badge name must contain at least one character');
                 errorCount++;
             }
+            if(task.filesToUpload){
+                let totalFileSize = task.filesToUpload.reduce((acc, curr) => acc + curr.fileSize, 0);
 
-            if (totalFileSize >= 10000000){
-                this.triggerErrorToast('Maximum upload of 10MB exceeded. Remove files or reduce file size.');
-                errorCount++;
+                if (totalFileSize >= 10000000){
+                    this.triggerErrorToast('Maximum upload of 10MB exceeded. Remove files or reduce file size.');
+                    errorCount++;
+                }
             }
-
             if (checkedOptions.includes('Group') || task.selectGroupIsVisible){
                 if (!(task.associatedTask)){
                     this.triggerErrorToast('Choose a task to group with, or uncheck group from options list');
