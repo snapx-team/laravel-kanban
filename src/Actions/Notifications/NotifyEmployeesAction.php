@@ -2,12 +2,15 @@
 
 namespace Xguard\LaravelKanban\Actions\Notifications;
 
+use Xguard\LaravelKanban\Enums\LoggableTypes;
+use Xguard\LaravelKanban\Enums\SessionVariables;
 use Xguard\LaravelKanban\Models\EmployeeBoardNotificationSetting;
 use Xguard\LaravelKanban\Models\Log;
 use Lorisleiva\Actions\Action;
 
 class NotifyEmployeesAction extends Action
 {
+    const LOG = 'log';
 
     /**
      * Get the validation rules that apply to the action.
@@ -17,7 +20,7 @@ class NotifyEmployeesAction extends Action
     public function rules()
     {
         return [
-            'log' => ['required', 'instance_of:'.Log::class],
+            self::LOG => ['required', 'instance_of:'.Log::class],
         ];
     }
 
@@ -32,9 +35,9 @@ class NotifyEmployeesAction extends Action
         $globalIgnoreLogTypes = [LOG::TYPE_CARD_CHANGED_INDEX];
 
         if (!in_array($this->log->log_type, $globalIgnoreLogTypes)) {
-            if ($this->log->loggable_type == 'Xguard\LaravelKanban\Models\Task') {
+            if ($this->log->loggable_type == LoggableTypes::TASK()->getValue()) {
                 //notify reporter unless reporter performed the action
-                if (intval(session('employee_id')) !== intval($this->log->loggable->reporter_id)) {
+                if (intval(session(SessionVariables::EMPLOYEE_ID()->getValue())) !== intval($this->log->loggable->reporter_id)) {
                     $this->attachNotificationIfAllowed(
                         $this->log,
                         $this->log->loggable->board->id,
@@ -55,9 +58,9 @@ class NotifyEmployeesAction extends Action
                 }
             }
 
-            if ($this->log->loggable_type == 'Xguard\LaravelKanban\Models\Comment') {
+            if ($this->log->loggable_type == LoggableTypes::COMMENT()->getValue()) {
                 //notify reporter unless reporter performed the action
-                if (intval(session('employee_id')) !== intval($this->log->loggable->task->reporter_id)) {
+                if (intval(session(SessionVariables::EMPLOYEE_ID()->getValue())) !== intval($this->log->loggable->task->reporter_id)) {
                     $this->attachNotificationIfAllowed(
                         $this->log,
                         $this->log->loggable->task->board->id,
@@ -82,7 +85,7 @@ class NotifyEmployeesAction extends Action
                 }
             }
 
-            if ($this->log->loggable_type == 'Xguard\LaravelKanban\Models\Board') {
+            if ($this->log->loggable_type == LoggableTypes::BOARD()->getValue()) {
                 //notify targeted employee (added/deleted members)
                 if ($this->log->targeted_employee_id !== null) {
                     $this->attachNotificationIfAllowed(
@@ -101,8 +104,8 @@ class NotifyEmployeesAction extends Action
 
     public function attachNotificationIfAllowed($log, $boardId, $employeeId)
     {
-        $employeeBoardNotificationSettings = EmployeeBoardNotificationSetting::where('board_id', $boardId)
-            ->where('employee_id', $employeeId)->first();
+        $employeeBoardNotificationSettings = EmployeeBoardNotificationSetting::where(EmployeeBoardNotificationSetting::BOARD_ID, $boardId)
+            ->where(EmployeeBoardNotificationSetting::EMPLOYEE_ID, $employeeId)->first();
 
         if (!$employeeBoardNotificationSettings) {
             $log->notifications()->attach($employeeId);

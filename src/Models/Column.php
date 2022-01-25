@@ -17,22 +17,25 @@ class Column extends Model
     protected $cascadeDeletes = ['taskCards'];
     protected $guarded = [];
 
+    const ROW_ID = 'row_id';
+    const INDEX = 'index';
+
     const LOGS_RELATION_NAME = 'logs';
     const ROW_RELATION_NAME = 'row';
     const TASK_CARDS_RELATION_NAME = 'taskCards';
 
     public function logs()
     {
-        return $this->morphMany(Log::class, 'loggable');
+        return $this->morphMany(Log::class, Log::LOGGABLE_RELATION_NAME);
     }
 
     public function row(): BelongsTo
     {
-        return $this->belongsTo(Row::class)->orderBy('index', 'asc');
+        return $this->belongsTo(Row::class)->orderBy(Row::INDEX);
     }
 
     public function taskCards(): HasMany
     {
-        return $this->hasMany(Task::class)->orderBy('index', 'asc');
+        return $this->hasMany(Task::class)->orderBy(Row::INDEX);
     }
 }

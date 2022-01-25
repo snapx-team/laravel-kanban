@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\SlackMessage;
 use Illuminate\Notifications\Notification;
+use Xguard\LaravelKanban\Enums\DateTimeFormats;
 use Xguard\LaravelKanban\Models\Task;
 
 class TasksWithIncomingDeadline extends Notification
@@ -55,11 +56,16 @@ class TasksWithIncomingDeadline extends Notification
         foreach ($this->tasks as $task) {
             $message->attachment(function ($attachment) use ($task) {
 
+                $boardName = 'In Backlog';
+                if ($task->taskVersion->boardID) {
+                    $boardName = $task->taskVersion->board->name;
+                }
+
                 $fields = [
                     'ID' => $task->task_simple_name,
                     'Task Name' => $task->taskVersion->name,
-                    'Board Name' => $task->taskVersion->board->name,
-                    'Deadline' => Carbon::parse($task->deadline)->format('Y-m-d H:i:s'),
+                    'Board Name' => $boardName,
+                    'Deadline' => Carbon::parse($task->deadline)->format(DateTimeFormats::DATE_TIME_FORMAT()->getValue()),
                     'Time Left' => $task->hours_to_deadline . ' Hours',
                     'URL' => env('APP_URL') .'/kanban/board?name=board&id='. $task->taskVersion->board_id .'&task=' . $task->taskVersion->task_id
                 ];

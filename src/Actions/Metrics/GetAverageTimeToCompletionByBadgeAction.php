@@ -4,18 +4,26 @@ namespace Xguard\LaravelKanban\Actions\Metrics;
 
 use DateTime;
 use Exception;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Lorisleiva\Actions\Action;
+use Xguard\LaravelKanban\Enums\LoggableTypes;
+use Xguard\LaravelKanban\Enums\Roles;
+use Xguard\LaravelKanban\Enums\SessionVariables;
 use Xguard\LaravelKanban\Models\Log;
+use Xguard\LaravelKanban\Models\Task;
 
 class GetAverageTimeToCompletionByBadgeAction extends Action
 {
+    const NAMES = 'names';
+    const HITS = 'hits';
+
     public function authorize()
     {
-        return session('role') === 'admin';
+        return session(SessionVariables::ROLE()->getValue()) === Roles::ADMIN()->getValue();
     }
+
     /**
-     * Get the validation rules that apply to the action.
-     *
      * @return array
      */
     public function rules(): array
@@ -39,27 +47,27 @@ class GetAverageTimeToCompletionByBadgeAction extends Action
     }
 
     /**
-     * Execute the action and return a result.
-     *
      * @return array
      * @throws Exception
      */
     public function handle(): array
     {
-        $closedLogs = Log::where('log_type', Log::TYPE_CARD_COMPLETED)
-            ->whereDate('created_at', '>=', new DateTime($this->start))
-            ->whereDate('created_at', '<=', new DateTime($this->end))
-            ->where('loggable_type', 'Xguard\LaravelKanban\Models\Task')
-            ->orderBy('loggable_id')->get();
+        $closedLogs = Log::where(Log::LOG_TYPE, Log::TYPE_CARD_COMPLETED)
+            ->whereDate(Log::CREATED_AT, '>=', new DateTime($this->start))
+            ->whereDate(Log::CREATED_AT, '<=', new DateTime($this->end))
+            ->where(Log::LOGGABLE_TYPE, LoggableTypes::TASK()->getValue())
+            ->orderBy(Log::LOGGABLE_ID)->get();
 
-        $assignedLogs = Log::where('log_type', Log::TYPE_CARD_ASSIGNED_TO_USER)
-            ->whereDate('created_at', '>=', new DateTime($this->start))
-            ->whereDate('created_at', '<=', new DateTime($this->end))
-            ->where('loggable_type', 'Xguard\LaravelKanban\Models\Task')
-            ->orderBy('loggable_id')
+        $assignedLogs = Log::with([Log::LOGGABLE_RELATION_NAME => function (MorphTo $morphTo) {
+            $morphTo->withoutGlobalScope(SoftDeletingScope::class);
+        }])->where(Log::LOG_TYPE, Log::TYPE_CARD_ASSIGNED_TO_USER)
+            ->whereDate(Log::CREATED_AT, '>=', new DateTime($this->start))
+            ->whereDate(Log::CREATED_AT, '<=', new DateTime($this->end))
+            ->where(Log::LOGGABLE_TYPE, LoggableTypes::TASK()->getValue())
+            ->orderBy(Log::LOGGABLE_ID)
             ->latest()
             ->get()
-            ->unique('loggable_id');
+            ->unique(Log::LOGGABLE_ID);
 
         $names = [];
         $hits = [];
@@ -86,8 +94,8 @@ class GetAverageTimeToCompletionByBadgeAction extends Action
         }
 
         return [
-            'names' => $names,
-            'hits' => $averages,
+            self::NAMES => $names,
+            self::HITS => $averages,
         ];
     }
 }

@@ -21,23 +21,40 @@ class Log extends Model
 {
     use SoftDeletes, CascadeSoftDeletes;
 
-    protected $dates = ['deleted_at'];
-    protected $table = 'kanban_logs';
-    protected $cascadeDeletes = ['notifications'];
-    protected $guarded = [];
+    const TABLE_NAME = 'kanban_logs';
 
+    //LOG GROUP NAMES
+    const EMPLOYEE_GROUP = 'EMPLOYEE_GROUP';
+    const TASK_STATUS_GROUP = 'TASK_STATUS_GROUP';
+    const TASK_MOVEMENT_GROUP = 'TASK_MOVEMENT_GROUP';
+    const TASK_INFORMATION_UPDATE_GROUP = 'TASK_INFORMATION_UPDATE_GROUP';
+    const TASK_CHECKLIST_GROUP = 'TASK_CHECKLIST_GROUP';
+    const TASK_ASSIGNATION_TO_USER_GROUP = 'TASK_ASSIGNATION_TO_USER_GROUP';
+    const BOARD_MEMBER_GROUP = 'BOARD_MEMBER_GROUP';
+    const COMMENT_GROUP = 'COMMENT_GROUP';
+    const MENTIONS_GROUP = 'MENTIONS_GROUP';
+
+    //LOG FIELDS
     const ID = 'id';
+    const LOG_TYPE = 'log_type';
     const LOGGABLE_TYPE = 'loggable_type';
     const LOGGABLE_ID = 'loggable_id';
+    const USER_ID = 'user_id';
+    const DESCRIPTION = 'description';
+    const TARGETED_EMPLOYEE_ID = 'targeted_employee_id';
+    const DELETED_AT = 'deleted_at';
 
+    //LOG RELATION NAMES
     const LOGGABLE_RELATION_NAME = 'loggable';
     const TASK_VERSION_RELATION_NAME = 'taskVersion';
     const TARGET_EMPLOYEE_RELATION_NAME = 'targetEmployee';
     const USER_RELATION_NAME = 'user';
     const NOTIFICATION_EMPLOYEE_RELATION_NAME = 'notifications';
 
-    //LOG TYPES
+    //PIVOT TABLE NAMES
+    const KANBAN_EMPLOYEE_LOG_TABLE_NAME = 'kanban_employee_log';
 
+    //LOG TYPES
     const TYPE_EMPLOYEE_CREATED = 1;
     const TYPE_EMPLOYEE_UPDATED = 2;
     const TYPE_EMPLOYEE_DELETED = 3;
@@ -89,6 +106,11 @@ class Log extends Model
     const TYPE_EMPLOYEE_BOARD_NOTIFICATION_SETTINGS_UPDATED = 100;
     const TYPE_EMPLOYEE_BOARD_NOTIFICATION_SETTINGS_CREATED = 101;
 
+    protected $dates = [self::DELETED_AT];
+    protected $table = self::TABLE_NAME;
+    protected $cascadeDeletes = [self::NOTIFICATION_EMPLOYEE_RELATION_NAME];
+    protected $guarded = [];
+
     public static function createLog(
         ?int $userId,
         int $logType,
@@ -99,15 +121,15 @@ class Log extends Model
     ) {
 
         $log = LogsRepository::create([
-            'user_id' => $userId,
-            'log_type' => $logType,
-            'description' => $description,
-            'targeted_employee_id' => $targetedEmployeeId,
-            'loggable_id' => $loggableId,
-            'loggable_type' => $loggableType,
+            self::USER_ID => $userId,
+            self::LOG_TYPE => $logType,
+            self::DESCRIPTION => $description,
+            self::TARGETED_EMPLOYEE_ID => $targetedEmployeeId,
+            self::LOGGABLE_ID => $loggableId,
+            self::LOGGABLE_TYPE=> $loggableType,
         ]);
 
-        (new NotifyEmployeesAction(['log' => $log]))->run();
+        (new NotifyEmployeesAction([NotifyEmployeesAction::LOG => $log]))->run();
 
         return $log;
     }
@@ -115,27 +137,27 @@ class Log extends Model
     public static function returnLogGroup(string $logGroup): array
     {
         switch ($logGroup) {
-            case 'EMPLOYEE_GROUP':
+            case self::EMPLOYEE_GROUP:
                 return [
                     Log::TYPE_EMPLOYEE_CREATED,
                     Log::TYPE_EMPLOYEE_UPDATED,
                     Log::TYPE_EMPLOYEE_DELETED,
                 ];
 
-            case 'TASK_STATUS_GROUP':
+            case self::TASK_STATUS_GROUP:
                 return [
                     Log::TYPE_CARD_ACTIVATED,
                     Log::TYPE_CARD_CANCELLED,
                     Log::TYPE_CARD_COMPLETED
                 ];
 
-            case 'TASK_MOVEMENT_GROUP':
+            case self::TASK_MOVEMENT_GROUP:
                 return [
                     Log::TYPE_CARD_PLACED,
                     Log::TYPE_CARD_MOVED,
                 ];
 
-            case 'TASK_INFORMATION_UPDATE_GROUP':
+            case self::TASK_INFORMATION_UPDATE_GROUP:
                 return [
                     Log::TYPE_CARD_UPDATED,
                     Log::TYPE_CARD_ASSIGNED_GROUP,
@@ -143,32 +165,32 @@ class Log extends Model
                     Log::TYPE_CARD_FILE_ADDED
                 ];
 
-            case 'TASK_CHECKLIST_GROUP':
+            case self::TASK_CHECKLIST_GROUP:
                 return [
                     Log::TYPE_CARD_CHECKLIST_ITEM_CHECKED,
                     Log::TYPE_CARD_CHECKLIST_ITEM_UNCHECKED
                 ];
 
-            case 'TASK_ASSIGNATION_TO_USER_GROUP':
+            case self::TASK_ASSIGNATION_TO_USER_GROUP:
                 return [
                     Log::TYPE_CARD_ASSIGNED_TO_USER,
                     Log::TYPE_CARD_UNASSIGNED_TO_USER
                 ];
 
-            case 'BOARD_MEMBER_GROUP':
+            case self::BOARD_MEMBER_GROUP:
                 return [
                     Log::TYPE_KANBAN_MEMBER_CREATED,
                     Log::TYPE_KANBAN_MEMBER_DELETED
                 ];
 
-            case 'COMMENT_GROUP':
+            case self::COMMENT_GROUP:
                 return [
                     Log::TYPE_COMMENT_EDITED,
                     Log::TYPE_COMMENT_CREATED,
                     LOG::TYPE_COLUMN_DELETED
                 ];
 
-            case 'MENTIONS_GROUP':
+            case self::MENTIONS_GROUP:
                 return [
                     Log::TYPE_COMMENT_MENTION_CREATED
                 ];
@@ -187,16 +209,16 @@ class Log extends Model
 
     public function targetEmployee(): BelongsTo
     {
-        return $this->belongsTo(Employee::class, 'targeted_employee_id');
+        return $this->belongsTo(Employee::class, self::TARGETED_EMPLOYEE_ID);
     }
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class)->withDefault(['first_name' => 'DELETED', 'last_name'=>'USER']);
+        return $this->belongsTo(User::class)->withDefault([User::FIRST_NAME => 'DELETED', User::LAST_NAME=> 'USER']);
     }
 
     public function notifications(): BelongsToMany
     {
-        return $this->belongsToMany(Employee::class, 'kanban_employee_log', 'log_id', 'employee_id')->withTimestamps();
+        return $this->belongsToMany(Employee::class, self::KANBAN_EMPLOYEE_LOG_TABLE_NAME, 'log_id', 'employee_id')->withTimestamps();
     }
 }

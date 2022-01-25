@@ -2,6 +2,7 @@
 
 namespace Xguard\LaravelKanban\Repositories;
 
+use Xguard\LaravelKanban\Models\Column;
 use Xguard\LaravelKanban\Models\Row;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -14,23 +15,23 @@ class RowsRepository
 
     public static function getRows(int $boardId): Collection
     {
-        return Row::where('board_id', $boardId)->get();
+        return Row::where(Row::BOARD_ID, $boardId)->orderBy(Row::INDEX)->get();
     }
 
     public static function getRowWithColumns(int $rowId): Collection
     {
-        return Row::where('id', $rowId)->with('columns')->get();
+        return Row::where(Row::ID, $rowId)->with(Row::COLUMNS_RELATION_NAME)->orderBy(Row::INDEX)->get();
     }
 
     public static function getRowWithColumnsTaskCards(int $rowId): Collection
     {
-        return Row::where('id', $rowId)->with('columns.taskCards')->get();
+        return Row::where(Row::ID, $rowId)->with(Row::COLUMNS_RELATION_NAME.'.'.Column::TASK_CARDS_RELATION_NAME)->orderBy(Row::INDEX)->get();
     }
 
     public static function updateRowIndex(int $rowId, int $newIndex): Row
     {
         $row = Row::findOrFail($rowId);
-        $row->update(['index' => $newIndex]);
+        $row->update([Row::INDEX => $newIndex]);
         $row->refresh();
         return $row;
     }
