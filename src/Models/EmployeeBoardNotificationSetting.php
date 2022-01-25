@@ -17,14 +17,15 @@ class EmployeeBoardNotificationSetting extends Model
     use SoftDeletes, CascadeSoftDeletes;
 
     protected $table = 'kanban_employee_board_notification_setting';
-
     protected $cascadeDeletes = ['boards', 'employees'];
-
     protected $guarded = [];
-
     protected $appends = [
         'unserialized_options',
     ];
+
+    const BOARD_ID = 'board_id';
+    const EMPLOYEE_ID = 'employee_id';
+
     public function getUnserializedOptionsAttribute()
     {
         return unserialize($this->ignore_types);

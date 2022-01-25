@@ -3,25 +3,24 @@
 namespace Xguard\LaravelKanban\Actions\Rows;
 
 use Lorisleiva\Actions\Action;
+use Xguard\LaravelKanban\Models\Row;
 use Xguard\LaravelKanban\Repositories\RowsRepository;
 
 class UpdateRowIndexesAction extends Action
 {
+    const ROWS = 'rows';
+
     /**
-     * Get the validation rules that apply to the action.
-     *
      * @return array
      */
     public function rules()
     {
         return [
-            'rows' => ['present', 'array'],
+            self::ROWS => ['present', 'array'],
         ];
     }
 
     /**
-     * Execute the action and return a result.
-     *
      * @return mixed
      */
     public function handle()
@@ -30,7 +29,7 @@ class UpdateRowIndexesAction extends Action
         try {
             \DB::beginTransaction();
             foreach ($this->rows as $row) {
-                RowsRepository::updateRowIndex($row['id'], $newIndex);
+                RowsRepository::updateRowIndex($row[Row::ID], $newIndex);
                 $newIndex++;
             }
             \DB::commit();

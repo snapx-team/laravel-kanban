@@ -17,13 +17,17 @@ class Row extends Model
     protected $cascadeDeletes = ['columns'];
     protected $guarded = [];
 
+    const ID = 'id';
+    const BOARD_ID = 'board_id';
+    const INDEX = 'index';
+
     const COLUMNS_RELATION_NAME = 'columns';
     const BOARD_RELATION_NAME = 'board';
     const LOGS_RELATION_NAME = 'logs';
 
     public function logs()
     {
-        return $this->morphMany(Log::class, 'loggable');
+        return $this->morphMany(Log::class, Log::LOGGABLE_RELATION_NAME);
     }
 
     public function board(): BelongsTo
@@ -33,7 +37,6 @@ class Row extends Model
 
     public function columns(): HasMany
     {
-        return $this->HasMany(Column::class)->orderBy('index');
+        return $this->HasMany(Column::class)->orderBy(Column::INDEX);
     }
-
 }

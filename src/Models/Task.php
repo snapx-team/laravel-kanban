@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Dyrynda\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Xguard\LaravelKanban\Enums\DateTimeFormats;
 use Xguard\LaravelKanban\QueryBuilders\TasksQueryBuilder;
 
 /**
@@ -35,6 +36,9 @@ class Task extends Model
     const ID = 'id';
     const STATUS = 'status';
     const BADGE_ID = 'badge_id';
+    const BOARD_ID = 'board_id';
+    const DEADLINE = 'deadline';
+    const REPORTER_ID = 'reporter_id';
     const SHARED_TASK_DATA_RELATION_ID='shared_task_data_id';
     const CREATED_AT = 'created_at';
     const DELETED_AT = 'deleted_at';
@@ -47,6 +51,7 @@ class Task extends Model
     const REPORTER_RELATION_NAME ='reporter';
     const BADGE_RELATION_NAME ='badge';
     const BOARD_RELATION_NAME = 'board';
+    const TASK_VERSION_RELATION_NAME = 'taskVersion';
 
     public function newEloquentBuilder($query): TasksQueryBuilder
     {
@@ -60,7 +65,7 @@ class Task extends Model
 
     public function reporter(): BelongsTo
     {
-        return $this->belongsTo(Employee::class, 'reporter_id')->withDefault(function ($reporter) {
+        return $this->belongsTo(Employee::class, self::REPORTER_ID)->withDefault(function ($reporter) {
             $reporter->user->first_name = 'DELETED';
             $reporter->user->last_name = 'USER';
         });
@@ -68,12 +73,12 @@ class Task extends Model
 
     public function badge(): BelongsTo
     {
-        return $this->belongsTo(Badge::class, 'badge_id');
+        return $this->belongsTo(Badge::class, self::BADGE_ID);
     }
 
     public function board(): BelongsTo
     {
-        return $this->belongsTo(Board::class, 'board_id');
+        return $this->belongsTo(Board::class, self::BOARD_ID);
     }
 
     public function column(): BelongsTo
@@ -98,7 +103,7 @@ class Task extends Model
 
     public function logs()
     {
-        return $this->morphMany(Log::class, 'loggable');
+        return $this->morphMany(Log::class, Log::LOGGABLE_RELATION_NAME);
     }
 
     public function taskFiles(): HasMany
@@ -125,7 +130,7 @@ class Task extends Model
 
     public function getDeadlineAttribute($value): string
     {
-        return Carbon::parse($value)->format('c');
+        return Carbon::parse($value)->format(DateTimeFormats::PARSE_TO_ISO8601()->getValue());
     }
 
     public function taskVersion(): HasOne

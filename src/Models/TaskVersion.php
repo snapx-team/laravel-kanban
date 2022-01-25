@@ -16,14 +16,14 @@ class TaskVersion extends Model
     use SoftDeletes;
 
     protected $guarded = [];
-
     protected $dates = ['deleted_at'];
-
     protected $table = 'kanban_tasks_versions';
-
     protected $appends = [
         'previous_task_version',
     ];
+
+    const BOARD_RELATION_NAME = 'board';
+
 
     public function newEloquentBuilder($query): TasksQueryBuilder
     {

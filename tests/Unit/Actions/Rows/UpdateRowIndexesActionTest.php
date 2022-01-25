@@ -23,20 +23,20 @@ class UpdateRowIndexesActionTest extends TestCase
 
     public function testGivenValidIdThenDeletesRowAndCreateLog()
     {
-        $row = factory(Row::class)->create(['index' => rand(10, 20)]);
-        $row2 = factory(Row::class)->create(['index' => rand(10, 20)]);
+        $row = factory(Row::class)->create([Row::INDEX => rand(10, 20)]);
+        $row2 = factory(Row::class)->create([Row::INDEX => rand(10, 20)]);
 
         app(UpdateRowIndexesAction::class)->fill([
-            'rows' => [
-                ['id' => $row->id],
-                ['id' => $row2->id],
+            UpdateRowIndexesAction::ROWS => [
+                [Row::ID => $row->id],
+                [Row::ID => $row2->id],
             ]
         ])->run();
 
         $row->refresh();
         $row2->refresh();
 
-        $this->assertEquals(0 , $row->index);
-        $this->assertEquals(1 , $row2->index);
+        $this->assertEquals(0, $row->index);
+        $this->assertEquals(1, $row2->index);
     }
 }

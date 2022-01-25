@@ -18,7 +18,7 @@ class LoggableTypes extends Enum
     private const BADGE = 'Xguard\LaravelKanban\Models\Badge';
     private const TASK = 'Xguard\LaravelKanban\Models\Task';
     private const BOARD = 'Xguard\LaravelKanban\Models\Board';
-    private const COMMENT = 'Xguard\LaravelKanban\Models\comment';
-    private const ROW = 'Xguard\LaravelKanban\Models\row';
-    private const COLUMN = 'Xguard\LaravelKanban\Models\column';
+    private const COMMENT = 'Xguard\LaravelKanban\Models\Comment';
+    private const ROW = 'Xguard\LaravelKanban\Models\Row';
+    private const COLUMN = 'Xguard\LaravelKanban\Models\Column';
 }

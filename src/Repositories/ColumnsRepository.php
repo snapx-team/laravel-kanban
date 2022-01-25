@@ -14,13 +14,13 @@ class ColumnsRepository
 
     public static function getColumns(int $row_id): Collection
     {
-        return Column::where('row_id', $row_id)->get();
+        return Column::where(Column::ROW_ID, $row_id)->orderBy(Column::INDEX)->get();
     }
 
     public static function updateColumnIndex(int $column_id, int $newIndex): Column
     {
         $column = Column::findOrFail($column_id);
-        $column->update(['index' => $newIndex]);
+        $column->update([Column::INDEX => $newIndex]);
         $column->refresh();
         return $column;
     }
