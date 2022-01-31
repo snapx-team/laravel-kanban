@@ -1,7 +1,8 @@
 <template>
-    <div :class="`w-${size} h-${size} ${isSelected ? 'mb-6' : ''} border-${borderSize} border-${borderColor} ${borderSize=== 0 ? 'border' : ''}`"
-         class="rounded-full inline relative flex flex-col items-center group"
-         :style="`background-color:#${backgroundColor}`">
+    <div
+        :class="`w-${size} h-${size} ${isSelected ? 'mb-6' : ''} border-${borderSize} border-${borderColor} ${borderSize=== 0 ? 'border' : ''}`"
+        class="rounded-full inline relative flex flex-col items-center group"
+        :style="`background-color:#${backgroundColor}`">
         <div :class="`mt-${size}`"
              class="absolute top-0 flex flex-col items-center hidden mb-6 group-hover:flex"
              v-if="tooltip">
@@ -10,7 +11,7 @@
                 {{ name }}
             </p>
         </div>
-        <p class="text-white m-auto " :style="`font-size: ${size*2-1}px`">{{initials}}</p>
+        <p class="text-white m-auto " :style="`font-size: ${size*2-1}px`">{{ initials }}</p>
     </div>
 </template>
 <script>
@@ -20,6 +21,12 @@ export default {
     inject: ["eventHub"],
     mixins: [helperFunctions],
 
+    watch: {
+        name: function () {
+            this.setInitialsAndBackgroundColor();
+        }
+    },
+
     data() {
         return {
             isSelected: false,
@@ -27,6 +34,7 @@ export default {
             initials: 'XX'
         }
     },
+
     props: {
         name: {
             type: String, default: "john Doe",
@@ -48,17 +56,24 @@ export default {
         },
     },
 
-    mounted(){
-        this.initials = this.getInitials()
-        this.backgroundColor = this.generateHexColorWithText(this.name);
+    mounted() {
+        this.setInitialsAndBackgroundColor();
     },
     created() {
         this.eventHub.$on("show-employee-tasks", (idArray) => {
             this.select(idArray);
         });
+        this.eventHub.$on("reset-show-employee-tasks", () => {
+            this.select([]);
+        });
     },
 
     methods: {
+
+        setInitialsAndBackgroundColor() {
+            this.initials = this.getInitials()
+            this.backgroundColor = this.generateHexColorWithText(this.name);
+        },
 
         getInitials() {
             let names = this.name.split(' '),
@@ -66,8 +81,7 @@ export default {
 
             if (names.length > 1) {
                 initials += names[names.length - 1].substring(0, 1).toUpperCase();
-            }
-            else {
+            } else {
                 initials += names[names.length - 1].substring(1, 2).toUpperCase();
             }
             return initials;

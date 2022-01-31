@@ -10,6 +10,6 @@ class LogController extends Controller
 {
     public function getLogs($id): LengthAwarePaginator
     {
-        return LogsRepository::getLogs($id);
+        return LogsRepository::getLogs(intval($id));
     }
 }

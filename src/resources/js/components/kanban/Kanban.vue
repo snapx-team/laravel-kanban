@@ -219,6 +219,8 @@ export default {
         this.eventHub.$off('save-row-and-columns');
         this.eventHub.$off('update-task-card-data');
         this.eventHub.$off('delete-row');
+        this.eventHub.$off('show-employee-tasks');
+        this.eventHub.$off('reset-show-employee-tasks');
     },
 
     computed: {
