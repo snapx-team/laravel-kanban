@@ -151,9 +151,7 @@ export default {
     mounted() {
         this.asyncGetKanbanEmployees().then((data) => {
             this.allKanbanUsers = data.data;
-        }).catch(res => {
-            console.log(res)
-        });
+        })
     },
 
     computed: {
