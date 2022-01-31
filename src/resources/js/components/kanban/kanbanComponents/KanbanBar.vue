@@ -37,9 +37,24 @@ import Avatar from "../../global/Avatar.vue";
 
 export default {
     inject: ["eventHub"],
+
     components: {
         Avatar,
     },
+
+    watch: {
+        kanbanID: function () {
+            this.eventHub.$emit("reset-show-employee-tasks");
+            this.selected = [];
+            this.membersOnKanbanBarNumber = 5;
+        },
+        kanbanMembers: function () {
+            this.eventHub.$emit("reset-show-employee-tasks");
+            this.selected = [];
+            this.membersOnKanbanBarNumber = 5;
+        }
+    },
+
     data() {
         return {
             selected: [],
@@ -70,6 +85,7 @@ export default {
             type: Object,
         },
     },
+
     methods: {
         createMember() {
             this.eventHub.$emit("add-member");
@@ -89,12 +105,14 @@ export default {
             this.eventHub.$emit("show-employee-tasks", this.selected);
         }
     },
+
     computed: {
         computedMembers() {
             return this.kanbanMembers.sort((x,y) => { return x.employee_id === this.$employeeIdSession ? -1 : y.employee_id === this.$employeeIdSession ? 1 : 0; });
         },
     },
 };
+
 </script>
 
 <style scoped>

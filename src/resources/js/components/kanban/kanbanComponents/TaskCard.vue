@@ -111,7 +111,11 @@ export default {
         this.eventHub.$on("show-employee-tasks", (idArray) => {
             this.allCurrentIDs = idArray;
         });
+        this.eventHub.$on("reset-show-employee-tasks", () => {
+            this.allCurrentIDs = [];
+        });
     },
+
     computed: {
         showCard() {
             if (this.allCurrentIDs.length === 0) {
