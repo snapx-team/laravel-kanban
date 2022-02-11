@@ -18,7 +18,7 @@ class Employee extends Model
 
     protected $dates = ['deleted_at'];
     protected $table = 'kanban_employees';
-    protected $cascadeDeletes = ['members'];
+    protected $cascadeDeletes = ['members','employeeBoardNotificationSetting',];
     protected $guarded = [];
 
     const USER_RELATION_NAME = 'user';

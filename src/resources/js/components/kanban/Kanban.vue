@@ -188,7 +188,7 @@ export default {
     },
 
     created() {
-        this.eventHub.$on("update-task-card-data", (cardData) => {
+        this.eventHub.$on("update-task-card-data-from-kanban", (cardData) => {
             this.updateTaskCard(cardData);
         });
         this.eventHub.$on("save-members", (selectedMembers) => {
@@ -217,7 +217,7 @@ export default {
         this.eventHub.$off('save-members');
         this.eventHub.$off('remove-member');
         this.eventHub.$off('save-row-and-columns');
-        this.eventHub.$off('update-task-card-data');
+        this.eventHub.$off('update-task-card-data-from-kanban');
         this.eventHub.$off('delete-row');
         this.eventHub.$off('show-employee-tasks');
         this.eventHub.$off('reset-show-employee-tasks');

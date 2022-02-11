@@ -386,11 +386,11 @@ export default {
 
             if (isValid) {
                 if (this.sourceFrom === componentNames.KanbanTaskModal) {
-                    this.eventHub.$emit("update-task-card-data", this.cloneCardData);
+                    this.eventHub.$emit("update-task-card-data-from-kanban", this.cloneCardData);
                     this.eventHub.$emit("close-task-modal");
                 }
                 if (this.sourceFrom === componentNames.TaskPane) {
-                    this.eventHub.$emit("update-task-card-data", this.cloneCardData);
+                    this.eventHub.$emit("update-task-card-data-from-task-pane", this.cloneCardData);
                 }
             }
         },

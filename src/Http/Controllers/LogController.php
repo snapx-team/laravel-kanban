@@ -8,7 +8,7 @@ use Xguard\LaravelKanban\Repositories\LogsRepository;
 
 class LogController extends Controller
 {
-    public function getLogs($id): LengthAwarePaginator
+    public function getLogs($id)
     {
         return LogsRepository::getLogs(intval($id));
     }

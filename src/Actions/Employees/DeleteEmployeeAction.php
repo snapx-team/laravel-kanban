@@ -31,6 +31,12 @@ class DeleteEmployeeAction extends Action
         try {
             \DB::beginTransaction();
             $employee = Employee::findOrFail($this->employeeId);
+
+            $allAssociatedTasks = $employee->tasks;
+            foreach ($allAssociatedTasks as $task) {
+                $task->assignedTo()->detach($this->employeeId);
+            }
+
             $employee->delete();
 
             Log::createLog(
