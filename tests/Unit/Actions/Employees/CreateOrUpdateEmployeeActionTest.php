@@ -32,7 +32,7 @@ class CreateOrUpdateEmployeeActionTest extends TestCase
                 [
                     'id' => $users[0]->id,
                 ],
-                [   
+                [
                     'id' => $users[1]->id,
                 ]
             ],

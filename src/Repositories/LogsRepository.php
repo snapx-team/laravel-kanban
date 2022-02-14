@@ -18,31 +18,36 @@ class LogsRepository
     }
 
     // this will also get all logs of related tasks
-    public static function getLogs(int $logId)
+    public static function getLogs($logId)
     {
-        $sharedTaskDataId = Task::find($logId)->shared_task_data_id;
-        $allAssociatedTasks = Task::where(Task::SHARED_TASK_DATA_RELATION_ID, '=', $sharedTaskDataId)->pluck(Task::ID)->toArray();
-        return Log::with([Log::USER_RELATION_NAME, Log::LOGGABLE_RELATION_NAME => function (MorphTo $morphTo) {
-            $morphTo->morphWith([Task::class => [Task::BOARD_RELATION_NAME, Task::BADGE_RELATION_NAME]]);
-        }])
-            ->with(Log::TARGET_EMPLOYEE_RELATION_NAME.'.'.Employee::USER_RELATION_NAME)
-            ->with([Log::TASK_VERSION_RELATION_NAME => function ($q) {
-                $q->withTaskData();
+        $sharedTaskData = Task::find($logId);
+
+        if ($sharedTaskData) {
+            $sharedTaskDataId = $sharedTaskData->shared_task_data_id;
+            $allAssociatedTasks = Task::where(Task::SHARED_TASK_DATA_RELATION_ID, '=', $sharedTaskDataId)->pluck(Task::ID)->toArray();
+            return Log::with([Log::USER_RELATION_NAME, Log::LOGGABLE_RELATION_NAME => function (MorphTo $morphTo) {
+                $morphTo->morphWith([Task::class => [Task::BOARD_RELATION_NAME, Task::BADGE_RELATION_NAME]]);
             }])
-            ->orderBy(Log::CREATED_AT, 'desc')
-            ->with([Log::LOGGABLE_RELATION_NAME => function (MorphTo $morphTo) {
-                $morphTo->morphWith([
-                    Task::class => [Task::BOARD_RELATION_NAME, Task::BADGE_RELATION_NAME, Task::COLUMN_RELATION_NAME],
-                    Comment::class => [
-                        Comment::TASK_RELATION_NAME.'.'.Task::BOARD_RELATION_NAME,
-                        Comment::TASK_RELATION_NAME.'.'.Task::ROW_RELATION_NAME,
-                        Comment::TASK_RELATION_NAME.'.'.Task::COLUMN_RELATION_NAME],
-                    Board::class
-                ]);
-            }])
-            ->where(Log::LOGGABLE_TYPE, LoggableTypes::TASK()->getValue())
-            ->whereIn(Log::LOGGABLE_ID, $allAssociatedTasks)
-            ->orderBy(Log::CREATED_AT, 'desc')
-            ->distinct()->paginate(10);
+                ->with(Log::TARGET_EMPLOYEE_RELATION_NAME.'.'.Employee::USER_RELATION_NAME)
+                ->with([Log::TASK_VERSION_RELATION_NAME => function ($q) {
+                    $q->withTaskData();
+                }])
+                ->orderBy(Log::CREATED_AT, 'desc')
+                ->with([Log::LOGGABLE_RELATION_NAME => function (MorphTo $morphTo) {
+                    $morphTo->morphWith([
+                        Task::class => [Task::BOARD_RELATION_NAME, Task::BADGE_RELATION_NAME, Task::COLUMN_RELATION_NAME],
+                        Comment::class => [
+                            Comment::TASK_RELATION_NAME.'.'.Task::BOARD_RELATION_NAME,
+                            Comment::TASK_RELATION_NAME.'.'.Task::ROW_RELATION_NAME,
+                            Comment::TASK_RELATION_NAME.'.'.Task::COLUMN_RELATION_NAME],
+                        Board::class
+                    ]);
+                }])
+                ->where(Log::LOGGABLE_TYPE, LoggableTypes::TASK()->getValue())
+                ->whereIn(Log::LOGGABLE_ID, $allAssociatedTasks)
+                ->orderBy(Log::CREATED_AT, 'desc')
+                ->distinct()->paginate(10);
+        }
+        return null;
     }
 }

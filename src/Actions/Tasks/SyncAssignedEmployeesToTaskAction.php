@@ -40,26 +40,30 @@ class SyncAssignedEmployeesToTaskAction extends Action
 
             foreach ($assignedToResponse['attached'] as $employeeId) {
                 $employee = Employee::find($employeeId);
-                Log::createLog(
-                    Auth::user()->id,
-                    Log::TYPE_CARD_ASSIGNED_TO_USER,
-                    'User ' . $employee->user->full_name . ' has been assigned to task [' . $this->task->task_simple_name . ']',
-                    $employee->id,
-                    $this->task->id,
-                    'Xguard\LaravelKanban\Models\Task'
-                );
+                if ($employee) {
+                    Log::createLog(
+                        Auth::user()->id,
+                        Log::TYPE_CARD_ASSIGNED_TO_USER,
+                        'User '.$employee->user->full_name.' has been assigned to task ['.$this->task->task_simple_name.']',
+                        $employee->id,
+                        $this->task->id,
+                        'Xguard\LaravelKanban\Models\Task'
+                    );
+                }
             }
 
             foreach ($assignedToResponse['detached'] as $employeeId) {
                 $employee = Employee::find($employeeId);
-                Log::createLog(
-                    Auth::user()->id,
-                    Log::TYPE_CARD_UNASSIGNED_TO_USER,
-                    'User ' . $employee->user->full_name . ' has been unassigned from task [' . $this->task->task_simple_name . ']',
-                    $employee->id,
-                    $this->task->id,
-                    'Xguard\LaravelKanban\Models\Task'
-                );
+                if ($employee) {
+                    Log::createLog(
+                        Auth::user()->id,
+                        Log::TYPE_CARD_UNASSIGNED_TO_USER,
+                        'User ' . $employee->user->full_name . ' has been unassigned from task [' . $this->task->task_simple_name . ']',
+                        $employee->id,
+                        $this->task->id,
+                        'Xguard\LaravelKanban\Models\Task'
+                    );
+                }
             }
         }
     }

@@ -187,7 +187,7 @@ export default {
             this.fetchAndReplaceTaskPaneData();
         });
 
-        this.eventHub.$on("update-task-card-data", (task) => {
+        this.eventHub.$on("update-task-card-data-from-task-pane", (task) => {
             this.updateTaskCard(task);
         });
     },
@@ -195,6 +195,7 @@ export default {
     beforeDestroy() {
         this.eventHub.$off('populate-task-view');
         this.eventHub.$off('fetch-and-replace-task-pane-data');
+        this.eventHub.$off('update-task-card-data-from-task-pane');
     },
 
     methods: {
