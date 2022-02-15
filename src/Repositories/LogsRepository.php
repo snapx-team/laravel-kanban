@@ -18,9 +18,9 @@ class LogsRepository
     }
 
     // this will also get all logs of related tasks
-    public static function getLogs($logId)
+    public static function getLogs($taskId)
     {
-        $sharedTaskData = Task::find($logId);
+        $sharedTaskData = Task::find($taskId);
 
         if ($sharedTaskData) {
             $sharedTaskDataId = $sharedTaskData->shared_task_data_id;

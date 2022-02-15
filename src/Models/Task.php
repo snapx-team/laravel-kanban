@@ -34,6 +34,7 @@ class Task extends Model
     ];
 
     const ID = 'id';
+    const INDEX = 'index';
     const STATUS = 'status';
     const BADGE_ID = 'badge_id';
     const BOARD_ID = 'board_id';
