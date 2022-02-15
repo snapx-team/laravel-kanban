@@ -36,6 +36,6 @@ class Column extends Model
 
     public function taskCards(): HasMany
     {
-        return $this->hasMany(Task::class)->orderBy(Row::INDEX);
+        return $this->hasMany(Task::class)->orderBy(Task::INDEX);
     }
 }
