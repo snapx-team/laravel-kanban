@@ -35,10 +35,14 @@ class Task extends Model
 
     const ID = 'id';
     const INDEX = 'index';
+    const NAME = 'name';
     const STATUS = 'status';
     const BADGE_ID = 'badge_id';
     const BOARD_ID = 'board_id';
+    const COLUMN_ID = 'column_id';
+    const ROW_ID = 'row_id';
     const DEADLINE = 'deadline';
+    const TIME_ESTIMATE = 'time_estimate';
     const REPORTER_ID = 'reporter_id';
     const SHARED_TASK_DATA_RELATION_ID='shared_task_data_id';
     const CREATED_AT = 'created_at';

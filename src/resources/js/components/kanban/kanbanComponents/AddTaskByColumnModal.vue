@@ -431,6 +431,7 @@ export default {
                         erp_employees: [],
                         erp_contracts: [],
                     },
+                    time_estimate: 0,
                     deadline: null,
                     columnId: null,
                     associatedTask: null,

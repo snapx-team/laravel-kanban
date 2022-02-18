@@ -5,30 +5,24 @@ namespace Xguard\LaravelKanban\Actions\Tasks;
 use Illuminate\Support\Facades\Auth;
 use Lorisleiva\Actions\Action;
 use Xguard\LaravelKanban\AWSStorage\S3Storage;
+use Xguard\LaravelKanban\Enums\LoggableTypes;
 use Xguard\LaravelKanban\Models\Log;
 use Xguard\LaravelKanban\Models\Task;
+use Xguard\LaravelKanban\Models\TaskFile;
 
 class StoreTaskFilesAction extends Action
 {
+    const TASK = 'task';
+    const FILES_TO_UPLOAD = 'filesToUpload';
 
-    /**
-     * Get the validation rules that apply to the action.
-     *
-     * @return array
-     */
-    public function rules()
+    public function rules(): array
     {
         return [
-            'task' => ['required', 'instance_of:' . Task::class],
-            'filesToUpload' => ['required'],
+            self::TASK => ['required', 'instance_of:' . Task::class],
+            self::FILES_TO_UPLOAD => ['required'],
         ];
     }
 
-    /**
-     * Execute the action and return a result.
-     *
-     * @return void
-     */
     public function handle()
     {
         $disk = app(S3Storage::class);
@@ -38,7 +32,7 @@ class StoreTaskFilesAction extends Action
                 $path = 'task_files/' . $this->task->id . '/' . \Str::random(40) . '/' . $file->getClientOriginalName();
                 $disk->put($path, file_get_contents($file));
                 $this->task->taskFiles()->create([
-                    'task_file_url' => $path,
+                    TaskFile::TASK_FILE_URL => $path,
                 ]);
 
                 Log::createLog(
@@ -47,7 +41,7 @@ class StoreTaskFilesAction extends Action
                     'Added file  [' . $path  . ']',
                     null,
                     $this->task->id,
-                    'Xguard\LaravelKanban\Models\Task'
+                    LoggableTypes::TASK()->getValue()
                 );
             }
         }

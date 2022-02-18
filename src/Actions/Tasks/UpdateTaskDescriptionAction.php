@@ -4,6 +4,8 @@ namespace Xguard\LaravelKanban\Actions\Tasks;
 
 use Illuminate\Support\Facades\Auth;
 use Lorisleiva\Actions\Action;
+use Throwable;
+use Xguard\LaravelKanban\Enums\LoggableTypes;
 use Xguard\LaravelKanban\Models\Log;
 use Xguard\LaravelKanban\Models\Task;
 use Xguard\LaravelKanban\Http\Helper\AccessManager;
@@ -11,36 +13,35 @@ use Xguard\LaravelKanban\Models\SharedTaskData;
 
 class UpdateTaskDescriptionAction extends Action
 {
+    const CHECK_BOX_CONTENT = 'checkBoxContent';
+    const DESCRIPTION = 'description';
+    const IS_CHECKED = 'isChecked';
+    const TASK_ID = 'taskId';
+
     public function authorize()
     {
         return AccessManager::canAccessBoardUsingTaskId($this->taskId);
     }
-    /**
-     * Get the validation rules that apply to the action.
-     *
-     * @return array
-     */
-    public function rules()
+
+    public function rules(): array
     {
         return [
-            'checkBoxContent' => ['required', 'string'],
-            'description' => ['required', 'string'],
-            'isChecked' => ['required', 'boolean'],
-            'taskId' => ['required', 'integer', 'gt:0'],
+            self::CHECK_BOX_CONTENT => ['required', 'string'],
+            self::DESCRIPTION => ['required', 'string'],
+            self::IS_CHECKED => ['required', 'boolean'],
+            self::TASK_ID => ['required', 'integer', 'gt:0'],
         ];
     }
 
     /**
-     * Execute the action and return a result.
-     *
-     * @return mixed
+     * @throws Throwable
      */
     public function handle()
     {
         try {
             \DB::beginTransaction();
             $task = Task::find($this->taskId);
-            SharedTaskData::where('id', $task->shared_task_data_id)->update(['description' => $this->description]);
+            SharedTaskData::where('id', $task->shared_task_data_id)->update([SharedTaskData::DESCRIPTION => $this->description]);
 
             if ($this->isChecked) {
                 Log::createLog(
@@ -49,7 +50,7 @@ class UpdateTaskDescriptionAction extends Action
                     $this->checkBoxContent,
                     null,
                     $task->id,
-                    'Xguard\LaravelKanban\Models\Task'
+                    LoggableTypes::TASK()->getValue()
                 );
             } else {
                 Log::createLog(
@@ -58,7 +59,7 @@ class UpdateTaskDescriptionAction extends Action
                     $this->checkBoxContent,
                     null,
                     $task->id,
-                    'Xguard\LaravelKanban\Models\Task'
+                    LoggableTypes::TASK()->getValue()
                 );
             }
             \DB::commit();

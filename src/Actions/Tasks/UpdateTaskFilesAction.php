@@ -4,40 +4,35 @@ namespace Xguard\LaravelKanban\Actions\Tasks;
 
 use Lorisleiva\Actions\Action;
 use Xguard\LaravelKanban\Models\Task;
+use Xguard\LaravelKanban\Models\TaskFile;
 
 class UpdateTaskFilesAction extends Action
 {
-    /**
-     * Get the validation rules that apply to the action.
-     *
-     * @return array
-     */
-    public function rules()
+    const TASK = 'task';
+    const FILES_TO_UPLOAD = 'filesToUpload';
+    const TASK_FILES = 'taskFiles';
+
+    public function rules(): array
     {
         return [
-            'task' => ['required', 'instance_of:'.Task::class],
-            'filesToUpload' => ['nullable', 'array'],
-            'taskFiles' => ['nullable', 'array'],
+            self::TASK => ['required', 'instance_of:'.Task::class],
+            self::FILES_TO_UPLOAD => ['nullable', 'array'],
+            self::TASK_FILES => ['nullable', 'array'],
         ];
     }
 
-    /**
-     * Execute the action and return a result.
-     *
-     * @return mixed
-     */
     public function handle()
     {
-        $currentExistingFiles = $this->task->taskFiles()->pluck('id')->toArray();
-        $newExistingFiles = $this->taskFiles!= null ? array_column($this->taskFiles, 'id') : [];
+        $currentExistingFiles = $this->task->taskFiles()->pluck(TaskFile::ID)->toArray();
+        $newExistingFiles = $this->taskFiles!= null ? array_column($this->taskFiles, TaskFile::ID) : [];
         $idsOfFilesToDelete = array_diff($currentExistingFiles, $newExistingFiles);
 
         if (count($idsOfFilesToDelete) > 0) {
-            app(DeleteTaskFilesAction::class)->fill(['task' => $this->task, 'filesIds' => $idsOfFilesToDelete])->run();
+            app(DeleteTaskFilesAction::class)->fill([DeleteTaskFilesAction::TASK => $this->task, DeleteTaskFilesAction::FILES_IDS => $idsOfFilesToDelete])->run();
         }
 
         if ($this->filesToUpload && count($this->filesToUpload) > 0) {
-            app(StoreTaskFilesAction::class)->fill(['task' => $this->task, 'filesToUpload' => $this->filesToUpload])->run();
+            app(StoreTaskFilesAction::class)->fill([StoreTaskFilesAction::TASK => $this->task, StoreTaskFilesAction::FILES_TO_UPLOAD => $this->filesToUpload])->run();
         }
     }
 }

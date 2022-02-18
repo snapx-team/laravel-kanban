@@ -277,8 +277,13 @@ export const ajaxCalls = {
             });
         },
 
-        asyncUpdateTaskCardIndexes(taskCards, type) {
-            return axios.post('update-task-card-indexes', taskCards).then(() => {
+        asyncUpdateTaskCardIndexes(taskCards, type, selectedSortMethod, targetTaskId) {
+            return axios.post('update-task-card-indexes', {
+                'taskCards': taskCards,
+                'selectedSortMethod': selectedSortMethod,
+                'targetTaskId': targetTaskId,
+                'type': type
+            }).then(() => {
                 if (type === 'moved' || type === 'added')
                     this.triggerSuccessToast('task moved');
             }).catch((error) => {
@@ -315,7 +320,7 @@ export const ajaxCalls = {
         },
 
         asyncSetStatus(taskCardId, status) {
-            return axios.post('set-status/' + taskCardId + '/' + status).then(()=> {
+            return axios.post('set-status/' + taskCardId + '/' + status).then(() => {
                 this.triggerSuccessToast('Status Updated');
             }).catch((error) => {
                 this.loopAllErrorsAsTriggerErrorToast(error);

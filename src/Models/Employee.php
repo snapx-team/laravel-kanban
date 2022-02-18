@@ -21,6 +21,8 @@ class Employee extends Model
     protected $cascadeDeletes = ['members','employeeBoardNotificationSetting',];
     protected $guarded = [];
 
+    const USER_ID = 'user_id';
+
     const USER_RELATION_NAME = 'user';
 
     public function members(): HasMany
@@ -53,7 +55,7 @@ class Employee extends Model
 
     public function logs(): MorphMany
     {
-        return $this->morphMany(Log::class, 'loggable');
+        return $this->morphMany(Log::class, Log::LOGGABLE_RELATION_NAME);
     }
 
     public function employeeBoardNotificationSetting(): hasMany

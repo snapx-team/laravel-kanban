@@ -19,8 +19,7 @@
                 <!-- Close when clicked outside -->
                 <div @click="closeTaskModal()" class="overflow-auto fixed h-full w-full"></div>
                 <div class="flex flex-col overflow-auto z-50 w-100 bg-white rounded-md shadow-2xl m-10"
-                     style="width: 1000px; min-height: 300px; max-height: 80%">
-
+                     style="width: 1300px; min-height: 300px; max-height: 80%">
 
                     <div class="flex justify-between p-5 bg-indigo-800 border-b">
                         <div class="space-y-1">
@@ -48,11 +47,9 @@
                         </div>
                     </div>
 
-
                     <div class="flex flex-wrap">
                         <div class="w-full">
                             <ul class="flex mb-0 list-none flex-wrap py-3 flex-row">
-
                                 <li class="m-1 flex-1 text-center">
                                     <a class="text-xs font-bold uppercase px-5 py-3 rounded block leading-normal"
                                        v-on:click="toggleTabs(1)"

@@ -19,21 +19,40 @@ class SharedTaskData extends Model
     protected $cascadeDeletes = ['erpContracts', 'erpEmployees'];
     protected $guarded = [];
 
+    const KANBAN_ERP_SHAREABLES_TABLE_NAME = 'kanban_erp_shareables';
+
+    const ID = 'id';
+    const DESCRIPTION = 'description';
+    const SHAREABLE_ID = 'shareable_id';
+    const SHAREABLE_TYPE = 'shareable_type';
+    const CONTRACT = 'contract';
+    const USER = 'user';
+
     const ERP_CONTRACTS_RELATION_NAME = 'erpContracts';
-    const ERP_EMPLOYEES_RELATION_NAME ='erpEmployees';
+    const ERP_EMPLOYEES_RELATION_NAME = 'erpEmployees';
 
     public function taskCards(): HasMany
     {
-        return $this->hasMany(Task::class)->orderBy('name', 'asc');
+        return $this->hasMany(Task::class)->orderBy(Task::NAME, 'asc');
     }
 
     public function erpContracts(): BelongsToMany
     {
-        return $this->belongsToMany(Contract::class, 'kanban_erp_shareables', 'shared_task_data_id', 'shareable_id')->wherePivot('shareable_type', '=', 'contract')->withPivot('shareable_type');
+        return $this->belongsToMany(
+            Contract::class,
+            self::KANBAN_ERP_SHAREABLES_TABLE_NAME,
+            Task::SHARED_TASK_DATA_RELATION_ID,
+            self::SHAREABLE_ID
+        )->wherePivot(self::SHAREABLE_TYPE, '=', self::CONTRACT)->withPivot(self::SHAREABLE_TYPE);
     }
 
     public function erpEmployees(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'kanban_erp_shareables', 'shared_task_data_id', 'shareable_id')->wherePivot('shareable_type', '=', 'user')->withPivot('shareable_type');
+        return $this->belongsToMany(
+            User::class,
+            self::KANBAN_ERP_SHAREABLES_TABLE_NAME,
+            Task::SHARED_TASK_DATA_RELATION_ID,
+            self::SHAREABLE_ID
+        )->wherePivot(self::SHAREABLE_TYPE, '=', self::USER)->withPivot(self::SHAREABLE_TYPE);
     }
 }

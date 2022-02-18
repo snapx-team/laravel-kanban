@@ -7,18 +7,18 @@ use Xguard\LaravelKanban\Models\SharedTaskData;
 
 class UpdateErpShareablesDescriptionAction extends Action
 {
-    /**
-     * Get the validation rules that apply to the action.
-     *
-     * @return array
-     */
-    public function rules()
+    const DESCRIPTION = "description";
+    const SHARED_TASK_DATA_ID = "sharedTaskDataId";
+    const ERP_EMPLOYEES = "erpEmployees";
+    const ERP_CONTRACTS = "erpContracts";
+
+    public function rules(): array
     {
         return [
-            "description" => ['required', 'string'],
-            "sharedTaskDataId" => ['required', 'integer', 'gt:0'],
-            "erpEmployees" => ['present', 'array'],
-            "erpContracts" => ['present', 'array'],
+            self::DESCRIPTION => ['required', 'string'],
+            self::SHARED_TASK_DATA_ID => ['required', 'integer', 'gt:0'],
+            self::ERP_EMPLOYEES => ['present', 'array'],
+            self::ERP_CONTRACTS => ['present', 'array'],
         ];
     }
 
@@ -28,26 +28,22 @@ class UpdateErpShareablesDescriptionAction extends Action
             'description.required' => 'Task description is required',
         ];
     }
-    /**
-     * Execute the action and return a result.
-     *
-     * @return mixed
-     */
+
     public function handle()
     {
-        $sharedTaskData = SharedTaskData::where('id', $this->sharedTaskDataId)->first();
-        $sharedTaskData->update(['description' => $this->description]);
+        $sharedTaskData = SharedTaskData::where(SharedTaskData::ID, $this->sharedTaskDataId)->first();
+        $sharedTaskData->update([SharedTaskData::DESCRIPTION => $this->description]);
 
         $erpEmployeesArray = [];
         $erpContractsArray = [];
 
         foreach ($this->erpEmployees as $erpEmployee) {
-            $erpEmployeesArray[$erpEmployee['id']] = ['shareable_type' => 'user'];
+            $erpEmployeesArray[$erpEmployee['id']] = [SharedTaskData::SHAREABLE_TYPE => SharedTaskData::USER];
         }
 
 
         foreach ($this->erpContracts as $erpContract) {
-            $erpContractsArray[$erpContract['id']] = ['shareable_type' => 'contract'];
+            $erpContractsArray[$erpContract['id']] = [SharedTaskData::SHAREABLE_TYPE => SharedTaskData::CONTRACT];
         }
 
         $sharedTaskData->erpContracts()->sync($erpContractsArray);
