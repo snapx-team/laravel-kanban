@@ -5,6 +5,7 @@ namespace Xguard\LaravelKanban\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Xguard\LaravelKanban\Actions\Tasks\UpdateTaskCardIndexesAction;
+use Xguard\LaravelKanban\Enums\TaskStatuses;
 use Xguard\LaravelKanban\Models\Task;
 use Xguard\LaravelKanban\Actions\Tasks\PlaceTaskAction;
 use Xguard\LaravelKanban\Actions\Tasks\CreateTaskAction;
@@ -25,24 +26,24 @@ class TaskController extends Controller
 
     public function getAllTasks()
     {
-        return Task::with('board', 'sharedTaskData')->take(5)->get();
+        return Task::with(Task::BOARD_RELATION_NAME, Task::SHARED_TASK_DATA_RELATION_NAME)->take(5)->get();
     }
 
     public function getSomeTasks($searchTerm)
     {
-        return Task::with('board')->whereSearchText($searchTerm)->orderBy('name', 'ASC')->take(10)->get();
+        return Task::with(Task::BOARD_RELATION_NAME)->whereSearchText($searchTerm)->orderBy(Task::NAME, 'ASC')->take(10)->get();
     }
 
     public function getTaskData($id)
     {
-        return Task::where('id', $id)->withTaskData()->first();
+        return Task::where(Task::ID, $id)->withTaskData()->first();
     }
 
     public function getRelatedTasks($id)
     {
         $relatedTasks = Task::findOrFail($id);
-        return Task::where('id', '!=', $id)
-            ->where('shared_task_data_id', $relatedTasks->shared_task_data_id)
+        return Task::where(Task::ID, '!=', $id)
+            ->where(Task::SHARED_TASK_DATA_RELATION_ID, $relatedTasks->shared_task_data_id)
             ->withTaskData()
             ->get();
     }
@@ -50,9 +51,9 @@ class TaskController extends Controller
     public function getRelatedTasksLessInfo($id)
     {
         $sharedTaskData = Task::findOrFail($id);
-        return Task::where('id', '!=', $id)
-            ->where('shared_task_data_id', $sharedTaskData->shared_task_data_id)
-            ->with('board', 'sharedTaskData')
+        return Task::where(Task::ID, '!=', $id)
+            ->where(Task::SHARED_TASK_DATA_RELATION_ID, $sharedTaskData->shared_task_data_id)
+            ->with(Task::BOARD_RELATION_NAME, Task::SHARED_TASK_DATA_RELATION_NAME)
             ->get();
     }
 
@@ -62,20 +63,20 @@ class TaskController extends Controller
             $taskFilesToUpload = $request->file('file');
             $taskCard = json_decode(file_get_contents($request->file('taskCardData')), true);
             app(CreateTaskAction::class)->fill([
-                'assignedTo' => null,
-                'associatedTask' => $taskCard['associatedTask'],
-                'badge' => $taskCard['badge'],
-                'columnId' => null,
-                'deadline' => $taskCard['deadline'],
-                'description' => $taskCard['shared_task_data']['description'],
-                'erpEmployees' => $taskCard['shared_task_data']['erp_employees'],
-                'erpContracts' => $taskCard['shared_task_data']['erp_contracts'],
-                'name' => $taskCard['name'],
-                'rowId' => null,
-                'selectedKanbans' => $taskCard['selectedKanbans'],
-                'timeEstimate' =>  $taskCard['time_estimate'],
-                'taskFiles'=>  null,
-                'filesToUpload'=>  $taskFilesToUpload,
+                CreateTaskAction::ASSIGNED_TO => null,
+                CreateTaskAction::ASSOCIATED_TASK => $taskCard['associatedTask'],
+                CreateTaskAction::BADGE => $taskCard['badge'],
+                CreateTaskAction::COLUMN_ID => null,
+                CreateTaskAction::DEADLINE => $taskCard['deadline'],
+                CreateTaskAction::DESCRIPTION => $taskCard['shared_task_data']['description'],
+                CreateTaskAction::ERP_EMPLOYEES => $taskCard['shared_task_data']['erp_employees'],
+                CreateTaskAction::ERP_CONTRACTS => $taskCard['shared_task_data']['erp_contracts'],
+                CreateTaskAction::NAME => $taskCard['name'],
+                CreateTaskAction::ROW_ID => null,
+                CreateTaskAction::SELECTED_KANBANS => $taskCard['selectedKanbans'],
+                CreateTaskAction::TIME_ESTIMATE => $taskCard['time_estimate'],
+                CreateTaskAction::TASK_FILES => null,
+                CreateTaskAction::FILES_TO_UPLOAD => $taskFilesToUpload,
             ])->run();
         } catch (\Exception $e) {
             return response([
@@ -92,24 +93,23 @@ class TaskController extends Controller
             $taskFilesToUpload = $request->file('file');
             $taskCard = json_decode(file_get_contents($request->file('taskCardData')), true);
             $selectedKanban = [];
-            $board = ['id'=>$taskCard['boardId']];
+            $board = ['id' => $taskCard['boardId']];
             array_push($selectedKanban, $board);
             app(CreateTaskAction::class)->fill([
-                'assignedTo' => $taskCard['assignedTo'],
-                'associatedTask' => $taskCard['associatedTask'],
-                'badge' => $taskCard['badge'],
-                'columnId' => $taskCard['selectedColumnId'],
-                'deadline' => $taskCard['deadline'],
-                'description' => $taskCard['shared_task_data']['description'],
-                'erpEmployees' => $taskCard['shared_task_data']['erp_employees'],
-                'erpContracts' => $taskCard['shared_task_data']['erp_contracts'],
-                'name' => $taskCard['name'],
-                'rowId' => $taskCard['selectedRowId'],
-                'selectedKanbans' => $selectedKanban,
-                'timeEstimate' =>  $taskCard['time_estimate'],
-                'taskFiles'=>  null,
-                'filesToUpload'=>  $taskFilesToUpload,
-
+                CreateTaskAction::ASSIGNED_TO => $taskCard['assignedTo'],
+                CreateTaskAction::ASSOCIATED_TASK => $taskCard['associatedTask'],
+                CreateTaskAction::BADGE => $taskCard['badge'],
+                CreateTaskAction::COLUMN_ID => $taskCard['selectedColumnId'],
+                CreateTaskAction::DEADLINE => $taskCard['deadline'],
+                CreateTaskAction::DESCRIPTION => $taskCard['shared_task_data']['description'],
+                CreateTaskAction::ERP_EMPLOYEES => $taskCard['shared_task_data']['erp_employees'],
+                CreateTaskAction::ERP_CONTRACTS => $taskCard['shared_task_data']['erp_contracts'],
+                CreateTaskAction::NAME => $taskCard['name'],
+                CreateTaskAction::ROW_ID => $taskCard['selectedRowId'],
+                CreateTaskAction::SELECTED_KANBANS => $selectedKanban,
+                CreateTaskAction::TIME_ESTIMATE => $taskCard['time_estimate'],
+                CreateTaskAction::TASK_FILES => null,
+                CreateTaskAction::FILES_TO_UPLOAD => $taskFilesToUpload,
             ])->run();
         } catch (\Exception $e) {
             return response([
@@ -126,21 +126,21 @@ class TaskController extends Controller
             $taskFilesToUpload = $request->file('file');
             $taskCard = json_decode(file_get_contents($request->file('taskCardData')), true);
             app(UpdateTaskAction::class)->fill([
-                'assignedTo' => $taskCard['assigned_to'],
-                'badge' => $taskCard['badge'],
-                'columnId' => $taskCard['column_id'],
-                'deadline' => $taskCard['deadline'],
-                'description' => $taskCard['shared_task_data']['description'],
-                'erpContracts' => $taskCard['shared_task_data']['erp_contracts'],
-                'erpEmployees' => $taskCard['shared_task_data']['erp_employees'],
-                'name' => $taskCard['name'],
-                'rowId' => $taskCard['row_id'],
-                'status' => $taskCard['status'],
-                'taskId' => $taskCard['id'],
-                'sharedTaskDataId' => $taskCard['shared_task_data_id'],
-                'timeEstimate' =>  $taskCard['time_estimate'],
-                'taskFiles'=>  $taskCard['task_files'],
-                'filesToUpload'=>  $taskFilesToUpload,
+                UpdateTaskAction::ASSIGNED_TO => $taskCard['assigned_to'],
+                UpdateTaskAction::BADGE => $taskCard['badge'],
+                UpdateTaskAction::COLUMN_ID => $taskCard['column_id'],
+                UpdateTaskAction::DEADLINE => $taskCard['deadline'],
+                UpdateTaskAction::DESCRIPTION => $taskCard['shared_task_data']['description'],
+                UpdateTaskAction::ERP_CONTRACTS => $taskCard['shared_task_data']['erp_contracts'],
+                UpdateTaskAction::ERP_EMPLOYEES => $taskCard['shared_task_data']['erp_employees'],
+                UpdateTaskAction::NAME => $taskCard['name'],
+                UpdateTaskAction::ROW_ID => $taskCard['row_id'],
+                UpdateTaskAction::STATUS => $taskCard['status'],
+                UpdateTaskAction::TASK_ID => $taskCard['id'],
+                UpdateTaskAction::SHARED_TASK_DATA_ID => $taskCard['shared_task_data_id'],
+                UpdateTaskAction::TIME_ESTIMATE => $taskCard['time_estimate'],
+                UpdateTaskAction::TASK_FILES => $taskCard['task_files'],
+                UpdateTaskAction::FILES_TO_UPLOAD => $taskFilesToUpload,
 
             ])->run();
         } catch (\Exception $e) {
@@ -154,20 +154,23 @@ class TaskController extends Controller
 
     public function getTaskCardsByColumn($id)
     {
-        return Task::where('column_id', $id)->where('status', 'active')->withTaskData()->orderBy('index')->get();
+        return Task::where(Task::COLUMN_ID, $id)->where(
+            Task::STATUS,
+            TaskStatuses::ACTIVE()->getValue()
+        )->withTaskData()->orderBy(Task::INDEX)->get();
     }
 
     public function updateTaskCardIndexes(Request $request)
     {
         try {
             app(UpdateTaskCardIndexesAction::class)->fill([
-                'taskCards' => $request->all()
+                UpdateTaskCardIndexesAction::DATA => $request->all()
             ])->run();
         } catch (\Exception $e) {
             return response([
                 'success' => 'false',
                 'message' => $e->getMessage(),
-                'errors'=>$e->getErrors()
+                'errors' => $e->getErrors()
             ], 400);
         }
         return response(['success' => 'true'], 200);
@@ -177,9 +180,9 @@ class TaskController extends Controller
     {
         try {
             app(UpdateTaskColumnAndRowAction::class)->fill([
-                'columnId' => $columnId,
-                'rowId' => $rowId,
-                'taskId' => $taskCardId,
+                UpdateTaskColumnAndRowAction::COLUMN_ID => $columnId,
+                UpdateTaskColumnAndRowAction::ROW_ID => $rowId,
+                UpdateTaskColumnAndRowAction::TASK_ID => $taskCardId,
             ])->run();
         } catch (\Exception $e) {
             return response([
@@ -209,10 +212,10 @@ class TaskController extends Controller
         $descriptionData = $request->all();
         try {
             app(UpdateTaskDescriptionAction::class)->fill([
-                'checkBoxContent' => $descriptionData['checkboxContent'],
-                'description' => $descriptionData['description'],
-                'isChecked' => $descriptionData['isChecked'] === "true",
-                'taskId' => $descriptionData['id'],
+                UpdateTaskDescriptionAction::CHECK_BOX_CONTENT => $descriptionData['checkboxContent'],
+                UpdateTaskDescriptionAction::DESCRIPTION => $descriptionData['description'],
+                UpdateTaskDescriptionAction::IS_CHECKED => $descriptionData['isChecked'] === "true",
+                UpdateTaskDescriptionAction::TASK_ID => $descriptionData['id'],
             ])->run();
             return response(['success' => 'true'], 200);
         } catch (\Exception $e) {
@@ -228,8 +231,8 @@ class TaskController extends Controller
     {
         try {
             app(UpdateTaskStatusAction::class)->fill([
-                'taskId' => $taskCardId,
-                'newStatus' => $status
+                UpdateTaskStatusAction::TASK_ID => $taskCardId,
+                UpdateTaskStatusAction::NEW_STATUS => $status
             ])->run();
         } catch (\Exception $e) {
             return response([
@@ -245,10 +248,10 @@ class TaskController extends Controller
         $taskPlacementData = $request->all();
         try {
             app(PlaceTaskAction::class)->fill([
-            'taskId' => $taskPlacementData['taskId'],
-            'boardId' => $taskPlacementData['boardId'],
-            'rowId' => $taskPlacementData['rowId'],
-            'columnId' => $taskPlacementData['columnId'],
+                PlaceTaskAction::TASK_ID => $taskPlacementData['taskId'],
+                PlaceTaskAction::BOARD_ID => $taskPlacementData['boardId'],
+                PlaceTaskAction::ROW_ID => $taskPlacementData['rowId'],
+                PlaceTaskAction::COLUMN_ID => $taskPlacementData['columnId'],
             ])->run();
         } catch (\Exception $e) {
             return response([
@@ -264,8 +267,8 @@ class TaskController extends Controller
     {
         try {
             app(UpdateGroupAction::class)->fill([
-                'taskId' => $task_id,
-                'groupId' => $group
+                UpdateGroupAction::TASK_ID => $task_id,
+                UpdateGroupAction::GROUP_ID => $group
             ])->run();
         } catch (\Exception $e) {
             return response([
@@ -280,7 +283,7 @@ class TaskController extends Controller
     {
         try {
             app(RemoveTaskFromGroupAction::class)->fill([
-                'taskId' => $id
+                RemoveTaskFromGroupAction::TASK_ID => $id
             ])->run();
         } catch (\Exception $e) {
             return response([

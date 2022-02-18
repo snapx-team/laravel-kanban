@@ -4,6 +4,8 @@ namespace Xguard\LaravelKanban\Actions\Tasks;
 
 use Illuminate\Support\Facades\Auth;
 use Lorisleiva\Actions\Action;
+use Throwable;
+use Xguard\LaravelKanban\Enums\LoggableTypes;
 use Xguard\LaravelKanban\Models\Log;
 use Xguard\LaravelKanban\Models\Task;
 use Xguard\LaravelKanban\Http\Helper\AccessManager;
@@ -11,30 +13,28 @@ use Xguard\LaravelKanban\Repositories\TasksRepository;
 
 class PlaceTaskAction extends Action
 {
-    public function authorize()
+    const TASK_ID = 'taskId';
+    const BOARD_ID = 'boardId';
+    const ROW_ID = 'rowId';
+    const COLUMN_ID = 'columnId';
+
+    public function authorize(): bool
     {
         return AccessManager::canAccessBoardUsingTaskId($this->taskId);
     }
 
-    /**
-     * Get the validation rules that apply to the action.
-     *
-     * @return array
-     */
-    public function rules()
+    public function rules(): array
     {
         return [
-            'taskId' => ['required', 'integer', 'gt:0'],
-            'boardId' => ['required', 'integer', 'gt:0'],
-            'rowId' => ['nullable' , 'required_with:columnId,', 'integer', 'gt:0'],
-            'columnId' => ['nullable', 'required_with:rowId', 'integer', 'gt:0'],
+            self::TASK_ID => ['required', 'integer', 'gt:0'],
+            self::BOARD_ID => ['required', 'integer', 'gt:0'],
+            self::ROW_ID => ['nullable' , 'required_with:columnId,', 'integer', 'gt:0'],
+            self::COLUMN_ID => ['nullable', 'required_with:rowId', 'integer', 'gt:0'],
         ];
     }
 
     /**
-     * Execute the action and return a result.
-     *
-     * @return mixed
+     * @throws Throwable
      */
     public function handle()
     {
@@ -42,9 +42,9 @@ class PlaceTaskAction extends Action
             \DB::beginTransaction();
             $task = Task::find($this->taskId);
             $task->update([
-                'board_id' => $this->boardId,
-                'row_id' => $this->rowId,
-                'column_id' => $this->columnId
+                Task::BOARD_ID => $this->boardId,
+                Task::ROW_ID => $this->rowId,
+                Task::COLUMN_ID => $this->columnId
             ]);
 
             // occurs when users wants to remove card that is currently placed in board
@@ -59,22 +59,23 @@ class PlaceTaskAction extends Action
                 $logDesc,
                 null,
                 $task->id,
-                'Xguard\LaravelKanban\Models\Task'
+                LoggableTypes::TASK()->getValue()
             );
 
             TasksRepository::versionTask([
-                "index" => $task->index,
-                "name" => $task->name,
-                "deadline" => $task->deadline,
-                "shared_task_data_id" => $task->shared_task_data_id,
-                "reporter_id" => $task->reporter_id,
-                "column_id" => $task->column_id,
-                "row_id" => $task->row_id,
-                "board_id" => $task->board_id,
-                "badge_id" => $task->badge_id,
-                "status" => $task->status ? $task->status : 'active',
-                "task_id" => $task->id,
-                "log_id" => $log->id
+                TasksRepository::INDEX => $task->index,
+                TasksRepository::NAME => $task->name,
+                TasksRepository::DEADLINE => $task->deadline,
+                TasksRepository::SHARED_TASK_DATA_ID => $task->shared_task_data_id,
+                TasksRepository::REPORTER_ID => $task->reporter_id,
+                TasksRepository::COLUMN_ID => $task->column_id,
+                TasksRepository::ROW_ID => $task->row_id,
+                TasksRepository::BOARD_ID => $task->board_id,
+                TasksRepository::BADGE_ID => $task->badge_id,
+                TasksRepository::STATUS => $task->status ?: 'active',
+                TasksRepository::TASK_ID => $task->id,
+                TasksRepository::LOG_ID => $log->id,
+                TasksRepository::TIME_ESTIMATE => $task->time_estimate
             ]);
             \DB::commit();
         } catch (\Exception $e) {

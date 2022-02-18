@@ -9,16 +9,16 @@ use Xguard\LaravelKanban\AWSStorage\S3Storage;
 class TaskFile extends Model
 {
     protected $guarded = [];
-
-    protected $appends = [
-        'full_url',
-    ];
-
+    protected $appends = ['full_url',];
     protected $table = "kanban_task_files";
+
+    const ID = 'id';
+    const TASK_FILE_URL = 'task_file_url';
+    const TASK_ID = 'task_id';
 
     public function task(): BelongsTo
     {
-        return $this->belongsTo(Task::class, 'task_id');
+        return $this->belongsTo(Task::class, self::TASK_ID);
     }
 
     public function getFullUrlAttribute(): string

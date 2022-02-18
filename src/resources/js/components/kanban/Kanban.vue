@@ -4,7 +4,8 @@
             <kanban-bar :kanbanId="kanban.id"
                         :kanbanMembers="kanban.members"
                         :kanbanName="kanban.name"
-                        :loadingMembers="loadingMembers"></kanban-bar>
+                        :loadingMembers="loadingMembers"
+                        :sortMethod="selectedSortMethod"></kanban-bar>
 
             <draggable @start="isDraggingRow = true"
                        @end="getRowChangeData($event)"
@@ -21,6 +22,7 @@
                         <h2 class="text-gray-100 font-medium tracking-wide animate-pulse">
                             Loading... </h2>
                     </div>
+
                     <div class="border bg-gray-700 pl-3 pr-3 rounded py-2 flex justify-between" v-else>
 
                         <div class="flex">
@@ -62,10 +64,8 @@
                                             Loading... </p>
                                     </div>
                                     <div class="flex" v-else>
-
                                         <p class="flex-auto text-gray-700 font-semibold font-sans tracking-wide pt-1">
                                             {{ column.name }} </p>
-
                                         <button @click="createTaskCard(rowIndex, columnIndex)"
                                                 class="w-6 h-6 bg-blue-200 rounded-full hover:bg-blue-300 mouse transition ease-in duration-200 focus:outline-none">
                                             <i class="fas fa-plus text-white"></i>
@@ -81,20 +81,23 @@
                                                group="tasks"
                                                @start="taskDragStart"
                                                @end="isDraggingTask=false"
+                                               @add="(e) => {e.item.classList.add('hidden')}"
                                                :options="draggableOptions">
-                                        <task-card :class="{'opacity-60':isDraggableDisabled}"
-                                                   :key="task_card.id"
-                                                   :task_card="task_card"
-                                                   class="mt-3 cursor-move"
-                                                   v-for="task_card in column.task_cards"
-                                                   v-on:mouseup.native="openTask(task_card)"></task-card>
+                                        <transition-group type="transition" :name="!isDraggingTask ? 'flip-list' : null"
+                                                          class="flex w-full h-full flex-col">
+                                            <task-card :class="{'opacity-60':isDraggableDisabled}"
+                                                       :key="task_card.id"
+                                                       :task_card="task_card"
+                                                       class="mt-3 cursor-move"
+                                                       v-for="task_card in column.task_cards"
+                                                       v-on:mouseup.native="openTask(task_card)"></task-card>
+                                        </transition-group>
                                     </draggable>
                                 </div>
                             </draggable>
                         </div>
                     </div>
                 </div>
-
             </draggable>
 
             <hr class="mt-5"/>
@@ -110,6 +113,7 @@
             <add-row-and-columns-modal :kanbanData="kanban"></add-row-and-columns-modal>
             <add-task-by-column-modal :kanbanData="kanban"></add-task-by-column-modal>
         </div>
+
         <div v-else>
             <div v-if="kanbanErrorMessage"
                  class="bg-blue-100 border-t-4 border-blue-500 rounded-b text-blue-800 px-4 py-3 shadow-md">
@@ -167,7 +171,8 @@ export default {
             isDraggingRow: false,
             isDraggingColumn: false,
             isDraggingTask: false,
-            kanbanErrorMessage: null
+            kanbanErrorMessage: null,
+            selectedSortMethod: {'name':'index', 'value': 'index'}
         };
     },
 
@@ -209,6 +214,9 @@ export default {
         this.eventHub.$on("fetch-and-set-column-tasks", (task) => {
             this.fetchAndSetColumnTasks(task);
         });
+        this.eventHub.$on("set-kanban-sort-method", (selectedSortMethod) => {
+            this.setKanbanSortMethod(selectedSortMethod);
+        });
     },
 
     beforeDestroy() {
@@ -221,6 +229,7 @@ export default {
         this.eventHub.$off('delete-row');
         this.eventHub.$off('show-employee-tasks');
         this.eventHub.$off('reset-show-employee-tasks');
+        this.eventHub.$off('set-kanban-sort-method');
     },
 
     computed: {
@@ -268,8 +277,46 @@ export default {
             });
         },
 
+        setKanbanSortMethod(selectedSortMethod) {
+            this.selectedSortMethod = selectedSortMethod
+            this.sortAllTaskCards();
+        },
+
+
+        sortAllTaskCards() {
+            for (let row of this.kanban.rows) {
+                for (let column of row.columns) {
+                    this.sortTaskCards(column.task_cards)
+                }
+            }
+        },
+
+        sortTaskCards(taskCards) {
+            switch (this.selectedSortMethod.value) {
+                case 'index':
+                    return taskCards.sort(function (a, b) {
+                        return a.index - b.index;
+                    })
+                case 'deadline_desc':
+                    return taskCards.sort(function (a, b) {
+                        return new Date(a.deadline) - new Date(b.deadline);
+                    })
+                case 'created_desc':
+                    return taskCards.sort(function (a, b) {
+                        return new Date(b.created_at) - new Date(a.created_at);
+                    })
+                case 'time_estimate_desc':
+                    return taskCards.sort(function (a, b) {
+                        return b.time_estimate - a.time_estimate;
+                    })
+            }
+        },
+
         // Whenever a user drags a card
         getTaskChangeData(event, columnIndex, rowIndex) {
+
+            if (this.selectedSortMethod.value !== 'index')
+                this.sortTaskCards(this.kanban.rows[rowIndex].columns[columnIndex].task_cards)
 
             this.isDraggableDisabled = true;
             let eventName = Object.keys(event)[0];
@@ -279,15 +326,16 @@ export default {
 
             switch (eventName) {
                 case "moved":
-                    this.asyncUpdateTaskCardIndexes(taskCardData, 'moved').then(() => {
+                    this.asyncUpdateTaskCardIndexes(taskCardData, 'moved', this.selectedSortMethod.value, event.moved.element.id).then(() => {
                         this.isDraggableDisabled = false
                     });
                     break;
                 case "added":
                     this.asyncUpdateTaskCardRowAndColumnId(columnId, rowId, event.added.element.id).then(() => {
-                            this.asyncUpdateTaskCardIndexes(taskCardData, 'added').then(() => {
+                            this.asyncUpdateTaskCardIndexes(taskCardData, 'added', this.selectedSortMethod.value, event.added.element.id).then(() => {
                                 this.asyncGetTaskCardsByColumn(columnId).then((data) => {
                                     this.kanban.rows[rowIndex].columns[columnIndex].task_cards = data.data;
+                                    this.sortTaskCards(this.kanban.rows[rowIndex].columns[columnIndex].task_cards)
                                     this.isDraggableDisabled = false
                                 })
                             });
@@ -295,7 +343,7 @@ export default {
                     );
                     break;
                 case "removed":
-                    this.asyncUpdateTaskCardIndexes(taskCardData, 'removed');
+                    this.asyncUpdateTaskCardIndexes(taskCardData, 'removed', this.selectedSortMethod.value,  event.removed.element.id);
                     break;
                 default:
                     alert('event "' + eventName + '" not handled: ');
@@ -353,7 +401,7 @@ export default {
             this.loadingCards = {columnId: cloneCardData.column_id, isLoading: true}
             this.asyncUpdateTask(cloneCardData).then(() => {
                 this.asyncGetTaskCardsByColumn(cloneCardData.column_id).then((data) => {
-                    this.kanban.rows[cloneCardData.row.index].columns[cloneCardData.column.index].task_cards = data.data;
+                    this.kanban.rows[cloneCardData.row.index].columns[cloneCardData.column.index].task_cards = this.sortTaskCards(data.data);
                     this.loadingCards = {columnId: null, isLoading: false}
                     this.isDraggableDisabled = false
                 })
@@ -365,7 +413,7 @@ export default {
             this.isDraggableDisabled = true;
             this.asyncCreateTask(taskData).then((data) => {
                 this.asyncGetTaskCardsByColumn(taskData.selectedColumnId).then((data) => {
-                    this.kanban.rows[taskData.selectedRowIndex].columns[taskData.selectedColumnIndex].task_cards = data.data;
+                    this.kanban.rows[taskData.selectedRowIndex].columns[taskData.selectedColumnIndex].task_cards = this.sortTaskCards(data.data);
                     this.isDraggableDisabled = false;
                 })
             });
@@ -402,6 +450,7 @@ export default {
             this.isDraggableDisabled = true;
             this.asyncGetTaskCardsByColumn(task.column.id).then((data) => {
                 this.kanban.rows[task.row.index].columns[task.column.index].task_cards = data.data;
+                this.sortTaskCards(this.kanban.rows[task.row.index].columns[task.column.index].task_cards)
                 this.isDraggableDisabled = false
             })
         },
@@ -409,6 +458,7 @@ export default {
         getKanban(kanbanID) {
             this.kanbanErrorMessage = null;
             this.isDraggableDisabled = true;
+            this.selectedSortMethod = {'name':'index', 'value': 'index'};
             this.eventHub.$emit("set-loading-state", true);
             this.asyncGetKanbanData(kanbanID).then((data) => {
                 this.kanban = data.data;
@@ -441,7 +491,7 @@ export default {
             } else {
                 this.collapsedRows.splice(this.collapsedRows.indexOf(rowId), 1);  //deleting
             }
-        }
+        },
     },
 };
 </script>
@@ -456,4 +506,10 @@ export default {
     background: #F7FAFC;
     border: 1px solid #4299e1;
 }
+
+.flip-list-move {
+    transition: transform 0.4s;
+}
+
+
 </style>

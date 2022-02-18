@@ -5,8 +5,12 @@ namespace Xguard\LaravelKanban\Actions\Tasks;
 use Carbon;
 use Illuminate\Support\Facades\Auth;
 use Lorisleiva\Actions\Action;
+use Throwable;
 use Xguard\LaravelKanban\Actions\Badges\CreateBadgeAction;
 use Xguard\LaravelKanban\Actions\ErpShareables\CreateErpShareablesAction;
+use Xguard\LaravelKanban\Enums\LoggableTypes;
+use Xguard\LaravelKanban\Enums\SessionVariables;
+use Xguard\LaravelKanban\Enums\TaskStatuses;
 use Xguard\LaravelKanban\Models\Badge;
 use Xguard\LaravelKanban\Models\Log;
 use Xguard\LaravelKanban\Models\Task;
@@ -14,29 +18,38 @@ use Xguard\LaravelKanban\Repositories\TasksRepository;
 
 class CreateTaskAction extends Action
 {
+    const ASSIGNED_TO = 'assignedTo';
+    const ASSOCIATED_TASK = 'associatedTask';
+    const BADGE = 'badge';
+    const COLUMN_ID = 'columnId';
+    const DEADLINE = 'deadline';
+    const DESCRIPTION = 'description';
+    const ERP_CONTRACTS = 'erpContracts';
+    const ERP_EMPLOYEES = 'erpEmployees';
+    const NAME = 'name';
+    const ROW_ID = 'rowId';
+    const SELECTED_KANBANS = 'selectedKanbans';
+    const TIME_ESTIMATE = 'timeEstimate';
+    const TASK_FILES = 'taskFiles';
+    const FILES_TO_UPLOAD = 'filesToUpload';
 
-    /**
-     * Get the validation rules that apply to the action.
-     *
-     * @return array
-     */
-    public function rules()
+    public function rules(): array
     {
         return [
-            'assignedTo' => ['nullable', 'array'],
-            'associatedTask' => ['nullable', 'array'],
-            'badge' => ['present', 'array'],
-            'columnId' => ['nullable', 'integer', 'gt:0'],
-            'deadline' => ['required', 'string'],
-            'description' => ['required', 'string'],
-            'erpContracts' => ['present', 'array'],
-            'erpEmployees' => ['present', 'array'],
-            'name' => ['required', 'string'],
-            'rowId' => ['nullable', 'integer', 'gt:0'],
-            'selectedKanbans' => ['required', 'array', "min:1"],
-            'timeEstimate' => ['present', 'integer', 'digits_between: 0,40'],
-            'task_files' => ['nullable', 'array'],
-            'filesToUpload' => ['nullable', 'array'],
+            self::ASSIGNED_TO => ['nullable', 'array'],
+            self::ASSOCIATED_TASK => ['nullable', 'array'],
+            self::BADGE => ['present', 'array'],
+            self::COLUMN_ID => ['nullable', 'integer', 'gt:0'],
+            self::DEADLINE => ['required', 'string'],
+            self::DESCRIPTION => ['required', 'string'],
+            self::ERP_CONTRACTS => ['present', 'array'],
+            self::ERP_EMPLOYEES => ['present', 'array'],
+            self::NAME => ['required', 'string'],
+            self::ROW_ID => ['nullable', 'integer', 'gt:0'],
+            self::SELECTED_KANBANS => ['required', 'array', "min:1"],
+            self::TIME_ESTIMATE => ['present', 'integer', 'digits_between: 0,40'],
+            self::TASK_FILES => ['nullable', 'array'],
+            self::FILES_TO_UPLOAD => ['nullable', 'array'],
         ];
     }
 
@@ -49,75 +62,81 @@ class CreateTaskAction extends Action
     }
 
     /**
-     * Execute the action and return a result.
-     *
-     * @return mixed
+     * @throws Throwable
      */
     public function handle()
     {
         try {
             \DB::beginTransaction();
-            $badgeName = count($this->badge) > 0 ? trim($this->badge['name']) : '--';
-            $badge = Badge::where('name', $badgeName)->first();
+            $badgeName = count($this->badge) > 0 ? trim($this->badge[self::NAME]) : '--';
+            $badge = Badge::where(self::NAME, $badgeName)->first();
 
             if (!$badge) {
-                $badge = app(CreateBadgeAction::class)->fill(["name" => $badgeName])->run();
+                $badge = app(CreateBadgeAction::class)->fill([self::NAME => $badgeName])->run();
             }
 
             if ($this->associatedTask !== null) {
-                $sharedTaskDataId = $this->associatedTask['shared_task_data_id'];
+                $sharedTaskDataId = $this->associatedTask[Task::SHARED_TASK_DATA_RELATION_ID];
             } else {
                 $sharedTaskDataId = (app(CreateErpShareablesAction::class)->fill([
-                    "description" => $this->description,
-                    "erpEmployees" => $this->erpEmployees,
-                    "erpContracts" => $this->erpContracts,
+                    CreateErpShareablesAction::DESCRIPTION => $this->description,
+                    CreateErpShareablesAction::ERP_EMPLOYEES => $this->erpEmployees,
+                    CreateErpShareablesAction::ERP_CONTRACTS => $this->erpContracts,
                 ])->run())->id;
             }
 
-            $maxIndex = $this->columnId ? Task::where('column_id', $this->columnId)->where('status', 'active')->max('index') + 1 : null;
+            $maxIndex = $this->columnId ? Task::where(Task::COLUMN_ID, $this->columnId)->where(
+                Task::STATUS,
+                TaskStatuses::ACTIVE()->getValue()
+            )->max(Task::INDEX) + 1 : null;
 
             foreach ($this->selectedKanbans as $kanban) {
                 $task = Task::create([
-                    'index' => $maxIndex,
-                    'reporter_id' => session('employee_id'),
-                    'name' => $this->name,
-                    'deadline' => Carbon::parse($this->deadline),
-                    'badge_id' => $badge->id,
-                    'column_id' => $this->columnId ? $this->columnId : null,
-                    'row_id' => $this->rowId ? $this->rowId : null,
-                    'board_id' => $kanban['id'],
-                    'shared_task_data_id' => $sharedTaskDataId,
-                    'time_estimate' => $this->timeEstimate
+                    Task::INDEX => $maxIndex,
+                    Task::REPORTER_ID => session(SessionVariables::EMPLOYEE_ID()->getValue()),
+                    Task::NAME => $this->name,
+                    Task::DEADLINE => Carbon::parse($this->deadline),
+                    Task::BADGE_ID => $badge->id,
+                    Task::COLUMN_ID => $this->columnId ?: null,
+                    Task::ROW_ID => $this->rowId ?: null,
+                    Task::BOARD_ID => $kanban['id'],
+                    Task::SHARED_TASK_DATA_RELATION_ID => $sharedTaskDataId,
+                    Task::TIME_ESTIMATE => $this->timeEstimate
                 ]);
 
-                app(SyncAssignedEmployeesToTaskAction::class)->fill(["assignedTo" => $this->assignedTo, "task" => $task])->run();
+                app(SyncAssignedEmployeesToTaskAction::class)->fill([
+                    SyncAssignedEmployeesToTaskAction::ASSIGNED_TO => $this->assignedTo,
+                    SyncAssignedEmployeesToTaskAction::TASK => $task
+                ])->run();
 
                 $log = Log::createLog(
                     Auth::user()->id,
                     Log::TYPE_CARD_CREATED,
-                    'Created new task [' . $task->task_simple_name . '] in board [' . $task->board->name . ']',
+                    'Created new task ['.$task->task_simple_name.'] in board ['.$task->board->name.']',
                     null,
                     $task->id,
-                    'Xguard\LaravelKanban\Models\Task'
+                    LoggableTypes::TASK()->getValue()
                 );
 
                 TasksRepository::versionTask([
-                    "index" => $task->index,
-                    "name" => $task->name,
-                    "deadline" => $task->deadline,
-                    "shared_task_data_id" => $task->shared_task_data_id,
-                    "reporter_id" => $task->reporter_id,
-                    "column_id" => $task->column_id,
-                    "row_id" => $task->row_id,
-                    "board_id" => $task->board_id,
-                    "badge_id" => $task->badge_id,
-                    "status" => $task->status ? $task->status : 'active',
-                    "task_id" => $task->id,
-                    "log_id" => $log->id,
-                    'time_estimate' => $this->timeEstimate
+                    TasksRepository::INDEX => $task->index,
+                    TasksRepository::NAME => $task->name,
+                    TasksRepository::DEADLINE => $task->deadline,
+                    TasksRepository::SHARED_TASK_DATA_ID => $task->shared_task_data_id,
+                    TasksRepository::REPORTER_ID => $task->reporter_id,
+                    TasksRepository::COLUMN_ID => $task->column_id,
+                    TasksRepository::ROW_ID => $task->row_id,
+                    TasksRepository::BOARD_ID => $task->board_id,
+                    TasksRepository::BADGE_ID => $task->badge_id,
+                    TasksRepository::STATUS => $task->status ?: 'active',
+                    TasksRepository::TASK_ID => $task->id,
+                    TasksRepository::LOG_ID => $log->id,
+                    TasksRepository::TIME_ESTIMATE => $this->timeEstimate
                 ]);
 
-                app(UpdateTaskFilesAction::class)->fill(['task' => $task, 'taskFiles'=> $this->taskFiles, 'filesToUpload' => $this->filesToUpload])->run();
+                app(UpdateTaskFilesAction::class)->fill([
+                    UpdateTaskFilesAction::TASK => $task, UpdateTaskFilesAction::TASK_FILES => $this->taskFiles, UpdateTaskFilesAction::FILES_TO_UPLOAD => $this->filesToUpload
+                ])->run();
             }
             \DB::commit();
         } catch (\Exception $e) {

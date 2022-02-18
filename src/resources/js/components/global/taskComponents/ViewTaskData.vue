@@ -1,8 +1,6 @@
 <template>
     <div>
-
-        <!-- Task Header-->
-        <div>
+		<div>
             <div class="inline-flex space-x-1">
                 <badge :name="cloneCardData.badge.name" v-if="cloneCardData.badge !== []"></badge>
 
@@ -67,9 +65,9 @@
         </div>
 
         <div class="flex pt-3 border-t"
-             :class="isVerticalMode ? 'flex-col-reverse' : 'space-x-20'">
+             :class="isVerticalMode ? 'flex-col-reverse' : 'space-x-16'">
 
-            <div class="flex-grow">
+            <div class="flex-auto">
 
                 <!-- Description-->
                 <div class="space-y-5">
@@ -109,7 +107,7 @@
                 </div>
             </div>
 
-            <div class="space-y-5 flex-1">
+            <div class="space-y-5 flex-none" style="max-width: 30%;">
 
                 <!-- Info Section-->
                 <div>

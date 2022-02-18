@@ -12,10 +12,17 @@ use Xguard\LaravelKanban\Repositories\TasksRepository;
 
 class UpdateTaskCardIndexesAction extends Action
 {
+    const DATA = 'data';
+    const TASK_CARDS = 'taskCards';
+    const SELECTED_SORT_METHOD = 'selectedSortMethod';
+    const TARGET_TASK_ID = 'targetTaskId';
+    const TYPE = 'type';
+    const ADDED = 'added';
+    const REMOVED = 'removed';
+    const ID = 'id';
+    const INDEX = 'index';
+
     /**
-     * Execute the action and return a result.
-     *
-     * @return void
      * @throws Throwable
      */
     public function handle()
@@ -24,11 +31,38 @@ class UpdateTaskCardIndexesAction extends Action
             \DB::beginTransaction();
 
             $newIndex = 0;
-            foreach ($this->taskCards as $taskCard) {
-                $task = Task::find($taskCard['id']);
-                $task->update(['index' => $newIndex]);
-                $task->refresh();
-                $newIndex++;
+            $taskCards = $this->data[self::TASK_CARDS];
+
+            /*
+            Set index to be last if kanban frontend sort is set as anything other than index
+            This is to avoid re-indexing based on the sorted cards and keep original indexing
+            */
+            if ($this->data[self::SELECTED_SORT_METHOD] !== self::INDEX) {
+                switch ($this->data[self::TYPE]) {
+                    case self::ADDED:
+                        $this->findAndSetTaskCardIndex($this->data[self::TARGET_TASK_ID], count($taskCards)-1);
+                        break;
+                    case self::REMOVED:
+                        usort($taskCards, function ($a, $b) {
+                            if ($a[self::INDEX] == $b[self::INDEX]) {
+                                return (0);
+                            }
+                            return (($a[self::INDEX] < $b[self::INDEX]) ? -1 : 1);
+                        });
+
+                        foreach ($taskCards as $taskCard) {
+                            $this->findAndSetTaskCardIndex($taskCard[self::ID], $newIndex);
+                            $newIndex++;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                foreach ($taskCards as $taskCard) {
+                    $this->findAndSetTaskCardIndex($taskCard[self::ID], $newIndex);
+                    $newIndex++;
+                }
             }
 
             \DB::commit();
@@ -36,5 +70,12 @@ class UpdateTaskCardIndexesAction extends Action
             \DB::rollBack();
             throw $e;
         }
+    }
+
+    public function findAndSetTaskCardIndex($taskCardId, $index)
+    {
+        $task = Task::find($taskCardId);
+        $task->update([self::INDEX => $index]);
+        $task->refresh();
     }
 }

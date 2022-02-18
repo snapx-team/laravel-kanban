@@ -3,6 +3,7 @@
 namespace Xguard\LaravelKanban\Actions\Tasks;
 
 use Lorisleiva\Actions\Action;
+use Xguard\LaravelKanban\Enums\LoggableTypes;
 use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Log;
 use Illuminate\Support\Facades\Auth;
@@ -10,24 +11,16 @@ use Xguard\LaravelKanban\Models\Task;
 
 class SyncAssignedEmployeesToTaskAction extends Action
 {
+    const ASSIGNED_TO = 'assignedTo';
+    const TASK = 'task';
 
-    /**
-     * Get the validation rules that apply to the action.
-     *
-     * @return array
-     */
-    public function rules()
+    public function rules(): array
     {
         return [
             'task' => ['required', 'instance_of:' . Task::class],
         ];
     }
 
-    /**
-     * Execute the action and return a result.
-     *
-     * @return void
-     */
     public function handle()
     {
         if ($this->assignedTo !== null) {
@@ -47,7 +40,7 @@ class SyncAssignedEmployeesToTaskAction extends Action
                         'User '.$employee->user->full_name.' has been assigned to task ['.$this->task->task_simple_name.']',
                         $employee->id,
                         $this->task->id,
-                        'Xguard\LaravelKanban\Models\Task'
+                        LoggableTypes::TASK()->getValue()
                     );
                 }
             }
@@ -61,7 +54,7 @@ class SyncAssignedEmployeesToTaskAction extends Action
                         'User ' . $employee->user->full_name . ' has been unassigned from task [' . $this->task->task_simple_name . ']',
                         $employee->id,
                         $this->task->id,
-                        'Xguard\LaravelKanban\Models\Task'
+                        LoggableTypes::TASK()->getValue()
                     );
                 }
             }

@@ -12,19 +12,17 @@ use Illuminate\Support\Facades\Auth;
 
 class CreateBadgeAction extends Action
 {
+    const NAME = 'name';
+
     public function authorize()
     {
         return session(SessionVariables::ROLE()->getValue()) === Roles::ADMIN()->getValue();
     }
-    /**
-     * Get the validation rules that apply to the action.
-     *
-     * @return array
-     */
-    public function rules()
+
+    public function rules() :array
     {
         return [
-            "name" => ['required', 'string', 'unique:kanban_badges,name']
+            self::NAME => ['required', 'string', 'unique:kanban_badges,name']
         ];
     }
 
@@ -35,11 +33,7 @@ class CreateBadgeAction extends Action
             'name.unique' => 'Kanban badge name must be unique',
         ];
     }
-    /**
-     * Execute the action and return a result.
-     *
-     * @return mixed
-     */
+
     public function handle()
     {
         $badge = Badge::create([
