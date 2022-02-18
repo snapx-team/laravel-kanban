@@ -2,21 +2,18 @@
 
 namespace Xguard\LaravelKanban\Actions\Badges;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Lorisleiva\Actions\Action;
 use stdClass;
 use Xguard\LaravelKanban\Models\Badge;
-use Xguard\LaravelKanban\Models\EmployeeBoardNotificationSetting;
-use Xguard\LaravelKanban\Models\Log;
 use Xguard\LaravelKanban\Models\Task;
 use Xguard\LaravelKanban\Models\Template;
 
 class ListBadgesWithCountAction extends Action
 {
-    /**
-     * @return mixed
-     */
-    public function handle()
+
+    public function handle(): Collection
     {
         $badgeTableName = (new Badge)->getTable();
         $taskTableName = (new Task)->getTable();
@@ -49,7 +46,7 @@ class ListBadgesWithCountAction extends Action
         return $badge_totals->sortBy(Badge::NAME)->values();
     }
 
-    public function getBadgesCountByModel($badgeTableName, $modelTableName)
+    public function getBadgesCountByModel($badgeTableName, $modelTableName): Collection
     {
         return DB::table($badgeTableName)
             ->whereNull($badgeTableName.'.'.Badge::DELETED_AT)
