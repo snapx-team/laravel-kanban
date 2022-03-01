@@ -168,11 +168,12 @@ export default {
             loadingMembers: {memberId: null, isLoading: false},
             isDraggableDisabled: false,
             collapsedRows: [],
+            selectedSortMethods: [],
+            selectedSortMethod: {'name': 'index', 'value': 'index'},
             isDraggingRow: false,
             isDraggingColumn: false,
             isDraggingTask: false,
             kanbanErrorMessage: null,
-            selectedSortMethod: {'name':'index', 'value': 'index'}
         };
     },
 
@@ -181,15 +182,20 @@ export default {
         if (localStorage.collapsedRows) {
             this.collapsedRows = localStorage.collapsedRows.split(',').map(Number);
         }
+        if (localStorage.selectedSortMethods) {
+            this.selectedSortMethods = JSON.parse(localStorage.selectedSortMethods);
+            this.setSelectedSortMethodFromStorage();
+        }
     },
 
     watch: {
         id: function (newVal) {
             this.getKanban(newVal);
+            this.setSelectedSortMethodFromStorage();
         },
         collapsedRows(newCollapsedRows) {
             localStorage.collapsedRows = newCollapsedRows;
-        }
+        },
     },
 
     created() {
@@ -279,6 +285,10 @@ export default {
 
         setKanbanSortMethod(selectedSortMethod) {
             this.selectedSortMethod = selectedSortMethod
+            const index = this.selectedSortMethods.findIndex(e => e.id === selectedSortMethod.id);
+            if (index > -1) this.selectedSortMethods[index] = selectedSortMethod;
+            else this.selectedSortMethods.push(selectedSortMethod);
+            localStorage.selectedSortMethods = JSON.stringify(this.selectedSortMethods);
             this.sortAllTaskCards();
         },
 
@@ -343,7 +353,7 @@ export default {
                     );
                     break;
                 case "removed":
-                    this.asyncUpdateTaskCardIndexes(taskCardData, 'removed', this.selectedSortMethod.value,  event.removed.element.id);
+                    this.asyncUpdateTaskCardIndexes(taskCardData, 'removed', this.selectedSortMethod.value, event.removed.element.id);
                     break;
                 default:
                     alert('event "' + eventName + '" not handled: ');
@@ -458,7 +468,6 @@ export default {
         getKanban(kanbanID) {
             this.kanbanErrorMessage = null;
             this.isDraggableDisabled = true;
-            this.selectedSortMethod = {'name':'index', 'value': 'index'};
             this.eventHub.$emit("set-loading-state", true);
             this.asyncGetKanbanData(kanbanID).then((data) => {
                 this.kanban = data.data;
@@ -492,6 +501,12 @@ export default {
                 this.collapsedRows.splice(this.collapsedRows.indexOf(rowId), 1);  //deleting
             }
         },
+
+        setSelectedSortMethodFromStorage(){
+            const index = this.selectedSortMethods.findIndex(e => e.id === this.id);
+            if (index > -1) this.selectedSortMethod = this.selectedSortMethods[index];
+            else this.selectedSortMethod = {'name': 'index', 'value': 'index'};
+        }
     },
 };
 </script>
