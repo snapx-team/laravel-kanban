@@ -45,13 +45,13 @@
                         <template slot="contextmenu">
                             <hsc-menu-item label="Sort By:">
                                 <hsc-menu-item label="Index (Default)"
-                                               @click="setSortMethod({'name':'Index', 'value': 'index'})"/>
+                                               @click="setSortMethod({'id': kanbanId, 'name':'Index', 'value': 'index'})"/>
                                 <hsc-menu-item label="Deadline Soonest"
-                                               @click="setSortMethod({'name':'Deadline Soonest', 'value': 'deadline_desc'})"/>
+                                               @click="setSortMethod({'id': kanbanId, 'name':'Deadline Soonest', 'value': 'deadline_desc'})"/>
                                 <hsc-menu-item label="Recently Created"
-                                               @click="setSortMethod({'name':'Recently Created', 'value': 'created_desc'})"/>
+                                               @click="setSortMethod({'id': kanbanId, 'name':'Recently Created', 'value': 'created_desc'})"/>
                                 <hsc-menu-item label="Highest Time Estimate"
-                                               @click="setSortMethod({'name':'Highest Time Estimate', 'value': 'time_estimate_desc'})"/>
+                                               @click="setSortMethod({'id': kanbanId, 'name':'Highest Time Estimate', 'value': 'time_estimate_desc'})"/>
                             </hsc-menu-item>
                         </template>
                     </hsc-menu-button-menu>
@@ -102,8 +102,9 @@ export default {
         },
         sortMethod: {
             type: Object,
+            default: () => ({'name': 'index', 'value': 'index'}),
         },
-        kanbanID: {
+        kanbanId: {
             type: Number,
             default: null,
         },
