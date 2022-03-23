@@ -1,13 +1,11 @@
 <template>
-    <div class="bg-white hover:shadow-md shadow rounded px-3 pt-3 pb-5 border-l-4"
-         v-bind:class="`border-indigo-500`" :style=priorityHue
-         v-if="showCard">
+    <div class="bg-white hover:shadow-md shadow rounded px-3 pt-3 pb-5 border-l-4 border-indigo-500"
+         :style=priorityHue :class="{ 'hidden' : !showCard }">
         <div class="flex justify-between">
             <p class="text-gray-700 font-semibold font-sans tracking-wide text-sm mr-3">
                 <span class="font-bold">{{ task_card.task_simple_name }}: </span>
                 <span class="italic">{{ task_card.name }}</span>
             </p>
-
 
             <div class="flex justify-end">
                 <template v-for="(employee, employeeIndex) in task_card.assigned_to">
