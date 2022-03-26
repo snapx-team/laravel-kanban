@@ -1,6 +1,6 @@
 <template>
     <div>
-		<div>
+        <div>
             <div class="inline-flex space-x-1">
                 <badge :name="cloneCardData.badge.name" v-if="cloneCardData.badge !== []"></badge>
 
@@ -107,7 +107,7 @@
                 </div>
             </div>
 
-            <div class="space-y-5 flex-none" style="max-width: 30%;">
+            <div class="space-y-5 flex-none" :style=" sourceFrom === kanbanTaskModalName? 'max-width: 30%;' : '' ">
 
                 <!-- Info Section-->
                 <div>
@@ -294,6 +294,7 @@ export default {
     data() {
         return {
             source: componentNames.ViewTaskData,
+            kanbanTaskModalName: componentNames.KanbanTaskModal,
             loadingSharedData: false,
             tasks: [],
             formatted: null,

@@ -1,5 +1,4 @@
 <template>
-
     <div class="space-y-3" :class="{'animate-pulse': loadingComments}">
         <div>
             <div class="flex-grow space-y-2">
@@ -248,9 +247,7 @@ export default {
             this.asyncGetComments(this.cardData.id).then((data) => {
                 this.comments = data.data;
                 this.loadingComments = false;
-            }).catch(res => {
-                console.log(res)
-            });
+            })
         },
 
         saveComment() {
