@@ -209,7 +209,7 @@ class Log extends Model
 
     public function targetEmployee(): BelongsTo
     {
-        return $this->belongsTo(Employee::class, self::TARGETED_EMPLOYEE_ID);
+        return $this->belongsTo(Employee::class, self::TARGETED_EMPLOYEE_ID)->withTrashed();
     }
 
     public function user(): BelongsTo
