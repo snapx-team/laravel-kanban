@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Xguard\LaravelKanban\Models\Log;
 
 class Employee extends Model
 {
@@ -18,7 +17,7 @@ class Employee extends Model
 
     protected $dates = ['deleted_at'];
     protected $table = 'kanban_employees';
-    protected $cascadeDeletes = ['members','employeeBoardNotificationSetting',];
+    protected $cascadeDeletes = ['members','employeeBoardNotificationSetting'];
     protected $guarded = [];
 
     const USER_ID = 'user_id';

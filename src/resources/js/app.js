@@ -62,7 +62,6 @@ Vue.use(VueObserveVisibility);
 Vue.use(VueMenu);
 Vue.use(VueCrontab);
 
-
 let globalData = new Vue({
     data: {$role: 'employee'}
 });
@@ -87,6 +86,7 @@ Vue.mixin({
         }
     }
 });
+
 new Vue({
     router,
     mounted() {
