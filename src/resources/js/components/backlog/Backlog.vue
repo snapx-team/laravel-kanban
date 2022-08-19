@@ -355,10 +355,10 @@ export default {
                 filterStatus: ['active'],
                 filterPlacedInBoard: false,
                 filterNotPlacedInBoard: true,
-                filterStart: this.getOneMonthAgo(),
+                filterStart: this.getOneYearAgo(),
                 filterEnd: new Date(),
             },
-            start: this.getOneMonthAgo(),
+            start: this.getOneYearAgo(),
             end: new Date(),
             showBoardsPane: true,
             showTaskPane: false,
@@ -494,9 +494,9 @@ export default {
             this.getBacklogData();
         },
 
-        getOneMonthAgo() {
+        getOneYearAgo() {
             let d = new Date()
-            return new Date(d.setMonth(d.getMonth() - 1));
+            return new Date(d.setFullYear(d.getFullYear() - 1));
         },
         getErpEmployees() {
             this.asyncGetAllUsers().then((data) => {
