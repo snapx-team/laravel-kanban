@@ -23,9 +23,11 @@ class LaravelKanbanController extends Controller
     public function setKanbanSessionVariables()
     {
         if (Auth::check()) {
-            $employee = Employee::where('user_id', '=', Auth::user()->id)->first();
-            session(['role' => $employee->role, 'employee_id' => $employee->id]);
-            return ['is_logged_in' => true];
+            $employee = Employee::where(Employee::USER_ID, '=', Auth::user()->id)->first();
+            if ($employee !== null) {
+                session(['role' => $employee->role, 'employee_id' => $employee->id]);
+                return ['is_logged_in' => true];
+            }
         }
         return ['is_logged_in' => false];
     }
