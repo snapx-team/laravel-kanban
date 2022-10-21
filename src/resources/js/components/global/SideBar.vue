@@ -214,18 +214,18 @@ export default {
         };
     }, mounted() {
         this.getBoards();
-        this.getNotificationCount();
         this.setVersion();
         this.$crontab.addJob({
             name: 'getNotificationCount',
             interval: {
-                seconds: '/6',
+                seconds: '/20',
             },
             job: this.getNotificationCount
         });
         if (this.$device.mobile || this.$device.ios || this.$device.android || window.innerWidth < 1200) {
             this.isSideBarOpen = false;
         }
+        this.getNotificationCount();
     },
 
     created() {

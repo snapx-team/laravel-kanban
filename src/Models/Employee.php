@@ -21,7 +21,6 @@ class Employee extends Model
     protected $guarded = [];
 
     const USER_ID = 'user_id';
-
     const USER_RELATION_NAME = 'user';
 
     public function members(): HasMany
