@@ -14,7 +14,7 @@ jobs: # a collection of steps
     steps:
       - checkout
       - run: cd .. && git clone --depth 5 "$CLONING_URL" --branch "$BRANCH"
-
+      - run: sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 4EB27DB2A3B88B8B
       - run: cd .. && sudo apt update # PHP CircleCI 2.0 Configuration File# PHP CircleCI 2.0 Configuration File
       - run: cd .. && sudo apt-get install -y --no-install-recommends libpng-dev libfreetype6-dev libjpeg-dev libjpeg62-turbo-dev libmagickwand-dev
       - run: cd .. && sudo docker-php-ext-configure gd --with-freetype --with-jpeg

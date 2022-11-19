@@ -3,6 +3,7 @@
 namespace Xguard\LaravelKanban\Repositories;
 
 use Carbon;
+use Xguard\LaravelKanban\Models\Task;
 use Xguard\LaravelKanban\Models\TaskVersion;
 
 class TasksRepository
@@ -38,5 +39,10 @@ class TasksRepository
             self::LOG_ID => $taskData ['log_id'],
             self::TIME_ESTIMATE => $taskData ['time_estimate']
         ]);
+    }
+
+    public static function getLatestTaskByEmployee($employeeId)
+    {
+        return Task::where(Task::REPORTER_ID, $employeeId)->latest()->first();
     }
 }
