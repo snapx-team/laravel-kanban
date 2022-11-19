@@ -42,7 +42,7 @@ class EmployeesRepositoryTest extends TestCase
     {
         $employee = factory(Employee::class)->create(['last_notif_check' => null]);
         $logsToShowCount = rand(1, 10);
-        $logs = factory(Log::class , $logsToShowCount)->create();
+        $logs = factory(Log::class, $logsToShowCount)->create();
         foreach ($logs as $log) {
             $log->notifications()->attach($employee->id);
         }
@@ -52,12 +52,12 @@ class EmployeesRepositoryTest extends TestCase
     public function testGetNotificationCountReturnsCountNotifsAfterLastNotifCheckIfLastNotifCheckIsNotNull()
     {
         $dateTime = new DateTime('NOW');
-        $employee = factory(Employee::class)->create(['last_notif_check' =>  $dateTime->format('Y-m-d H:i:s')]);
-        $logs = factory(Log::class , 10)->create();
+        $employee = factory(Employee::class)->create(['last_notif_check' => $dateTime->format('Y-m-d H:i:s')]);
+        $logs = factory(Log::class, 10)->create();
         $logsToShowCount = 0;
         foreach ($logs as $log) {
             if (rand(0, 1)) {
-                $logsToShowCount ++;
+                $logsToShowCount++;
             } else {
                 $log->created_at = $log->created_at->subDays(1);
                 $log->save();
