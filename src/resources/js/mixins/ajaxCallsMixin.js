@@ -187,8 +187,8 @@ export const ajaxCalls = {
             });
         },
 
-        asyncGetLatestTaskByEmployee(employeeId) {
-            return axios.get('get-latest-task-by-employee/' + employeeId).catch((error) => {
+        asyncGetRecentlyCreatedTasksByEmployee(employeeId) {
+            return axios.get('get-recently-created-tasks-by-employee/' + employeeId).catch((error) => {
                 this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
@@ -588,16 +588,16 @@ export const ajaxCalls = {
             });
         },
 
-        triggerCopyLinkInfoToast(message, url) {
-            this.$toast.info({
+        triggerCopyLinkInfoToast(message, tasks) {
+            this.$toast({
                 component: CopyLinkToastComponent,
                 props: {
                     message: message,
-                    url: url
+                    tasks: tasks
                 },
             }, {
                 position: 'bottom-right',
-                timeout: 10000,
+                timeout: 30000,
                 closeOnClick: true,
                 pauseOnFocusLoss: true,
                 pauseOnHover: true,

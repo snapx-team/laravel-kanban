@@ -28,7 +28,7 @@ class TasksRepository
             self::INDEX => $taskData['index'],
             self::NAME => $taskData['name'],
             self::DEADLINE => Carbon::parse($taskData['deadline'])->toDateTimeString(),
-            self::SHARED_TASK_DATA_ID =>$taskData['shared_task_data_id'],
+            self::SHARED_TASK_DATA_ID => $taskData['shared_task_data_id'],
             self::REPORTER_ID => $taskData['reporter_id'],
             self::COLUMN_ID => $taskData['column_id'],
             self::ROW_ID => $taskData['row_id'],
@@ -41,8 +41,10 @@ class TasksRepository
         ]);
     }
 
-    public static function getLatestTaskByEmployee($employeeId)
+    public static function getRecentlyCreatedTasksByEmployee($employeeId)
     {
-        return Task::where(Task::REPORTER_ID, $employeeId)->latest()->first();
+        $mostRecentTaskCreatedAt = Task::where(Task::REPORTER_ID, $employeeId)->latest()->first()->created_at;
+        return Task::with('board')->where(Task::REPORTER_ID, $employeeId)
+            ->where(Task::CREATED_AT, '>', $mostRecentTaskCreatedAt->subSeconds(10))->get();
     }
 }

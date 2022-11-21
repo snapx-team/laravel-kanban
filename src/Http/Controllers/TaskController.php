@@ -25,9 +25,9 @@ class TaskController extends Controller
         return app(PaginateBackLogTasksAction::class)->fill($request->all())->run();
     }
 
-    public function getLatestTaskByEmployee($employeeId)
+    public function getRecentlyCreatedTasksByEmployee($employeeId)
     {
-        return TasksRepository::getLatestTaskByEmployee($employeeId);
+        return TasksRepository::getRecentlyCreatedTasksByEmployee($employeeId);
     }
 
     public function getAllTasks()

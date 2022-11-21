@@ -1,23 +1,33 @@
 <template>
     <div class="container">
-        <button
-            class="action"
-            @click.stop="copyToClipboard"
-        >{{ message }}
-        </button>
+        <h2 class="pb-3">{{ message }}</h2>
+        <div v-for="task in tasks"
+             class="flex items-center">
+            <button
+                class="flex-none border border-blue-700 hover:bg-blue-500 py-1 px-3 my-1 rounded transition duration-300 ease-in-out"
+                @click.stop="copyToClipboard(task.id)">
+                <i class="fas fa-link pr-1"></i>
+                Copy Link
+            </button>
+            <p class="px-2">to</p>
+            <badge :name="task.board.name"></badge>
+        </div>
+
     </div>
 </template>
 
 <script>
 
-export default {
+import Badge from "../Badge";
 
+export default {
+    components: {Badge},
     props: {
         message: {
             type: String,
         },
-        url: {
-            type: String,
+        tasks: {
+            type: Array,
         },
     },
 
@@ -26,9 +36,10 @@ export default {
             this.$emit("myClick");
         },
 
-        copyToClipboard() {
+        copyToClipboard(id) {
+
             let temp = document.createElement('input'),
-                text = this.url;
+                text = window.location.hostname + '/kanban/backlog?task='+ id;
 
             document.body.appendChild(temp);
             temp.value = text;

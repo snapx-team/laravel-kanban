@@ -156,9 +156,8 @@ export default {
             this.loadingBacklogTasks = true
             const cloneBacklogTasksData = {...backlogTasksData};
             this.asyncCreateBacklogTasks(cloneBacklogTasksData).then(() => {
-                this.asyncGetLatestTaskByEmployee(this.$employeeIdSession).then((res) => {
-                    let url = window.location.hostname + '/kanban/backlog?task='+ res.data['id'];
-                    this.triggerCopyLinkInfoToast('Click to copy backlog task link', url)
+                this.asyncGetRecentlyCreatedTasksByEmployee(this.$employeeIdSession).then((res) => {
+                    this.triggerCopyLinkInfoToast('Newly Created: ', res.data)
                 });
             });
         },

@@ -4,9 +4,11 @@ namespace Tests\Unit\Repositories;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Xguard\LaravelKanban\Enums\DateTimeFormats;
 use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Task;
 use Xguard\LaravelKanban\Repositories\TasksRepository;
+use DateTime;
 
 class TaskRepositoryTest extends TestCase
 {
@@ -15,6 +17,7 @@ class TaskRepositoryTest extends TestCase
     const ROLE = 'role';
     const ADMIN = 'admin';
     const EMPLOYEE_ID = 'employee_id';
+    const FIVE = 5;
 
     public function setUp(): void
     {
@@ -24,13 +27,12 @@ class TaskRepositoryTest extends TestCase
         session([self::ROLE => self::ADMIN, self::EMPLOYEE_ID => $this->employee->id]);
     }
 
-    public function testGetLatestTaskByEmployee()
+    public function testGetRecentlyCreatedTasksByEmployee()
     {
-        factory(Task::class)->create([Task::REPORTER_ID => session(self::EMPLOYEE_ID)]);
-        $retrievedLatestTaskByEmployee = $this->taskRepository::getLatestTaskByEmployee(session(self::EMPLOYEE_ID));
-        $this->assertDatabaseHas('kanban_tasks', [
-            Task::ID => $retrievedLatestTaskByEmployee->id,
-            Task::NAME => $retrievedLatestTaskByEmployee->name,
-        ]);
+        $dateTime = new DateTime('yesterday');
+        factory(Task::class, self::FIVE)->create([Task::REPORTER_ID => session(self::EMPLOYEE_ID)]);
+        factory(Task::class, self::FIVE)->create([Task::REPORTER_ID => session(self::EMPLOYEE_ID), Task::CREATED_AT => $dateTime->format(DateTimeFormats::DATE_TIME_FORMAT()->getValue())]);
+        $retrievedRecentlyCreatedTasksByEmployee = $this->taskRepository::getRecentlyCreatedTasksByEmployee(session(self::EMPLOYEE_ID));
+        $this->assertEquals($retrievedRecentlyCreatedTasksByEmployee->count(), self::FIVE);
     }
 }

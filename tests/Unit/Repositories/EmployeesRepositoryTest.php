@@ -5,6 +5,7 @@ namespace Tests\Unit\Repositories;
 use DateTime;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Xguard\LaravelKanban\Enums\DateTimeFormats;
 use Xguard\LaravelKanban\Models\Employee;
 use Xguard\LaravelKanban\Models\Log;
 use Xguard\LaravelKanban\Repositories\EmployeesRepository;
@@ -21,7 +22,7 @@ class EmployeesRepositoryTest extends TestCase
 
     public function testUpdateLastNotificationCheck()
     {
-        $employee = factory(Employee::class)->create(['last_notif_check' => null]);
+        $employee = factory(Employee::class)->create([Employee::LAST_NOTIF_CHECK => null]);
         $this->assertNull($employee->last_notif_check);
         $dateTime = new DateTime('NOW');
 
@@ -30,12 +31,12 @@ class EmployeesRepositoryTest extends TestCase
         $employee->refresh();
 
         $this->assertNotNull($employee->last_notif_check);
-        $this->assertEquals($employee->last_notif_check, $dateTime->format('Y-m-d H:i:s'));
+        $this->assertEquals($employee->last_notif_check, $dateTime->format(DateTimeFormats::DATE_TIME_FORMAT()->getValue()));
     }
 
     public function testGetNotificationCountReturnsCountOfAllNotifsIfLastNotifCheckIsNull()
     {
-        $employee = factory(Employee::class)->create(['last_notif_check' => null]);
+        $employee = factory(Employee::class)->create([Employee::LAST_NOTIF_CHECK => null]);
         $logsToShowCount = rand(1, 10);
         $logs = factory(Log::class, $logsToShowCount)->create();
         foreach ($logs as $log) {
@@ -47,7 +48,7 @@ class EmployeesRepositoryTest extends TestCase
     public function testGetNotificationCountReturnsCountNotifsAfterLastNotifCheckIfLastNotifCheckIsNotNull()
     {
         $dateTime = new DateTime('NOW');
-        $employee = factory(Employee::class)->create(['last_notif_check' => $dateTime->format('Y-m-d H:i:s')]);
+        $employee = factory(Employee::class)->create([Employee::LAST_NOTIF_CHECK => $dateTime->format(DateTimeFormats::DATE_TIME_FORMAT()->getValue())]);
         $logs = factory(Log::class, 10)->create();
         $logsToShowCount = 0;
         foreach ($logs as $log) {
