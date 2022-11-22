@@ -16,12 +16,18 @@ use Xguard\LaravelKanban\Actions\Tasks\UpdateTaskAction;
 use Xguard\LaravelKanban\Actions\Tasks\UpdateTaskColumnAndRowAction;
 use Xguard\LaravelKanban\Actions\Tasks\UpdateTaskDescriptionAction;
 use Xguard\LaravelKanban\Actions\Tasks\UpdateTaskStatusAction;
+use Xguard\LaravelKanban\Repositories\TasksRepository;
 
 class TaskController extends Controller
 {
     public function getBacklogTasks(Request $request)
     {
         return app(PaginateBackLogTasksAction::class)->fill($request->all())->run();
+    }
+
+    public function getRecentlyCreatedTasksByEmployee($employeeId)
+    {
+        return TasksRepository::getRecentlyCreatedTasksByEmployee($employeeId);
     }
 
     public function getAllTasks()

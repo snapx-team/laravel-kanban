@@ -21,7 +21,9 @@ class Employee extends Model
     protected $guarded = [];
 
     const USER_ID = 'user_id';
+    const LAST_NOTIF_CHECK = 'last_notif_check';
     const USER_RELATION_NAME = 'user';
+    const NOTFICIATIONS_RELATION_NAME = 'notifications';
 
     public function members(): HasMany
     {

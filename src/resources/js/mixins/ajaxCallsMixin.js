@@ -1,4 +1,5 @@
 import axios from 'axios';
+import CopyLinkToastComponent from '../components/global/toastComponenents/CopyLinkToast';
 
 export const ajaxCalls = {
 
@@ -182,6 +183,12 @@ export const ajaxCalls = {
 
         asyncGetBacklogTasks(page, filters, cancelToken) {
             return axios.post('get-backlog-tasks?page=' + page, filters, {cancelToken: cancelToken}).catch((error) => {
+                this.loopAllErrorsAsTriggerErrorToast(error);
+            });
+        },
+
+        asyncGetRecentlyCreatedTasksByEmployee(employeeId) {
+            return axios.get('get-recently-created-tasks-by-employee/' + employeeId).catch((error) => {
                 this.loopAllErrorsAsTriggerErrorToast(error);
             });
         },
@@ -568,6 +575,29 @@ export const ajaxCalls = {
             this.$toast.info(message, {
                 position: 'bottom-right',
                 timeout: 5000,
+                closeOnClick: true,
+                pauseOnFocusLoss: true,
+                pauseOnHover: true,
+                draggable: true,
+                draggablePercent: 0.6,
+                showCloseButtonOnHover: false,
+                hideProgressBar: false,
+                closeButton: 'button',
+                icon: true,
+                rtl: false
+            });
+        },
+
+        triggerCopyLinkInfoToast(message, tasks) {
+            this.$toast({
+                component: CopyLinkToastComponent,
+                props: {
+                    message: message,
+                    tasks: tasks
+                },
+            }, {
+                position: 'bottom-right',
+                timeout: 30000,
                 closeOnClick: true,
                 pauseOnFocusLoss: true,
                 pauseOnHover: true,

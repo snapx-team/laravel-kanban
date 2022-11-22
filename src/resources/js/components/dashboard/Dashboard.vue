@@ -155,7 +155,11 @@ export default {
         saveBacklogTask(backlogTasksData) {
             this.loadingBacklogTasks = true
             const cloneBacklogTasksData = {...backlogTasksData};
-            this.asyncCreateBacklogTasks(cloneBacklogTasksData);
+            this.asyncCreateBacklogTasks(cloneBacklogTasksData).then(() => {
+                this.asyncGetRecentlyCreatedTasksByEmployee(this.$employeeIdSession).then((res) => {
+                    this.triggerCopyLinkInfoToast('Newly Created: ', res.data)
+                });
+            });
         },
 
         deleteBoard(boardId) {

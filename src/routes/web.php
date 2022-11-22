@@ -83,6 +83,7 @@ Route::group(['prefix' => 'kanban',], function () {
 
                 // Task
                 Route::post('/get-backlog-tasks', 'TaskController@getBacklogTasks');
+                Route::get('/get-recently-created-tasks-by-employee/{employeeId}', 'TaskController@getRecentlyCreatedTasksByEmployee');
                 Route::get('/get-all-tasks', 'TaskController@getAllTasks');
                 Route::get('/get-some-tasks/{searchTerm}', 'TaskController@getSomeTasks');
                 Route::get('/get-task-data/{id}', 'TaskController@getTaskData');

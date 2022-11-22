@@ -45,7 +45,6 @@ class LogsRepository
                 }])
                 ->where(Log::LOGGABLE_TYPE, LoggableTypes::TASK()->getValue())
                 ->whereIn(Log::LOGGABLE_ID, $allAssociatedTasks)
-                ->orderBy(Log::CREATED_AT, 'desc')
                 ->distinct()->paginate(10);
         }
         return null;
