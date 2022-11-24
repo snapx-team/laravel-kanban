@@ -15,6 +15,7 @@ class Member extends Model
     protected $guarded = [];
 
     const EMPLOYEE_ID = 'employee_id';
+    const BOARD_ID = 'board_id';
     const EMPLOYEE_RELATION_NAME = 'employee';
 
     public function employee(): BelongsTo

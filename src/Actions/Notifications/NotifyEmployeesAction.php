@@ -34,18 +34,16 @@ class NotifyEmployeesAction extends Action
     {
         if ($this->log->loggable_type == LoggableTypes::TASK()->getValue()) {
             //notify reporter unless reporter performed the action
-            if (intval(session(SessionVariables::EMPLOYEE_ID()->getValue())) !== intval($this->log->loggable->reporter_id)) {
-                $this->attachNotificationIfAllowed(
-                    $this->log,
-                    $this->log->loggable->board->id,
-                    $this->log->loggable->reporter->id
-                );
-            }
-            //notify assigned-to users
+            $this->attachNotificationIfAllowed(
+                $this->log,
+                $this->log->loggable->board->id,
+                $this->log->loggable->reporter->id
+            );
+            //notify assigned-to users unless is also reporter
             foreach ($this->log->loggable->assignedTo as $employee) {
                 $this->attachNotificationIfAllowed($this->log, $this->log->loggable->board->id, $employee->id);
             }
-            //notify targeted employee
+            //notify targeted employee unless is also reporter
             if ($this->log->targeted_employee_id !== null) {
                 $this->attachNotificationIfAllowed(
                     $this->log,
@@ -54,16 +52,13 @@ class NotifyEmployeesAction extends Action
                 );
             }
         }
-
         if ($this->log->loggable_type == LoggableTypes::COMMENT()->getValue()) {
-            //notify reporter unless reporter performed the action
-            if (intval(session(SessionVariables::EMPLOYEE_ID()->getValue())) !== intval($this->log->loggable->task->reporter_id)) {
-                $this->attachNotificationIfAllowed(
-                    $this->log,
-                    $this->log->loggable->task->board->id,
-                    $this->log->loggable->task->reporter->id
-                );
-            }
+            //notify reporter
+            $this->attachNotificationIfAllowed(
+                $this->log,
+                $this->log->loggable->task->board->id,
+                $this->log->loggable->task->reporter->id
+            );
             //notify assigned-to users
             foreach ($this->log->loggable->task->assignedTo as $employee) {
                 $this->attachNotificationIfAllowed(
@@ -81,7 +76,6 @@ class NotifyEmployeesAction extends Action
                 );
             }
         }
-
         if ($this->log->loggable_type == LoggableTypes::BOARD()->getValue()) {
             //notify targeted employee (added/deleted members)
             if ($this->log->targeted_employee_id !== null) {
@@ -100,22 +94,22 @@ class NotifyEmployeesAction extends Action
 
     public function attachNotificationIfAllowed($log, $boardId, $employeeId)
     {
-        $employeeBoardNotificationSettings = EmployeeBoardNotificationSetting::where(
-            EmployeeBoardNotificationSetting::BOARD_ID,
-            $boardId
-        )
-            ->where(EmployeeBoardNotificationSetting::EMPLOYEE_ID, $employeeId)->first();
+        if (intval(session(SessionVariables::EMPLOYEE_ID()->getValue())) != $employeeId) {
+            $employeeBoardNotificationSettings = EmployeeBoardNotificationSetting::
+            where(EmployeeBoardNotificationSetting::BOARD_ID, $boardId)->
+            where(EmployeeBoardNotificationSetting::EMPLOYEE_ID, $employeeId)->first();
 
-        if (!$employeeBoardNotificationSettings) {
-            $log->notifications()->attach($employeeId);
-        } else {
-            $logsToIgnore = [];
-            foreach ($employeeBoardNotificationSettings->getUnserializedOptionsAttribute() as $logGroup) {
-                $logGroupArray = Log::returnLogGroup($logGroup);
-                $logsToIgnore = array_merge($logsToIgnore, $logGroupArray);
-            }
-            if (!in_array($log->log_type, $logsToIgnore)) {
+            if (!$employeeBoardNotificationSettings) {
                 $log->notifications()->attach($employeeId);
+            } else {
+                $logsToIgnore = [];
+                foreach ($employeeBoardNotificationSettings->getUnserializedOptionsAttribute() as $logGroup) {
+                    $logGroupArray = Log::returnLogGroup($logGroup);
+                    $logsToIgnore = array_merge($logsToIgnore, $logGroupArray);
+                }
+                if (!in_array($log->log_type, $logsToIgnore)) {
+                    $log->notifications()->attach($employeeId);
+                }
             }
         }
     }
