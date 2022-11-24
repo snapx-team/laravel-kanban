@@ -11,19 +11,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @property string|null $options
  */
-
 class EmployeeBoardNotificationSetting extends Model
 {
     use SoftDeletes, CascadeSoftDeletes;
 
     protected $table = 'kanban_employee_board_notification_setting';
     protected $guarded = [];
-    protected $appends = [
-        'unserialized_options',
-    ];
+    protected $appends = ['unserialized_options',];
 
     const BOARD_ID = 'board_id';
     const EMPLOYEE_ID = 'employee_id';
+    const IGNORE_TYPES = 'ignore_types';
 
     public function getUnserializedOptionsAttribute()
     {

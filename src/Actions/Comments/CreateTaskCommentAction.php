@@ -5,6 +5,8 @@ namespace Xguard\LaravelKanban\Actions\Comments;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
 use Throwable;
+use Xguard\LaravelKanban\Enums\LoggableTypes;
+use Xguard\LaravelKanban\Enums\SessionVariables;
 use Xguard\LaravelKanban\Http\Helper\AccessManager;
 use Xguard\LaravelKanban\Models\Comment;
 use Xguard\LaravelKanban\Models\Employee;
@@ -13,10 +15,12 @@ use Lorisleiva\Actions\Action;
 
 class CreateTaskCommentAction extends Action
 {
+    const COMMENT_DATA = 'comment_data';
+    const MENTIONS = 'mentions';
 
     public function authorize(): bool
     {
-        if (AccessManager::canAccessBoardUsingTaskId($this->comment_data['task_id'])) {
+        if (AccessManager::canAccessBoardUsingTaskId($this->comment_data[Comment::TASK_ID])) {
             return true;
         }
         return false;
@@ -52,9 +56,9 @@ class CreateTaskCommentAction extends Action
         try {
             \DB::beginTransaction();
             $comment = Comment::create([
-                'task_id' => $this->comment_data['task_id'],
-                'comment' => $this->comment_data['comment'],
-                'employee_id' => session('employee_id'),
+                Comment::TASK_ID => $this->comment_data[Comment::TASK_ID],
+                Comment::COMMENT => $this->comment_data[Comment::COMMENT],
+                Comment::EMPLOYEE_ID => session(SessionVariables::EMPLOYEE_ID()->getValue()),
             ]);
 
             Log::createLog(
@@ -63,20 +67,20 @@ class CreateTaskCommentAction extends Action
                 $comment->comment,
                 null,
                 $comment->id,
-                'Xguard\LaravelKanban\Models\Comment'
+                LoggableTypes::COMMENT()->getValue()
             );
 
-            if ($this->comment_data['mentions'] != null) {
-                $mentions = array_unique($this->comment_data['mentions']);
+            if ($this->comment_data[self::MENTIONS] != null) {
+                $mentions = array_unique($this->comment_data[self::MENTIONS]);
                 foreach ($mentions as $mention) {
-                    $mentionedEmployee = Employee::with('user')->find($mention);
+                    $mentionedEmployee = Employee::with(Employee::USER_RELATION_NAME)->find($mention);
                     Log::createLog(
                         Auth::user()->id,
                         Log::TYPE_COMMENT_MENTION_CREATED,
                         'Mentioned user [' . $mentionedEmployee->user->full_name . '] in a comment',
                         $mentionedEmployee->id,
                         $comment->id,
-                        'Xguard\LaravelKanban\Models\Comment'
+                        LoggableTypes::COMMENT()->getValue()
                     );
                 }
             }

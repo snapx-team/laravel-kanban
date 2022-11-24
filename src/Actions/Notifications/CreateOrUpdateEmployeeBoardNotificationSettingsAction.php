@@ -6,13 +6,15 @@ use DB;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Throwable;
+use Xguard\LaravelKanban\Enums\LoggableTypes;
+use Xguard\LaravelKanban\Enums\SessionVariables;
+use Xguard\LaravelKanban\Models\EmployeeBoardNotificationSetting;
 use Xguard\LaravelKanban\Models\Log;
 use Lorisleiva\Actions\Action;
 use Xguard\LaravelKanban\Repositories\EmployeeBoardNotificationSettingRepository;
 
 class CreateOrUpdateEmployeeBoardNotificationSettingsAction extends Action
 {
-
     /**
      * Execute the action and return a result.
      *
@@ -29,11 +31,11 @@ class CreateOrUpdateEmployeeBoardNotificationSettingsAction extends Action
             foreach ($this->notificationSettings as $boardId => $notificationSetting) {
                 $notificationSettings = EmployeeBoardNotificationSettingRepository::updateOrCreate(
                     [
-                        'employee_id' => session('employee_id'),
-                        'board_id' => $boardId
+                        EmployeeBoardNotificationSetting::EMPLOYEE_ID => session(SessionVariables::EMPLOYEE_ID()->getValue()),
+                        EmployeeBoardNotificationSetting::BOARD_ID => $boardId
                     ],
                     [
-                        'ignore_types' => serialize($notificationSetting)
+                        EmployeeBoardNotificationSetting::IGNORE_TYPES => serialize($notificationSetting)
                     ]
                 );
 
@@ -45,7 +47,7 @@ class CreateOrUpdateEmployeeBoardNotificationSettingsAction extends Action
                         'updated notification settings',
                         null,
                         $notificationSettings->id,
-                        'Xguard\LaravelKanban\Models\EmployeeBoardNotificationSetting'
+                        LoggableTypes::EMPLOYEE_BOARD_NOTIFICATION_SETTING()->getValue()
                     );
                 }
 
@@ -57,7 +59,7 @@ class CreateOrUpdateEmployeeBoardNotificationSettingsAction extends Action
                         'created notification settings',
                         null,
                         $notificationSettings->id,
-                        'Xguard\LaravelKanban\Models\EmployeeBoardNotificationSetting'
+                        LoggableTypes::EMPLOYEE_BOARD_NOTIFICATION_SETTING()->getValue()
                     );
                 }
             }

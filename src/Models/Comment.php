@@ -15,6 +15,9 @@ class Comment extends Model
     protected $guarded = [];
 
     const ID = 'id';
+    const TASK_ID = 'task_id';
+    const EMPLOYEE_ID = 'employee_id';
+    const COMMENT = 'comment';
 
     const TASK_RELATION_NAME = 'task';
     const EMPLOYEE_RELATION_NAME = 'employee';
