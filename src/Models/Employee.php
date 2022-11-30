@@ -20,6 +20,7 @@ class Employee extends Model
     protected $cascadeDeletes = ['members','employeeBoardNotificationSetting'];
     protected $guarded = [];
 
+    const ID = 'id';
     const USER_ID = 'user_id';
     const LAST_NOTIF_CHECK = 'last_notif_check';
     const USER_RELATION_NAME = 'user';
@@ -40,7 +41,7 @@ class Employee extends Model
 
     public function employee(): BelongsTo
     {
-        return $this->belongsTo(Employee::class, 'id');
+        return $this->belongsTo(Employee::class, self::ID);
     }
 
     public function tasks(): BelongsToMany

@@ -27,6 +27,7 @@
     padding-top: 1px;
 }
 
+
 // vue date picker overrides
 
 .mx-datepicker {
@@ -36,6 +37,28 @@
 .mx-input {
     min-height: 50px;
     min-width: 200px;
+}
+
+.mx-datepicker-sidebar+.mx-datepicker-content {
+    margin-left: 130px !important;
+}
+
+.mx-datepicker-sidebar{
+    width:auto;
+}
+
+.mx-btn-shortcut {
+    display: block;
+    padding: 6px;
+    margin: 5px;
+    background: #6792b3;
+    line-height: 25px;
+    color: white;
+
+    &:hover {
+        color: white;
+        background: #4c7ca1;
+    }
 }
 
 // quill overrides

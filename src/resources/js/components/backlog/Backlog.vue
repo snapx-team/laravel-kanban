@@ -1,37 +1,30 @@
 <template>
     <div v-if="backlogData !== null">
         <div class="flex flex-wrap p-4 pl-10">
-            <h3 class="text-3xl text-gray-800 font-bold py-1 pr-2">Backlog - </h3>
-            <h3 class="text-3xl text-gray-800 py-1"> Between {{ filters.filterStart | moment("MMM Do YYYY") }} and
-                {{ filters.filterEnd | moment("MMM Do YYYY") }}</h3>
+            <h3 class="text-3xl text-gray-800 font-bold py-1 pr-2">Backlog</h3>
         </div>
 
         <div class="p-5">
             <div class="flex-column">
 
                 <!-- date filter -->
-                <div class="flex flex-wrap bg-gray-50 p-4 rounded">
-                    <div class="flex-column w-72 mr-2">
-                        <span
-                            class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">Start</span>
-                        <date-picker type="date" v-model="start"
+                <div class="flex flex-wrap bg-gray-50 p-4 rounded items-end">
+                    <div class="flex-column w-72 mr-4">
+                        <p class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600 pb-1">Select
+                            Date Range</p>
+                        <date-picker type="date" v-model="selectedDateRange"
                                      placeholder="YYYY-MM-DD"
+                                     :default-value="new Date()"
                                      format="YYYY-MM-DD"
+                                     :shortcuts="shortcuts"
+                                     @change="setTimeSpan()"
+                                     range
                         ></date-picker>
                     </div>
-                    <div class="flex-column w-72 mr-2">
-                    <span
-                        class="block text-xs font-bold leading-4 tracking-wide uppercase text-gray-600">End</span>
-                        <date-picker type="date" v-model="end"
-                                     placeholder="YYYY-MM-DD"
-                                     format="YYYY-MM-DD"
-                        ></date-picker>
-                    </div>
-                    <button @click="setTimeSpan()"
-                            class="px-4 mt-4 h-12 border border-transparent rounded text-white bg-indigo-600 hover:bg-indigo-500 transition duration-300 ease-in-out"
-                            type="button">
-                        <span>Set Time Range</span>
-                    </button>
+                    <h3 class="text-xl text-gray-800 py-3"> Between {{
+                        filters.filterStart | moment("MMM Do YYYY")
+                        }} and
+                        {{ filters.filterEnd | moment("MMM Do YYYY") }}</h3>
                 </div>
 
                 <!-- general search -->
@@ -91,29 +84,42 @@
                         </div>
 
                         <!-- placed in board, awaiting placement -->
-                        <div class="flex py-3 h-12 border mt-3 mx-2 bg-white rounded">
-                            <label class="flex mx-3">
-                                <input
-                                    class="mt-2 form-radio text-indigo-600"
-                                    name="task-options"
-                                    type="checkbox"
-                                    @change="filterTrigger()"
-                                    v-model="filters.filterPlacedInBoard">
-                                <div class="ml-1 text-gray-700 font-medium">
-                                    <p>Placed In Board</p>
-                                </div>
-                            </label>
-                            <label class="flex mx-3">
-                                <input
-                                    class="mt-2 form-radio text-indigo-600"
-                                    name="task-options"
-                                    type="checkbox"
-                                    @change="filterTrigger()"
-                                    v-model="filters.filterNotPlacedInBoard">
-                                <div class="ml-1 text-gray-700 font-medium">
-                                    <p>Awaiting Placement</p>
-                                </div>
-                            </label>
+                        <div class="relative flex group">
+                            <div v-if="cancelledIsSelected || completedIsSelected"
+                                 class="mt-14 absolute top-0 flex flex-col items-center hidden mb-6 group-hover:flex">
+                                <div class="w-3 h-3 -mb-2 bg-gray-800 rotate-45 transform"></div>
+                                <p class="w-60 leading-relaxed relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-gray-800 rounded shadow-lg">
+                                    These filters are disabled/ignored when "Completed" or "Cancelled" is selected
+                                </p>
+                            </div>
+                            <div class="flex py-3 h-12 border mt-3 mx-2 bg-white rounded"
+                                 :class="{'bg-gray-200': cancelledIsSelected || completedIsSelected }">
+
+                                <label class="flex mx-3">
+                                    <input
+                                        class="mt-2 form-radio text-indigo-600"
+                                        name="task-options"
+                                        type="checkbox"
+                                        @change="filterTrigger()"
+                                        v-model="filters.filterPlacedInBoard"
+                                        :disabled="cancelledIsSelected || completedIsSelected">
+                                    <div class="ml-1 text-gray-700 font-medium">
+                                        <p>Placed In Board</p>
+                                    </div>
+                                </label>
+                                <label class="flex mx-3">
+                                    <input
+                                        class="mt-2 form-radio text-indigo-600"
+                                        name="task-options"
+                                        type="checkbox"
+                                        @change="filterTrigger()"
+                                        v-model="filters.filterNotPlacedInBoard"
+                                        :disabled="cancelledIsSelected || completedIsSelected">
+                                    <div class="ml-1 text-gray-700 font-medium">
+                                        <p>Awaiting Placement</p>
+                                    </div>
+                                </label>
+                            </div>
                         </div>
                     </div>
 
@@ -343,7 +349,6 @@ export default {
             backlogData: null,
             erpEmployees: [],
             erpContracts: [],
-
             filters: {
                 filterText: "",
                 filterBadge: [],
@@ -358,10 +363,36 @@ export default {
                 filterStart: this.getOneYearAgo(),
                 filterEnd: new Date(),
             },
-            start: this.getOneYearAgo(),
-            end: new Date(),
+            selectedDateRange: [this.getOneYearAgo(), new Date()],
             showBoardsPane: true,
             showTaskPane: false,
+            shortcuts: [
+                {text: 'Today', onClick: () => [new Date(), new Date()]},
+                {
+                    text: 'Start of Week',
+                    onClick: () => [moment().startOf('week').toDate(), new Date()]
+                },
+                {
+                    text: 'Last Week',
+                    onClick: () => [moment().subtract(1, 'week').toDate(), new Date()]
+                },
+                {
+                    text: 'Start of Month',
+                    onClick: () => [moment().startOf('month').toDate(), new Date()]
+                },
+                {
+                    text: 'Last Month',
+                    onClick: () => [moment().subtract(1, 'month').toDate(), new Date()]
+                },
+                {
+                    text: 'Start of Year',
+                    onClick: () => [moment().startOf('year').toDate(), new Date()]
+                },
+                {
+                    text: 'Last Year',
+                    onClick: () => [moment().subtract(1, 'year').toDate(), new Date()]
+                }
+            ],
         };
     },
 
@@ -410,13 +441,22 @@ export default {
         },
         endTime() {
             return this.filters.filterEnd.toISOString().slice(0, 10);
+        },
+        activeIsSelected() {
+            return this.filters.filterStatus.includes("active");
+        },
+        cancelledIsSelected() {
+            return this.filters.filterStatus.includes("cancelled");
+        },
+        completedIsSelected() {
+            return this.filters.filterStatus.includes("completed");
         }
     },
     methods: {
 
         async getBacklogData() {
             window.scrollTo({top: 0, behavior: 'smooth'});
-            if (this.start && this.end) {
+            if (this.selectedDateRange[0] && this.selectedDateRange) {
                 this.eventHub.$emit("set-loading-state", true);
                 this.isLoadingTasks = true;
                 this.pageNumber = 1;
@@ -468,6 +508,12 @@ export default {
         },
 
         filterTrigger() {
+            if (this.filters.filterStatus.length === 0) {
+                this.triggerInfoToast("A status needs to be selected");
+            }
+            if (this.activeIsSelected && !this.completedIsSelected && !this.cancelledIsSelected && !this.filters.filterPlacedInBoard && !this.filters.filterNotPlacedInBoard) {
+                this.triggerInfoToast("Please select: 'Placed In Board' or 'Awaiting Placement'");
+            }
             this.pageNumber = 1;
             this.backlogTaskList = [];
             this.getMoreBacklogTasks();
@@ -489,8 +535,8 @@ export default {
         },
 
         setTimeSpan() {
-            this.filters.filterStart = this.start;
-            this.filters.filterEnd = this.end;
+            this.filters.filterStart = this.selectedDateRange[0];
+            this.filters.filterEnd = this.selectedDateRange[1];
             this.getBacklogData();
         },
 
@@ -578,4 +624,7 @@ export default {
     background-color: #ffffff;
 }
 
+.group:hover .group-hover\:flex {
+    display: flex;
+}
 </style>

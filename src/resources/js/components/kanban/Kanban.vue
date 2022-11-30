@@ -133,7 +133,6 @@
 
 import draggable from "vuedraggable";
 import {ajaxCalls} from "../../mixins/ajaxCallsMixin";
-
 import TaskCard from "./kanbanComponents/TaskCard.vue";
 import kanbanTaskModal from "./kanbanComponents/KanbanTaskModal";
 import AddMemberModal from "./kanbanComponents/AddMemberModal.vue";
@@ -291,7 +290,6 @@ export default {
             localStorage.selectedSortMethods = JSON.stringify(this.selectedSortMethods);
             this.sortAllTaskCards();
         },
-
 
         sortAllTaskCards() {
             for (let row of this.kanban.rows) {
@@ -525,6 +523,4 @@ export default {
 .flip-list-move {
     transition: transform 0.4s;
 }
-
-
 </style>

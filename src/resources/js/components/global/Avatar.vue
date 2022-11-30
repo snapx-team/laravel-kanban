@@ -6,7 +6,7 @@
         <div :class="`mt-${size}`"
              class="absolute top-0 flex flex-col items-center hidden mb-6 group-hover:flex"
              v-if="tooltip">
-            <div class="w-3 h-3 -mb-2 bg-gray-800"></div>
+            <div class="w-3 h-3 -mb-2 bg-gray-800 rotate-45 transform"></div>
             <p class="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-gray-800 rounded shadow-lg">
                 {{ name }}
             </p>
@@ -94,6 +94,7 @@ export default {
         },
     },
 };
+
 </script>
 
 <style scoped>
