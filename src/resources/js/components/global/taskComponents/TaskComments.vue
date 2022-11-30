@@ -312,7 +312,7 @@ export default {
 
         clickOutsideQuill(){
             this.isCommentFocus = false;
-            this.cancelEditComment();
+            this.isEditingComment = {visible: false, id: null};
         },
 
         updatePaginationIndex(newIndex) {
