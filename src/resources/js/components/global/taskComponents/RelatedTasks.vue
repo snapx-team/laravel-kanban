@@ -1,5 +1,4 @@
 <template>
-
     <div>
         <div v-if="!loadingRelatedTasks" class="space-y-4 whitespace-nowrap">
             <p v-if="relatedTasks.length === 0 && !selectGroupIsVisible"
@@ -139,7 +138,11 @@ export default {
         },
 
         updateTask(task) {
-            this.eventHub.$emit("update-kanban-task-cards", task);
+			if (this.sourceFrom === componentNames.ViewTaskData) {
+				this.eventHub.$emit("update-kanban-task-cards", task);
+			} else if (this.sourceFrom === componentNames.TaskPane) {
+				this.eventHub.$emit("open-task-view", task);
+			}
         },
 
         onTypeTask(search, loading) {

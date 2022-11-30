@@ -117,7 +117,7 @@
                                                v-if="task.id"
                                                :key="getUniqueId()"
                                                :appendSelectToBody=true
-                                               :source="source"
+                                               :sourceFrom="source"
                                                :cardData="task"></related-tasks>
                             </div>
                             <div v-bind:class="{'hidden': openTab !== 5, 'block': openTab === 5}">
@@ -203,6 +203,8 @@ export default {
             this.eventHub.$emit("close-task-view");
         },
         populateTaskView(task) {
+            this.openTab = 1;
+            window.scrollTo({top: 0, behavior: 'smooth'});
             Object.assign(this.task, {...task});
             if (task.deadline) {
                 this.task.deadline = new Date(task.deadline);
@@ -217,6 +219,7 @@ export default {
             this.openTab = tabNumber
         },
         fetchAndReplaceTaskPaneData() {
+            this.openTab = 1;
             window.scrollTo({top: 0, behavior: 'smooth'});
             this.eventHub.$emit("reload-backlog-data");
             this.asyncGetTaskData(this.task.id).then((data) => {

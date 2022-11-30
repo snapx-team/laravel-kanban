@@ -415,6 +415,7 @@ export default {
     methods: {
 
         async getBacklogData() {
+            window.scrollTo({top: 0, behavior: 'smooth'});
             if (this.start && this.end) {
                 this.eventHub.$emit("set-loading-state", true);
                 this.isLoadingTasks = true;
@@ -432,7 +433,6 @@ export default {
         },
 
         getMoreBacklogTasks() {
-
             if (this.isLoadingTasks) {
                 tokenSource.cancel();
             }
@@ -454,7 +454,6 @@ export default {
         },
 
         filterByBoard(board) {
-
             let contains = this.filters.filterBoard.some(elem => {
                 return board.id === elem.id;
             });
@@ -468,7 +467,6 @@ export default {
             this.filterTrigger();
         },
 
-
         filterTrigger() {
             this.pageNumber = 1;
             this.backlogTaskList = [];
@@ -481,9 +479,11 @@ export default {
                 this.eventHub.$emit("populate-task-view", task);
             }, 100);
         },
+
         closeTaskView() {
             this.showTaskPane = false;
         },
+
         closeBoardView() {
             this.showBoardsPane = false;
         },
@@ -498,6 +498,7 @@ export default {
             let d = new Date()
             return new Date(d.setFullYear(d.getFullYear() - 1));
         },
+
         getErpEmployees() {
             this.asyncGetAllUsers().then((data) => {
                 this.erpEmployees = data.data;
@@ -505,6 +506,7 @@ export default {
                 console.log(res)
             });
         },
+
         getContracts() {
             this.asyncGetAllContracts().then((data) => {
                 this.erpContracts = data.data;
@@ -533,6 +535,7 @@ export default {
                 this.typeEmployee(search, loading, this);
             }
         },
+
         typeEmployee: _.debounce(function (search, loading) {
             this.asyncGetSomeUsers(search).then((data) => {
                 this.erpEmployees = data.data;
@@ -545,12 +548,14 @@ export default {
                     loading(false);
                 });
         }, 500),
+
         onTypeContract(search, loading) {
             if (search.length) {
                 loading(true);
                 this.typeContract(search, loading, this);
             }
         },
+
         typeContract: _.debounce(function (search, loading) {
             this.asyncGetSomeContracts(search).then((data) => {
                 this.erpContracts = data.data;

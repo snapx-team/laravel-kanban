@@ -10,9 +10,11 @@
                             enter-class=" opacity-0 bg-blue-200"
                             leave-active-class="transition duration-300 ease-in transform"
                             leave-to-class="opacity-0 bg-blue-200">
-                    <div class="z-50 overflow-auto h-screen absolute inset-0 bg-gray-400 bg-opacity-75 flex"
-                         v-if="kanbanIsLoading">
-                        <loading-animation :size="100" class="m-auto"></loading-animation>
+                    <div v-if="kanbanIsLoading">
+                        <div class="z-50 overflow-auto h-full absolute inset-0 bg-gray-400 bg-opacity-75 flex"></div>
+                        <div class="z-50 overflow-auto h-screen absolute inset-0 flex">
+                            <loading-animation :size="100" class="m-auto"></loading-animation>
+                        </div>
                     </div>
                 </transition>
                 <router-view></router-view>
@@ -45,7 +47,6 @@ export default {
             kanban: {},
         };
     },
-
     methods: {
         setSessions() {
             axios.get('set-sessions').then((data) => {
@@ -74,7 +75,6 @@ export default {
             this.kanbanIsLoading = state;
         });
     },
-
     beforeDestroy() {
         this.eventHub.$off('set-loading-state');
     },

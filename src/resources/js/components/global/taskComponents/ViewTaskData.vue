@@ -236,7 +236,7 @@
                 <div v-if="isRelatedTasksVisible"
                      class="space-y-5 pt-5">
                     <p class="text-gray-700 font-semibold font-sans tracking-wide text-lg"> Related Tasks: </p>
-                    <related-tasks :source="source" :cardData="cloneCardData"></related-tasks>
+                    <related-tasks :sourceFrom="source" :cardData="cloneCardData"></related-tasks>
                 </div>
 
             </div>
