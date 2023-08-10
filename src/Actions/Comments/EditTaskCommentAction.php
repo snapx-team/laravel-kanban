@@ -50,6 +50,11 @@ class EditTaskCommentAction extends Action
             \DB::beginTransaction();
 
             $comment = Comment::find($this->comment_data['id']);
+
+            if ($comment === null) {
+                return;
+            }
+
             $comment->update(['comment' => $this->comment_data['comment']]);
             $comment->refresh();
 
