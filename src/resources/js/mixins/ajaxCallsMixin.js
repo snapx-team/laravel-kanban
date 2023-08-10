@@ -524,7 +524,6 @@ export const ajaxCalls = {
         },
 
         asyncCreateOrEditComment(commentData) {
-
             return axios.post('create-or-update-task-comment', commentData).catch((error) => {
                 this.loopAllErrorsAsTriggerErrorToast(error);
             });

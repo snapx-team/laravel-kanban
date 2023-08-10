@@ -266,8 +266,7 @@ export default {
             }
 
             this.asyncCreateOrEditComment(this.commentData).then(res => {
-                this.commentData.comment = null;
-                this.isEditingComment = {visible: false, id: null};
+                this.cancelEditComment();
                 this.getComments();
                 this.eventHub.$emit("reload-logs");
             });
@@ -291,8 +290,7 @@ export default {
         },
 
         deleteComment(commentData) {
-
-
+            this.cancelEditComment();
             this.$swal({
                 icon: 'warning',
                 title: 'Confirm Delete Comment',
